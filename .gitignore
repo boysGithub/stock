@@ -1,0 +1,7 @@
+.DS_Store
+*.log
+*.zip
+/application/config.php
+/application/database.php
+/application/command.php
+!.gitignore
