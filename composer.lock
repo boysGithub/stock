@@ -117,16 +117,16 @@
         },
         {
             "name": "phpdocumentor/reflection-docblock",
-            "version": "3.1.0",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "9270140b940ff02e58ec577c237274e92cd40cdd"
+                "reference": "8331b5efe816ae05461b7ca1e721c01b46bafb3e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/phpDocumentor/ReflectionDocBlock/9270140b940ff02e58ec577c237274e92cd40cdd.zip",
-                "reference": "9270140b940ff02e58ec577c237274e92cd40cdd",
+                "url": "https://packagist.phpcomposer.com/files/phpDocumentor/ReflectionDocBlock/8331b5efe816ae05461b7ca1e721c01b46bafb3e.zip",
+                "reference": "8331b5efe816ae05461b7ca1e721c01b46bafb3e",
                 "shasum": ""
             },
             "require": {
@@ -158,7 +158,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2016-06-10 09:48:41"
+            "time": "2016-09-30 07:12:33"
         },
         {
             "name": "phpdocumentor/type-resolver",
@@ -1014,7 +1014,7 @@
         },
         {
             "name": "symfony/dom-crawler",
-            "version": "v2.8.11",
+            "version": "v2.8.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dom-crawler.git",
@@ -1129,16 +1129,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.1.4",
+            "version": "v3.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "f291ed25eb1435bddbe8a96caaef16469c2a092d"
+                "reference": "368b9738d4033c8b93454cb0dbd45d305135a6d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/symfony/yaml/f291ed25eb1435bddbe8a96caaef16469c2a092d.zip",
-                "reference": "f291ed25eb1435bddbe8a96caaef16469c2a092d",
+                "url": "https://packagist.phpcomposer.com/files/symfony/yaml/368b9738d4033c8b93454cb0dbd45d305135a6d3.zip",
+                "reference": "368b9738d4033c8b93454cb0dbd45d305135a6d3",
                 "shasum": ""
             },
             "require": {
@@ -1174,20 +1174,20 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-09-02 02:12:52"
+            "time": "2016-09-25 08:27:07"
         },
         {
             "name": "topthink/framework",
-            "version": "5.0",
+            "version": "v5.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/framework.git",
-                "reference": "4115408538b566d795d621385f9c293f026fb3f4"
+                "reference": "0e39004f5661ad6c11e1b00026aa9d857068dbbc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/top-think/framework/4115408538b566d795d621385f9c293f026fb3f4.zip",
-                "reference": "4115408538b566d795d621385f9c293f026fb3f4",
+                "url": "https://packagist.phpcomposer.com/files/top-think/framework/0e39004f5661ad6c11e1b00026aa9d857068dbbc.zip",
+                "reference": "0e39004f5661ad6c11e1b00026aa9d857068dbbc",
                 "shasum": ""
             },
             "require": {
@@ -1221,7 +1221,7 @@
                 "orm",
                 "thinkphp"
             ],
-            "time": "2016-09-15 04:58:29"
+            "time": "2016-09-28 03:40:39"
         },
         {
             "name": "topthink/think-captcha",
@@ -1294,16 +1294,16 @@
         },
         {
             "name": "topthink/think-image",
-            "version": "v1.0.6",
+            "version": "v1.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-image.git",
-                "reference": "a708d93ec30bae62bad53f7b82e466cfada2b7d6"
+                "reference": "8586cf47f117481c6d415b20f7dedf62e79d5512"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/top-think/think-image/a708d93ec30bae62bad53f7b82e466cfada2b7d6.zip",
-                "reference": "a708d93ec30bae62bad53f7b82e466cfada2b7d6",
+                "url": "https://packagist.phpcomposer.com/files/top-think/think-image/8586cf47f117481c6d415b20f7dedf62e79d5512.zip",
+                "reference": "8586cf47f117481c6d415b20f7dedf62e79d5512",
                 "shasum": ""
             },
             "require": {
@@ -1311,7 +1311,7 @@
             },
             "require-dev": {
                 "phpunit/phpunit": "4.8.*",
-                "topthink/framework": "dev-master"
+                "topthink/framework": "^5.0"
             },
             "type": "library",
             "autoload": {
@@ -1330,20 +1330,20 @@
                 }
             ],
             "description": "The ThinkPHP5 Image Package",
-            "time": "2016-07-20 04:18:35"
+            "time": "2016-09-29 06:05:43"
         },
         {
             "name": "topthink/think-installer",
-            "version": "v1.0.5",
+            "version": "v1.0.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-installer.git",
-                "reference": "6fbab3ed12ce31a455c0f62aac25afe39ec1499a"
+                "reference": "ae50760ebd7c687c7a8573db2cfa94a41e5100e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/top-think/think-installer/6fbab3ed12ce31a455c0f62aac25afe39ec1499a.zip",
-                "reference": "6fbab3ed12ce31a455c0f62aac25afe39ec1499a",
+                "url": "https://packagist.phpcomposer.com/files/top-think/think-installer/ae50760ebd7c687c7a8573db2cfa94a41e5100e3.zip",
+                "reference": "ae50760ebd7c687c7a8573db2cfa94a41e5100e3",
                 "shasum": ""
             },
             "require": {
@@ -1371,7 +1371,7 @@
                     "email": "448901948@qq.com"
                 }
             ],
-            "time": "2016-07-29 10:04:04"
+            "time": "2016-09-23 04:04:44"
         },
         {
             "name": "topthink/think-migration",
@@ -1411,16 +1411,16 @@
         },
         {
             "name": "topthink/think-mongo",
-            "version": "1.0.1",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-mongo.git",
-                "reference": "31d0e092ca81028edd1b4f65ebee14a4410ffa29"
+                "reference": "b02a65b7864387bd43d8a266a8c1f886ff0638b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/top-think/think-mongo/31d0e092ca81028edd1b4f65ebee14a4410ffa29.zip",
-                "reference": "31d0e092ca81028edd1b4f65ebee14a4410ffa29",
+                "url": "https://packagist.phpcomposer.com/files/top-think/think-mongo/b02a65b7864387bd43d8a266a8c1f886ff0638b9.zip",
+                "reference": "b02a65b7864387bd43d8a266a8c1f886ff0638b9",
                 "shasum": ""
             },
             "type": "library",
@@ -1441,7 +1441,7 @@
                 }
             ],
             "description": "mongodb driver for thinkphp5",
-            "time": "2016-09-20 06:18:18"
+            "time": "2016-09-22 11:18:49"
         },
         {
             "name": "topthink/think-queue",
