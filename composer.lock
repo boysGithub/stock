@@ -1375,16 +1375,16 @@
         },
         {
             "name": "topthink/think-migration",
-            "version": "v1.0.5",
+            "version": "v1.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-migration.git",
-                "reference": "43d018cb0c4e7a11b167a54771baebf2e0d4f9ed"
+                "reference": "b2960f9b86c9231f593d5cfb84798176e332c987"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/top-think/think-migration/43d018cb0c4e7a11b167a54771baebf2e0d4f9ed.zip",
-                "reference": "43d018cb0c4e7a11b167a54771baebf2e0d4f9ed",
+                "url": "https://packagist.phpcomposer.com/files/top-think/think-migration/b2960f9b86c9231f593d5cfb84798176e332c987.zip",
+                "reference": "b2960f9b86c9231f593d5cfb84798176e332c987",
                 "shasum": ""
             },
             "type": "library",
@@ -1407,7 +1407,7 @@
                     "email": "448901948@qq.com"
                 }
             ],
-            "time": "2016-08-15 04:09:01"
+            "time": "2016-10-17 03:31:17"
         },
         {
             "name": "topthink/think-mongo",
