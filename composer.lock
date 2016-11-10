@@ -1014,16 +1014,16 @@
         },
         {
             "name": "symfony/dom-crawler",
-            "version": "v2.8.12",
+            "version": "v2.8.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dom-crawler.git",
-                "reference": "aac03b7ea2a7adff10a3599d614e79e6101230ab"
+                "reference": "a94f3fe6f179d6453e5ed8188cf4bfdf933d85f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/symfony/dom-crawler/aac03b7ea2a7adff10a3599d614e79e6101230ab.zip",
-                "reference": "aac03b7ea2a7adff10a3599d614e79e6101230ab",
+                "url": "https://packagist.phpcomposer.com/files/symfony/dom-crawler/a94f3fe6f179d6453e5ed8188cf4bfdf933d85f4.zip",
+                "reference": "a94f3fe6f179d6453e5ed8188cf4bfdf933d85f4",
                 "shasum": ""
             },
             "require": {
@@ -1066,7 +1066,7 @@
             ],
             "description": "Symfony DomCrawler Component",
             "homepage": "https://symfony.com",
-            "time": "2016-07-30 07:20:35"
+            "time": "2016-10-18 15:35:45"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -1129,16 +1129,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.1.5",
+            "version": "v3.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "368b9738d4033c8b93454cb0dbd45d305135a6d3"
+                "reference": "7ff51b06c6c3d5cc6686df69004a42c69df09e27"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/symfony/yaml/368b9738d4033c8b93454cb0dbd45d305135a6d3.zip",
-                "reference": "368b9738d4033c8b93454cb0dbd45d305135a6d3",
+                "url": "https://packagist.phpcomposer.com/files/symfony/yaml/7ff51b06c6c3d5cc6686df69004a42c69df09e27.zip",
+                "reference": "7ff51b06c6c3d5cc6686df69004a42c69df09e27",
                 "shasum": ""
             },
             "require": {
@@ -1174,20 +1174,20 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-09-25 08:27:07"
+            "time": "2016-10-24 18:41:13"
         },
         {
             "name": "topthink/framework",
-            "version": "v5.0.1",
+            "version": "v5.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/framework.git",
-                "reference": "0e39004f5661ad6c11e1b00026aa9d857068dbbc"
+                "reference": "0674c774981517e48911eafc0f1102a8fe56a022"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/top-think/framework/0e39004f5661ad6c11e1b00026aa9d857068dbbc.zip",
-                "reference": "0e39004f5661ad6c11e1b00026aa9d857068dbbc",
+                "url": "https://packagist.phpcomposer.com/files/top-think/framework/0674c774981517e48911eafc0f1102a8fe56a022.zip",
+                "reference": "0674c774981517e48911eafc0f1102a8fe56a022",
                 "shasum": ""
             },
             "require": {
@@ -1204,6 +1204,11 @@
                 "squizlabs/php_codesniffer": "2.*"
             },
             "type": "think-framework",
+            "autoload": {
+                "psr-4": {
+                    "think\\": "library/think"
+                }
+            },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "Apache-2.0"
@@ -1221,7 +1226,7 @@
                 "orm",
                 "thinkphp"
             ],
-            "time": "2016-09-28 03:40:39"
+            "time": "2016-10-24 06:15:09"
         },
         {
             "name": "topthink/think-captcha",
