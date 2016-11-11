@@ -27,9 +27,5 @@ class Transaction extends Model
     {
     	return $this->hasOne('User','uid','uid');
     }
-
-    public function userFunds(){
-        return $this->hasOne('UserFunds','uid','uid');
-    }
 }
 ?>
