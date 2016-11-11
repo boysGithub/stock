@@ -4,6 +4,7 @@ namespace app\order\controller;
 
 use think\Db;
 use think\Request;
+use think\Config;
 use app\index\controller\Base;
 use app\order\model\UserPosition;
 use app\order\model\UserFunds as UserModel;
@@ -42,7 +43,8 @@ class Index extends Base
      */
     public function save(Request $request)
     {
-        if($this->isCanTrade()){
+        $tell = Config::has('stocktell.transactiontime') ? Config::get('stocktell.transactiontime'): true;
+        if($this->isCanTrade($tell)){
             $data = $request->param();
 
             //验证传递的参数
@@ -65,7 +67,7 @@ class Index extends Base
     }
 
     /**
-     * 获取一个用户订单
+     * 获取一个用户交易详情
      *
      * @param  int  $id | \think\Request  $request
      * @return \think\Response
@@ -155,7 +157,7 @@ class Index extends Base
                 break;
             case 'entrust':
                 # 获取当日委托数据
-                return Trans::whereTime('time','week')->where(['uid'=>$uid])->select();
+                return Trans::whereTime('time','today')->where(['uid'=>$uid])->select();
                 break;
         }
     }
@@ -231,38 +233,43 @@ class Index extends Base
     }
 
     /**
-     * [isCanTrade 是否能够交易]
+     * [isCanTrade 是否能够交易的时间]
      * @return boolean [布尔值]
      */
-    protected function isCanTrade(){
-        $w = date("w",time());
-        if($w === 6 || $w === 0 ){
-            $bool = false;
-        }else{
-            $nowTime = time();
-            $startAm = strtotime(date("Y-m-d 09:30:00"));
-            $endAm = strtotime(date("Y-m-d 11:30:00"));
-            $startPm = strtotime(date("Y-m-d 13:00:00"));
-            $endPm = strtotime(date("Y-m-d 15:00:00"));
-            if(($startAm < $nowTime && $nowTime < $endAm) || ($startPm < $nowTime && $nowTime < $endPm)){
-                //获取不能交易的日子
-                $year = date("Y-01-01");
-                $noTradeDays = Db::name('no_trade_days')->whereTime('day','>',$year)->select();
-                if($noTradeDays){
-                    foreach ($noTradeDays as $key => $value) {
-                        $today = date("Y-m-d",time());
-                        if($value['day'] == $today){
-                            $bool = false;
-                        }else{
-                            $bool = true;
+    protected function isCanTrade($tell){
+        //是否启用时间验证
+        if($tell){
+            $w = date("w",time());
+            if($w === 6 || $w === 0 ){
+                $bool = false;
+            }else{
+                $nowTime = time();
+                $startAm = strtotime(date("Y-m-d 09:30:00"));
+                $endAm = strtotime(date("Y-m-d 11:30:00"));
+                $startPm = strtotime(date("Y-m-d 13:00:00"));
+                $endPm = strtotime(date("Y-m-d 15:00:00"));
+                if(($startAm < $nowTime && $nowTime < $endAm) || ($startPm < $nowTime && $nowTime < $endPm)){
+                    //获取不能交易的日子
+                    $year = date("Y-01-01");
+                    $noTradeDays = Db::name('no_trade_days')->whereTime('day','>',$year)->select();
+                    if($noTradeDays){
+                        foreach ($noTradeDays as $key => $value) {
+                            $today = date("Y-m-d",time());
+                            if($value['day'] == $today){
+                                $bool = false;
+                            }else{
+                                $bool = true;
+                            }
                         }
+                    }else{
+                        $bool = true;
                     }
                 }else{
-                    $bool = true;
+                    $bool = false;
                 }
-            }else{
-                $bool = false;
             }
+        }else{
+            $bool = true;
         }
         return $bool;
     }
