@@ -5,14 +5,17 @@ namespace app\order\controller;
 use think\Db;
 use think\Request;
 use think\Config;
+use think\Validate;
 use app\index\controller\Base;
 use app\order\model\UserPosition;
 use app\order\model\UserFunds as UserModel;
 use app\order\model\Transaction as Trans;
+
 class Index extends Base
 {
     protected $_scale = 0.0003; //股票手续
     protected $_stockFunds = 1000000; //股票账户初始金额
+    protected $_limit = 20; //显示的条数
     /**
      * 显示资源列表
      *
@@ -48,14 +51,14 @@ class Index extends Base
             $data = $request->param();
 
             //验证传递的参数
-            $result = $this->validate($data,'Users');
+            $result = $this->validate($data,'Order');
             if (true !== $result) {
                 return json(['status'=>'failed','data'=>$result]);
             }
 
             //获取股票信息
             $stockData = getStock($data['stock'],'s_');
-            if($funds = $this->isToBuy($stockData[$data['stock']][1],$data)){
+            if($funds = $this->isToBuy($data)){
                 $res = $this->trans($data,$stockData,$funds);
             }else{
                 $res = json(['status'=>'failed','data'=>'资金不足']);
@@ -75,14 +78,21 @@ class Index extends Base
     public function read($id)
     {
         $data   = input('get.');
+
+        //验证传递的参数
+        $result = $this->validate($data,'GetUserInfo');
+        if (true !== $result) {
+            return json(['status'=>'failed','data'=>$result]);
+        }
+
         $result = $this->getAccessType($data,$id);
 
         //添加成交状态的名字
-        for ($i=0; $i < count($result); $i++) {
-            $result[$i]->append(['status_name','username']);
+        for ($i=0; $i < count($result['data']); $i++) {
+            $result['data'][$i]->append(['status_name','username']);
         }
         if($result){
-            $result = json(['status'=>'success','data'=>$result]);
+            $result = json(['status'=>'success','data'=>$result['data'],'totalPage'=>$result['totalPage']]);
         }else{
             $result = json(['status'=>'failed','data'=>'获取的数据不存在']);
         }
@@ -146,18 +156,41 @@ class Index extends Base
      * @return [type]       [description]
      */
     protected function getAccessType($data,$uid){
+        //设置显示的数量
+        $limit = $this->_limit;
+        $data['p'] = isset($data['p']) ? $data['p'] > 0 ? $data['p'] : 1 : 1 ;
+        
         switch ($data['type']) {
-            case 'all':
+            case 'trans':
                 # 获取历史成交所有数据
-                return Trans::where(['uid'=>$uid,'status'=>1])->select();
+                //----------判断结尾的时间比前面大  否则为当前时间
+                $data['etime'] = $data['etime'] >= $data['stime'] ? $data['etime'] : date('Y-m-d', strtotime('+1 day'));
+                $page = ceil(Trans::where(['uid'=>$uid,'status'=>1])->whereTime('time','between',[$data['stime'],$data['etime']])->count()/$limit);
+                $result['data'] = Trans::where(['uid'=>$uid,'status'=>1])->whereTime('time','between',[$data['stime'],$data['etime']])->limit(($data['p']-1)*$limit,$limit)->select();
+                $result['totalPage'] = $page;
+                return $result;
                 break;
             case 'deal':
                 # 获取当日成交的数据
-                return Trans::whereTime('time','today')->where(['uid'=>$uid,'status'=>1])->select();
+                $page = ceil(Trans::whereTime('time','today')->where(['uid'=>$uid,'status'=>1])->count()/$limit);
+                $result['data'] = Trans::where(['uid'=>$uid,'status'=>1])->whereTime('time','today')->limit(($data['p']-1)*$limit,$limit)->select();
+                $result['totalPage'] = $page;
+                return $result;
                 break;
             case 'entrust':
                 # 获取当日委托数据
-                return Trans::whereTime('time','today')->where(['uid'=>$uid])->select();
+                $page = ceil(Trans::whereTime('time','today')->where(['uid'=>$uid])->count()/$limit);
+                $result['data'] = Trans::whereTime('time','today')->where(['uid'=>$uid])->limit(($data['p']-1)*$limit,$limit)->select();
+                $result['totalPage'] = $page;
+                return $result;
+                break;
+            case 'historical':
+                # 获取历史委托数据
+                $data['etime'] = $data['etime'] >= $data['stime'] ? $data['etime'] : date('Y-m-d', strtotime('+1 day'));
+                $page = ceil(Trans::where(['uid'=>$uid])->whereTime('time','between',[$data['stime'],$data['etime']])->count()/$limit);  //获取总页数
+                $result['data'] = Trans::where(['uid'=>$uid])->whereTime('time','between',[$data['stime'],$data['etime']])->limit(($data['p']-1)*$limit,$limit)->select();
+                $result['totalPage'] = $page;
+                return $result;
                 break;
         }
     }
@@ -174,15 +207,23 @@ class Index extends Base
             if($data['type'] == 1){
                 //判断是否涨跌停
                 if($this->isLimitMove($stockData[$data['stock']],$data['type'])){
-                    if($data['price'] >= $stockData[$data['stock']][1]){
+                    //是否市价买入
+                    if($data['isMarket'] == 1){
                         $result = $this->buyProcess($data,$stockData,$funds);
                     }else{
-                        //买入没有成交的处理
-                        if(Trans::create($data)){
-                            //添加进入redis   ----未完成
-                            $result = json(['status'=>'success','data'=>'下单成功']);
+                        //先处理为大于等于才成交
+                        if($data['price'] >= $stockData[$data['stock']][1]){
+                            $result = $this->buyProcess($data,$stockData,$funds);
                         }else{
-                            $result = json(['status'=>'failed','data'=>'下单失败']);
+                            //买入没有成交的处理
+                            $data['stock_name'] = $stockData[$data['stock']][0];
+                            $Trans = new Trans();
+                            if($Trans->allowField(true)->save($data)){
+                                //添加进入redis   ----未完成
+                                $result = json(['status'=>'success','data'=>'下单成功']);
+                            }else{
+                                $result = json(['status'=>'failed','data'=>'下单失败']);
+                            }
                         }
                     }
                 }else{
@@ -280,12 +321,12 @@ class Index extends Base
      * @param  [type]  $data  [订单详情的数组]
      * @return boolean        [布尔值]
      */
-    protected function isToBuy($price,$data){
+    protected function isToBuy($data){
         $scale = $this->_scale;
         //查询对应账户的可用资金
         $funds = UserModel::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->find();
-        $fee = $price*$data['number']*$scale >= 5 ? $price*$data['number']*$scale : 5;
-        $available = $price*$data['number']+$fee;
+        $fee = $data['price']*$data['number']*$scale >= 5 ? $data['price']*$data['number']*$scale : 5;
+        $available = $data['price']*$data['number']+$fee;
         if($funds['available_funds'] >= $available){
             $bool = $funds;
         }else{
@@ -312,13 +353,14 @@ class Index extends Base
             $data['status'] = 1;
             $data['price'] = $stockData[$data['stock']][1];
             $data['stock_name'] = $stockData[$data['stock']][0];
-            // //手续费最低为5元
+            //手续费最低为5元
             $data['fee'] = $data['price']*$data['number']*$scale >=5?$data['price']*$data['number']*$scale:5;
             $data['available_funds'] = $funds['available_funds'] - $data['price']*$data['number'] - $data['fee'];
             //更新用户资金
             UserModel::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->update(['available_funds'=>$data['available_funds']]);
             //添加订单到数据库
-            Trans::create($data);
+            $Trans = new Trans();
+            $Trans->allowField(true)->save($data);
 
             //查看是否持有这只股票
             $userInfo = UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'is_position'=>1,'sorts'=>$data['sorts']])->find();
@@ -326,13 +368,13 @@ class Index extends Base
             if($userInfo){
                 //持有股票更改持仓表信息
                 $da['cost'] = $userInfo['cost'] + $data['price']*$data['number'] + $data['fee'];
-                $da['id'] = $userInfo['id'];
                 $da['fee'] = $data['fee'] + $userInfo['fee'];
                 $da['freeze_number'] = $userInfo['freeze_number'] + $data['number'];
                 $da['cost_price'] = round($da['cost'] / ($userInfo['freeze_number']+$userInfo['available_number']+$data['number']),3);
                 $da['assets'] = $data['price'] * ($userInfo['freeze_number']+$userInfo['available_number']+$data['number']) + $da['fee'];
                 $da['ratio'] = round(($data['price'] - $userInfo['cost_price']) / $userInfo['cost_price'],3);
-                UserPosition::update($da);
+                $UserPosition = new UserPosition();
+                $UserPosition->allowField(true)->where(['id'=>$userInfo['id']])->update($da);
                 Db::commit();
                 $result = json(['status'=>'success','data'=>'购买成功']);;
             }else{
@@ -347,7 +389,8 @@ class Index extends Base
                 $da['uid'] = $data['uid'];
                 $da['time'] = date("Y-m-d H:i:s",time());
                 $da['sorts'] = $data['sorts'];
-                UserPosition::create($da);
+                $UserPosition = new UserPosition();
+                $UserPosition->allowField(true)->save($da);
                 Db::commit();
                 $result = json(['status'=>'success','data'=>'购买成功']);;
             }
