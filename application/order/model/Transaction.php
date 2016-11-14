@@ -17,6 +17,8 @@ class Transaction extends Model
     	return $this->user->username;
     }
 
+    
+
     protected function getStatusNameAttr($value,$data){
     	$status = [0=>'待交易',1=>'交易成功',2=>'撤单成功'];
         return $status[$data['status']];
