@@ -8,7 +8,7 @@ use think\Config;
 use think\Validate;
 use app\index\controller\Base;
 use app\order\model\UserPosition;
-use app\order\model\UserFunds as UserModel;
+use app\order\model\UserFunds;
 use app\order\model\Transaction as Trans;
 
 class Index extends Base
@@ -16,16 +16,18 @@ class Index extends Base
     protected $_scale = 0.0003; //股票手续
     protected $_stockFunds = 1000000; //股票账户初始金额
     protected $_limit = 20; //显示的条数
+    
     /**
-     * 显示资源列表
-     *
-     * @return \think\Response
+     * [index 获取用户持仓]
+     * @return [json] [用户持仓信息]
      */
     public function index()
     {
-        $redis = new \Redis();
-        $list = UserModel::all();
-        return json($list);
+        $data = input('get.');
+        $this->validate($data,'UserPosition');
+        if (true !== $result) {
+            return json(['status'=>'failed','data'=>$result]);
+        }
     }
 
     /**
@@ -51,7 +53,7 @@ class Index extends Base
             $data = $request->param();
 
             //验证传递的参数
-            $result = $this->validate($data,'Order');
+            $result = $this->validate($data,'SaveOrder');
             if (true !== $result) {
                 return json(['status'=>'failed','data'=>$result]);
             }
@@ -80,7 +82,7 @@ class Index extends Base
         $data   = input('get.');
 
         //验证传递的参数
-        $result = $this->validate($data,'GetUserInfo');
+        $result = $this->validate($data,'GetUserOrderInfo');
         if (true !== $result) {
             return json(['status'=>'failed','data'=>$result]);
         }
@@ -99,16 +101,6 @@ class Index extends Base
         return $result;
     }
 
-    /**
-     * 显示编辑资源表单页.
-     *
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
 
     /**
      * 保存更新的资源
@@ -119,22 +111,36 @@ class Index extends Base
      */
     public function update(Request $request, $id)
     {
-
         $data   = $request->param();
-        $arr = [0,1,2];
-        if(!in_array($data['status'],$arr)){
-            exit(JN(['status'=>'failed','data'=>'非法参数']));
+
+        $res = $this->validate($data,'UpdateOrder');
+        if (true !== $res) {
+            return json(['status'=>'failed','data'=>$res]);
         }
-        $status = Trans::where(['id'=>$id,'status'=>['=',0]])->value('status');
-        if($status === 0){
-            $result = Trans::update($data,['id'=>$id]);
-            if($result){
-                $result = json(['status'=>'success','data'=>'撤单成功']);
-            }else{
-                $result = json(['status'=>'failed','data'=>'撤单失败']);
+
+        $userOrder = Trans::where(['id'=>$id])->find();
+
+        if($userOrder['status'] === 0){
+            if($data['status'] == 2){
+                Db::startTrans();
+                try {
+                    Trans::update($data,['id'=>$id]);
+                    $availableFunds = UserFunds::where(['uid'=>$userOrder['uid']])->value('available_funds');
+                    $da['available_funds'] = $userOrder['price'] * $userOrder['number'] + $availableFunds;
+                    UserFunds::update($da,['uid'=>$userOrder['uid']]);
+                    Db::commit();
+                    $result = json(['status'=>'success','data'=>'撤单成功']);
+                } catch (\Exception $e){
+                    Db::rollback();
+                    $result = json(['status'=>'failed','data'=>'撤单失败']);
+                }
             }
+        }else if($userOrder['status'] === 1){
+            $result = json(['status'=>'failed','data'=>'订单已经成交']);
+        }else if($userOrder['status'] === 2){
+            $result = json(['status'=>'failed','data'=>'订单已经撤单']);
         }else{
-            $result = json(['status'=>'failed','data'=>'订单已经不能修改']);
+            $result = json(['status'=>'failed','data'=>'订单不能存在']);
         }
         return $result;
     }
@@ -324,7 +330,7 @@ class Index extends Base
     protected function isToBuy($data){
         $scale = $this->_scale;
         //查询对应账户的可用资金
-        $funds = UserModel::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->find();
+        $funds = UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->find();
         $fee = $data['price']*$data['number']*$scale >= 5 ? $data['price']*$data['number']*$scale : 5;
         $available = $data['price']*$data['number']+$fee;
         if($funds['available_funds'] >= $available){
@@ -357,7 +363,7 @@ class Index extends Base
             $data['fee'] = $data['price']*$data['number']*$scale >=5?$data['price']*$data['number']*$scale:5;
             $data['available_funds'] = $funds['available_funds'] - $data['price']*$data['number'] - $data['fee'];
             //更新用户资金
-            UserModel::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->update(['available_funds'=>$data['available_funds']]);
+            UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->update(['available_funds'=>$data['available_funds']]);
             //添加订单到数据库
             $Trans = new Trans();
             $Trans->allowField(true)->save($data);
