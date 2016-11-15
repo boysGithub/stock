@@ -514,16 +514,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.8.27",
+            "version": "4.8.28",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "c062dddcb68e44b563f66ee319ddae2b5a322a90"
+                "reference": "558a3a0d28b4cb7e4a593a4fbd2220e787076225"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/sebastianbergmann/phpunit/c062dddcb68e44b563f66ee319ddae2b5a322a90.zip",
-                "reference": "c062dddcb68e44b563f66ee319ddae2b5a322a90",
+                "url": "https://packagist.phpcomposer.com/files/sebastianbergmann/phpunit/558a3a0d28b4cb7e4a593a4fbd2220e787076225.zip",
+                "reference": "558a3a0d28b4cb7e4a593a4fbd2220e787076225",
                 "shasum": ""
             },
             "require": {
@@ -582,7 +582,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-07-21 06:48:14"
+            "time": "2016-11-14 06:25:28"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -926,16 +926,16 @@
         },
         {
             "name": "sebastian/recursion-context",
-            "version": "1.0.2",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/recursion-context.git",
-                "reference": "913401df809e99e4f47b27cdd781f4a258d58791"
+                "reference": "79860854756415e1cec8d186c9cf261cafd87dfc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/sebastianbergmann/recursion-context/913401df809e99e4f47b27cdd781f4a258d58791.zip",
-                "reference": "913401df809e99e4f47b27cdd781f4a258d58791",
+                "url": "https://packagist.phpcomposer.com/files/sebastianbergmann/recursion-context/79860854756415e1cec8d186c9cf261cafd87dfc.zip",
+                "reference": "79860854756415e1cec8d186c9cf261cafd87dfc",
                 "shasum": ""
             },
             "require": {
@@ -975,7 +975,7 @@
             ],
             "description": "Provides functionality to recursively process PHP variables",
             "homepage": "http://www.github.com/sebastianbergmann/recursion-context",
-            "time": "2015-11-11 19:50:13"
+            "time": "2016-11-14 15:54:23"
         },
         {
             "name": "sebastian/version",
@@ -1070,16 +1070,16 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.2.0",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "dff51f72b0706335131b00a7f49606168c582594"
+                "reference": "e79d363049d1c2128f133a2667e4f4190904f7f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/symfony/polyfill-mbstring/dff51f72b0706335131b00a7f49606168c582594.zip",
-                "reference": "dff51f72b0706335131b00a7f49606168c582594",
+                "url": "https://packagist.phpcomposer.com/files/symfony/polyfill-mbstring/e79d363049d1c2128f133a2667e4f4190904f7f4.zip",
+                "reference": "e79d363049d1c2128f133a2667e4f4190904f7f4",
                 "shasum": ""
             },
             "require": {
@@ -1091,7 +1091,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.2-dev"
+                    "dev-master": "1.3-dev"
                 }
             },
             "autoload": {
@@ -1125,7 +1125,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2016-05-18 14:26:46"
+            "time": "2016-11-14 01:06:16"
         },
         {
             "name": "symfony/yaml",
@@ -1178,16 +1178,16 @@
         },
         {
             "name": "topthink/framework",
-            "version": "v5.0.2",
+            "version": "v5.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/framework.git",
-                "reference": "0674c774981517e48911eafc0f1102a8fe56a022"
+                "reference": "fd30f090e40dc25a758d99029fa07f669f575580"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/top-think/framework/0674c774981517e48911eafc0f1102a8fe56a022.zip",
-                "reference": "0674c774981517e48911eafc0f1102a8fe56a022",
+                "url": "https://packagist.phpcomposer.com/files/top-think/framework/fd30f090e40dc25a758d99029fa07f669f575580.zip",
+                "reference": "fd30f090e40dc25a758d99029fa07f669f575580",
                 "shasum": ""
             },
             "require": {
@@ -1226,7 +1226,7 @@
                 "orm",
                 "thinkphp"
             ],
-            "time": "2016-10-24 06:15:09"
+            "time": "2016-11-11 09:22:23"
         },
         {
             "name": "topthink/think-captcha",
@@ -1416,16 +1416,16 @@
         },
         {
             "name": "topthink/think-mongo",
-            "version": "1.0.2",
+            "version": "v1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-mongo.git",
-                "reference": "b02a65b7864387bd43d8a266a8c1f886ff0638b9"
+                "reference": "04548b89d283a15e4b3fc040cd0b3832efba15c5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/top-think/think-mongo/b02a65b7864387bd43d8a266a8c1f886ff0638b9.zip",
-                "reference": "b02a65b7864387bd43d8a266a8c1f886ff0638b9",
+                "url": "https://packagist.phpcomposer.com/files/top-think/think-mongo/04548b89d283a15e4b3fc040cd0b3832efba15c5.zip",
+                "reference": "04548b89d283a15e4b3fc040cd0b3832efba15c5",
                 "shasum": ""
             },
             "type": "library",
@@ -1446,7 +1446,7 @@
                 }
             ],
             "description": "mongodb driver for thinkphp5",
-            "time": "2016-09-22 11:18:49"
+            "time": "2016-11-04 02:10:44"
         },
         {
             "name": "topthink/think-queue",
@@ -1486,16 +1486,16 @@
         },
         {
             "name": "topthink/think-sae",
-            "version": "1.0",
+            "version": "v1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-sae.git",
-                "reference": "018de7802a909dc4952a3951b5fbe8e58d8e6457"
+                "reference": "e31ee4ec073c0ffc5dbc7292f8268661e5265091"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/top-think/think-sae/018de7802a909dc4952a3951b5fbe8e58d8e6457.zip",
-                "reference": "018de7802a909dc4952a3951b5fbe8e58d8e6457",
+                "url": "https://packagist.phpcomposer.com/files/top-think/think-sae/e31ee4ec073c0ffc5dbc7292f8268661e5265091.zip",
+                "reference": "e31ee4ec073c0ffc5dbc7292f8268661e5265091",
                 "shasum": ""
             },
             "type": "library",
@@ -1516,7 +1516,7 @@
                 }
             ],
             "description": "sae support for thinkphp5",
-            "time": "2016-07-25 09:43:35"
+            "time": "2016-10-08 10:53:21"
         },
         {
             "name": "topthink/think-testing",
