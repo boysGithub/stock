@@ -3,7 +3,7 @@ namespace app\order\validate;
 
 use think\Validate;
 
-class Order extends Validate
+class SaveOrder extends Validate
 {
     // 验证规则
     protected $rule = [
