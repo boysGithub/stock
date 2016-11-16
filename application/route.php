@@ -12,6 +12,7 @@ use think\Route;
 
 Route::resource('orders','order/index');
 Route::resource('index','index/index');
+Route::resource('users','user/index');
 //Route::resource('api/:version/:controller','api/:version.:controller');
 // Route::resource('blogs','index/blog');
 return [

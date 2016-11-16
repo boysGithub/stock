@@ -1,5 +1,5 @@
 <?php
-namespace app\order\model;
+namespace app\common\model;
 
 use think\model\Merge;
 
