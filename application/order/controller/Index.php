@@ -1,5 +1,4 @@
 <?php
-
 namespace app\order\controller;
 
 use think\Db;
@@ -7,29 +6,19 @@ use think\Request;
 use think\Config;
 use think\Validate;
 use app\index\controller\Base;
-use app\order\model\UserPosition;
-use app\order\model\UserFunds;
-use app\order\model\Transaction as Trans;
+use app\common\model\UserPosition;
+use app\common\model\UserFunds;
+use app\common\model\Transaction as Trans;
 
+/**
+ * 订单控制器
+ */
 class Index extends Base
 {
     protected $_scale = 0.0003; //股票手续
     protected $_stockFunds = 1000000; //股票账户初始金额
     protected $_limit = 20; //显示的条数
     
-    /**
-     * [index 获取用户持仓]
-     * @return [json] [用户持仓信息]
-     */
-    public function index()
-    {
-        $data = input('get.');
-        $this->validate($data,'UserPosition');
-        if (true !== $result) {
-            return json(['status'=>'failed','data'=>$result]);
-        }
-    }
-
     /**
      * 显示创建资源表单页.
      *
@@ -126,7 +115,7 @@ class Index extends Base
                 try {
                     Trans::update($data,['id'=>$id]);
                     $availableFunds = UserFunds::where(['uid'=>$userOrder['uid']])->value('available_funds');
-                    $da['available_funds'] = $userOrder['price'] * $userOrder['number'] + $availableFunds;
+                    $da['available_funds'] = $userOrder['fee'] + $userOrder['price'] * $userOrder['number'] + $availableFunds;
                     UserFunds::update($da,['uid'=>$userOrder['uid']]);
                     Db::commit();
                     $result = json(['status'=>'success','data'=>'撤单成功']);
@@ -143,6 +132,14 @@ class Index extends Base
             $result = json(['status'=>'failed','data'=>'订单不能存在']);
         }
         return $result;
+    }
+
+    /**
+     * [edit 获取撤单列表]
+     * @return [type] [description]
+     */
+    public function edit(){
+
     }
 
     /**
@@ -206,7 +203,6 @@ class Index extends Base
      * @return [boolean] [成功为true,失败为false]
      */
     protected function trans($data,$stockData,$funds){
-        $redis = redis();
         //判断是否停牌
         if((float)$stockData[$data['stock']][1] != 0){
             //买入
@@ -221,15 +217,7 @@ class Index extends Base
                         if($data['price'] >= $stockData[$data['stock']][1]){
                             $result = $this->buyProcess($data,$stockData,$funds);
                         }else{
-                            //买入没有成交的处理
-                            $data['stock_name'] = $stockData[$data['stock']][0];
-                            $Trans = new Trans();
-                            if($Trans->allowField(true)->save($data)){
-                                //添加进入redis   ----未完成
-                                $result = json(['status'=>'success','data'=>'下单成功']);
-                            }else{
-                                $result = json(['status'=>'failed','data'=>'下单失败']);
-                            }
+                            $result = $this->noOrder($data,$stockData,$funds);
                         }
                     }
                 }else{
@@ -403,6 +391,37 @@ class Index extends Base
         } catch (\Exception $e){
             Db::rollback();
             $result = json(['status'=>'failed','data'=>'下单失败，多次失败请联系管理员']);
+        }
+        return $result;
+    }
+
+    /**
+     * [noOrder 没有成交的订单]
+     * @param  [array] $data      [订单信息]
+     * @param  [array] $stockData [获取的股票现价信息]
+     * @param  [array] $funds     [用户资金信息]
+     * @return [json]             [返回对应信息]
+     */
+    protected function noOrder($data,$stockData,$funds){
+        $scale = $this->_scale;
+        Db::startTrans();
+        try {
+            //买入没有成交的处理
+            $data['stock_name'] = $stockData[$data['stock']][0];
+            $data['fee'] = $data['price']*$data['number']*$scale >=5?$data['price']*$data['number']*$scale:5;
+            //扣除用户资金
+            $data['available_funds'] = $funds['available_funds'] - $data['fee'] - $data['price'] * $data['number'];
+            $Trans = new Trans();
+            $Trans->allowField(true)->save($data);
+            
+            UserFunds::where(['uid'=>$funds['uid']])->update(['available_funds'=>$data['available_funds']]);
+            //添加进入redis   ----未完成
+            
+            Db::commit();
+            $result = json(['status'=>'success','data'=>'下单成功']);
+        } catch (\Exception $e) {
+            Db::rollback();
+            $result = json(['status'=>'failed','data'=>'下单失败']);
         }
         return $result;
     }
