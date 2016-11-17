@@ -14,11 +14,13 @@ use app\common\model\Transaction as Trans;
  * 订单控制器
  */
 class Index extends Base
-{
-    protected $_scale = 0.0003; //股票手续
-    protected $_stockFunds = 1000000; //股票账户初始金额
-    protected $_limit = 20; //显示的条数
-    
+{   
+    protected $_base;
+    public function  __construct(){
+        $this->_base = new Base();
+        
+    }
+
     /**
      * 显示创建资源表单页.
      *
@@ -159,7 +161,7 @@ class Index extends Base
      */
     protected function getAccessType($data,$uid){
         //设置显示的数量
-        $limit = $this->_limit;
+        $limit = $this->_base->_limit;
         $data['p'] = isset($data['p']) ? (int)$data['p'] > 0 ? $data['p'] : 1 : 1 ;
         
         switch ($data['type']) {
@@ -212,6 +214,7 @@ class Index extends Base
                         if($data['price'] >= $stockData[$data['stock']][1]){
                             $result = $this->buyProcess($data,$stockData,$funds);
                         }else{
+                            //买入没有成交的处理
                             $result = $this->noOrder($data,$stockData,$funds);
                         }
                     }
@@ -311,7 +314,7 @@ class Index extends Base
      * @return boolean        [布尔值]
      */
     protected function isToBuy($data){
-        $scale = $this->_scale;
+        $scale = $this->_base->_scale;
         //查询对应账户的可用资金
         $funds = UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->find();
         $fee = $data['price']*$data['number']*$scale >= 5 ? $data['price']*$data['number']*$scale : 5;
@@ -333,7 +336,7 @@ class Index extends Base
      */
     protected function buyProcess($data,$stockData,$funds){
         //手续费比例
-        $scale = $this->_scale;
+        $scale = $this->_base->_scale;
         //买入成交的处理
         Db::startTrans();
         //开启事务
@@ -398,7 +401,7 @@ class Index extends Base
      * @return [json]             [返回对应信息]
      */
     protected function noOrder($data,$stockData,$funds){
-        $scale = $this->_scale;
+        $scale = $this->_base->_scale;
         Db::startTrans();
         try {
             //买入没有成交的处理
