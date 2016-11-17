@@ -42,14 +42,18 @@ class Rank extends Base
 		if($tell){
 			$data['p'] = isset($data['p']) ? $data['p'] > 0 ? $data['p'] : 1 : 1 ;
 			$count = count($tmp) < $data['p'] * $limit ? count($tmp) - ($data['p'] - 1) * $limit : $data['p'] * $limit;
-			for ($i=($data['p']-1)*$limit; $i < $count; $i++) { 
-				$tmpArr[$i] = $tmp[$i];
+			if($count > 0){
+				for ($i=($data['p']-1)*$limit; $i < $count; $i++) { 
+					$tmpArr[$i] = $tmp[$i];
+				}
+				if($tmpArr){
+	        		$result = $tmpArr; 
+		        }else{
+		        	$result = false;
+		        }
+			}else{
+				$result = false;
 			}
-			if($tmpArr){
-        	$result = $tmpArr;
-	        }else{
-	        	$result = false;
-	        }
 		}else{
 			if($tmp){
         		$result = $tmp;
