@@ -47,7 +47,7 @@ class Rank extends Base
 					$tmpArr[$i] = $tmp[$i];
 				}
 				if($tmpArr){
-	        		$result = $tmpArr;
+	        		$result = $tmpArr; 
 		        }else{
 		        	$result = false;
 		        }
