@@ -13,11 +13,11 @@ class Transaction extends Model
         $value = str_replace('s_','',$value);
         return str_replace('_i','',$value);
     }
+    
     protected function getUsernameAttr($username){
     	return $this->user->username;
     }
 
-    
 
     protected function getStatusNameAttr($value,$data){
     	$status = [0=>'待交易',1=>'交易成功',2=>'撤单成功'];

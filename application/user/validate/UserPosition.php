@@ -8,7 +8,7 @@ use think\Validate;
 class UserPosition extends Validate
 {
 	protected $rule = [
-		['uid','require|number','用户id不能为空|必须为'],
+		['uid','require|number','用户id不能为空|必须为数字'],
 	];
 }
 ?>

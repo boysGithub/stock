@@ -13,12 +13,13 @@ use think\Route;
 Route::resource('orders','order/index');
 Route::resource('index','index/index');
 Route::resource('users','user/index');
+Route::get('rank/:method','user/rank/:method');
 //Route::resource('api/:version/:controller','api/:version.:controller');
 // Route::resource('blogs','index/blog');
-return [
-	'__pattern__' => [
-		'name' => '\w+',
-	],
+//return [
+	// '__pattern__' => [
+	// 	'name' => '\w+',
+	// ],
 	//'hello/[:name]' => 'index/index/hello',
 	// '[hello]' => [
 	// 	':id' => ['index/hello', ['method' => 'get'], ['id' => '\d+']],
@@ -26,6 +27,6 @@ return [
 	// ],
 	
 	
-];
+//];
 
 // 

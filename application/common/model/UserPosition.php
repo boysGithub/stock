@@ -31,5 +31,6 @@ class UserPosition extends Merge
         $value = str_replace('s_','',$value);
         return str_replace('_i','',$value);
     }
+
 }
 ?>
