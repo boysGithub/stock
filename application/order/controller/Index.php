@@ -51,7 +51,7 @@ class Index extends Base
 
             //获取股票信息
             $stockData = getStock($data['stock'],'s_');
-            if($funds = $this->isToBuy($data)){
+            if($funds = $this->isToBuy($data,$stockData)){
                 $res = $this->trans($data,$stockData,$funds);
             }else{
                 $res = json(['status'=>'failed','data'=>'资金不足']);
@@ -313,12 +313,16 @@ class Index extends Base
      * @param  [type]  $data  [订单详情的数组]
      * @return boolean        [布尔值]
      */
-    protected function isToBuy($data){
+    protected function isToBuy($data,$stockData){
         $scale = $this->_base->_scale;
         //查询对应账户的可用资金
         $funds = UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->find();
         $fee = $data['price']*$data['number']*$scale >= 5 ? $data['price']*$data['number']*$scale : 5;
-        $available = $data['price']*$data['number']+$fee;
+        if($data['isMarket'] == 1){
+            $available = $stockData[$data['stock']][1]*$data['number']+$fee;
+        }else{
+            $available = $data['price']*$data['number']+$fee;
+        }
         if($funds['available_funds'] >= $available){
             $bool = $funds;
         }else{
