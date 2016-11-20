@@ -26,15 +26,16 @@ class Index extends Base
      */
     public function index()
     {
-        $data = input('get.');
-        $res = $this->validate($data,'UserPosition');
-        if (true !== $res) {
-            return json(['status'=>'failed','data'=>$res]);
-        }
         
-        $position = $this->getUserPosition($data); //获取持仓信息
-        $noOrder = $this->getUserNoOrder($data); //获取待成交信息
-        return json(['status'=>'success','data'=>$position['data'],'totalPage'=>$position['totalPage'],'nData'=>$noOrder['data'],'nTotalPage'=>$noOrder['totalPage']]);
+        // $data = input('get.');
+        // $res = $this->validate($data,'UserPosition');
+        // if (true !== $res) {
+        //     return json(['status'=>'failed','data'=>$res]);
+        // }
+        
+        // $position = $this->getUserPosition($data); //获取持仓信息
+        // $noOrder = $this->getUserNoOrder($data); //获取待成交信息
+        // return json(['status'=>'success','data'=>$position['data'],'totalPage'=>$position['totalPage'],'nData'=>$noOrder['data'],'nTotalPage'=>$noOrder['totalPage']]);
     }
 
     /**
@@ -71,9 +72,9 @@ class Index extends Base
         $fund = UserFunds::where(['uid'=>$id])->find(); //获取用户资产信息
         if($fund){
             $fund->append(['username']);
-            $fund['totalProfitRatio'] = round(($fund['funds']-$stockFunds)/$stockFunds*100,2);
+            $fund['totalProfitRatio'] = round(($fund['funds']-$stockFunds)/$stockFunds*100,2); //总盈利率
             $userInit = DaysRatio::where(['uid'=>$id])->whereTime('time','today')->value('initialCapital');
-            $fund['shares'] = $userInit ? $fund['funds'] - $userInit : 0 ;
+            $fund['shares'] = $userInit ? $fund['funds'] - $userInit : 0 ;  //今日盈亏
             //暂时用数据库处理才做   ---redis 还未完成
             $rank = new Rank();
             $tmp = $rank->totalProfitRank(false);
