@@ -15,7 +15,7 @@ class Rank extends Model
 	public function getTotalProfitRank($p,$condition='total_rate',$sorts=1){
 		$limit = 50;
 		$p = ($p-1)*$limit;
-		$sql = "SELECT obj.uid, obj.total_rate,u.username,obj.success_rate,obj.avg_position_day,obj.week_avg_profit_rate,
+		$sql = "SELECT obj.uid, obj.total_rate,u.username,obj.success_rate,obj.avg_position_day,obj.week_avg_profit_rate,round((obj.funds-obj.available_funds)/obj.funds*100,2) AS position,
 				@rownum := @rownum + 1 AS num_tmp,
 				        @incrnum := CASE
 				        WHEN @rowtotal = obj.{$condition} THEN
@@ -23,7 +23,7 @@ class Rank extends Model
 				        WHEN @rowtotal := obj.{$condition} THEN
 				            @rownum
 				        END AS rownum
-				FROM (SELECT uid, total_rate ,success_rate,avg_position_day,week_avg_profit_rate
+				FROM (SELECT uid, total_rate ,success_rate,funds,available_funds,avg_position_day,week_avg_profit_rate
 					FROM `sjq_users_funds`
 					WHERE sorts = {$sorts}
 					ORDER BY total_rate DESC

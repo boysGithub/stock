@@ -167,29 +167,26 @@ class Index extends Base
         switch ($data['type']) {
             case 'trans':
                 # 获取历史成交所有数据
-                //----------判断结尾的时间比前面大  否则为当前时间
-                // $data['etime'] = $data['etime'] >= $data['stime'] ? $data['etime'] : date('Y-m-d', strtotime('+1 day'));
                 $result['totalPage'] = ceil(Trans::where(['uid'=>$uid,'status'=>1])->whereTime('time','between',[$data['stime'],$data['etime']])->count()/$limit);
-                $result['data'] = Trans::where(['uid'=>$uid,'status'=>1])->whereTime('time','between',[$data['stime'],$data['etime']])->limit(($data['p']-1)*$limit,$limit)->order('time desc')->select();
+                $result['data'] = Trans::where(['uid'=>$uid,'status'=>1])->whereTime('time','between',[$data['stime'],$data['etime']])->limit(($data['p']-1)*$limit,$limit)->order('id desc')->select();
                 return $result;
                 break;
             case 'deal':
                 # 获取当日成交的数据
                 $result['totalPage'] = ceil(Trans::whereTime('time','today')->where(['uid'=>$uid,'status'=>1])->count()/$limit);
-                $result['data'] = Trans::where(['uid'=>$uid,'status'=>1])->whereTime('time','today')->limit(($data['p']-1)*$limit,$limit)->order('time desc')->select();
+                $result['data'] = Trans::where(['uid'=>$uid,'status'=>1])->whereTime('time','today')->limit(($data['p']-1)*$limit,$limit)->order('id desc')->select();
                 return $result;
                 break;
             case 'entrust':
                 # 获取当日委托数据
                 $result['totalPage'] = ceil(Trans::whereTime('time','today')->where(['uid'=>$uid])->count()/$limit);
-                $result['data'] = Trans::whereTime('time','today')->where(['uid'=>$uid])->limit(($data['p']-1)*$limit,$limit)->order('time desc')->select();
+                $result['data'] = Trans::whereTime('time','today')->where(['uid'=>$uid])->limit(($data['p']-1)*$limit,$limit)->order('id desc')->select();
                 return $result;
                 break;
             case 'historical':
                 # 获取历史委托数据
-                // $data['etime'] = $data['etime'] >= $data['stime'] ? $data['etime'] : date('Y-m-d', strtotime('+1 day'));
                 $result['totalPage'] = ceil(Trans::where(['uid'=>$uid])->whereTime('time','between',[$data['stime'],$data['etime']])->count()/$limit);  //获取总页数
-                $result['data'] = Trans::where(['uid'=>$uid])->whereTime('time','between',[$data['stime'],$data['etime']])->limit(($data['p']-1)*$limit,$limit)->order('time desc')->select();
+                $result['data'] = Trans::where(['uid'=>$uid])->whereTime('time','between',[$data['stime'],$data['etime']])->limit(($data['p']-1)*$limit,$limit)->order('id desc')->select();
                 return $result;
                 break;
         }

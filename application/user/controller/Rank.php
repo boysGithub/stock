@@ -12,45 +12,12 @@ use app\common\model\Rank as RankModel;
 */
 class Rank extends Base
 {
-	protected $_base;
-	public function __construct(){
-		$this->_base =new Base();
-	}
-
-	// /**
-	//  * [testData description]
-	//  * @return [type] [description]
-	//  */
-	// public function testData(){
-	// 	Db::startTrans();
-	// 	for ($i=900001; $i <= 1000000; $i++) {
-	// 		try{
-	// 	    	$data['uid'] = $i;
-	// 			$data['username'] = 'test'.$i;
-	// 			User::create($data);
-	// 			$da['uid'] = $i;
-	// 			$da['funds'] = 1000000 - rand(0,10000);
-	// 			$da['time'] = date('Y-m-d H:i:s',time());
-	// 			$da['total_rate'] = rand(0,1000000)/100;
-	// 			$da['success_rate'] = rand(0,10000)/100;
-	// 			$da['week_avg_profit_rate'] = rand(0,10000)/100;
-	// 			UserFunds::create($da);
-	// 		    // 提交事务
-	// 		    Db::commit();    
-	// 		} catch (\Exception $e) {
-	// 		    // 回滚事
-	// 		    Db::rollback();
-	// 		}	
-	// 	}
-	// }
-
 	/**
 	 * [getTotalProfit 总盈利率牛人排行榜]
-	 * @return [type] [description]
+	 * @return [json] [返回获取数据的json]
 	 */
 	public function getRankList(){
-		$limit = $this->_base->_limit;
-		$stockFunds = $this->_base->_stockFunds;
+		//这里的分页 limit 在model 里面
 		$data = input('get.');
 		$res = $this->validate($data,'Rank');
 		if (true !== $res) {
