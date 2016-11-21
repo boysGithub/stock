@@ -26,16 +26,14 @@ class Index extends Base
      */
     public function index()
     {
-        
-        // $data = input('get.');
-        // $res = $this->validate($data,'UserPosition');
-        // if (true !== $res) {
-        //     return json(['status'=>'failed','data'=>$res]);
-        // }
-        
-        // $position = $this->getUserPosition($data); //获取持仓信息
-        // $noOrder = $this->getUserNoOrder($data); //获取待成交信息
-        // return json(['status'=>'success','data'=>$position['data'],'totalPage'=>$position['totalPage'],'nData'=>$noOrder['data'],'nTotalPage'=>$noOrder['totalPage']]);
+        $data = input('get.');
+        $res = $this->validate($data,'UserPosition');
+        if (true !== $res) {
+            return json(['status'=>'failed','data'=>$res]);
+        }
+        $position = $this->getUserPosition($data); //获取持仓信息
+        $noOrder = $this->getUserNoOrder($data); //获取待成交信息
+        return json(['status'=>'success','data'=>$position['data'],'totalPage'=>$position['totalPage'],'nData'=>$noOrder['data'],'nTotalPage'=>$noOrder['totalPage']]);
     }
 
     /**
