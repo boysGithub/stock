@@ -72,6 +72,7 @@ class Index extends Base
             $fund->append(['username']);
             $userInit = DaysRatio::where(['uid'=>$id])->whereTime('time','today')->value('initialCapital');
             $fund['shares'] = $userInit ? $fund['funds'] - $userInit : 0 ;  //今日盈亏
+            $fund['position'] = round(($fund['funds'] - $funds['available_funds'])/$fund['funds']*100,2);
             $result = json(['status'=>'success','data'=>$fund]);
         }else{
             $result = json(['status'=>'failed','data'=>'没有这个用户']);
