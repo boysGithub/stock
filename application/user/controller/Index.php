@@ -37,16 +37,6 @@ class Index extends Base
     }
 
     /**
-     * 显示创建资源表单页.
-     *
-     * @return \think\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * 用户自选股
      *
      * @param  \think\Request  $request
@@ -61,7 +51,7 @@ class Index extends Base
         }
         $data['time'] = date("Y-m-d H:i:s");
         if(UserFunds::where(['uid'=>$data['uid']])->find()){
-            if(OptionalStock::where(['uid'=>$data['uid'],'stock'=>$data['stock']])->find()){
+            if(OptionalStock::where($data])->find()){
                 $result = json(['status'=>'failed','data'=>'股票已经存在']);
             }else{
                 getStock($data['stock'],'s_');
@@ -78,10 +68,9 @@ class Index extends Base
     }
 
     /**
-     * 
-     *
-     * @param  int  $id
-     * @return \think\Response
+     * [read 获取用户账户信息]
+     * @param  [number] $id [用户uid]
+     * @return [json]     [返回json]
      */
     public function read($id)
     {   
@@ -99,40 +88,6 @@ class Index extends Base
         }
         
         return $result;
-    }
-
-    /**
-     * 显示编辑资源表单页.
-     *
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * 保存更新的资源
-     *
-     * @param  \think\Request  $request
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * 删除指定资源
-     *
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function delete($id)
-    {
-        //
     }
 
     /**
