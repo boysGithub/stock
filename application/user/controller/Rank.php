@@ -44,7 +44,7 @@ class Rank extends Base
 		
 		$userFunds = new UserFunds();
 		$tmp = $userFunds->Field('id,uid,funds,available_funds,sorts')->order('funds desc')->select();
-		return $tmp;
+		return json($tmp);
         foreach ($tmp as $key => $value) {
             $f[$key] = $value['funds'];
             $tmp[$key]->append(['username']);

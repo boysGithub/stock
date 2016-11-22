@@ -9,7 +9,7 @@ use app\common\model\UserPosition;
 use app\common\model\Transaction as Trans;
 use app\common\model\UserFunds;
 use app\common\model\DaysRatio;
-use app\user\controller\Rank;
+use app\common\model\Rank;
 /**
  * 用户控制器
  */
@@ -66,21 +66,12 @@ class Index extends Base
     public function read($id)
     {   
         $stockFunds = $this->_base->_stockFunds;
-
-        $fund = UserFunds::where(['uid'=>$id])->find(); //获取用户资产信息
+        $fund = UserFunds::where(['uid'=>$id])->Field('id,uid,funds,time,operationTime,available_funds,sorts,total_rate,avg_position_day,total_profit_rank')->find();
+        //获取用户资产信息
         if($fund){
             $fund->append(['username']);
-            $fund['totalProfitRatio'] = round(($fund['funds']-$stockFunds)/$stockFunds*100,2); //总盈利率
             $userInit = DaysRatio::where(['uid'=>$id])->whereTime('time','today')->value('initialCapital');
             $fund['shares'] = $userInit ? $fund['funds'] - $userInit : 0 ;  //今日盈亏
-            //暂时用数据库处理才做   ---redis 还未完成
-            $rank = new Rank();
-            $tmp = $rank->totalProfitRank(false);
-            foreach ($tmp as $key => $value) {
-                if($value['uid'] == $id){
-                    $fund['rank'] = $key+1;
-                }
-            }
             $result = json(['status'=>'success','data'=>$fund]);
         }else{
             $result = json(['status'=>'failed','data'=>'没有这个用户']);

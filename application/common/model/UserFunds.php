@@ -2,7 +2,7 @@
 namespace app\common\model;
 
 use think\Model;
-
+use think\Db;
 /**
 * 用户模型
 */

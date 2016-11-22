@@ -1,10 +1,19 @@
-{extend name="base" /}
-{block name="head"}
+<?php if (!defined('THINK_PATH')) exit(); /*a:4:{s:79:"/Users/ducong/nginxroot/stock/public/../application/index/view/index/index.html";i:1479803721;s:72:"/Users/ducong/nginxroot/stock/public/../application/index/view/base.html";i:1479455582;s:81:"/Users/ducong/nginxroot/stock/public/../application/index/view/public/header.html";i:1479798992;s:81:"/Users/ducong/nginxroot/stock/public/../application/index/view/public/footer.html";i:1479187842;}*/ ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <meta name="description" content="">
 <meta name="keywords" content="">
 <title>模拟炒股首页</title>
-{/block}
-{block name="css"}
+
+<!-- Amaze ui -->
+<link rel="stylesheet" href="/static/amaze/css/amazeui.min.css">
+<link rel="stylesheet" href="/static/amaze/css/app.css">
+
+
 <style type="text/css">
 .tr-slider-ad{}
 .tr-slider-ad .am-slider-default{margin: 0;padding: 2px 4px;}
@@ -44,9 +53,51 @@
 .tr-simulation li{font-size: 14px; padding: 20px 15px;border:none; border-top: 1px dashed #999;}
 .tr-simulation li.first{border: none;}
 </style>
-{/block}
-{block name="header"}{include file="public/header" /}{/block}
-{block name="main"}
+
+</head>
+<body>
+<header class="am-topbar am-topbar-fixed-top">
+	<div class="am-g tr-login-topbar">
+		<div class="am-container">
+			<div class="am-u-sm-12">
+				<div class="am-nav am-nav-pills am-topbar-nav am-fl">
+					<a href="http://www.sjqcj.com/" target="_blank" title="水晶球网">水晶球首页</a>&nbsp;|&nbsp;<a href="http://www.baidu.com" target="_blank">CCC</a>
+				</div>
+				<div class="am-topbar-right am-fr">
+					<?php if(false): ?>
+						欢迎来到模拟炒股，请&nbsp;
+						<a href="<?php echo url('stocks/member/login'); ?>" title="登录" class="topbar-login">登录</a>
+						&nbsp;|&nbsp;
+						<a href="<?php echo url('stocks/member/register'); ?>" title="注册" class="topbar-register">注册</a>
+					<?php else: ?>
+						您好，
+						<a href="<?php echo url('stocks/member/index'); ?>" title="个人中心" class="topbar-login">username</a>
+						<a href="<?php echo url('stocks/member/loginout'); ?>" title="退出" class="topbar-out">退出</a>
+					<?php endif; ?>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="am-g tr-menu-topbar">
+		<div class="am-container">
+			<h1 class="am-topbar-brand">
+				<a href="/" title="logo"><img src="/static/img/logo1.png" alt="logo" /></a>
+			</h1>
+			<button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-secondary am-show-sm-only am-collapsed" data-am-collapse="{target: '#tr-header-nav'}"><span class="am-sr-only">导航切换</span> <span class="am-icon-bars"></span></button>
+			<div class="am-collapse am-topbar-collapse tr-menu-nav" id="tr-header-nav">
+				<div class="tr-menu-nav-item">
+				<ul class="am-nav am-nav-pills am-topbar-nav">
+				    <li class="home<?php if(\think\Request::instance()->controller() == 'index' and \think\Request::instance()->action() == 'index'): ?> am-active<?php endif; ?>"><a href="/" title="模拟炒股首页">首页</a></li>
+				    <li class="<?php if(\think\Request::instance()->controller() == 'index' and \think\Request::instance()->action() == 'matchList'): ?> am-active<?php endif; ?>"><a href="<?php echo url('index/index/matchList'); ?>">模拟赛场</a></li>
+				    <li class="<?php if(\think\Request::instance()->controller() == 'index' and \think\Request::instance()->action() == 'rankingList'): ?> am-active<?php endif; ?>"><a href="<?php echo url('index/index/rankingList'); ?>">牛人排行榜</a></li>
+				    <li class="<?php if(\think\Request::instance()->controller() == 'index' and \think\Request::instance()->action() == 'index'): ?> am-active<?php endif; ?>"><a href="<?php echo url('index/index/tradingRules'); ?>">交易规则</a></li>
+				</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</header>
+
 <div class="am-g">
     <div class="am-g am-container">
         <div class="am-u-md-9 am-margin-top-sm">
@@ -112,7 +163,7 @@
                     <li><a href="javascript:;">总盈利率</a></li>
                 </ul>
                 <div class="tr-more">
-                    <a href="{:url('index/index/rankingList')}" alt="查看百强排名">查看百强排名&gt;&gt;</a>
+                    <a href="<?php echo url('index/index/rankingList'); ?>" alt="查看百强排名">查看百强排名&gt;&gt;</a>
                 </div>
                 <div class="am-tabs-bd">
                     <div class="am-tab-panel am-active">
@@ -439,23 +490,21 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {empty name="profit_ranking"}
+                                <?php if(empty($profit_ranking) || ($profit_ranking instanceof \think\Collection && $profit_ranking->isEmpty())): ?>
                                     <tr>
                                         <td colspan="7"><span>暂无数据</span></td>
                                     </tr>
-                                {else /}
-                                    {volist name="profit_ranking" id="val"}
+                                <?php else: if(is_array($profit_ranking) || $profit_ranking instanceof \think\Collection): $i = 0; $__LIST__ = $profit_ranking;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$val): $mod = ($i % 2 );++$i;?>
                                         <tr>
                                             <td><span class="tr-rank tr-icon tr-icon-1th"></span></td>
-                                            <td><a href="{:url('stocks/member/personal', array('id'=>$val.uid))}" title="">{$val.username}}</a></td>
+                                            <td><a href="<?php echo url('stocks/member/personal', array('id'=>$val['uid'])); ?>" title=""><?php echo $val['username']; ?>}</a></td>
                                             <td><span class="tr-color-lose">-27.28%</span></td>
                                             <td><span class="tr-color-win">2.35%</span></td>
-                                            <td><span class="tr-color-{if condition="2.35 lt 0"}lose{else /}win{/if} ">2.35%</span></td>
+                                            <td><span class="tr-color-<?php if(2.35 < 0): ?>lose<?php else: ?>win<?php endif; ?> ">2.35%</span></td>
                                             <td><span class="">70%</span></td>
                                             <td><a href="" title="">追踪可看</a></td>
                                         </tr>
-                                    {/volist}
-                                {/empty}
+                                    <?php endforeach; endif; else: echo "" ;endif; endif; ?>
                                 <tr>
                                     <td><span class="tr-rank tr-icon tr-icon-2th"></span></td>
                                     <td><a href="" title="">寻梦6188</a></td>
@@ -625,7 +674,7 @@
                 <div class="am-panel-bd" style="padding: 3.4rem 1.25rem;">
                     <a href="#login" title="" class="am-btn am-btn-block am-btn-primary am-btn-lg am-radius am-margin-bottom-lg">登录</a>
                     <a href="#reg" title="" class="am-btn am-btn-block am-btn-primary am-btn-lg am-radius am-margin-bottom-lg">立即注册</a>
-                    <a href="{:url('index/index/tradeCenter')}" title="" class="am-btn am-btn-block am-btn-warning am-btn-lg am-radius">交易中心</a>
+                    <a href="<?php echo url('index/index/tradeCenter'); ?>" title="" class="am-btn am-btn-block am-btn-warning am-btn-lg am-radius">交易中心</a>
                 </div>
             </section>
             <section class="am-panel am-panel-default tr-tab-one">
@@ -815,11 +864,25 @@
         </div> 
     </div>
 </div>
-{/block}
 
-{block name="footer"}{include file="public/footer" /}{/block}
-{block name="js"}
-{js file="/static/js/carouFredSel.js"}
+<footer>
+	<br>
+	<hr >
+	<br>
+	<div class="am-g am-text-center">
+		&copy;2016 成都水晶球股份有限公司  All rights reserved.
+	</div>
+	<br>
+</footer>
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="/static/amaze/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="/static/amaze/js/amazeui.min.js"></script>
+<script src="/static/js/vue.js"></script>
+
+
+<script type="text/javascript" src="/static/js/carouFredSel.js"></script>
 <script type="text/javascript">
     var _scroll = {
         delay: 1000,
@@ -841,4 +904,6 @@
         scroll: _scroll
     });
 </script>
-{/block}
+
+</body>
+</html>
