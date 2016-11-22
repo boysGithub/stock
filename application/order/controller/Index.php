@@ -51,6 +51,7 @@ class Index extends Base
 
             //获取股票信息
             $stockData = getStock($data['stock'],'s_');
+            
             if($funds = $this->isToBuy($data,$stockData)){
                 $res = $this->trans($data,$stockData,$funds);
             }else{
