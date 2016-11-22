@@ -1,0 +1,108 @@
+{extend name="base" /}
+{block name="head"}
+<meta name="description" content="">
+<meta name="keywords" content="">
+<title>委托-交易中心</title>
+{/block}
+{block name="css"}
+    <style type="text/css">
+    .tr-tabs .am-tabs-nav li a{font-size: 16px;}
+    .tr-tabs .am-nav>li>a:focus, .tr-tabs .am-nav>li>a:hover{background-color: #39f; color: #fff; border-color: #39f;}
+    .tr-tabs .am-nav-tabs>li.am-active>a, .tr-tabs .am-nav-tabs>li.am-active>a:focus, .tr-tabs .am-nav-tabs>li.am-active>a:hover{background-color: #39f; color: #fff; border-color: #39f;}
+    .tr-tabs .am-tabs-bd,.tr-tabs .am-nav-tabs{border-color: #39f;}
+    </style>
+{/block}
+{block name="header"}{include file="public/header" /}{/block}
+{block name="main"}
+<div class="am-g tr-main">
+    <div class="am-container">
+        <div class="am-g">
+            <div class="am-u-md-2 am-padding-right">
+                {include file="trading/trading-left" /}
+            </div>
+                <div class="am-u-md-10 am-padding-horizontal-sm">
+                    <div class="am-tabs tr-tabs" id="tr-tabs">
+                        <ul class="am-tabs-nav am-nav am-nav-tabs">
+                            <li class="{eq name='1' value='$tradingTab'}am-active{/eq}"><a href="{:url('stocks/trading/entrust', array('type'=>2,'tradingTab'=>1))}">当日委托</a></li>
+                            <li class="{eq name='2' value='$tradingTab'}am-active{/eq}"><a href="{:url('stocks/trading/deal', array('type'=>2,'tradingTab'=>2))}">当日成交</a></li>
+                            <li class="{eq name='3' value='$tradingTab'}am-active{/eq}"><a href="{:url('stocks/trading/entrust', array('type'=>2,'tradingTab'=>3))}">历史委托</a></li>
+                            <li class="{eq name='4' value='$tradingTab'}am-active{/eq}"><a href="{:url('stocks/trading/deal', array('type'=>2,'tradingTab'=>4))}">历史成交</a></li>
+                        </ul>
+                        <div class="am-tabs-bd">
+                            <div class="am-tab-panel am-active">
+                                <table class="am-table am-table-centered">
+                                    <thead>
+                                        <tr>
+                                            <th>股票名称</th>
+                                            <th>买入/卖出</th>
+                                            <th>成交价格(&yen;)</th>
+                                            <th>成交数量</th>
+                                            <th>成交金额(&yen;)</th>
+                                            <th>成交时间</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><a href="" title="兔宝宝(002572)">兔宝宝(002572)</a></td>
+                                            <td><span class="tr-color-buy">买入</span></td>
+                                            <td><span class="tr-price">7.52</span></td>
+                                            <td>1000</td>
+                                            <td>50000</td>
+                                            <td>2016-10-13 13:11:11</td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="" title="兔宝宝(002572)">兔宝宝(002572)</a></td>
+                                            <td><span class="tr-color-buy">买入</span></td>
+                                            <td><span class="tr-price">7.52</span></td>
+                                            <td>1000</td>
+                                            <td>50000</td>
+                                            <td>2016-10-13 13:11:11</td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="" title="兔宝宝(002572)">兔宝宝(002572)</a></td>
+                                            <td><span class="tr-color-buy">买入</span></td>
+                                            <td><span class="tr-price">7.52</span></td>
+                                            <td>1000</td>
+                                            <td>50000</td>
+                                            <td>2016-10-13 13:11:11</td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="" title="兔宝宝(002572)">兔宝宝(002572)</a></td>
+                                            <td><span class="tr-color-buy">买入</span></td>
+                                            <td><span class="tr-price">7.52</span></td>
+                                            <td>1000</td>
+                                            <td>50000</td>
+                                            <td>2016-10-13 13:11:11</td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="" title="兔宝宝(002572)">兔宝宝(002572)</a></td>
+                                            <td><span class="tr-color-buy">买入</span></td>
+                                            <td><span class="tr-price">7.52</span></td>
+                                            <td>1000</td>
+                                            <td>50000</td>
+                                            <td>2016-10-13 13:11:11</td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="" title="兔宝宝(002572)">兔宝宝(002572)</a></td>
+                                            <td><span class="tr-color-buy">买入</span></td>
+                                            <td><span class="tr-price">7.52</span></td>
+                                            <td>1000</td>
+                                            <td>50000</td>
+                                            <td>2016-10-13 13:11:11</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>  
+                </div>      
+            </div>        
+        </div>       
+    </div>   
+</div>     
+{/block}
+{block name="footer"}{include file="public/footer" /}{/block}
+{block name="js"}
+    <script>
+    </script>
+{/block}

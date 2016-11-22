@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+{block name="head"}Head{/block}
+<!-- Amaze ui -->
+<link rel="stylesheet" href="/static/amaze/css/amazeui.min.css">
+<link rel="stylesheet" href="/static/amaze/css/app.css">
+
+{block name="css"}CSS{/block}
+</head>
+<body>
+{block name="header"}头部{/block}
+{block name="main"}主内容{/block}
+{block name="footer"}底部{/block}
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="/static/amaze/js/jquery.min.js"></script>
+<!--<![endif]-->
+<script src="/static/amaze/js/amazeui.min.js"></script>
+<script src="/static/js/vue.js"></script>
+
+{block name="js"}Js{/block}
+</body>
+</html>

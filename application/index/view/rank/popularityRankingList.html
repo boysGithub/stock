@@ -1,0 +1,124 @@
+{extend name="base" /}
+{block name="head"}
+<meta name="description" content="">
+<meta name="keywords" content="">
+<title>比赛排行榜</title>
+{/block}
+{block name="css"}
+<link href="/static/css/bootstrap.css" rel="stylesheet">
+<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/css/bootstrap-theme.css" rel="stylesheet">
+<link href="/static/css/bootstrap-theme.min.css" rel="stylesheet">
+    <style>
+        .navigation-div{
+            width: 1100px;
+            clear: both;
+            margin: 0 auto;
+        }
+        .navigation-div-buttom{
+            width: 1000px;
+            margin-top: 60px;
+            margin-left: 240px;
+        }
+        .table-list{
+            width: 100%;
+        }
+        .rank{
+            vertical-align: middle;
+            font-size: 14px;
+        }
+        .icon-btn{
+            /*background: "/static/img/zyc_images.png";*/
+            background: url("/static/img/zyc_images.png");
+        }
+        .rank-1th{
+            background-position: 0 -240px;
+            width: 24px;
+            height: 28px;
+            display: inline-block;
+        }
+        .rank-2th{
+            background-position: 0 -280px;
+            width: 24px;
+            height: 28px;
+            display: inline-block;
+        }
+        .rank-3th{
+            background-position: 0 -320px;
+            width: 24px;
+            height: 28px;
+            display: inline-block;
+        }
+        .table-list td{
+            text-align: center;
+            vertical-align: middle!important;
+            padding: 8px;
+        }
+        .paging{
+            text-align: center;
+            margin-top: 10px;
+        }
+        .text-color{
+            color:#DC143C;
+        }
+        .margin-top-ul{
+            margin-top: 60px;
+        }
+    </style>
+{/block}
+{block name="header"}{include file="public/header" /}{/block}
+{block name="main"}
+
+    <div class="navigation-div-buttom">
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="{eq name='0' value='$type'}active{/eq}"><a href="{:url('stocks/ranking/rankingList', array('type'=>0))}">日盈利率排名</a></li>
+            <li role="presentation" class="{eq name='1' value='$type'}active{/eq}"><a href="{:url('stocks/ranking/rankingList', array('type'=>1))}">周赛排名排名</a></li>
+            <li role="presentation" class="{eq name='2' value='$type'}active{/eq}"><a href="{:url('stocks/ranking/rankingList', array('type'=>2))}">月赛排名排名</a></li>
+            <li role="presentation" class="{eq name='3' value='$type'}active{/eq}"><a href="{:url('stocks/ranking/popularityRankingList')}">总盈利率排名</a></li>
+        </ul>
+        <ul class="list-group margin-top-ul">
+            {volist name="listRanking" id="ranking" mod="2"}
+                <li class="list-group-item">
+                    <table class="table-list">
+                        <tr>
+                            <td rowspan="2">
+                                {switch name="$ranking.ranking" }
+                                {case value="1"}<span class="rank icon-btn rank-1th"> </span>{/case}
+                                {case value="2"}<span class="rank icon-btn rank-2th"> </span>{/case}
+                                {case value="3"}<span class="rank icon-btn rank-3th"> </span>{/case}
+                                {default /}{$ranking.ranking}
+                                {/switch}
+                            </td>
+                            <td rowspan="2">
+                                <img src="/static/img/head.jpg" width="40px" alt="{$ranking.name}">
+                            </td>
+                            <td rowspan="2">
+                                <span>{$ranking.name}</span>
+                            </td>
+                            <td>粉丝数</td>
+                            <td>选股成功率</td>
+                            <td>仓位</td>
+                            <td>周平均盈利率</td>
+                            <td>平均持股天数</td>
+                            <td>总盈利率</td>
+                        </tr>
+                        <tr>
+                            <td>333</td>
+                            <td class="{eq name='mod' value='1'}text-color{/eq}">{$ranking.ryll}%</td>
+                            <td class="{eq name='mod' value='1'}text-color{/eq}">{$ranking.zyll}%</td>
+                            <td>{$ranking.yyll}%</td>
+                            <td>{$ranking.zoyll}%</td>
+                            <td class="{eq name='mod' value='1'}text-color{/eq}">{$ranking.xgccl}%</td>
+                        </tr>
+                    </table>
+                </li>
+            {/volist}
+        </ul>
+        <div class="paging">
+            {$listRanking->render()}
+        </div>
+    </div>
+{/block}
+{block name="footer"}{include file="public/footer" /}{/block}
+{block name="js"}
+{/block}

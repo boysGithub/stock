@@ -1,0 +1,41 @@
+<header class="am-topbar am-topbar-fixed-top">
+	<div class="am-g tr-login-topbar">
+		<div class="am-container">
+			<div class="am-u-sm-12">
+				<div class="am-nav am-nav-pills am-topbar-nav am-fl">
+					<a href="http://www.sjqcj.com/" target="_blank" title="水晶球网">水晶球首页</a>&nbsp;|&nbsp;<a href="http://www.baidu.com" target="_blank">CCC</a>
+				</div>
+				<div class="am-topbar-right am-fr">
+					{if condition="false"}
+						欢迎来到模拟炒股，请&nbsp;
+						<a href="{:url('stocks/member/login')}" title="登录" class="topbar-login">登录</a>
+						&nbsp;|&nbsp;
+						<a href="{:url('stocks/member/register')}" title="注册" class="topbar-register">注册</a>
+					{else}
+						您好，
+						<a href="{:url('stocks/member/index')}" title="个人中心" class="topbar-login">username</a>
+						<a href="{:url('stocks/member/loginout')}" title="退出" class="topbar-out">退出</a>
+					{/if}
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="am-g tr-menu-topbar">
+		<div class="am-container">
+			<h1 class="am-topbar-brand">
+				<a href="/" title="logo"><img src="/static/img/logo1.png" alt="logo" /></a>
+			</h1>
+			<button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-secondary am-show-sm-only am-collapsed" data-am-collapse="{target: '#tr-header-nav'}"><span class="am-sr-only">导航切换</span> <span class="am-icon-bars"></span></button>
+			<div class="am-collapse am-topbar-collapse tr-menu-nav" id="tr-header-nav">
+				<div class="tr-menu-nav-item">
+				<ul class="am-nav am-nav-pills am-topbar-nav">
+				    <li class="home{if condition="$Request.controller eq 'index' and $Request.action eq 'index'"} am-active{/if}"><a href="/" title="模拟炒股首页">首页</a></li>
+				    <li class="{if condition="$Request.controller eq 'index' and $Request.action eq 'matchList'"} am-active{/if}"><a href="{:url('index/index/matchList')}">模拟赛场</a></li>
+				    <li class="{if condition="$Request.controller eq 'index' and $Request.action eq 'rankingList'"} am-active{/if}"><a href="{:url('index/index/rankingList')}">牛人排行榜</a></li>
+				    <li class="{if condition="$Request.controller eq 'index' and $Request.action eq 'index'"} am-active{/if}"><a href="{:url('index/index/tradingRules')}">交易规则</a></li>
+				</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</header>

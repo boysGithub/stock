@@ -1,0 +1,112 @@
+{extend name="base" /}
+{block name="head"}
+<meta name="description" content="">
+<meta name="keywords" content="">
+<title>交易明细</title>
+{/block}
+{block name="css"}
+<link href="/static/css/bootstrap.css" rel="stylesheet">
+<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/css/bootstrap-theme.css" rel="stylesheet">
+<link href="/static/css/bootstrap-theme.min.css" rel="stylesheet">
+    <style>
+        ul {
+            list-style-type: none;
+        }
+        .clearfix:after {
+            content: ".";
+            display: block;
+            height: 0;
+            visibility: hidden;
+            clear: both;
+        }
+        .trading-center{
+            width: 1300px;
+        }
+        .menu-ul li {
+            margin: 10px;
+        }
+        .menu-left {
+            width: 120px;
+            text-align: center;
+            margin-left: 200px;
+            margin-top: 80px;
+        }
+        .menu-left-up {
+            margin-top: 20px;
+            border: 1px solid #e8e8e8;
+        }
+        .menu-ul {
+            float: none;
+            padding: 0;
+        }
+        .fl {
+            float: left;
+        }
+        .menu-center{
+            margin-top: 80px;
+            margin-left: 160px;
+        }
+        .menu-center table{
+            width: 800px;
+        }
+        .table tr{
+            height: 50px;
+        }
+        .table td{
+            text-align: center;
+            vertical-align: middle!important;
+        }
+        .title-div{
+            margin-bottom: 15px;
+            font-size: 26px;
+            width: 100%;
+            text-align: center;
+        }
+        .paging{
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+{/block}
+{block name="header"}{include file="public/header" /}{/block}
+{block name="main"}
+<div class="am-g">
+    <div class="trading-center clearfix">
+        <div class="menu-left fl">
+            {include file="trading/trading-left" /}
+        </div>
+        <div class="menu-center fl">
+            <div class="title-div">标题</div>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td>股票名称</td>
+                        <td>价格</td>
+                        <td>数量</td>
+                        <td>状态</td>
+                        <td>时间</td>
+                        <td>操作</td>
+                    </tr>
+                </tbody>
+                {volist name="listOrder" id="stock" }
+                <tr>
+                    <td>{$stock.name}({$stock.code})</td>
+                    <td>{$stock.price}</td>
+                    <td>{$stock.number}</td>
+                    <td>{$stock.type}</td>
+                    <td>{$stock.time}</td>
+                    <td><input type="button" value="撤单" class="btn btn-info"></td>
+                </tr>
+                {/volist}
+            </table>
+            <div class="paging">
+                {$listOrder->render()}
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="footer"}{include file="public/footer" /}{/block}
+{block name="js"}
+{/block}
