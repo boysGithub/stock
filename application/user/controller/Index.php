@@ -9,7 +9,7 @@ use app\common\model\UserPosition;
 use app\common\model\Transaction as Trans;
 use app\common\model\UserFunds;
 use app\common\model\DaysRatio;
-use app\common\model\Rank;
+use app\common\model\OptionalStock;
 /**
  * 用户控制器
  */
@@ -47,14 +47,34 @@ class Index extends Base
     }
 
     /**
-     * 保存新建的资源
+     * 用户自选股
      *
      * @param  \think\Request  $request
      * @return \think\Response
      */
     public function save(Request $request)
     {
-        //
+        $data = $request->param();
+        $res = $this->validate($data,'OptionalStock');
+        if (true !== $res) {
+            return json(['status'=>'failed','data'=>$res]);
+        }
+        $data['time'] = date("Y-m-d H:i:s");
+        if(UserFunds::where(['uid'=>$data['uid']])->find()){
+            if(OptionalStock::where(['uid'=>$data['uid'],'stock'=>$data['stock']])->find()){
+                $result = json(['status'=>'failed','data'=>'股票已经存在']);
+            }else{
+                getStock($data['stock'],'s_');
+                if(OptionalStock::create($data)){
+                    $result = json(['status'=>'success','data'=>'添加自选股成功']);
+                }else{
+                    $result = json(['status'=>'failed','data'=>'添加自选股失败']);
+                }
+            }
+        }else{
+            $result = json(['status'=>'failed','data'=>'用户不存在']);
+        }
+        return $result;
     }
 
     /**

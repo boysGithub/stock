@@ -40,6 +40,7 @@ class Index extends Base
     public function save(Request $request)
     {
         $tell = Config::has('stocktell.transactiontime') ? Config::get('stocktell.transactiontime'): true;
+        
         if($this->isCanTrade($tell)){
             $data = $request->param();
 
@@ -48,14 +49,17 @@ class Index extends Base
             if (true !== $result) {
                 return json(['status'=>'failed','data'=>$result]);
             }
-
-            //获取股票信息
-            $stockData = getStock($data['stock'],'s_');
-            
-            if($funds = $this->isToBuy($data,$stockData)){
-                $res = $this->trans($data,$stockData,$funds);
+            //这里后续再改    多查了一次数据库
+            if(UserFunds::where(['uid'=>$data['uid']])->find()){
+                //获取股票信息
+                $stockData = getStock($data['stock'],'s_');
+                if($funds = $this->isToBuy($data,$stockData)){
+                    $res = $this->trans($data,$stockData,$funds);
+                }else{
+                    $res = json(['status'=>'failed','data'=>'资金不足']);
+                }
             }else{
-                $res = json(['status'=>'failed','data'=>'资金不足']);
+                $res = json(['status'=>'failed','data'=>'用户不存在']);
             }
         }else{
             $res = json(['status'=>'failed','data'=>'现在不是交易时间']);
@@ -198,6 +202,7 @@ class Index extends Base
      * @return [boolean] [成功为true,失败为false]
      */
     protected function trans($data,$stockData,$funds){
+        $data['number'] = $data['number']%100 ? $data['number'] - $data['number']%100 : $data['number'];
         //判断是否停牌
         if((float)$stockData[$data['stock']][1] != 0){
             //买入
