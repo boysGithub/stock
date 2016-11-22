@@ -27,7 +27,7 @@ class Rank extends Model
 					ORDER BY total_rate DESC
 					) obj,(select @rownum := 0) r,`sjq_users` as u
 					where obj.uid=u.uid
-					order by obj.{$condition} desc";
+					order by obj.{$condition} desc LIMIT 100";
 		return Db::query($sql);			
 	}
 
