@@ -22,16 +22,6 @@ class Index extends Base
     }
 
     /**
-     * 显示创建资源表单页.
-     *
-     * @return \think\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * 新建股票的订单
      *
      * @param  \think\Request  $request
@@ -138,25 +128,6 @@ class Index extends Base
             $result = json(['status'=>'failed','data'=>'订单不能存在']);
         }
         return $result;
-    }
-
-    /**
-     * [edit 获取撤单列表]
-     * @return [type] [description]
-     */
-    public function edit(){
-
-    }
-
-    /**
-     * 删除指定资源
-     *
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function delete($id)
-    {
-        //
     }
 
     /**
