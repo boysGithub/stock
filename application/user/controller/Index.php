@@ -90,14 +90,18 @@ class Index extends Base
      * [delete 用户删除自选股信息]
      * @return [type] [description]
      */
-    public function deleteOptional(){
-        $id = input('post.id');
+    public function delete($id){
+        $uid = input('get.');
+        $res = $this->validate($uid,'UserPosition');
+        if (true !== $res) {
+            return json(['status'=>'failed','data'=>$res]);
+        }
         if(strpos($id,',')){
             $data = explode(',',$id);
         }else{
             $data = $id;
         }
-        if(OptionalStock::where('id','in',$data)->delete()){
+        if(OptionalStock::where(['uid'=>$uid['uid'],'id'=>['in',$data]])->delete()){
             $result = json(['status'=>'success','data'=>'删除成功']);
         }else{
             $result = json(['status'=>'failed','data'=>'删除失败']);
