@@ -86,6 +86,25 @@ class Index extends Base
     }
 
     /**
+     * [delete 用户删除自选股信息]
+     * @return [type] [description]
+     */
+    public function deleteOptional(){
+        $id = input('post.id');
+        if(strpos($id,',')){
+            $data = explode(',',$id);
+        }else{
+            $data = $id;
+        }
+        if(OptionalStock::where('id','in',$data)->delete()){
+            $result = json(['status'=>'success','data'=>'删除成功']);
+        }else{
+            $result = json(['status'=>'failed','data'=>'删除失败']);
+        }
+        return $result;
+    }
+
+    /**
      * [read 获取用户账户信息]
      * @param  [number] $id [用户uid]
      * @return [json]     [返回json]
