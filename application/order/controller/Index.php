@@ -22,6 +22,23 @@ class Index extends Base
     }
 
     /**
+     * [index 牛人动态（用户订单列表）]
+     * @return [json] [用户的数据]
+     */
+    public function index(){
+        $expert = Trans::where(['status'=>1])->order('id desc')->limit(20)->Field('id,uid,stock,price,time,type,stock_name,sorts')->select();
+        foreach ($expert as $key => $value) {
+           $value->append(['username']);
+        }
+        if($expert){
+            $result = json(['status'=>'success','data'=>$expert]);
+        }else{
+            $result = json(['status'=>'failed','data'=>'还没有数据']);
+        }
+        return $result;
+    }
+
+    /**
      * 新建股票的订单
      *
      * @param  \think\Request  $request
