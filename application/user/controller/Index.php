@@ -90,8 +90,8 @@ class Index extends Base
      * [delete 用户删除自选股信息]
      * @return [type] [description]
      */
-    public function delete($id){
-        $uid = input('get.');
+    public function delete(Request $request,$id){
+        $uid = $request->param();
         $res = $this->validate($uid,'UserPosition');
         if (true !== $res) {
             return json(['status'=>'failed','data'=>$res]);

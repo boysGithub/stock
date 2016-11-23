@@ -120,13 +120,13 @@ class Index extends Base
             return json(['status'=>'failed','data'=>$res]);
         }
 
-        $userOrder = Trans::where(['id'=>$id])->find();
+        $userOrder = Trans::where(['id'=>$id,'uid'=>$data['uid']])->find();
 
         if($userOrder['status'] === 0){
             if($data['status'] == 2){
                 Db::startTrans();
                 try {
-                    Trans::update($data,['id'=>$id]);
+                    Trans::update($data,['id'=>$id,'uid'=>$data['uid']]);
                     $availableFunds = UserFunds::where(['uid'=>$userOrder['uid']])->value('available_funds');
                     $da['available_funds'] = $userOrder['fee'] + $userOrder['price'] * $userOrder['number'] + $availableFunds;
                     UserFunds::update($da,['uid'=>$userOrder['uid']]);
