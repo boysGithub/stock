@@ -12,7 +12,7 @@ class UpdateOrder extends Validate
 	protected $rule = [
 		['id','require|number','订单的号不能空|订单号只能为数字'],
 		['status','require|number|in:2','更新状态不能为空|更新状态值只能是数字|更新状态的值只能为2'],
-
+		['uid','require|number',"用户id不能空|用户id只能为数字"],
 	];
 }
 ?>
