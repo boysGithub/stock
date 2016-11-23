@@ -15,6 +15,7 @@ Route::resource('index','index/index');
 Route::resource('users','user/index');
 Route::get('rank/:method','user/rank/:method');
 Route::get('share/:method','order/share/:method');
+Route::get('user/:method','user/index/:method');
 //Route::resource('api/:version/:controller','api/:version.:controller');
 // Route::resource('blogs','index/blog');
 //return [

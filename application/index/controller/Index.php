@@ -46,5 +46,13 @@ class Index extends Base
 	public function tradeCenter(){
 		return $this->fetch('trade/tradeCenter');
 	}
+
+	/**
+	 * [personal 个人中心页面]
+	 * @return [type] [description]
+	 */
+	public function personal(){
+		return $this->fetch('member/personal');
+	}
 }
 ?>
