@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:4:{s:79:"/Users/ducong/nginxroot/stock/public/../application/index/view/index/index.html";i:1479803721;s:72:"/Users/ducong/nginxroot/stock/public/../application/index/view/base.html";i:1479455582;s:81:"/Users/ducong/nginxroot/stock/public/../application/index/view/public/header.html";i:1479798992;s:81:"/Users/ducong/nginxroot/stock/public/../application/index/view/public/footer.html";i:1479187842;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:4:{s:79:"/Users/ducong/nginxroot/stock/public/../application/index/view/index/index.html";i:1479866596;s:72:"/Users/ducong/nginxroot/stock/public/../application/index/view/base.html";i:1479805602;s:81:"/Users/ducong/nginxroot/stock/public/../application/index/view/public/header.html";i:1479805602;s:81:"/Users/ducong/nginxroot/stock/public/../application/index/view/public/footer.html";i:1479805602;}*/ ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -136,7 +136,7 @@
                                     </a>
                                 </div>
                                 <div class="am-u-sm-6 am-u-end" style="margin-left: 10px;">
-                                    <a href="" title="personal" class="am-block">阿西八1</a>
+                                    <a href="<?php echo url('index/index/personal'); ?>" title="personal" class="am-block">阿西八1</a>
                                     <p>
                                         排名：258 <br>
                                         周盈利率:25.24%

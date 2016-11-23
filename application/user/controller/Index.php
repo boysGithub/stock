@@ -37,7 +37,7 @@ class Index extends Base
     }
 
     /**
-     * 用户自选股
+     * 添加用户自选股
      *
      * @param  \think\Request  $request
      * @return \think\Response
@@ -51,7 +51,7 @@ class Index extends Base
         }
         $data['time'] = date("Y-m-d H:i:s");
         if(UserFunds::where(['uid'=>$data['uid']])->find()){
-            if(OptionalStock::where($data])->find()){
+            if(OptionalStock::where(['uid'=>$data['uid'],'stock'=>$data['stock']])->find()){
                 $result = json(['status'=>'failed','data'=>'股票已经存在']);
             }else{
                 getStock($data['stock'],'s_');
@@ -63,6 +63,24 @@ class Index extends Base
             }
         }else{
             $result = json(['status'=>'failed','data'=>'用户不存在']);
+        }
+        return $result;
+    }
+
+    /**
+     * [getUserOptional 获取用户的自选股信息]
+     * @return [json] [用户自选股信息]
+     */
+    public function getUserOptional(){
+        $uid = input('get.uid');
+        if($uid && is_numeric($uid)){
+            if($userOptionalStock = OptionalStock::where(['uid'=>$uid])->select()){
+                $result = json(['status'=>'success','data'=>$userOptionalStock]);
+            }else{
+                $result = json(['status'=>'failed','data'=>'还没有添加自选股']);
+            }
+        }else{
+            $result = json(['status'=>'failed','data'=>'用户不能为空,也不能有特殊字符']);
         }
         return $result;
     }
@@ -104,6 +122,11 @@ class Index extends Base
         return $result;
     }
 
+    /**
+     * [getUserNoOrder 获取用户带成交的订单]
+     * @param  [array] $data [用户的uid]
+     * @return [json]       [返回订单详情]
+     */
     protected function getUserNoOrder($data){
         $limit = $this->_base->_limit;
         $data['np'] = isset($data['np']) ? (int)$data['np'] > 0 ? $data['np'] : 1 : 1;
