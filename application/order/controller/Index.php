@@ -56,18 +56,31 @@ class Index extends Base
             if (true !== $result) {
                 return json(['status'=>'failed','data'=>$result]);
             }
-            //这里后续再改    多查了一次数据库
-            if(UserFunds::where(['uid'=>$data['uid']])->find()){
+            if($data['type'] == 1){
                 //获取股票信息
-                $stockData = getStock($data['stock'],'s_');
-                if($funds = $this->isToBuy($data,$stockData)){
-                    $res = $this->trans($data,$stockData,$funds);
+                if($data['number']%100 == 0){
+                    $stockData = getStock($data['stock'],'s_');
+                    if($funds = $this->isToBuy($data,$stockData)){
+                        $res = $this->trans($data,$stockData,$funds);
+                    }else{
+                        $res = json(['status'=>'failed','data'=>'资金不足']);
+                    }
                 }else{
-                    $res = json(['status'=>'failed','data'=>'资金不足']);
+                    $res = json(['status'=>'failed','data'=>'购买数量必须为100的整数倍']);
                 }
-            }else{
-                $res = json(['status'=>'failed','data'=>'用户不存在']);
-            }
+            }else if($data['type'] == 2){
+                if($bool = $this->isToSell($data)){
+                    if($bool['available_number'] >= $data['number']){
+                        $funds = UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->find();
+                        $stockData = getStock($data['stock'],'s_');
+                        $res = $this->trans($data,$stockData,$funds);
+                    }else{
+                        $res = json(['status'=>'failed','data'=>'股票的数量不能高于最大可卖数量'.$bool['available_number']."股"]);
+                    }
+                }else{
+                    $res = json(['status'=>'failed','data'=>'股票第二天才能卖出']);
+                }
+            }   
         }else{
             $res = json(['status'=>'failed','data'=>'现在不是交易时间']);
         }
@@ -196,17 +209,26 @@ class Index extends Base
             //买入
             if($data['type'] == 1){
                 //判断是否涨跌停
-                if($this->isLimitMove($stockData[$data['stock']],$data['type'])){
+                if($highLimit = $this->isLimitMove($stockData[$data['stock']],$data['type'])){
                     //是否市价买入
                     if($data['isMarket'] == 1){
                         $result = $this->buyProcess($data,$stockData,$funds);
                     }else{
-                        //先处理为大于等于才成交
-                        if($data['price'] >= $stockData[$data['stock']][1]){
-                            $result = $this->buyProcess($data,$stockData,$funds);
+                        //购买的价格不能比今天的涨停价高
+                        if($highLimit[0] > $data['price']){
+                            if($highLimit[1] <= $data['price']){
+                                //先处理为大于等于才成交
+                                if($data['price'] >= $stockData[$data['stock']][1]){
+                                    $result = $this->buyProcess($data,$stockData,$funds);
+                                }else{
+                                    //买入没有成交的处理
+                                    $result = $this->noBuyOrder($data,$stockData,$funds);
+                                }
+                            }else{
+                                $result = json(['status'=>'failed','data'=>'购买的价格不能低于今天的跌停的价格'.$highLimit[1].'元']);
+                            }
                         }else{
-                            //买入没有成交的处理
-                            $result = $this->noOrder($data,$stockData,$funds);
+                            $result = json(['status'=>'failed','data'=>'购买的价格不能高于今天的涨停的价格'.$highLimit[0].'元']);
                         }
                     }
                 }else{
@@ -214,12 +236,28 @@ class Index extends Base
                 }
             }else if($data['type'] == 2){
                 //卖出
-                if($this->isLimitMove($stockData[$data['stock']],$data['type'])){
-                    if($data['price'] <= $stockData[$data['stock']][1]){
-                        //卖出成交的处理
+                if($lowLimit = $this->isLimitMove($stockData[$data['stock']],$data['type'])){
+                    //市价卖出
+                    if($data['isMarket'] == 1){
+                        $result = $this->sellProcess($data,$stockData,$funds);
                     }else{
-                        //卖出没有成交的处理
-                    }  
+                        //卖出的价格不能比今天的跌停价低
+                        if($lowLimit[1] < $data['price']){
+                            if($lowLimit[0] >= $data['price']){
+                                //小于等于才成交
+                                if($data['price'] <= $stockData[$data['stock']][1]){
+                                    $result = $this->sellProcess($data,$stockData,$funds);
+                                }else{
+                                    //卖出没有成交的处理
+                                    $result = $this->noSellOrder($data,$stockData,$funds);
+                                } 
+                            }else{
+                                $result = json(['status'=>'failed','data'=>'卖出的价格不能高于今天的涨停的价格'.$lowLimit[0].'元']);
+                            }
+                        }else{
+                             $result = json(['status'=>'failed','data'=>'卖出的价格不能低于今天的跌停的价格'.$lowLimit[1].'元']);
+                        }
+                    }
                 }else{
                     $result = json(['status'=>'failed','data'=>'跌停不能买卖']);
                 }
@@ -241,14 +279,14 @@ class Index extends Base
         if($type == 1){
             //买入的情况
             if((float)$stockData[1] < $limitUp && (float)$stockData[1] >= $limitDown){
-                $bool = true;
+                $bool = [$limitUp,$limitDown];
             }else{
                 $bool = false;
             }
         }else if($type == 2){
             //卖出的情况
             if((float)$stockData[1] <= $limitUp && (float)$stockData[1] > $limitDown){
-                $bool = true;
+                $bool = [$limitUp,$limitDown];
             }else{
                 $bool = false;
             }
@@ -300,8 +338,7 @@ class Index extends Base
 
     /**
      * [isToBuy 资金是否能够订单的金额]
-     * @param  [type]  $price [当前股票价格]
-     * @param  [type]  $data  [订单详情的数组]
+     * @param  [array]  $data  [买入的订单信息]
      * @return boolean        [布尔值]
      */
     protected function isToBuy($data,$stockData){
@@ -309,6 +346,10 @@ class Index extends Base
         //查询对应账户的可用资金
         $funds = UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->find();
         $fee = $data['price']*$data['number']*$scale >= 5 ? $data['price']*$data['number']*$scale : 5;
+        //沪市过户费
+        if($data['stock']{0} == "6"){
+                $fee = ceil($data['number']/1000) + $fee;
+        }
         if($data['isMarket'] == 1){
             $available = $stockData[$data['stock']][1]*$data['number']+$fee;
         }else{
@@ -323,7 +364,21 @@ class Index extends Base
     }
 
     /**
-     * [buyProcess description]
+     * [isToSell 股票是否有可以卖出数量]
+     * @param  [array]  $data [卖出的订单信息]
+     * @return boolean       [description]
+     */
+    protected function isToSell($data){
+        $position = UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'sorts'=>$data['sorts'],'is_position'=>1])->find();
+        if($position['available_number'] > 0 ){
+            $bool = $position;
+        }else{
+            $bool = false;
+        }
+        return $bool;
+    }
+    /**
+     * [buyProcess 买入交易]
      * @param  [type] $data      [订单详情的数组]
      * @param  [type] $stockData [股票的实时信息]
      * @param  [type] $funds     [用户的资金信息]
@@ -342,42 +397,49 @@ class Index extends Base
             $data['stock_name'] = $stockData[$data['stock']][0];
             //手续费最低为5元
             $data['fee'] = $data['price']*$data['number']*$scale >=5?$data['price']*$data['number']*$scale:5;
+            //沪市过户费
+            if($data['stock']{0} == "6"){
+                $data['fee'] = ceil($data['number']/1000) + $data['fee'];
+            }
             $data['available_funds'] = $funds['available_funds'] - $data['price']*$data['number'] - $data['fee'];
             //更新用户资金
             UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->update(['available_funds'=>$data['available_funds']]);
-            //添加订单到数据库
-            $Trans = new Trans();
-            $Trans->allowField(true)->save($data);
-
             //查看是否持有这只股票
             $userInfo = UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'is_position'=>1,'sorts'=>$data['sorts']])->find();
 
             if($userInfo){
                 //持有股票更改持仓表信息
-                $da['cost'] = $userInfo['cost'] + $data['price']*$data['number'] + $data['fee'];
                 $da['fee'] = $data['fee'] + $userInfo['fee'];
+                $da['cost'] = $userInfo['cost'] + $data['price']*$data['number'] + $data['fee'];
                 $da['freeze_number'] = $userInfo['freeze_number'] + $data['number'];
-                $da['cost_price'] = round($da['cost'] / ($userInfo['freeze_number']+$userInfo['available_number']+$data['number']),3);
-                $da['assets'] = $data['price'] * ($userInfo['freeze_number']+$userInfo['available_number']+$data['number']) + $da['fee'];
-                $da['ratio'] = round(($data['price'] - $userInfo['cost_price']) / $userInfo['cost_price'],3);
+                $da['cost_price'] = round($da['cost'] / ($da['freeze_number']+$userInfo['available_number']),8);
+                $da['ratio'] = round(($data['price'] - $da['cost_price']) / $da['cost_price']*100,8);
                 $UserPosition = new UserPosition();
                 $UserPosition->allowField(true)->where(['id'=>$userInfo['id']])->update($da);
+                $data['pid'] = $userInfo['id'];
+                //添加订单到数据库
+                $Trans = new Trans();
+                $Trans->allowField(true)->save($data);
                 Db::commit();
-                $result = json(['status'=>'success','data'=>'购买成功']);;
+                $result = json(['status'=>'success','data'=>'购买成功']);
             }else{
                 //添加成交的订单到持仓表
                 $da['fee'] = $data['fee'];
-                $da['cost'] = $stockData[$data['stock']][1]*$data['number']+$da['fee'];
+                $da['cost'] = $data['price']*$data['number']+$data['fee'];
                 $da['stock'] = $data['stock'];
                 $da['stock_name'] = $data['stock_name'];
-                $da['assets'] = $da['cost'];
                 $da['freeze_number'] = $data['number'];
-                $da['cost_price'] = round($da['cost'] / $data['number'],3);
+                $da['cost_price'] = round($da['cost'] / $data['number'],8);
                 $da['uid'] = $data['uid'];
                 $da['time'] = date("Y-m-d H:i:s",time());
                 $da['sorts'] = $data['sorts'];
+                $da['ratio'] = round(($data['price'] - $da['cost_price'])/$da['cost_price']*100,8);
                 $UserPosition = new UserPosition();
                 $UserPosition->allowField(true)->save($da);
+                $data['pid'] = $UserPosition->id;
+                //添加订单到数据库
+                $Trans = new Trans();
+                $Trans->allowField(true)->save($data);
                 Db::commit();
                 $result = json(['status'=>'success','data'=>'购买成功']);;
             }
@@ -389,19 +451,92 @@ class Index extends Base
     }
 
     /**
-     * [noOrder 没有成交的订单]
+     * [sellProcess 卖出交易]
+     * @param  [array] $data      [卖出订单详情]
+     * @param  [array] $stockData [股票信息]
+     * @param  [array] $funds     [账户资金]
+     * @return [json]            [返回信息]
+     */
+    protected function sellProcess($data,$stockData,$funds){
+        //手续费比例
+        $scale = $this->_base->_scale;
+        //买入成交的处理
+        Db::startTrans();
+        //开启事务
+        try {
+            //订单参数
+            $data['status'] = 1;
+            $data['price'] = $stockData[$data['stock']][1];
+            $data['stock_name'] = $stockData[$data['stock']][0];
+            //手续费最低为5元
+            $data['fee'] = $data['price']*$data['number']*$scale >=5?$data['price']*$data['number']*$scale:5;
+            //沪市过户费
+            if($data['stock']{0} == "6"){
+                $data['fee'] = ceil($data['number']/1000) + $data['fee'];
+            }
+            //收取印花税
+            $data['fee'] = $data['price'] * $data['number'] * 0.001 + $data['fee'];
+            //为用户增加卖出金额
+            $data['available_funds'] = $funds['available_funds'] + $data['price']*$data['number'] - $data['fee'];
+            UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->update(['available_funds'=>$data['available_funds']]);
+            //获取用户持有股票的信息
+            $userInfo = UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'is_position'=>1,'sorts'=>$data['sorts']])->find();
+            //判断是否清仓完全卖出
+            if($userInfo['available_number'] == $data['number'] && $userInfo['freeze_number'] == 0){
+                //更新用户信息
+                $da['available_number'] = 0;
+                $da['is_position'] = 2;
+                $da['fee'] = $userInfo['fee'] + $data['fee'];
+                $da['cost'] = $data['price'] * $data['number'] + $data['fee'];
+                $da['cost_price'] = round($da['cost'] / $data['number'],8);
+                $da['ratio'] = round(($data['price'] - $da['cost_price'])/$da['cost_price']*100,8);
+                //添加订单到数据库
+                UserPosition::where(['id'=>$userInfo['id']])->update($da);
+                $data['pid'] = $userInfo['id'];
+                $Trans = new Trans();
+                $Trans->allowField(true)->save($data);
+                Db::commit();
+                $result = json(['status'=>'success','data'=>'卖出成功']);
+            }else{
+                //更新用户信息
+                $da['available_number'] = $userInfo['available_number'] - $data['number'];
+                $da['cost'] = $userInfo['cost'] - $data['price'] * $data['number'] + $data['fee'];
+                $da['cost_price'] = round($da['cost'] / ($userInfo['freeze_number']+$da['available_number']),8);
+                $da['fee'] = $userInfo['fee'] + $data['fee'];
+                $da['ratio'] = round(($data['price'] - $da['cost_price'])/$da['cost_price']*100,8);
+                UserPosition::where(['id'=>$userInfo['id']])->update($da);
+                //添加订单到数据库
+                $data['pid'] = $userInfo['id'];
+                $Trans = new Trans();
+                $Trans->allowField(true)->save($data);
+                Db::commit();
+                $result = json(['status'=>'success','data'=>'卖出成功']);
+            }
+        } catch (\Exception $e){
+            Db::rollback();
+            $result = json(['status'=>'failed','data'=>'下单失败，多次失败请联系管理员']);
+        }
+        return $result;
+    }
+
+    /**
+     * [noOrder 买入没有成交的订单]
      * @param  [array] $data      [订单信息]
      * @param  [array] $stockData [获取的股票现价信息]
      * @param  [array] $funds     [用户资金信息]
      * @return [json]             [返回对应信息]
      */
-    protected function noOrder($data,$stockData,$funds){
+    protected function noBuyOrder($data,$stockData,$funds){
         $scale = $this->_base->_scale;
         Db::startTrans();
         try {
             //买入没有成交的处理
             $data['stock_name'] = $stockData[$data['stock']][0];
             $data['fee'] = $data['price']*$data['number']*$scale >=5?$data['price']*$data['number']*$scale:5;
+            //沪市过户费
+            if($data['stock']{0} == "6"){
+                $data['fee'] = ceil($data['number']/1000) + $data['fee'];
+            }
             //扣除用户资金
             $data['available_funds'] = $funds['available_funds'] - $data['fee'] - $data['price'] * $data['number'];
             $Trans = new Trans();
@@ -416,6 +551,33 @@ class Index extends Base
             Db::rollback();
             $result = json(['status'=>'failed','data'=>'下单失败']);
         }
+        return $result;
+    }
+
+    /**
+     * [noSellOrder 卖出没有成交的订单]
+     * @param  [array] $data      [订单的详情]
+     * @param  [array] $stockData [当前股票的信息]
+     * @param  [array] $funds     [用户的账户信息]
+     * @return [json]            [提示信息]
+     */
+    protected function noSellOrder($data,$stockData,$funds){
+        $scale = $this->_base->_scale;
+            //买入没有成交的处理
+            $data['stock_name'] = $stockData[$data['stock']][0];
+            $data['fee'] = $data['price']*$data['number']*$scale >=5?$data['price']*$data['number']*$scale:5;
+            //沪市过户费
+            if($data['stock']{0} == "6"){
+                $data['fee'] = ceil($data['number']/1000) + $data['fee'];
+            }
+            $Trans = new Trans();
+            //添加进入redis   ----未完成
+            
+            if($Trans->allowField(true)->save($data)){
+                $result = json(['status'=>'success','data'=>'下单成功']);
+            }else{
+                $result = json(['status'=>'failed','data'=>'下单失败']);
+            }
         return $result;
     }
 }
