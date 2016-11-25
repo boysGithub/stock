@@ -69,6 +69,32 @@ class Index extends Base
     }
 
     /**
+     * 当前股票是否已经是自选股
+     *
+     * @param  \think\Request  $request
+     * @return [json]
+     */
+    public function isOptional(Request $request)
+    {
+        $data = $request->param();
+        $res = $this->validate($data,'OptionalStock');
+        if (true !== $res) {
+            return json(['status'=>'failed','data'=>$res]);
+        }
+        if(UserFunds::where(['uid'=>$data['uid']])->find()){
+            if(OptionalStock::where(['uid'=>$data['uid'],'stock'=>$data['stock']])->find()){
+                $result = json(['status'=>'success','data'=>'是自选股']);
+            }else{
+                $result = json(['status'=>'failed','data'=>'不是自选股']);
+            }
+        }else{
+            $result = json(['status'=>'failed','data'=>'用户不存在']);
+        }
+        
+        return $result;
+    }
+
+    /**
      * [getUserOptional 获取用户的自选股信息]
      * @return [json] [用户自选股信息]
      */
