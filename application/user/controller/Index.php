@@ -90,7 +90,7 @@ class Index extends Base
         }else{
             $result = json(['status'=>'failed','data'=>'用户不存在']);
         }
-        
+
         return $result;
     }
 
