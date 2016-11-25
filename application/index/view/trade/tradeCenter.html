@@ -152,28 +152,28 @@
                                     <tbody>
                                         <tr>
                                             <td>卖⑤(元/股)</td>
-                                            <td class="price">9.12</td>
-                                            <td>2029123</td>
+                                            <td class="price">{{ stock.sellPrice5 }}</td>
+                                            <td>{{ stock.sellNum5 }}</td>
                                         </tr>
                                         <tr>
-                                            <td>卖⑤(元/股)</td>
-                                            <td class="price">9.12</td>
-                                            <td>2029123</td>
+                                            <td>卖④(元/股)</td>
+                                            <td class="price">{{ stock.sellPrice4 }}</td>
+                                            <td>{{ stock.sellNum4 }}</td>
                                         </tr>
                                         <tr>
-                                            <td>卖⑤(元/股)</td>
-                                            <td class="price">9.12</td>
-                                            <td>2029123</td>
+                                            <td>卖③(元/股)</td>
+                                            <td class="price">{{ stock.sellPrice3 }}</td>
+                                            <td>{{ stock.sellNum3 }}</td>
                                         </tr>
                                         <tr>
-                                            <td>卖⑤(元/股)</td>
-                                            <td class="price">9.12</td>
-                                            <td>2029123</td>
+                                            <td>卖②(元/股)</td>
+                                            <td class="price">{{ stock.sellPrice2 }}</td>
+                                            <td>{{ stock.sellNum2 }}</td>
                                         </tr>
                                         <tr>
-                                            <td>卖⑤(元/股)</td>
-                                            <td class="price">9.12</td>
-                                            <td>2029123</td>
+                                            <td>卖①(元/股)</td>
+                                            <td class="price">{{ stock.sellPrice1 }}</td>
+                                            <td>{{ stock.sellNum1 }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -181,44 +181,44 @@
                                 <table class="am-table">
                                     <tbody>
                                         <tr>
-                                            <td>买⑤(元/股)</td>
-                                            <td class="price">9.12</td>
-                                            <td>2029123</td>
+                                            <td>买①(元/股)</td>
+                                            <td class="price">{{ stock.buyPrice1 }}</td>
+                                            <td>{{ stock.buyNum1 }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>买②(元/股)</td>
+                                            <td class="price">{{ stock.buyPrice2 }}</td>
+                                            <td>{{ stock.buyNum2 }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>买③(元/股)</td>
+                                            <td class="price">{{ stock.buyPrice3 }}</td>
+                                            <td>{{ stock.buyNum3 }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>买④(元/股)</td>
+                                            <td class="price">{{ stock.buyPrice4 }}</td>
+                                            <td>{{ stock.buyNum4 }}</td>
                                         </tr>
                                         <tr>
                                             <td>买⑤(元/股)</td>
-                                            <td class="price">9.12</td>
-                                            <td>2029123</td>
-                                        </tr>
-                                        <tr>
-                                            <td>买⑤(元/股)</td>
-                                            <td class="price">9.12</td>
-                                            <td>2029123</td>
-                                        </tr>
-                                        <tr>
-                                            <td>买⑤(元/股)</td>
-                                            <td class="price">9.12</td>
-                                            <td>2029123</td>
-                                        </tr>
-                                        <tr>
-                                            <td>买⑤(元/股)</td>
-                                            <td class="price">9.12</td>
-                                            <td>2029123</td>
+                                            <td class="price">{{ stock.buyPrice5 }}</td>
+                                            <td>{{ stock.buyNum5 }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                             <div class="am-u-sm-5">
                                 <ul>
-                                    <li><span>现&nbsp;&nbsp;&nbsp;价 : </span><span class="tr-color-win">9.12</span></li>
-                                    <li><span>今&nbsp;&nbsp;&nbsp;开 : </span><span class="tr-color-lose">9.10</span></li>
-                                    <li><span>昨&nbsp;&nbsp;&nbsp;收 : </span><span>9.12</span></li>
-                                    <li><span>最&nbsp;&nbsp;&nbsp;高 : </span><span class="tr-color-win">9.12</span></li>
-                                    <li><span>最&nbsp;&nbsp;&nbsp;低 : </span><span class="tr-color-lose">9.12</span></li>
-                                    <li><span>涨停价 : </span><span class="tr-color-win">9.32</span></li>
-                                    <li><span>跌停价 : </span><span class="tr-color-lose">9.02</span></li>
-                                    <li><span>换手率 : </span><span class="menu-right-centent-tebale3-margin">0.18%</span></li>
-                                    <li><span>成交量 : </span><span class="menu-right-centent-tebale3-margin">912562</span></li>
+                                    <li><span>现&nbsp;&nbsp;&nbsp;价 : </span><span class="tr-color-win">{{ stock.price }}</span></li>
+                                    <li><span>今&nbsp;&nbsp;&nbsp;开 : </span><span class="tr-color-lose">{{ stock.todayPrcie }}</span></li>
+                                    <li><span>昨&nbsp;&nbsp;&nbsp;收 : </span><span>{{ stock.prec }}</span></li>
+                                    <li><span>最&nbsp;&nbsp;&nbsp;高 : </span><span class="tr-color-win">{{ stock.maxPrice }}</span></li>
+                                    <li><span>最&nbsp;&nbsp;&nbsp;低 : </span><span class="tr-color-lose">{{ stock.minPrice }}</span></li>
+                                    <li><span>涨停价 : </span><span class="tr-color-win">{{ stock.highLimit }}</span></li>
+                                    <li><span>跌停价 : </span><span class="tr-color-lose">{{ stock.lowerLimit }}</span></li>
+                                    <li><span>换手率 : </span><span class="menu-right-centent-tebale3-margin">{{ stock.turnoverRate }}</span></li>
+                                    <li><span>成交量 : </span><span class="menu-right-centent-tebale3-margin">{{ buyInfo.turnoverNum }}</span></li>
                                 </ul>
                             </div>
                         </div>
@@ -238,6 +238,7 @@
             data: {
                 stockList: [],
                 buyInfo: {title: '----'},
+                stock : {sellPrice1: '--', sellNum1: '--', sellPrice2: '--', sellNum2: '--', sellPrice3: '--', sellNum3: '--', sellPrice4: '--',sellNum4: '--', sellPrice5: '--', sellNum5: '--', buyPrice1: '--', buyNum1: '--', buyPrice2: '--', buyNum2: '--', buyPrice3: '--', buyNum3: '--', buyPrice4: '--', buyNum4: '--', buyPrice5: '--', buyNum5: '--', price: '--', todayPrcie: '--', prec: '--', maxPrice: '--', minPrice: '--', highLimit: '--', lowerLimit: '--', turnoverRate: '--', turnover: '--'},
                 changeClass: ' tr-color-win'
             },
             methods: {
@@ -306,8 +307,39 @@
                                     turnoverNum:  brief['4'], 
                                     turnoverMoney:  brief['5']
                                 };
+                                var stockInfo = {
+                                    sellPrice1: detail['20'],
+                                    sellNum1: detail['21'],
+                                    sellPrice2: detail['22'],
+                                    sellNum2: detail['23'],
+                                    sellPrice3: detail['24'],
+                                    sellNum3: detail['25'],
+                                    sellPrice4: detail['26'],
+                                    sellNum4: detail['27'],
+                                    sellPrice5: detail['28'],
+                                    sellNum5: detail['29'],
+                                    buyPrice1: detail['10'],
+                                    buyNum1: detail['11'],
+                                    buyPrice2: detail['12'],
+                                    buyNum2: detail['13'],
+                                    buyPrice3: detail['14'],
+                                    buyNum3: detail['15'],
+                                    buyPrice4: detail['16'],
+                                    buyNum4: detail['17'],
+                                    buyPrice5: detail['18'],
+                                    buyNum5: detail['19'],
+                                    price: detail['3'], 
+                                    todayPrcie: detail['1'], 
+                                    prec: detail['2'], 
+                                    maxPrice: detail['4'], 
+                                    minPrice: detail['5'],/* 
+                                    highLimit: detail[''], 
+                                    lowerLimit: detail[''], 
+                                    turnoverRate: detail[''], 
+                                    turnover: detail['']*/
+                                }
 
-
+                                _this.stock = stockInfo;
                                 _this.buyInfo = buyInfo;
                             }
                         }    
