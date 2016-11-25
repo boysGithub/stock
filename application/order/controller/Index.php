@@ -70,12 +70,16 @@ class Index extends Base
                 }
             }else if($data['type'] == 2){
                 if($bool = $this->isToSell($data)){
-                    if($bool['available_number'] >= $data['number']){
-                        $funds = UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->find();
-                        $stockData = getStock($data['stock'],'s_');
-                        $res = $this->trans($data,$stockData,$funds);
+                    if($bool == 1){
+                        $res = json(['status'=>'failed','data'=>'没有对应的持仓信息']);
                     }else{
-                        $res = json(['status'=>'failed','data'=>'股票的数量不能高于最大可卖数量'.$bool['available_number']."股"]);
+                        if($bool['available_number'] >= $data['number']){
+                            $funds = UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->find();
+                            $stockData = getStock($data['stock'],'s_');
+                            $res = $this->trans($data,$stockData,$funds);
+                        }else{
+                            $res = json(['status'=>'failed','data'=>'股票的数量不能高于最大可卖数量'.$bool['available_number']."股"]);
+                        }
                     }
                 }else{
                     $res = json(['status'=>'failed','data'=>'股票第二天才能卖出']);
@@ -370,11 +374,16 @@ class Index extends Base
      */
     protected function isToSell($data){
         $position = UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'sorts'=>$data['sorts'],'is_position'=>1])->find();
-        if($position['available_number'] > 0 ){
-            $bool = $position;
+        if($position){
+            if($position['available_number'] > 0 ){
+                $bool = $position;
+            }else{
+                $bool = false;
+            }
         }else{
-            $bool = false;
+            $bool = 1;
         }
+        
         return $bool;
     }
     /**
@@ -412,8 +421,9 @@ class Index extends Base
                 $da['fee'] = $data['fee'] + $userInfo['fee'];
                 $da['cost'] = $userInfo['cost'] + $data['price']*$data['number'] + $data['fee'];
                 $da['freeze_number'] = $userInfo['freeze_number'] + $data['number'];
-                $da['cost_price'] = round($da['cost'] / ($da['freeze_number']+$userInfo['available_number']),8);
-                $da['ratio'] = round(($data['price'] - $da['cost_price']) / $da['cost_price']*100,8);
+                $da['cost_price'] = round($da['cost'] / ($da['freeze_number']+$userInfo['available_number']),3);
+                $da['assets'] = $data['price'] * ($da['freeze_number']+$userInfo['available_number']);
+                $da['ratio'] = round(($data['price'] - $da['cost_price']) / $da['cost_price']*100,3);
                 $UserPosition = new UserPosition();
                 $UserPosition->allowField(true)->where(['id'=>$userInfo['id']])->update($da);
                 $data['pid'] = $userInfo['id'];
@@ -425,15 +435,16 @@ class Index extends Base
             }else{
                 //添加成交的订单到持仓表
                 $da['fee'] = $data['fee'];
-                $da['cost'] = $data['price']*$data['number']+$data['fee'];
+                $da['cost'] = $data['price'] * $data['number'] + $data['fee'];
+                $da['assets'] = $data['price'] * $data['number'];
                 $da['stock'] = $data['stock'];
                 $da['stock_name'] = $data['stock_name'];
                 $da['freeze_number'] = $data['number'];
-                $da['cost_price'] = round($da['cost'] / $data['number'],8);
+                $da['cost_price'] = round($da['cost'] / $data['number'],3);
                 $da['uid'] = $data['uid'];
                 $da['time'] = date("Y-m-d H:i:s",time());
                 $da['sorts'] = $data['sorts'];
-                $da['ratio'] = round(($data['price'] - $da['cost_price'])/$da['cost_price']*100,8);
+                $da['ratio'] = round(($data['price'] - $da['cost_price'])/$da['cost_price']*100,3);
                 $UserPosition = new UserPosition();
                 $UserPosition->allowField(true)->save($da);
                 $data['pid'] = $UserPosition->id;
@@ -481,15 +492,38 @@ class Index extends Base
             UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->update(['available_funds'=>$data['available_funds']]);
             //获取用户持有股票的信息
             $userInfo = UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'is_position'=>1,'sorts'=>$data['sorts']])->find();
+            
             //判断是否清仓完全卖出
             if($userInfo['available_number'] == $data['number'] && $userInfo['freeze_number'] == 0){
                 //更新用户信息
                 $da['available_number'] = 0;
                 $da['is_position'] = 2;
+                $transInfo = Trans::where(['pid'=>$userInfo['id']])->select();
+
+                foreach ($transInfo as $key => $value) {
+                    if($value['type'] == 1){
+                        if(count($transInfo) <= 1){
+                            $costTotal = ($value['price'] * $value['number'] + $value['fee']);
+                            $totalNum = $value['number'];
+                        }else{
+                            $costTotal += ($value['price'] * $value['number'] + $value['fee']);
+                            $totalNum += $value['number'];
+                        }
+                    }else if($value['type'] == 2){
+                        if(count($transInfo) <= 1){
+                            $profits = ($value['price'] * $value['number'] - $value['fee']);
+                        }else{
+                            $profits += ($value['price'] * $value['number'] - $value['fee']);
+                        }
+                        
+                    }
+                }
+                $profits = isset($profits) ? $profits : 0 ;
+                $da['assets'] = $profits + $data['price'] * $data['number'] - $data['fee'];
                 $da['fee'] = $userInfo['fee'] + $data['fee'];
-                $da['cost'] = $data['price'] * $data['number'] + $data['fee'];
-                $da['cost_price'] = round($da['cost'] / $data['number'],8);
-                $da['ratio'] = round(($data['price'] - $da['cost_price'])/$da['cost_price']*100,8);
+                $da['cost'] = $costTotal;
+                $da['cost_price'] = round($da['cost'] / $totalNum,3);
+                $da['ratio'] = round(($da['assets'] - $costTotal)/$costTotal*100,3);
                 //添加订单到数据库
                 UserPosition::where(['id'=>$userInfo['id']])->update($da);
                 $data['pid'] = $userInfo['id'];
@@ -501,9 +535,14 @@ class Index extends Base
                 //更新用户信息
                 $da['available_number'] = $userInfo['available_number'] - $data['number'];
                 $da['cost'] = $userInfo['cost'] - $data['price'] * $data['number'] + $data['fee'];
-                $da['cost_price'] = round($da['cost'] / ($userInfo['freeze_number']+$da['available_number']),8);
+                $da['cost_price'] = round($da['cost'] / ($userInfo['freeze_number']+$da['available_number']),3);
                 $da['fee'] = $userInfo['fee'] + $data['fee'];
-                $da['ratio'] = round(($data['price'] - $da['cost_price'])/$da['cost_price']*100,8);
+                $da['assets'] = $data['price'] * ($userInfo['freeze_number']+$da['available_number']);
+                $tmp = 0;
+                if($da['cost_price'] == 0){
+                    $tmp = 1; 
+                }
+                $da['ratio'] = round(($data['price'] - $da['cost_price'])/abs(($da['cost_price'] + $tmp)),3);
                 UserPosition::where(['id'=>$userInfo['id']])->update($da);
                 //添加订单到数据库
                 $data['pid'] = $userInfo['id'];
