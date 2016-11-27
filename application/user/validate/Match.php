@@ -9,13 +9,14 @@ class Match extends Validate
 {
 	protected $rule = [
 		['id','require|number','比赛id不能为空|必须为数字'],
-		['match_id','require|number','比赛id不能为空|必须为数字'],
 		['uid','require|number','用户id不能为空|必须为数字'],
+		['period','in:days,month,weekly','用户id不能为空|必须为数字'],
 	];
 
 	protected $scene = [
         'match'  =>  ['id'],
-        'detail'  =>  ['match_id','uid'],
+        'detail'  =>  ['id','uid'],
+        'ranking'  =>  ['id','period'],
     ];
 }
 ?>
