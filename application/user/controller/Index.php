@@ -82,8 +82,9 @@ class Index extends Base
             return json(['status'=>'failed','data'=>$res]);
         }
         if(UserFunds::where(['uid'=>$data['uid']])->find()){
-            if(OptionalStock::where(['uid'=>$data['uid'],'stock'=>$data['stock']])->find()){
-                $result = json(['status'=>'success','data'=>'是自选股']);
+            $optional = OptionalStock::where(['uid'=>$data['uid'],'stock'=>$data['stock']])->find();
+            if(!empty($optional['id'])){
+                $result = json(['status'=>'success','data'=>$optional['id']]);
             }else{
                 $result = json(['status'=>'failed','data'=>'不是自选股']);
             }
