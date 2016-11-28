@@ -14,7 +14,7 @@ class Match extends Validate
 		['start_date','require|date','开始日期不能为空|必须为日期'],
 		['end_date','require|date','结束日期不能为空|必须为日期'],
 		['initial_capital','require|number','初始资金不能为空|必须为数字'],
-		['period','in:days,month,weekly','用户id不能为空|必须为数字'],
+		['period','in:days,month,weekly','周期必须在days,month,weekly中'],
 	];
 
 	protected $scene = [
