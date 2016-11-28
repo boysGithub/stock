@@ -26,10 +26,8 @@ class Index extends Base
      * @return [json] [用户的数据]
      */
     public function index(){
-        $expert = Trans::where(['status'=>1])->order('id desc')->limit(20)->Field('id,uid,stock,price,time,type,stock_name,sorts')->select();
-        foreach ($expert as $key => $value) {
-           $value->append(['username']);
-        }
+        $expert = Db::table('sjq_transaction t')->join('sjq_users u','t.uid=u.uid')->join('sjq_users_funds uf','u.uid=uf.uid')->join('sjq_users_position up','u.uid=up.uid AND t.stock=up.stock')->Field('t.id,t.uid,t.stock,t.stock_name,u.username,t.price,t.time,t.type,uf.total_rate,up.ratio')->order('t.id desc')->limit(30)->select();
+        
         if($expert){
             $result = json(['status'=>'success','data'=>$expert]);
         }else{
