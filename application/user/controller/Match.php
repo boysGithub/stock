@@ -24,7 +24,7 @@ class Match extends Base
         $field = '';
         if(isset($data['uid']) && !empty($data['uid'])){//登录后获取参加状态和排名
             $field .= ",(SELECT count(id) FROM sjq_match_user WHERE uid={$data['uid']} AND match_id=m.id) joined";
-            $field .= ",if(u.id IS NULL,0,(SELECT count(*) FROM sjq_match_user WHERE (u.end_capital - u.initial_capital) / u.initial_capital < ( end_capital - initial_capital) / initial_capital AND match_id=`match`.id)+1) ranking";
+            $field .= ",(SELECT count(id) FROM sjq_match_user WHERE (u.end_capital - u.initial_capital) / u.initial_capital < ( end_capital - initial_capital) / initial_capital AND match_id=m.id)+1 ranking";
             $matchs->join('sjq_match_user u',"u.match_id=m.id AND u.uid={$data['uid']}", 'LEFT');
         }
 
@@ -37,10 +37,13 @@ class Match extends Base
         		$matchs[$key]['status'] = 3;
         		$matchs[$key]['status_name'] = '已结束';
         	}
+            if(isset($data['uid']) && !empty($data['uid'])){
+                empty($val['joined']) && $matchs[$key]['ranking'] = 0;
+            }
         }
 
 
-        return json(['status'=>'success','data'=>$ranking]);
+        return json(['status'=>'success','data'=>$matchs]);
     }
 
     /**
