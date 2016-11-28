@@ -127,6 +127,11 @@ class Match extends Base
         if (true !== $res) {
             return json(['status'=>'failed','data'=>$res]);
         }
+
+        $match = Match::where(['id'=>$data['id']])->find();
+        if(time() < strtotime($match['start_date']) || time() > strtotime($match['end_date'])+24*3600){
+            return json(['status'=>'failed','data'=>'不可参加']);
+        }
         
         $initial_capital = UserFunds::where(['uid'=>$data['uid']])->value('funds');
         $match_user = MatchUser::data([
