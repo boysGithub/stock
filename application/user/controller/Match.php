@@ -121,15 +121,17 @@ class Match extends Base
     public function ranking()
     {
         $data = input('get.');
+        empty($data['period']) && $data['period'] = 'days';
+        $sort = 'DESC';
         $res = $this->validate($data,'Match.match');
         if (true !== $res) {
             return json(['status'=>'failed','data'=>$res]);
         }
         
         $page = isset($data['np']) && (int)$data['np'] > 0 ? $data['np'] : 1;
-        $limit = isset($data['limit']) && (int)$data['limit'] > 0 ? $data['limit'] : $this->_limit;
+        $limit = isset($data['limit']) && (int)$data['limit'] > 0 ? ($page-1) * $data['limit'] . ',' . $data['limit']: ($page-1) * 100 . ',100';
 
-        $ranking = MatchUser::where(['match_id'=>$data['id']])->limit(($page-1)*$limit, $limit)->select();
+        $ranking = MatchUser::getRinking($data['id'], $data['period'], $sort, $limit);
 
         return json(['status'=>'success','data'=>$ranking]);
     }
