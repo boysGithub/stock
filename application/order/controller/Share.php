@@ -46,7 +46,7 @@ class Share extends Base
         $chart = DaysRatio::where(['uid'=>$data['uid']])->Field('uid,endFunds,time')->select();
         if($chart){
             $time = UserFunds::where(['uid'=>$data['uid']])->value('time');
-            array_unshift($chart,[['uid'=>$data['uid'],'endFunds'=>$this->_base->_stockFunds,'time'=>date('Y-m-d',strtotime($time))]]);
+            array_unshift($chart,['uid'=>$data['uid'],'endFunds'=>$this->_base->_stockFunds,'time'=>date('Y-m-d',strtotime($time))]);
             $result = json(['status'=>'success','data'=>$chart]);
         }else{
             $result = json(['status'=>'failed','data'=>'还没有数据']);
