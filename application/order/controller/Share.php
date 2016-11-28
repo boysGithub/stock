@@ -3,11 +3,18 @@ namespace app\order\controller;
 
 use app\index\controller\Base;
 use app\common\model\Transaction;
+use app\common\model\DaysRatio;
+use app\common\model\UserFunds;
 /**
 * 股票信息控制
 */
 class Share extends Base
-{
+{   
+    protected $_base;
+    public function  __construct(){
+        $this->_base = new Base();
+        
+    }
 	/**
 	 * [getStockInfo 得到一直股票明细]
 	 * @return [type] [description]
@@ -26,5 +33,25 @@ class Share extends Base
         }
         return $result;
 	}
+
+    /**
+     * [GetTimeChart 得到用户分时图]
+     */
+    public function getTimeChart(){
+        $data = input("get.");
+        $res = $this->validate($data,"GetTimeChart");
+        if (true !== $res) {
+            return json(['status'=>'failed','data'=>$res]);
+        }
+        $chart = DaysRatio::where(['uid'=>$data['uid']])->Field('uid,endFunds,time')->select();
+        if($chart){
+            $time = UserFunds::where(['uid'=>$data['uid']])->value('time');
+            array_unshift($chart,[['uid'=>$data['uid'],'endFunds'=>$this->_base->_stockFunds,'time'=>date('Y-m-d',strtotime($time))]]);
+            $result = json(['status'=>'success','data'=>$chart]);
+        }else{
+            $result = json(['status'=>'failed','data'=>'还没有数据']);
+        }
+        return $result;
+    }
 }	
 ?>

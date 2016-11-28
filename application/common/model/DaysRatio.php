@@ -9,5 +9,9 @@ use think\Model;
 class DaysRatio extends Model
 {
 	protected $name = "days_ratio";
+
+	protected function getTimeAttr($time){
+		return date("Y-m-d",strtotime($time));
+	}
 }
 ?>
