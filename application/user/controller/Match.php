@@ -16,22 +16,34 @@ class Match extends Base
      */
     public function index()
     {
+        $data = input('get.');
         $page = isset($data['np']) && (int)$data['np'] > 0 ? $data['np'] : 1;
         $limit = isset($data['limit']) && (int)$data['limit'] > 0 ? $data['limit'] : $this->_limit;
 
-        $ranking = MatchModel::where(['start_date' => ['<', date('Y-m-d')]])->limit(($page-1)*$limit, $limit)->order('start_date desc')->field('id,name,type,start_date,end_date')->select();
-        foreach ($ranking as $key => $val) {
+        $matchs = MatchModel::where([])->alias('m')->limit(($page-1)*$limit, $limit)->order('start_date desc');
+        $field = '';
+        if(isset($data['uid']) && !empty($data['uid'])){//登录后获取参加状态和排名
+            $field .= ",(SELECT count(id) FROM sjq_match_user WHERE uid={$data['uid']} AND match_id=m.id) joined";
+            $field .= ",(SELECT count(id) FROM sjq_match_user WHERE (u.end_capital - u.initial_capital) / u.initial_capital < ( end_capital - initial_capital) / initial_capital AND match_id=m.id)+1 ranking";
+            $matchs->join('sjq_match_user u',"u.match_id=m.id AND u.uid={$data['uid']}", 'LEFT');
+        }
+
+        $matchs = $matchs->field('m.id,name,type,start_date,end_date'.$field)->select();
+        foreach ($matchs as $key => $val) {
         	if(time() >= strtotime($val['start_date']) && time() < strtotime($val['end_date']) + 24 * 3600){
-        		$ranking[$key]['status'] = 1;
-        		$ranking[$key]['status_name'] = '进行中';
+        		$matchs[$key]['status'] = 1;
+        		$matchs[$key]['status_name'] = '进行中';
         	} else if(time() >= strtotime($val['end_date']) + 24 * 3600){
-        		$ranking[$key]['status'] = 3;
-        		$ranking[$key]['status_name'] = '已结束';
+        		$matchs[$key]['status'] = 3;
+        		$matchs[$key]['status_name'] = '已结束';
         	}
+            if(isset($data['uid']) && !empty($data['uid'])){
+                empty($val['joined']) && $matchs[$key]['ranking'] = 0;
+            }
         }
 
 
-        return json(['status'=>'success','data'=>$ranking]);
+        return json(['status'=>'success','data'=>$matchs]);
     }
 
     /**
@@ -47,12 +59,31 @@ class Match extends Base
             return json(['status'=>'failed','data'=>$res]);
         }
 
-        $match = Match::where(['id'=>$data['id']])->find();
+        $page = isset($data['np']) && (int)$data['np'] > 0 ? $data['np'] : 1;
+        $limit = isset($data['limit']) && (int)$data['limit'] > 0 ? $data['limit'] : 100;
+
+        $match = MatchModel::where(['m.id'=>$data['id']])->alias('m');
+        $field = '';
+        if(isset($data['uid']) && !empty($data['uid'])){//登录后获取总收益和排名
+            $field .= ",u.id muid,FORMAT((u.end_capital - u.initial_capital) / u.initial_capital,2) total_rate,(SELECT count(*) FROM sjq_match_user WHERE total_rate < ( end_capital - initial_capital) / initial_capital AND match_id=m.id)+1 ranking";
+            $match->join('sjq_match_user u',"u.match_id=m.id AND u.uid={$data['uid']}", 'LEFT');
+        }
+
+        $match = $match->field('m.id,name,type,start_date,end_date'.$field)->find();
         if (empty($match)) {
             return json(['status'=>'failed','data'=>'比赛不存在']);
         }
 
-        return json(['status'=>'success','data'=>$match]);
+        //比赛排行
+        $rankList = MatchUser::where(['match_id'=>$data['id']])->limit(($page-1)*$limit, $limit)->order('total_rate desc')->field('id,uid,user_name,ROUND((end_capital - initial_capital) / initial_capital,2) total_rate,
+(SELECT count(id) FROM sjq_match_user WHERE total_rate < ( end_capital - initial_capital) / initial_capital AND match_id=1)+1 ranking')->select();
+
+        $res = [
+            'match'=>['id'=>$match['id'],'name'=>$match['name'],'total_rate'=>isset($match['muid']) ? $match['total_rate'] : 0,'ranking'=>isset($match['muid']) ? $match['ranking'] : 0],
+            'rankList' => $rankList
+        ];
+
+        return json(['status'=>'success','data'=>$res]);
     }
 
     /**
@@ -120,20 +151,6 @@ class Match extends Base
      */
     public function ranking()
     {
-        $data = input('get.');
-        empty($data['period']) && $data['period'] = 'days';
-        $sort = 'DESC';
-        $res = $this->validate($data,'Match.match');
-        if (true !== $res) {
-            return json(['status'=>'failed','data'=>$res]);
-        }
-        
-        $page = isset($data['np']) && (int)$data['np'] > 0 ? $data['np'] : 1;
-        $limit = isset($data['limit']) && (int)$data['limit'] > 0 ? ($page-1) * $data['limit'] . ',' . $data['limit']: ($page-1) * 100 . ',100';
-
-        $ranking = MatchUser::getRinking($data['id'], $data['period'], $sort, $limit);
-
-        return json(['status'=>'success','data'=>$ranking]);
     }
 }
 ?>
