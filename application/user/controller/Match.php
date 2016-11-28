@@ -4,6 +4,7 @@ namespace app\user\controller;
 use app\index\controller\Base;
 use app\common\model\Match as MatchModel;
 use app\common\model\MatchUser;
+use app\common\model\UserFunds;
 /**
 * 比赛控制器
 */
@@ -79,7 +80,7 @@ class Match extends Base
 (SELECT count(id) FROM sjq_match_user WHERE total_rate < ( end_capital - initial_capital) / initial_capital AND match_id=1)+1 ranking')->select();
 
         $res = [
-            'match'=>['id'=>$match['id'],'name'=>$match['name'],'total_rate'=>isset($match['muid']) ? $match['total_rate'] : 0,'ranking'=>isset($match['muid']) ? $match['ranking'] : 0],
+            'match'=>['id'=>$match['id'],'name'=>$match['name'],'joined'=>isset($match['muid']) ? 1 : 0,'total_rate'=>isset($match['muid']) ? $match['total_rate'] : 0,'ranking'=>isset($match['muid']) ? $match['ranking'] : 0],
             'rankList' => $rankList
         ];
 
@@ -105,7 +106,6 @@ class Match extends Base
             'type'=> $data['type'],
             'start_date'=> $data['start_date'],
             'end_date'=> $data['end_date'],
-            'initial_capital' => $data['initial_capital'],
             ])->save();
         
         if(empty($match->id)){
@@ -128,12 +128,12 @@ class Match extends Base
             return json(['status'=>'failed','data'=>$res]);
         }
         
-        $initial_capital = MatchModel::where(['id'=>$data['id']])->value('initial_capital');
+        $initial_capital = UserFunds::where(['uid'=>$data['uid']])->value('funds');
         $match_user = MatchUser::data([
             'match_id'=>$data['id'], 
             'uid'=> $data['uid'],
             'initial_capital' => $initial_capital,
-            'balance' => $initial_capital,
+            'balance' => 0,
             'end_capital' => $initial_capital
             ])->save();
         
