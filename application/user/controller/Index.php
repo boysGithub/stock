@@ -10,6 +10,7 @@ use app\common\model\Transaction as Trans;
 use app\common\model\UserFunds;
 use app\common\model\DaysRatio;
 use app\common\model\OptionalStock;
+use think\Db;
 /**
  * 用户控制器
  */
@@ -56,9 +57,16 @@ class Index extends Base
             }else{
                 $stockData = getStock($data['stock'],'s_');
                 $data['stock_name'] = $stockData[$data['stock']][0];
-                if($id = OptionalStock::create($data)->id){
+                //这里后期更改 先暂时这样处理
+                Db::startTrans();
+                try {
+                    $id = OptionalStock::create($data)->id;
+                    $count = OptionalStock::where(['stock'=>$data['stock']])->count();
+                    OptionalStock::where(['stock'=>$data['stock']])->update(['follow'=>$count]);
+                    Db::commit();
                     $result = json(['status'=>'success','data'=>$id]);
-                }else{
+                } catch (\Exception $e) {
+                    Db::rollback();
                     $result = json(['status'=>'failed','data'=>'添加自选股失败']);
                 }
             }
@@ -128,9 +136,20 @@ class Index extends Base
         }else{
             $data = $id;
         }
-        if(OptionalStock::where(['uid'=>$uid['uid'],'id'=>['in',$data]])->delete()){
+        //这里后期更改 先暂时这样处理
+        Db::startTrans();
+        try {
+            $info = OptionalStock::where(['uid'=>$uid['uid'],'id'=>['in',$data]])->select();
+            OptionalStock::where(['uid'=>$uid['uid'],'id'=>['in',$data]])->delete();
+            foreach ($info as $key => $value) {
+                $count = 0;
+                $count = OptionalStock::where(['stock'=>$value['stock']])->count();
+                OptionalStock::where(['stock'=>$value['stock']])->update(['follow'=>$count]);
+            }
+            Db::commit();
             $result = json(['status'=>'success','data'=>'删除成功']);
-        }else{
+        } catch (\Exception $e) {
+            Db::rollback();
             $result = json(['status'=>'failed','data'=>'删除失败']);
         }
         return $result;
