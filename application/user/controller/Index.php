@@ -56,8 +56,8 @@ class Index extends Base
             }else{
                 $stockData = getStock($data['stock'],'s_');
                 $data['stock_name'] = $stockData[$data['stock']][0];
-                if(OptionalStock::create($data)){
-                    $result = json(['status'=>'success','data'=>'添加自选股成功']);
+                if($id = OptionalStock::create($data)->id){
+                    $result = json(['status'=>'success','data'=>$id]);
                 }else{
                     $result = json(['status'=>'failed','data'=>'添加自选股失败']);
                 }
