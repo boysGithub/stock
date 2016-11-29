@@ -27,7 +27,7 @@ class Redis extends Driver
         'port'       => 6379,
         'password'   => '',
         'select'     => 0,
-        'timeout'    => 0,
+        'timeout'    => 300,
         'expire'     => 0,
         'persistent' => false,
         'prefix'     => '',
@@ -173,4 +173,7 @@ class Redis extends Driver
         return $this->handler->flushDB();
     }
 
+    public function keys($name){
+        return $this->handler->keys($name);
+    }
 }

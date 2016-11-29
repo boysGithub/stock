@@ -9,6 +9,7 @@ use app\index\controller\Base;
 use app\common\model\UserPosition;
 use app\common\model\UserFunds;
 use app\common\model\Transaction as Trans;
+use think\cache\driver\Redis;
 
 /**
  * 订单控制器
@@ -18,7 +19,6 @@ class Index extends Base
     protected $_base;
     public function  __construct(){
         $this->_base = new Base();
-        
     }
 
     /**
@@ -68,19 +68,17 @@ class Index extends Base
                 }
             }else if($data['type'] == 2){
                 if($bool = $this->isToSell($data)){
-                    if($bool == 1){
-                        $res = json(['status'=>'failed','data'=>'没有对应的持仓信息']);
-                    }else{
-                        if($bool['available_number'] >= $data['number']){
-                            $funds = UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->find();
-                            $stockData = getStock($data['stock'],'s_');
-                            $res = $this->trans($data,$stockData,$funds);
-                        }else{
-                            $res = json(['status'=>'failed','data'=>'股票的数量不能高于最大可卖数量'.$bool['available_number']."股"]);
+                    if(!is_object($bool)){
+                        if($bool == 1){
+                            $res = json(['status'=>'failed','data'=>'没有对应的持仓信息']);
                         }
+                    }else{
+                        $funds = UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->find();
+                        $stockData = getStock($data['stock'],'s_');
+                        $res = $this->trans($data,$stockData,$funds);
                     }
                 }else{
-                    $res = json(['status'=>'failed','data'=>'股票第二天才能卖出']);
+                    $res = json(['status'=>'failed','data'=>'可卖数量不够']);
                 }
             }   
         }else{
@@ -142,9 +140,15 @@ class Index extends Base
                 Db::startTrans();
                 try {
                     Trans::update($data,['id'=>$id,'uid'=>$data['uid']]);
-                    $availableFunds = UserFunds::where(['uid'=>$userOrder['uid']])->value('available_funds');
-                    $da['available_funds'] = $userOrder['fee'] + $userOrder['price'] * $userOrder['number'] + $availableFunds;
-                    UserFunds::update($da,['uid'=>$userOrder['uid']]);
+                    if($userOrder['type'] == 1){
+                        $availableFunds = UserFunds::where(['uid'=>$userOrder['uid']])->value('available_funds');
+                        $da['available_funds'] = $userOrder['fee'] + $userOrder['price'] * $userOrder['number'] + $availableFunds;
+                        UserFunds::update($da,['uid'=>$userOrder['uid']]);
+                    }else if($userOrder['type'] == 2){
+                        $position = UserPosition::where(['uid'=>$data['uid'],'stock'=>$userOrder['stock'],'is_position'=>1,'sorts'=>$userOrder['sorts']])->Field('id,available_number')->find();
+                        $da['available_number'] = $position['available_number'] + $userOrder['number'];
+                        UserPosition::where(['id'=>$position['id']])->update($da);
+                    }
                     Db::commit();
                     $result = json(['status'=>'success','data'=>'撤单成功']);
                 } catch (\Exception $e){
@@ -373,7 +377,7 @@ class Index extends Base
     protected function isToSell($data){
         $position = UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'sorts'=>$data['sorts'],'is_position'=>1])->find();
         if($position){
-            if($position['available_number'] > 0 ){
+            if($position['available_number'] - $data['number'] >= 0 ){
                 $bool = $position;
             }else{
                 $bool = false;
@@ -381,7 +385,6 @@ class Index extends Base
         }else{
             $bool = 1;
         }
-        
         return $bool;
     }
     /**
@@ -419,9 +422,9 @@ class Index extends Base
                 $da['fee'] = $data['fee'] + $userInfo['fee'];
                 $da['cost'] = $userInfo['cost'] + $data['price']*$data['number'] + $data['fee'];
                 $da['freeze_number'] = $userInfo['freeze_number'] + $data['number'];
-                $da['cost_price'] = round($da['cost'] / ($da['freeze_number']+$userInfo['available_number']),3);
+                $da['cost_price'] = round($da['cost'] / ($da['freeze_number']+$userInfo['available_number']),8);
                 $da['assets'] = $data['price'] * ($da['freeze_number']+$userInfo['available_number']);
-                $da['ratio'] = round(($data['price'] - $da['cost_price']) / $da['cost_price']*100,3);
+                $da['ratio'] = round(($data['price'] - $da['cost_price']) / $da['cost_price']*100,8);
                 $UserPosition = new UserPosition();
                 $UserPosition->allowField(true)->where(['id'=>$userInfo['id']])->update($da);
                 $data['pid'] = $userInfo['id'];
@@ -438,11 +441,11 @@ class Index extends Base
                 $da['stock'] = $data['stock'];
                 $da['stock_name'] = $data['stock_name'];
                 $da['freeze_number'] = $data['number'];
-                $da['cost_price'] = round($da['cost'] / $data['number'],3);
+                $da['cost_price'] = round($da['cost'] / $data['number'],8);
                 $da['uid'] = $data['uid'];
                 $da['time'] = date("Y-m-d H:i:s",time());
                 $da['sorts'] = $data['sorts'];
-                $da['ratio'] = round(($data['price'] - $da['cost_price'])/$da['cost_price']*100,3);
+                $da['ratio'] = round(($data['price'] - $da['cost_price'])/$da['cost_price']*100,8);
                 $UserPosition = new UserPosition();
                 $UserPosition->allowField(true)->save($da);
                 $data['pid'] = $UserPosition->id;
@@ -496,32 +499,33 @@ class Index extends Base
                 //更新用户信息
                 $da['available_number'] = 0;
                 $da['is_position'] = 2;
-                $transInfo = Trans::where(['pid'=>$userInfo['id']])->select();
-
-                foreach ($transInfo as $key => $value) {
-                    if($value['type'] == 1){
-                        if(count($transInfo) <= 1){
-                            $costTotal = ($value['price'] * $value['number'] + $value['fee']);
-                            $totalNum = $value['number'];
-                        }else{
-                            $costTotal += ($value['price'] * $value['number'] + $value['fee']);
-                            $totalNum += $value['number'];
-                        }
-                    }else if($value['type'] == 2){
-                        if(count($transInfo) <= 1){
-                            $profits = ($value['price'] * $value['number'] - $value['fee']);
-                        }else{
-                            $profits += ($value['price'] * $value['number'] - $value['fee']);
-                        }
-                        
+                $buyInfo = Trans::where(['pid'=>$userInfo['id'],'type'=>1])->select();
+                $sellInfo = Trans::where(['pid'=>$userInfo['id'],'type'=>2])->select();
+                if(count($buyInfo) == 1){
+                    $costTotal = $buyInfo[0]['price'] * $buyInfo[0]['number'] + $buyInfo[0]['fee'];
+                    $totalNum = $buyInfo[0]['number'];
+                }else{
+                    foreach ($buyInfo as $key => $value) {
+                        $tmpTotal[] = $value['price'] * $value['number'] + $value['fee'];
+                        $tmpNum[] = $value['number'];
                     }
+                    $costTotal = array_sum($tmpTotal);
+                    $totalNum = array_sum($tmpNum);
+                }
+                if(count($sellInfo) == 1){
+                    $profits = $data['price'] * $sellInfo[0]['number'] - $sellInfo[0]['fee'];
+                }else{
+                    foreach ($sellInfo as $key => $value) {
+                        $tmp[] = $data['price'] * $value['number'] - $value['fee'];
+                    }
+                    $profits = array_sum($tmp);
                 }
                 $profits = isset($profits) ? $profits : 0 ;
                 $da['assets'] = $profits + $data['price'] * $data['number'] - $data['fee'];
                 $da['fee'] = $userInfo['fee'] + $data['fee'];
                 $da['cost'] = $costTotal;
-                $da['cost_price'] = round($da['cost'] / $totalNum,3);
-                $da['ratio'] = round(($da['assets'] - $costTotal)/$costTotal*100,3);
+                $da['cost_price'] = round($da['cost'] / $totalNum,8);
+                $da['ratio'] = round(($da['assets'] - $da['cost'])/$da['cost']*100,8);
                 //添加订单到数据库
                 UserPosition::where(['id'=>$userInfo['id']])->update($da);
                 $data['pid'] = $userInfo['id'];
@@ -533,14 +537,14 @@ class Index extends Base
                 //更新用户信息
                 $da['available_number'] = $userInfo['available_number'] - $data['number'];
                 $da['cost'] = $userInfo['cost'] - $data['price'] * $data['number'] + $data['fee'];
-                $da['cost_price'] = round($da['cost'] / ($userInfo['freeze_number']+$da['available_number']),3);
+                $da['cost_price'] = round($da['cost'] / ($userInfo['freeze_number']+$da['available_number']),8);
                 $da['fee'] = $userInfo['fee'] + $data['fee'];
                 $da['assets'] = $data['price'] * ($userInfo['freeze_number']+$da['available_number']);
                 $tmp = 0;
                 if($da['cost_price'] == 0){
                     $tmp = 1; 
                 }
-                $da['ratio'] = round(($data['price'] - $da['cost_price'])/abs(($da['cost_price'] + $tmp)),3);
+                $da['ratio'] = round(($data['price'] - $da['cost_price'])/abs(($da['cost_price'] + $tmp))*100,8);
                 UserPosition::where(['id'=>$userInfo['id']])->update($da);
                 //添加订单到数据库
                 $data['pid'] = $userInfo['id'];
@@ -581,7 +585,8 @@ class Index extends Base
             
             UserFunds::where(['uid'=>$funds['uid']])->update(['available_funds'=>$data['available_funds']]);
             //添加进入redis   ----未完成
-            
+            $redis = new Redis();
+            $redis->set("noBuyOrder_".$Trans->id."_".$data['uid'],$data);
             Db::commit();
             $result = json(['status'=>'success','data'=>'下单成功']);
         } catch (\Exception $e) {
@@ -600,6 +605,8 @@ class Index extends Base
      */
     protected function noSellOrder($data,$stockData,$funds){
         $scale = $this->_base->_scale;
+        Db::startTrans();
+        try {
             //买入没有成交的处理
             $data['stock_name'] = $stockData[$data['stock']][0];
             $data['fee'] = $data['price']*$data['number']*$scale >=5?$data['price']*$data['number']*$scale:5;
@@ -607,14 +614,24 @@ class Index extends Base
             if($data['stock']{0} == "6"){
                 $data['fee'] = ceil($data['number']/1000) + $data['fee'];
             }
+            //收取印花税
+            $data['fee'] = $data['price'] * $data['number'] * 0.001 + $data['fee'];
+            //获取用户持有股票的信息
+            $info = UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'is_position'=>1,'sorts'=>$data['sorts']])->find();
+            $data['available_funds'] = $funds['available_funds'] + $data['price'] * $data['number'] - $data['fee'];
+            //减少可卖数量
+            UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'is_position'=>1,'sorts'=>$data['sorts']])->update(['available_number'=>$info['available_number']-$data['number']]);
+            $data['pid'] = $info['id'];
             $Trans = new Trans();
-            //添加进入redis   ----未完成
-            
-            if($Trans->allowField(true)->save($data)){
-                $result = json(['status'=>'success','data'=>'下单成功']);
-            }else{
-                $result = json(['status'=>'failed','data'=>'下单失败']);
-            }
+            $Trans->allowField(true)->save($data);
+            $redis = new Redis();
+            $redis->set("noSellOrder_".$Trans->id."_".$data['uid'],$data);
+            Db::commit();
+            $result = json(['status'=>'success','data'=>'下单成功']);
+        } catch (\Exception $e) {
+            Db::rollback();
+            $result = json(['status'=>'failed','data'=>'下单失败']);
+        }
         return $result;
     }
 }
