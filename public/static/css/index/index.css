@@ -1,0 +1,39 @@
+.am-slider-default.tr-slider-ad{box-shadow: none;margin: 30px 0;}
+.am-slider-default.tr-slider-ad .am-control-nav{bottom: 10px;}
+.am-slider-default.tr-slider-ad .am-control-nav li a{width: 13px; height: 13px;background-color:#fff;}
+.am-slider-default.tr-slider-ad .am-control-nav li a.am-active{background-color:#0e90d2;}
+
+.tr-proclamation{padding: 12px 30px; font-size: 14px;background: #fff; height: 48px; overflow: hidden;}
+.tr-proclamation .tr-pro-t{color: #4a9ff6;text-align: center;}
+.tr-proclamation .tr-pro-t .am-icon-volume-up{vertical-align: middle;}
+.tr-proclamation .tr-pro-t .tr-pro-t-c{ vertical-align: middle; display: inline-block; padding-right: 20px;border-right: 1px solid #4a9ff6;}
+.tr-proclamation dl{background: none;}
+.tr-proclamation dd{display: block;float: left;margin-right:30px;}
+.tr-proclamation dd a{color: #666; font-size: 14px;}
+.tr-proclamation dd a:hover{color: #fb7471;}
+
+.tr-talent{margin: 30px 0; border: none; background: none;}
+.tr-talent>.am-panel-hd{padding-left: 0;background: none; border-bottom: none;}
+.tr-talent .am-panel-title{font-size: 18px; font-weight: normal;}
+.tr-slider{box-shadow: none;}
+.tr-slider li{font-size: 14px;}
+.tr-slider .tr-recommend-reason{height: 36px; width: 100%; line-height: 18px; overflow: hidden;padding-right: 2rem;}
+.tr-slider-item .tr-talent-name{font-size: 18px; color: #333;}
+
+.tr-tabs{position: relative;}
+.tr-tabs .tr-more{position: absolute; top: 10px; right: 10px;}
+.tr-tabs .tr-more a:hover{color: gray;}
+.tr-tabs .am-tabs-nav li a{font-size: 16px; border-radius: 4px 4px 0 0; background-color: #eee;border-width: 1px; border-color: #999 #999 #39f; border-style: solid;}
+.tr-tabs .am-nav>li>a:focus, .tr-tabs .am-nav>li>a:hover{background-color: #39f; color: #fff; border-color: #39f;}
+.tr-tabs .am-nav-tabs>li.am-active>a, .tr-tabs .am-nav-tabs>li.am-active>a:focus, .tr-tabs .am-nav-tabs>li.am-active>a:hover{background-color: #39f; color: #fff; border-color: #39f;}
+.tr-tabs .am-tabs-bd,.tr-tabs .am-nav-tabs{border-color: #39f;border-radius: 0 2px 2px;}
+.tr-tabs .am-table{margin-bottom: 0;}
+.tr-tabs .am-tab-panel{padding-bottom: 19px;}
+
+.tr-left-ranking .am-titlebar-default a:hover{color: gray;}
+.tr-left-ranking .am-table-bordered{border:none;}
+.tr-left-ranking .am-table-bordered>tbody>tr>td{border: 1px solid #fff;}
+
+.tr-simulation a.tr-simulation-name{font-size: 14px;}
+.tr-simulation li{font-size: 14px; padding: 20px 15px;border:none; border-top: 1px dashed #999;}
+.tr-simulation li.first{border: none;}

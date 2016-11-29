@@ -5,105 +5,68 @@
 <title>模拟炒股首页</title>
 {/block}
 {block name="css"}
-<style type="text/css">
-.tr-slider-ad{}
-.tr-slider-ad .am-slider-default{margin: 0;padding: 2px 4px;}
-.tr-slider-ad .am-slider-default .am-control-nav{bottom: 5px;}
-.tr-proclamation{position: relative;padding: .2rem .6rem; height: 28px; overflow: hidden;}
-.tr-proclamation dl{background-color: #eee;}
-.tr-proclamation dd{display: block;float: left;margin-right:30px;}
-.tr-proclamation dd a{color: #aa0805;}
-.tr-proclamation dd a:hover{color: #fb7471;}
-.am-titlebar-default .am-titlebar-title{font-weight: 400;}
-.am-titlebar-default .am-titlebar-title:before{border-color: #03c;}
-
-.tr-slider{box-shadow: none; padding: 1rem 0;}
-.tr-slider li{font-size: 14px;}
-.tr-slider .am-viewport{margin: 0 28px;}
-.tr-slider .tr-recommend-reason{height: 36px; width: 100%; line-height: 18px; overflow: hidden;padding-right: 2rem;}
-.am-slider-default.tr-slider .am-direction-nav .am-prev{left: -5px;}
-.am-slider-default.tr-slider .am-direction-nav .am-next{right: -5px;}
-.tr-slider h1, h2, h3, h4, h5, h6{margin: 0;}
-.tr-slider-item{margin-bottom: 5px;}
-
-.tr-tabs{position: relative;}
-.tr-tabs .tr-more{position: absolute; top: 10px; right: 10px;}
-.tr-tabs .tr-more a:hover{color: gray;}
-.tr-tabs .am-tabs-nav li a{font-size: 16px; border-radius: 4px 4px 0 0; background-color: #eee;border-width: 1px; border-color: #999 #999 #39f; border-style: solid;}
-.tr-tabs .am-nav>li>a:focus, .tr-tabs .am-nav>li>a:hover{background-color: #39f; color: #fff; border-color: #39f;}
-.tr-tabs .am-nav-tabs>li.am-active>a, .tr-tabs .am-nav-tabs>li.am-active>a:focus, .tr-tabs .am-nav-tabs>li.am-active>a:hover{background-color: #39f; color: #fff; border-color: #39f;}
-.tr-tabs .am-tabs-bd,.tr-tabs .am-nav-tabs{border-color: #39f;border-radius: 0 2px 2px;}
-.tr-tabs .am-table{margin-bottom: 0;}
-.tr-tabs .am-tab-panel{padding-bottom: 19px;}
-
-.tr-left-ranking .am-titlebar-default a:hover{color: gray;}
-.tr-left-ranking .am-table-bordered{border:none;}
-.tr-left-ranking .am-table-bordered>tbody>tr>td{border: 1px solid #fff;}
-
-.tr-simulation a.tr-simulation-name{font-size: 14px;}
-.tr-simulation li{font-size: 14px; padding: 20px 15px;border:none; border-top: 1px dashed #999;}
-.tr-simulation li.first{border: none;}
-</style>
+{css file="/static/css/index/index.css"}
 {/block}
 {block name="header"}{include file="public/header" /}{/block}
 {block name="main"}
-<div class="am-g">
+<div class="am-g" id="index">
     <div class="am-g am-container">
+        <div class="am-slider am-slider-default tr-slider-ad" data-am-flexslider="{directionNav: false,slideshowSpeed:3000}">
+          <ul class="am-slides">
+            <li><a href="#" title=""><img src="/static/img/bing-1.png" alt="" /></a></li>
+            <li><a href="#" title=""><img src="/static/img/bing-1.png" alt="" /></a></li>
+            <li><a href="#" title=""><img src="/static/img/bing-4.jpg" alt="" /></a></li>
+          </ul>
+        </div>   
+        <div class="tr-proclamation"> 
+            <div class="am-u-md-2 tr-pro-t">
+                <span class="am-icon-volume-up"></span>
+                <span class="tr-pro-t-c">通知公告</span>
+            </div> 
+            <div class="am-u-md-10">
+                <dl id="ticker-1">
+                    <dd v-for="item in proclamation"><a :href="item.href" :title="item.title" target="_blank">{{ item.title }}</a></dd>
+                </dl>
+            </div>
+        </div>
+        <div class="am-panel am-panel-default tr-talent">
+            <div class="am-panel-hd">
+                <h2 class="am-panel-title">
+                    高手推荐
+                </h2>
+            </div>
+            <div class="am-slider am-slider-default am-margin-bottom-0 am-slider-carousel tr-slider" data-am-flexslider="{itemWidth: 484, itemMargin: 30, slideshow: false, directionNav: false, controlNav: false}">
+                <ul class="am-slides">
+                    <li>
+                        <div class="am-g tr-slider-item">
+                            <div class="am-u-sm-3">
+                                <a href="{:url('index/index/personal')}" title="personal">
+                                    <img src="/static/img/portrait.gif" alt="portrait">
+                                </a>
+                            </div>
+                            <div class="am-u-sm-3">
+                                <div class="tr-talent-name">阿西八1</a>
+                                <p>排名：258</p>
+                            </div>
+                            <div class="am-u-sm-6">
+
+                                <a href="" class="am-btn am-btn-block am-btn-primary am-btn-sm am-radius" title="模拟炒股" width="50%">他的模拟炒股</a>
+                                <p>周盈利率:25.24%</p>
+                            </div>
+                        </div>
+                        <div class="am-u-md-12">
+                            <h3>推荐理由</h3>
+                            <p class="tr-recommend-reason">
+                                选股有独特的眼光，并操作优秀,懂啊框架阿凯假两件阿赛况
+                            </p>
+                        </div>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
         <div class="am-u-md-9 am-margin-top-sm">
-            <div class="am-panel am-panel-default tr-slider-ad">
-                <div class="am-slider am-slider-default" data-am-flexslider>
-                  <ul class="am-slides">
-                    <li><a href="#" title=""><img src="/static/img/bing-4.jpg" alt="" /></a></li>
-                    <li><a href="#" title=""><img src="/static/img/bing-4.jpg" alt="" /></a></li>
-                    <li><a href="#" title=""><img src="/static/img/bing-4.jpg" alt="" /></a></li>
-                  </ul>
-                </div>
-                <footer class="am-panel-footer tr-proclamation">
-                    <dl id="ticker-1">
-                        <dd><a href="http://www.sjqcj.com/weibo/715816" title="水晶球牛人选股大赛第57周战况：名人组花荣顺利夺冠 温州叶荣添奇正藏药5天3板夺魁" target="_blank">水晶球牛人选股大赛第57周战况：名人组花荣顺利夺冠 温州叶荣添奇正藏药5天3板夺魁</a></dd>
-                        <dd><a href="http://www.sjqcj.com/weibo/712715" title="水晶球2016推股高手排行榜出炉：金一平擒四川双马成第一高手！" target="_blank">水晶球2016推股高手排行榜出炉：金一平擒四川双马成第一高手！</a></dd>
-                        <dd><a href="http://www.sjqcj.com/weibo/714541" title="金一平：最看好的高送转潜力股" target="_blank">金一平：最看好的高送转潜力股</a></dd>
-                        <dd><a href="http://www.sjqcj.com/weibo/715149" title="选股比赛播报（11.18）：高送转第一枪打响，涨停板接踵而至" target="_blank">选股比赛播报（11.18）：高送转第一枪打响，涨停板接踵而至</a></dd>
-                    </dl>
-                </footer>
-            </div>
-            <div class="am-panel am-panel-default tr-tab-three">
-                <header class="am-panel-hd am-padding-vertical-0 am-padding-horizontal-xs">
-                    <div data-am-widget="titlebar" class="am-titlebar am-titlebar-default am-margin-horizontal-0">
-                        <h2 class="am-titlebar-title">
-                            高手推荐
-                        </h2>
-                    </div>
-                </header>
-                <div class="am-slider am-slider-default am-margin-bottom-0 am-slider-carousel tr-slider" data-am-flexslider="{itemWidth: 230, itemMargin: 4, slideshow: false, controlNav: false}">
-                    <ul class="am-slides">
-                        <li>
-                            <div class="am-container tr-slider-item">
-                                <div class="am-u-sm-5">
-                                    <a href="" title="personal">
-                                        <img src="/static/img/portrait.gif" alt="portrait">
-                                    </a>
-                                </div>
-                                <div class="am-u-sm-6 am-u-end" style="margin-left: 10px;">
-                                    <a href="{:url('index/index/personal')}" title="personal" class="am-block">阿西八1</a>
-                                    <p>
-                                        排名：258 <br>
-                                        周盈利率:25.24%
-                                    </p>
-                                    <a href="" class="am-btn am-btn-block am-btn-primary am-btn-sm am-radius" title="模拟炒股" width="50%">他的模拟炒股</a>
-                                </div>
-                            </div>
-                            <div class="am-container">
-                                <h3>推荐理由</h3>
-                                <p class="tr-recommend-reason">
-                                    选股有独特的眼光，并操作优秀,懂啊框架阿凯假两件阿赛况
-                                </p>
-                            </div>
-                        </li>
-                        
-                    </ul>
-                </div>
-            </div>
+            
             <div class="am-tabs tr-tabs" data-am-tabs="{noSwipe: 1}" id="tr-tabs">
                 <ul class="am-tabs-nav am-nav am-nav-tabs">
                     <li class="am-active"><a href="javascript:;">牛人动态</a></li>
@@ -819,26 +782,6 @@
 
 {block name="footer"}{include file="public/footer" /}{/block}
 {block name="js"}
-{js file="/static/js/carouFredSel.js"}
-<script type="text/javascript">
-    var _scroll = {
-        delay: 1000,
-        easing: 'linear',
-        items: 1,
-        duration: 0.04,
-        timeoutDuration: 0,
-        pauseOnHover: 'immediate'
-    };
-    $('#ticker-1').carouFredSel({
-        width: 732,
-        align: false,
-        items: {
-            width: 'variable',
-            height: 24,
-            visible: 1,
-            margin: 0
-        },
-        scroll: _scroll
-    });
-</script>
+{js file="/static/js/widget/carouFredSel.js"}
+{js file="/static/js/index/index.js"}
 {/block}
