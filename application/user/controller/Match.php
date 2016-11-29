@@ -5,6 +5,7 @@ use app\index\controller\Base;
 use app\common\model\Match as MatchModel;
 use app\common\model\MatchUser;
 use app\common\model\UserFunds;
+use app\common\model\User;
 /**
 * 比赛控制器
 */
@@ -74,13 +75,13 @@ class Match extends Base
         if (empty($match)) {
             return json(['status'=>'failed','data'=>'比赛不存在']);
         }
-
+        
         //比赛排行
         $rankList = MatchUser::where(['match_id'=>$data['id']])->limit(($page-1)*$limit, $limit)->order('total_rate desc')->field('id,uid,user_name,ROUND((end_capital - initial_capital) / initial_capital,2) total_rate,
 (SELECT count(id) FROM sjq_match_user WHERE total_rate < ( end_capital - initial_capital) / initial_capital AND match_id=1)+1 ranking')->select();
 
         $res = [
-            'match'=>['id'=>$match['id'],'name'=>$match['name'],'joined'=>isset($match['muid']) ? 1 : 0,'total_rate'=>isset($match['muid']) ? $match['total_rate'] : 0,'ranking'=>isset($match['muid']) ? $match['ranking'] : 0],
+            'match'=>['id'=>$match['id'],'name'=>$match['name'],'joined'=>empty($match['muid']) ? 0 : 1,'total_rate'=>empty($match['muid']) ? 0 : $match['total_rate'],'ranking'=>empty($match['muid']) ? 0 : $match['ranking']],
             'rankList' => $rankList
         ];
 
@@ -100,13 +101,13 @@ class Match extends Base
             return json(['status'=>'failed','data'=>$res]);
         }
         
-        $match = MatchModel::data([
+        $match = MatchModel::create([
             'name'=>$data['name'], 
             'periods'=> $data['periods'],
             'type'=> $data['type'],
             'start_date'=> $data['start_date'],
             'end_date'=> $data['end_date'],
-            ])->save();
+            ]);
         
         if(empty($match->id)){
             return json(['status'=>'failed','data'=>'创建失败']);
@@ -122,25 +123,35 @@ class Match extends Base
      */
     public function join()
     {
-        $data = input('post.');
+        $data = input('get.');
         $res = $this->validate($data,'Match.detail');
         if (true !== $res) {
             return json(['status'=>'failed','data'=>$res]);
         }
 
-        $match = Match::where(['id'=>$data['id']])->find();
-        if(time() < strtotime($match['start_date']) || time() > strtotime($match['end_date'])+24*3600){
+        $count = MatchUser::where(['uid'=>$data['uid'],'match_id'=>$data['id']])->count();
+        if($count > 0){
+            return json(['status'=>'failed','data'=>'已参加']);
+        }
+
+        $match = MatchModel::where(['id'=>$data['id']])->find();
+        if(empty($match) || time() < strtotime($match['start_date']) || time() > strtotime($match['end_date'])+24*3600){
             return json(['status'=>'failed','data'=>'不可参加']);
         }
         
-        $initial_capital = UserFunds::where(['uid'=>$data['uid']])->value('funds');
-        $match_user = MatchUser::data([
+        $user = User::where(['u.uid'=>$data['uid']])->alias('u')->join('sjq_users_funds uf', 'u.uid=uf.uid')->field('username,funds')->find();
+        if(empty($user)){
+            return json(['status'=>'failed','data'=>'无效的用户']);
+        }
+
+        $match_user = MatchUser::create([
             'match_id'=>$data['id'], 
             'uid'=> $data['uid'],
-            'initial_capital' => $initial_capital,
+            'user_name'=> $user['username'],
+            'initial_capital' => $user['funds'],
             'balance' => 0,
-            'end_capital' => $initial_capital
-            ])->save();
+            'end_capital' => $user['funds']
+            ]);
         
         if(empty($match_user->id)){
             return json(['status'=>'failed','data'=>'添加失败']);
