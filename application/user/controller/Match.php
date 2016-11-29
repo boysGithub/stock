@@ -123,7 +123,7 @@ class Match extends Base
      */
     public function join()
     {
-        $data = input('get.');
+        $data = input('post.');
         $res = $this->validate($data,'Match.detail');
         if (true !== $res) {
             return json(['status'=>'failed','data'=>$res]);
