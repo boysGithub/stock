@@ -1,7 +1,8 @@
 /* Write your styles */
-body{color: #323232; font: 12px/22px "Microsoft Yahei", 微软雅黑, Simsun, 宋体, Arial;background:#f4f4f7;}
+body{color: #323232; font: 14px/22px "Microsoft Yahei", 微软雅黑, Simsun, 宋体, Arial;background:#f4f4f7;}
 header {margin-bottom: 0 !important;}
-table td a:link,table td a:visited{color:#865501;}
+a{color: #4a9ff6;}
+table td a:link,table td a:visited{color:#4a9ff6;}
 table td a:hover{color:#c98004;}
 p{margin: 0;}
 img{max-width: 100%; height: auto;}
@@ -25,9 +26,8 @@ ul{list-style: none;}
 .tr-color-win{color: #865501;}/*盈*/
 .tr-color-sale{color: #d8110b;}/*卖出*/
 .tr-color-lose{color: #094;}/*亏*/
+.tr-color-price{color: #ff7000;}/*价格*/
 .tr-color-order{color: #39f;}
-.tr-tab-bg-1{background-color: #f1f6f8;}
-.tr-tab-bg-2{background-color: #eef0f1;}
 
 .tr-icon{background: url('../../img/tr-icon.png') 0 0 no-repeat; width: 15px; height:18px; display: inline-block;background-size: 100%;vertical-align: middle;}
 .tr-icon-1th{background-position: 1px -4px;background-size: 100%;}
@@ -39,8 +39,11 @@ ul{list-style: none;}
 	    margin: 0;
 	    padding: 0;
 	}
+	.am-margin-top{margin-top: 1.6rem;}
 	.am-margin-top-sm{margin-top: 1rem;}
+	.am-margin-top-lg{margin-top: 2.4rem;}
 	.am-margin-vertical-sm{margin-top: 1rem; margin-bottom: 1rem;}
+	.am-padding-sm{padding: 1rem;}
 	.am-padding-right{padding-right: 1.6rem;}
 	.am-padding-right-sm{padding-right: 1rem;}
 	.am-padding-left{padding-left: 1.6rem;}
@@ -68,6 +71,10 @@ header .tr-menu-topbar{background: #0d7cc4; height: 100px; line-height: 100px;}
 .tr-menu-nav .am-topbar-nav>li>a:hover:after,.tr-menu-nav .am-topbar-nav>li>a:focus:after{opacity:0;}
 .tr-menu-nav .am-topbar-nav>li.am-active>a,.tr-menu-nav .am-topbar-nav>li.am-active>a:focus,.tr-menu-nav .am-topbar-nav>li.am-active>a:hover{background: none; border-bottom: 2px solid #4a9ff6;}
 .tr-menu-nav .am-topbar-nav>li.am-active>a:after{opacity: 0;}
+
+/*footer*/
+footer{background: #555; color: #fff;}
+.tr-copy{line-height: 60px;}
 
 @media only screen and (max-width: 640px){	
 	header .tr-menu-topbar{background-size: initial; height: auto;}

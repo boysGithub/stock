@@ -1,7 +1,17 @@
 var index = new Vue({
     el: "#index",
     data: {
-        proclamation: []//公告
+        proclamation: [],//公告
+        talent_dynamic: [
+            {
+                user_name: '寻梦',
+                stock: '兔宝宝',
+                state: '买入',
+                state_class: 'tr-color-sale',
+                price: 5.5,
+                url: '#',
+            }
+        ]//牛人动态
     }
 });
 
@@ -23,6 +33,20 @@ $(function(){
         index.proclamation = proclamation.data;
     }
     setTimeout(proclamationSlider, 100);
+
+    //牛人动态
+    /*$.ajax({
+        url: "http://www.stocks.com/orders.html",
+        data: {'dtype': 'jsonp'},
+        type: "GET",
+        dataType: 'jsonp',
+        success: function(data) {
+        alert(data.status);
+        }
+    });*/
+    $.getJSON('https://moni.sjqcj.com/orders',{},function(data){
+        alert(data.status);
+    });
 });
 
 function proclamationSlider(){

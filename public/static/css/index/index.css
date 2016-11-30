@@ -1,3 +1,7 @@
+.am-panel{border: none; background: none;box-shadow: none;margin: 0;} 
+.am-panel-hd{padding: 0 0 .6rem;background: none; border-bottom: none;}
+.am-panel-title{font-size: 18px; font-weight: normal;}
+
 .am-slider-default.tr-slider-ad{box-shadow: none;margin: 30px 0;}
 .am-slider-default.tr-slider-ad .am-control-nav{bottom: 10px;}
 .am-slider-default.tr-slider-ad .am-control-nav li a{width: 13px; height: 13px;background-color:#fff;}
@@ -12,28 +16,40 @@
 .tr-proclamation dd a{color: #666; font-size: 14px;}
 .tr-proclamation dd a:hover{color: #fb7471;}
 
-.tr-talent{margin: 30px 0; border: none; background: none;}
-.tr-talent>.am-panel-hd{padding-left: 0;background: none; border-bottom: none;}
-.tr-talent .am-panel-title{font-size: 18px; font-weight: normal;}
-.tr-slider{box-shadow: none;}
-.tr-slider li{font-size: 14px;}
-.tr-slider .tr-recommend-reason{height: 36px; width: 100%; line-height: 18px; overflow: hidden;padding-right: 2rem;}
-.tr-slider-item .tr-talent-name{font-size: 18px; color: #333;}
+.tr-talent{margin: 30px 0;}
+.tr-slider{box-shadow: none; background: none;}
+.tr-slider li{font-size: 14px;border-top: 2px solid #f76d63; background: #fff;}
+.tr-talent-info .tr-talent-name{font-size: 18px; color: #333;line-height: 45px;}
+.tr-talent-info .tr-talent-ranking{font-size: 14px; color: #666;line-height: 35px;}
+.tr-talent-info .tr-talent-btn{text-align: right; color: #666;line-height: 35px;}
+.tr-talent-info .tr-talent-rate{color: #666;line-height: 35px;margin-top:.5rem;}
+.tr-talent-info .tr-talent-rate span{font-size: 1.8rem;}
+.tr-talent-reason{height: 80px; width: 100%; line-height: 20px; overflow: hidden; color: #fff; background: #f76d63;}
 
-.tr-tabs{position: relative;}
+.tr-tabs{position: relative;border: 1px solid #e2e2e2; background: #fff; margin-bottom: 30px;}
 .tr-tabs .tr-more{position: absolute; top: 10px; right: 10px;}
 .tr-tabs .tr-more a:hover{color: gray;}
-.tr-tabs .am-tabs-nav li a{font-size: 16px; border-radius: 4px 4px 0 0; background-color: #eee;border-width: 1px; border-color: #999 #999 #39f; border-style: solid;}
-.tr-tabs .am-nav>li>a:focus, .tr-tabs .am-nav>li>a:hover{background-color: #39f; color: #fff; border-color: #39f;}
-.tr-tabs .am-nav-tabs>li.am-active>a, .tr-tabs .am-nav-tabs>li.am-active>a:focus, .tr-tabs .am-nav-tabs>li.am-active>a:hover{background-color: #39f; color: #fff; border-color: #39f;}
-.tr-tabs .am-tabs-bd,.tr-tabs .am-nav-tabs{border-color: #39f;border-radius: 0 2px 2px;}
+.tr-tabs .am-tabs-nav li{border-bottom: 1px solid #ddd;}
+.tr-tabs .am-tabs-nav li a{font-size: 18px; margin:0; border: none; border-bottom: 1px solid #fff; color: #666;}
+.tr-tabs .am-nav>li>a:focus, .tr-tabs .am-nav>li>a:hover{color: #4a9ff6; background: none;border: none;}
+.tr-tabs .am-nav-tabs>li.am-active>a, .tr-tabs .am-nav-tabs>li.am-active>a:focus, .tr-tabs .am-nav-tabs>li.am-active>a:hover{color: #4a9ff6;border: none;}
+.tr-tabs .am-nav-tabs>li.am-active,.tr-tabs .am-tabs-nav li:hover,.tr-tabs .am-nav-tabs>li.am-active>a,.tr-tabs .am-nav-tabs>li.am-active>a:focus, .tr-tabs .am-nav-tabs>li.am-active>a:hover,.tr-tabs .am-nav>li>a:focus, .tr-tabs .am-nav>li>a:hover{border-bottom:1px solid #4a9ff6;}
+.tr-tabs .am-tabs-bd{border:none;}
 .tr-tabs .am-table{margin-bottom: 0;}
+.tr-tabs .am-table>thead>tr>th{border: none; background: #f5f5f5;color: #333;font-weight: normal;}
 .tr-tabs .am-tab-panel{padding-bottom: 19px;}
+.tr-tabs .am-table>tbody>tr>td{font-size: 14px; color: #666; line-height: 2.6rem;}
+.tr-tabs .am-table .tr-icon{color: #fff;}
+.tr-tabs .am-table .am-btn-xs{font-size: 14px; padding: .5rem .5rem;}
 
-.tr-left-ranking .am-titlebar-default a:hover{color: gray;}
-.tr-left-ranking .am-table-bordered{border:none;}
-.tr-left-ranking .am-table-bordered>tbody>tr>td{border: 1px solid #fff;}
+.tr-img-ad{margin: 30px 0;}
 
-.tr-simulation a.tr-simulation-name{font-size: 14px;}
-.tr-simulation li{font-size: 14px; padding: 20px 15px;border:none; border-top: 1px dashed #999;}
-.tr-simulation li.first{border: none;}
+.tr-ranking-table .am-table{background: #fff;border: 1px solid #e2e2e2;}
+.tr-ranking-table .am-table>thead>tr>th{border:none; background: #faf9f9; font-weight: normal; color: #4a9ff6;}
+.tr-ranking-table .am-table>tbody>tr>td{border-top: 1px dashed #eaeaea}
+.tr-ranking-table .am-table>tbody>tr.first>td{border:none;}
+.tr-ranking-table .am-table>tbody>tr>td.tr-ranking-portrait{padding: .3rem;}
+
+.tr-match{margin: 30px 0;}
+.tr-match .am-panel-bd{color:#333; line-height: 26px; font-size: 14px;border: 1px solid #e2e2e2;background: #fff; padding: .5rem 1.6rem;}
+
