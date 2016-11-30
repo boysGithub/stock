@@ -453,7 +453,8 @@ if (!function_exists('json')) {
      * @return \think\response\Json
      */
     function json($data = [], $code = 200, $header = [], $options = [])
-    {
+    {   
+        header('Access-Control-Allow-Origin:*');
         return Response::create($data, 'json', $code, $header, $options);
     }
 }
