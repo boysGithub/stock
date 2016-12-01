@@ -22,30 +22,53 @@ class Match extends Base
         $page = isset($data['np']) && (int)$data['np'] > 0 ? $data['np'] : 1;
         $limit = isset($data['limit']) && (int)$data['limit'] > 0 ? $data['limit'] : $this->_limit;
 
-        $matchs = MatchModel::where([])->alias('m')->limit(($page-1)*$limit, $limit)->order('start_date desc');
+        $where = [];
+        $matchs = MatchModel::where($where)->alias('m')->limit(($page-1)*$limit, $limit)->order('start_date desc');
         $field = '';
         if(isset($data['uid']) && !empty($data['uid'])){//登录后获取参加状态和排名
-            $field .= ",(SELECT count(id) FROM sjq_match_user WHERE uid={$data['uid']} AND match_id=m.id) joined";
-            $field .= ",(SELECT count(id) FROM sjq_match_user WHERE (u.end_capital - u.initial_capital) / u.initial_capital < ( end_capital - initial_capital) / initial_capital AND match_id=m.id)+1 ranking";
+            $field .= ",u.id muid,(SELECT count(id) FROM sjq_match_user WHERE (u.end_capital - u.initial_capital) / u.initial_capital < ( end_capital - initial_capital) / initial_capital AND match_id=m.id)+1 ranking";
+            if(isset($data['joined']) && $data['joined'] == 1){
+                $where['u.id'] = ['not null',''];
+            }
             $matchs->join('sjq_match_user u',"u.match_id=m.id AND u.uid={$data['uid']}", 'LEFT');
         }
 
-        $matchs = $matchs->field('m.id,name,type,start_date,end_date'.$field)->select();
+        $matchs = $matchs->where($where)->field('m.id,name,image,type,start_date,end_date'.$field)->select();
+        $res = [];
         foreach ($matchs as $key => $val) {
         	if(time() >= strtotime($val['start_date']) && time() < strtotime($val['end_date']) + 24 * 3600){
-        		$matchs[$key]['status'] = 1;
-        		$matchs[$key]['status_name'] = '进行中';
+        		$status = 1;
+        		$status_name = '进行中';
         	} else if(time() >= strtotime($val['end_date']) + 24 * 3600){
-        		$matchs[$key]['status'] = 3;
-        		$matchs[$key]['status_name'] = '已结束';
+        		$status = 3;
+        		$status_name = '已结束';
         	}
+
+            $match = [
+                'id' => $val['id'],
+                'name' => $val['name'],
+                'image' => $val['image'],
+                'type' => $val['type'],
+                'start_date' => $val['start_date'],
+                'end_date' => $val['end_date'],
+                'status' => $status,
+                'status_name' => $status_name,
+            ];
             if(isset($data['uid']) && !empty($data['uid'])){
-                empty($val['joined']) && $matchs[$key]['ranking'] = 0;
+                $match['ranking'] = $val['ranking'];
+                if(empty($val['muid'])){
+                    $match['ranking'] = 0;
+                    $match['joined'] = 0;
+                } else{
+                    $match['joined'] = 1;
+                }
             }
+
+            $res[] = $match;
         }
 
 
-        return json(['status'=>'success','data'=>$matchs]);
+        return json(['status'=>'success','data'=>$res]);
     }
 
     /**

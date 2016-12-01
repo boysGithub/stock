@@ -31,16 +31,9 @@ class Index extends Base
            $value->append(['username']);
         }
         if($expert){
-            $result = ['status'=>'success','data'=>$expert];
+            $result = json(['status'=>'success','data'=>$expert]);
         }else{
-            $result = ['status'=>'failed','data'=>'还没有数据'];
-        }
-
-
-        if(input('get.dtype') == 'jsonp'){
-            $result = jsonp($result);
-        } else {
-            $result = json($result);
+            $result = json(['status'=>'failed','data'=>'还没有数据']);
         }
         return $result;
     }

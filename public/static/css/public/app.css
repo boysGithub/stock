@@ -2,7 +2,6 @@
 body{color: #323232; font: 14px/22px "Microsoft Yahei", 微软雅黑, Simsun, 宋体, Arial;background:#f4f4f7;}
 header {margin-bottom: 0 !important;}
 a{color: #4a9ff6;}
-table td a:link,table td a:visited{color:#4a9ff6;}
 table td a:hover{color:#c98004;}
 p{margin: 0;}
 img{max-width: 100%; height: auto;}
@@ -29,10 +28,7 @@ ul{list-style: none;}
 .tr-color-price{color: #ff7000;}/*价格*/
 .tr-color-order{color: #39f;}
 
-.tr-icon{background: url('../../img/tr-icon.png') 0 0 no-repeat; width: 15px; height:18px; display: inline-block;background-size: 100%;vertical-align: middle;}
-.tr-icon-1th{background-position: 1px -4px;background-size: 100%;}
-.tr-icon-2th{background-position: 1px -24px;background-size: 100%;}
-.tr-icon-3th{background-position: 1px -44px;background-size: 100%;}
+.tr-icon{background: url('../../img/ranking-icon.png') 0 0 no-repeat; width: 30px; height:30px; display: inline-block;background-size: 100%;vertical-align: middle;}
 
 @media only screen and (min-width: 1025px){	
 	[class*=am-u-] {
