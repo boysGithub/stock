@@ -25,7 +25,7 @@ class Match extends Base
         $where = [];
         $matchs = MatchModel::where($where)->alias('m')->limit(($page-1)*$limit, $limit)->order('start_date desc');
         $field = '';
-        if(isset($data['uid']) && !empty($data['uid'])){//登录后获取参加状态和排名
+        if(isset($data['uid']) && $data['uid'] > 0){//登录后获取参加状态和排名
             $field .= ",u.id muid,(SELECT count(id) FROM sjq_match_user WHERE (u.end_capital - u.initial_capital) / u.initial_capital < ( end_capital - initial_capital) / initial_capital AND match_id=m.id)+1 ranking";
             if(isset($data['joined']) && $data['joined'] == 1){
                 $where['u.id'] = ['not null',''];
@@ -54,7 +54,7 @@ class Match extends Base
                 'status' => $status,
                 'status_name' => $status_name,
             ];
-            if(isset($data['uid']) && !empty($data['uid'])){
+            if(isset($data['uid']) && $data['uid'] > 0){
                 $match['ranking'] = $val['ranking'];
                 if(empty($val['muid'])){
                     $match['ranking'] = 0;
