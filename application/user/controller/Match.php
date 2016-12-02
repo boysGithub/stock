@@ -47,7 +47,7 @@ class Match extends Base
             $match = [
                 'id' => $val['id'],
                 'name' => $val['name'],
-                'image' => $val['image'],
+                'image' => Config('use_url.img_url').$val['image'],
                 'type' => $val['type'],
                 'start_date' => $val['start_date'],
                 'end_date' => $val['end_date'],
