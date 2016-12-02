@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:5:{s:85:"/Users/ducong/nginxroot/stock/public/../application/index/view/trade/tradeCenter.html";i:1479804293;s:72:"/Users/ducong/nginxroot/stock/public/../application/index/view/base.html";i:1479455582;s:81:"/Users/ducong/nginxroot/stock/public/../application/index/view/public/header.html";i:1479798992;s:84:"/Users/ducong/nginxroot/stock/public/../application/index/view/trade/trade-left.html";i:1479803938;s:81:"/Users/ducong/nginxroot/stock/public/../application/index/view/public/footer.html";i:1479187842;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:5:{s:85:"/Users/ducong/nginxroot/stock/public/../application/index/view/trade/tradeCenter.html";i:1480644253;s:72:"/Users/ducong/nginxroot/stock/public/../application/index/view/base.html";i:1480646252;s:81:"/Users/ducong/nginxroot/stock/public/../application/index/view/public/header.html";i:1480644725;s:84:"/Users/ducong/nginxroot/stock/public/../application/index/view/trade/trade-left.html";i:1479805602;s:81:"/Users/ducong/nginxroot/stock/public/../application/index/view/public/footer.html";i:1480644253;}*/ ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,8 +10,8 @@
 <title>交易中心</title>
 
 <!-- Amaze ui -->
-<link rel="stylesheet" href="/static/amaze/css/amazeui.min.css">
-<link rel="stylesheet" href="/static/amaze/css/app.css">
+<link rel="stylesheet" href="/static/css/public/amazeui.min.css">
+<link rel="stylesheet" href="/static/css/public/app.css">
 
 
     <style type="text/css">
@@ -38,26 +38,27 @@
     .tr-stock-state .am-table>tbody>tr>td.price{color: red;}
     </style>
 
+
 </head>
 <body>
-<header class="am-topbar am-topbar-fixed-top">
+<header class="am-topbar am-topbar-fixed-top" id="header">
 	<div class="am-g tr-login-topbar">
 		<div class="am-container">
 			<div class="am-u-sm-12">
 				<div class="am-nav am-nav-pills am-topbar-nav am-fl">
-					<a href="http://www.sjqcj.com/" target="_blank" title="水晶球网">水晶球首页</a>&nbsp;|&nbsp;<a href="http://www.baidu.com" target="_blank">CCC</a>
+					欢迎来到水晶球！
 				</div>
 				<div class="am-topbar-right am-fr">
-					<?php if(false): ?>
-						欢迎来到模拟炒股，请&nbsp;
-						<a href="<?php echo url('stocks/member/login'); ?>" title="登录" class="topbar-login">登录</a>
-						&nbsp;|&nbsp;
-						<a href="<?php echo url('stocks/member/register'); ?>" title="注册" class="topbar-register">注册</a>
-					<?php else: ?>
+					<template v-if="logined">
 						您好，
 						<a href="<?php echo url('stocks/member/index'); ?>" title="个人中心" class="topbar-login">username</a>
 						<a href="<?php echo url('stocks/member/loginout'); ?>" title="退出" class="topbar-out">退出</a>
-					<?php endif; ?>
+					</template>	
+					<template v-else>
+						<a href="<?php echo url('index/index/login'); ?>" title="登录" class="topbar-login">登录</a>
+						&nbsp;|&nbsp;
+						<a href="<?php echo url('stocks/member/register'); ?>" title="注册" class="topbar-register">注册</a>
+					</template>
 				</div>
 			</div>
 		</div>
@@ -71,10 +72,11 @@
 			<div class="am-collapse am-topbar-collapse tr-menu-nav" id="tr-header-nav">
 				<div class="tr-menu-nav-item">
 				<ul class="am-nav am-nav-pills am-topbar-nav">
-				    <li class="home<?php if(\think\Request::instance()->controller() == 'index' and \think\Request::instance()->action() == 'index'): ?> am-active<?php endif; ?>"><a href="/" title="模拟炒股首页">首页</a></li>
-				    <li class="<?php if(\think\Request::instance()->controller() == 'index' and \think\Request::instance()->action() == 'matchList'): ?> am-active<?php endif; ?>"><a href="<?php echo url('index/index/matchList'); ?>">模拟赛场</a></li>
-				    <li class="<?php if(\think\Request::instance()->controller() == 'index' and \think\Request::instance()->action() == 'rankingList'): ?> am-active<?php endif; ?>"><a href="<?php echo url('index/index/rankingList'); ?>">牛人排行榜</a></li>
-				    <li class="<?php if(\think\Request::instance()->controller() == 'index' and \think\Request::instance()->action() == 'index'): ?> am-active<?php endif; ?>"><a href="<?php echo url('index/index/tradingRules'); ?>">交易规则</a></li>
+				    <li class="home<?php if(\think\Request::instance()->controller() == 'Index' and \think\Request::instance()->action() == 'index'): ?> am-active<?php endif; ?>"><a href="/" title="模拟炒股首页">首页</a></li>
+				    <li class="<?php if(\think\Request::instance()->controller() == 'Index' and \think\Request::instance()->action() == 'matchlist'): ?> am-active<?php endif; ?>"><a href="<?php echo url('index/index/matchList'); ?>">模拟赛场</a></li>
+				    <li class="<?php if(\think\Request::instance()->controller() == 'Index' and \think\Request::instance()->action() == 'rankinglist'): ?> am-active<?php endif; ?>"><a href="<?php echo url('index/index/rankingList'); ?>">牛人排行榜</a></li>
+				    <li class="<?php if(\think\Request::instance()->controller() == 'Index' and \think\Request::instance()->action() == 'tradecenter'): ?> am-active<?php endif; ?>"><a href="<?php echo url('index/index/tradeCenter'); ?>">交易中心</a></li>
+				    <li class="<?php if(\think\Request::instance()->controller() == 'Index' and \think\Request::instance()->action() == 'tradingrules'): ?> am-active<?php endif; ?>"><a href="<?php echo url('index/index/tradingRules'); ?>">交易规则</a></li>
 				</ul>
 				</div>
 			</div>
@@ -281,28 +283,28 @@
                                     <tbody>
                                         <tr>
                                             <td>卖⑤(元/股)</td>
-                                            <td class="price">9.12</td>
-                                            <td>2029123</td>
+                                            <td class="price">{{ stock.sellPrice5 }}</td>
+                                            <td>{{ stock.sellNum5 }}</td>
                                         </tr>
                                         <tr>
-                                            <td>卖⑤(元/股)</td>
-                                            <td class="price">9.12</td>
-                                            <td>2029123</td>
+                                            <td>卖④(元/股)</td>
+                                            <td class="price">{{ stock.sellPrice4 }}</td>
+                                            <td>{{ stock.sellNum4 }}</td>
                                         </tr>
                                         <tr>
-                                            <td>卖⑤(元/股)</td>
-                                            <td class="price">9.12</td>
-                                            <td>2029123</td>
+                                            <td>卖③(元/股)</td>
+                                            <td class="price">{{ stock.sellPrice3 }}</td>
+                                            <td>{{ stock.sellNum3 }}</td>
                                         </tr>
                                         <tr>
-                                            <td>卖⑤(元/股)</td>
-                                            <td class="price">9.12</td>
-                                            <td>2029123</td>
+                                            <td>卖②(元/股)</td>
+                                            <td class="price">{{ stock.sellPrice2 }}</td>
+                                            <td>{{ stock.sellNum2 }}</td>
                                         </tr>
                                         <tr>
-                                            <td>卖⑤(元/股)</td>
-                                            <td class="price">9.12</td>
-                                            <td>2029123</td>
+                                            <td>卖①(元/股)</td>
+                                            <td class="price">{{ stock.sellPrice1 }}</td>
+                                            <td>{{ stock.sellNum1 }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -310,44 +312,44 @@
                                 <table class="am-table">
                                     <tbody>
                                         <tr>
-                                            <td>买⑤(元/股)</td>
-                                            <td class="price">9.12</td>
-                                            <td>2029123</td>
+                                            <td>买①(元/股)</td>
+                                            <td class="price">{{ stock.buyPrice1 }}</td>
+                                            <td>{{ stock.buyNum1 }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>买②(元/股)</td>
+                                            <td class="price">{{ stock.buyPrice2 }}</td>
+                                            <td>{{ stock.buyNum2 }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>买③(元/股)</td>
+                                            <td class="price">{{ stock.buyPrice3 }}</td>
+                                            <td>{{ stock.buyNum3 }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>买④(元/股)</td>
+                                            <td class="price">{{ stock.buyPrice4 }}</td>
+                                            <td>{{ stock.buyNum4 }}</td>
                                         </tr>
                                         <tr>
                                             <td>买⑤(元/股)</td>
-                                            <td class="price">9.12</td>
-                                            <td>2029123</td>
-                                        </tr>
-                                        <tr>
-                                            <td>买⑤(元/股)</td>
-                                            <td class="price">9.12</td>
-                                            <td>2029123</td>
-                                        </tr>
-                                        <tr>
-                                            <td>买⑤(元/股)</td>
-                                            <td class="price">9.12</td>
-                                            <td>2029123</td>
-                                        </tr>
-                                        <tr>
-                                            <td>买⑤(元/股)</td>
-                                            <td class="price">9.12</td>
-                                            <td>2029123</td>
+                                            <td class="price">{{ stock.buyPrice5 }}</td>
+                                            <td>{{ stock.buyNum5 }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                             <div class="am-u-sm-5">
                                 <ul>
-                                    <li><span>现&nbsp;&nbsp;&nbsp;价 : </span><span class="tr-color-win">9.12</span></li>
-                                    <li><span>今&nbsp;&nbsp;&nbsp;开 : </span><span class="tr-color-lose">9.10</span></li>
-                                    <li><span>昨&nbsp;&nbsp;&nbsp;收 : </span><span>9.12</span></li>
-                                    <li><span>最&nbsp;&nbsp;&nbsp;高 : </span><span class="tr-color-win">9.12</span></li>
-                                    <li><span>最&nbsp;&nbsp;&nbsp;低 : </span><span class="tr-color-lose">9.12</span></li>
-                                    <li><span>涨停价 : </span><span class="tr-color-win">9.32</span></li>
-                                    <li><span>跌停价 : </span><span class="tr-color-lose">9.02</span></li>
-                                    <li><span>换手率 : </span><span class="menu-right-centent-tebale3-margin">0.18%</span></li>
-                                    <li><span>成交量 : </span><span class="menu-right-centent-tebale3-margin">912562</span></li>
+                                    <li><span>现&nbsp;&nbsp;&nbsp;价 : </span><span class="tr-color-win">{{ stock.price }}</span></li>
+                                    <li><span>今&nbsp;&nbsp;&nbsp;开 : </span><span class="tr-color-lose">{{ stock.todayPrcie }}</span></li>
+                                    <li><span>昨&nbsp;&nbsp;&nbsp;收 : </span><span>{{ stock.prec }}</span></li>
+                                    <li><span>最&nbsp;&nbsp;&nbsp;高 : </span><span class="tr-color-win">{{ stock.maxPrice }}</span></li>
+                                    <li><span>最&nbsp;&nbsp;&nbsp;低 : </span><span class="tr-color-lose">{{ stock.minPrice }}</span></li>
+                                    <li><span>涨停价 : </span><span class="tr-color-win">{{ stock.highLimit }}</span></li>
+                                    <li><span>跌停价 : </span><span class="tr-color-lose">{{ stock.lowerLimit }}</span></li>
+                                    <li><span>换手率 : </span><span class="menu-right-centent-tebale3-margin">{{ stock.turnoverRate }}</span></li>
+                                    <li><span>成交量 : </span><span class="menu-right-centent-tebale3-margin">{{ buyInfo.turnoverNum }}</span></li>
                                 </ul>
                             </div>
                         </div>
@@ -360,20 +362,18 @@
 </div>     
 
 <footer>
-	<br>
-	<hr >
-	<br>
-	<div class="am-g am-text-center">
+	<div class="am-g am-text-center tr-copy">
 		&copy;2016 成都水晶球股份有限公司  All rights reserved.
 	</div>
-	<br>
 </footer>
 
 <!--[if (gte IE 9)|!(IE)]><!-->
-<script src="/static/amaze/js/jquery.min.js"></script>
+<script src="/static/js/public/jquery.min.js"></script>
 <!--<![endif]-->
-<script src="/static/amaze/js/amazeui.min.js"></script>
-<script src="/static/js/vue.js"></script>
+<script src="/static/js/public/amazeui.min.js"></script>
+<script src="/static/js/public/vue.js"></script>
+
+<script src="/static/js/public/common.js"></script>
 
 
     <script type="text/javascript">
@@ -382,6 +382,7 @@
             data: {
                 stockList: [],
                 buyInfo: {title: '----'},
+                stock : {sellPrice1: '--', sellNum1: '--', sellPrice2: '--', sellNum2: '--', sellPrice3: '--', sellNum3: '--', sellPrice4: '--',sellNum4: '--', sellPrice5: '--', sellNum5: '--', buyPrice1: '--', buyNum1: '--', buyPrice2: '--', buyNum2: '--', buyPrice3: '--', buyNum3: '--', buyPrice4: '--', buyNum4: '--', buyPrice5: '--', buyNum5: '--', price: '--', todayPrcie: '--', prec: '--', maxPrice: '--', minPrice: '--', highLimit: '--', lowerLimit: '--', turnoverRate: '--', turnover: '--'},
                 changeClass: ' tr-color-win'
             },
             methods: {
@@ -450,8 +451,39 @@
                                     turnoverNum:  brief['4'], 
                                     turnoverMoney:  brief['5']
                                 };
+                                var stockInfo = {
+                                    sellPrice1: parseFloat(detail['21']),
+                                    sellNum1: detail['20'],
+                                    sellPrice2: parseFloat(detail['23']),
+                                    sellNum2: detail['22'],
+                                    sellPrice3: parseFloat(detail['25']),
+                                    sellNum3: detail['24'],
+                                    sellPrice4: parseFloat(detail['27']),
+                                    sellNum4: detail['26'],
+                                    sellPrice5: parseFloat(detail['29']),
+                                    sellNum5: detail['28'],
+                                    buyPrice1: parseFloat(detail['11']),
+                                    buyNum1: detail['10'],
+                                    buyPrice2: parseFloat(detail['13']),
+                                    buyNum2: detail['12'],
+                                    buyPrice3: parseFloat(detail['15']),
+                                    buyNum3: detail['14'],
+                                    buyPrice4: parseFloat(detail['17']),
+                                    buyNum4: detail['16'],
+                                    buyPrice5: parseFloat(detail['19']),
+                                    buyNum5: detail['18'],
+                                    price: parseFloat(detail['3']), 
+                                    todayPrcie: parseFloat(detail['1']), 
+                                    prec: parseFloat(detail['2']), 
+                                    maxPrice: parseFloat(detail['4']), 
+                                    minPrice: parseFloat(detail['5']), 
+                                    highLimit: parseFloat(detail['2'] * 1.1).toFixed(2),  
+                                    lowerLimit: parseFloat(detail['2'] * 0.9).toFixed(2), 
+                                    /*turnoverRate: detail[''], 
+                                    turnover: detail['']*/
+                                }
 
-
+                                _this.stock = stockInfo;
                                 _this.buyInfo = buyInfo;
                             }
                         }    

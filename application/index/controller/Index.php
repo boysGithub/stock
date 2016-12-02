@@ -54,5 +54,9 @@ class Index extends Base
 	public function personal(){
 		return $this->fetch('member/personal');
 	}
+
+	public function login(){
+		return $this->fetch('login/login');
+	}
 }
 ?>
