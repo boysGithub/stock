@@ -1,21 +1,21 @@
-<header class="am-topbar am-topbar-fixed-top">
+<header class="am-topbar am-topbar-fixed-top" id="header">
 	<div class="am-g tr-login-topbar">
 		<div class="am-container">
 			<div class="am-u-sm-12">
 				<div class="am-nav am-nav-pills am-topbar-nav am-fl">
-					<a href="http://www.sjqcj.com/" target="_blank" title="水晶球网">水晶球首页</a>&nbsp;|&nbsp;<a href="http://www.baidu.com" target="_blank">CCC</a>
+					欢迎来到水晶球！
 				</div>
 				<div class="am-topbar-right am-fr">
-					{if condition="false"}
-						欢迎来到模拟炒股，请&nbsp;
-						<a href="{:url('stocks/member/login')}" title="登录" class="topbar-login">登录</a>
-						&nbsp;|&nbsp;
-						<a href="{:url('stocks/member/register')}" title="注册" class="topbar-register">注册</a>
-					{else}
+					<template v-if="logined">
 						您好，
 						<a href="{:url('stocks/member/index')}" title="个人中心" class="topbar-login">username</a>
 						<a href="{:url('stocks/member/loginout')}" title="退出" class="topbar-out">退出</a>
-					{/if}
+					</template>	
+					<template v-else>
+						<a href="{:url('stocks/member/login')}" title="登录" class="topbar-login">登录</a>
+						&nbsp;|&nbsp;
+						<a href="{:url('stocks/member/register')}" title="注册" class="topbar-register">注册</a>
+					</template>
 				</div>
 			</div>
 		</div>
@@ -29,10 +29,11 @@
 			<div class="am-collapse am-topbar-collapse tr-menu-nav" id="tr-header-nav">
 				<div class="tr-menu-nav-item">
 				<ul class="am-nav am-nav-pills am-topbar-nav">
-				    <li class="home{if condition="$Request.controller eq 'index' and $Request.action eq 'index'"} am-active{/if}"><a href="/" title="模拟炒股首页">首页</a></li>
-				    <li class="{if condition="$Request.controller eq 'index' and $Request.action eq 'matchList'"} am-active{/if}"><a href="{:url('index/index/matchList')}">模拟赛场</a></li>
-				    <li class="{if condition="$Request.controller eq 'index' and $Request.action eq 'rankingList'"} am-active{/if}"><a href="{:url('index/index/rankingList')}">牛人排行榜</a></li>
-				    <li class="{if condition="$Request.controller eq 'index' and $Request.action eq 'index'"} am-active{/if}"><a href="{:url('index/index/tradingRules')}">交易规则</a></li>
+				    <li class="home{if condition="$Request.controller eq 'Index' and $Request.action eq 'index'"} am-active{/if}"><a href="/" title="模拟炒股首页">首页</a></li>
+				    <li class="{if condition="$Request.controller eq 'Index' and $Request.action eq 'matchlist'"} am-active{/if}"><a href="{:url('index/index/matchList')}">模拟赛场</a></li>
+				    <li class="{if condition="$Request.controller eq 'Index' and $Request.action eq 'rankinglist'"} am-active{/if}"><a href="{:url('index/index/rankingList')}">牛人排行榜</a></li>
+				    <li class="{if condition="$Request.controller eq 'Index' and $Request.action eq 'tradecenter'"} am-active{/if}"><a href="{:url('index/index/tradeCenter')}">交易中心</a></li>
+				    <li class="{if condition="$Request.controller eq 'Index' and $Request.action eq 'tradingrules'"} am-active{/if}"><a href="{:url('index/index/tradingRules')}">交易规则</a></li>
 				</ul>
 				</div>
 			</div>
