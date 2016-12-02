@@ -12,20 +12,32 @@ use app\common\model\Rank as RankModel;
 */
 class Rank extends Base
 {
+	protected $_base;
+    public function __construct(){
+        $this->_base = new Base();
+    }
 	/**
-	 * [getTotalProfit 总盈利率牛人排行榜]
+	 * [getRankList 牛人排行榜]
 	 * @return [json] [返回获取数据的json]
 	 */
 	public function getRankList(){
-		//这里的分页 limit 在model 里面
 		$data = input('get.');
 		$res = $this->validate($data,'Rank');
 		if (true !== $res) {
             return json(['status'=>'failed','data'=>$res]);
         }
-		// $data['p'] = isset($data['p']) ? $data['p'] > 0 ? $data['p'] : 1 : 1 ;
-		$rank = new RankModel();
-		$rankList = $rank->getTotalProfitRank($data['condition']);
+        $limit = isset($data['limit']) ? ($data['limit'] <= 100) ? $data['limit'] : 100 : 100; 
+		$data['p'] = isset($data['p']) ? $data['p'] > 0 ? $data['p'] : 1 : 1 ;
+		//兼容以前的接口地址
+		$tmp = [
+			'total_rate' => 'total_profit_rank',
+			'success_rate' => 'success_rank',
+			'week_avg_profit_rate' => 'week_avg_rank'
+		];
+		$rankList = Userfunds::order("{$tmp[$data['condition']]} asc")->limit(($data['p']-1)*$limit,$limit)->Field("uid,total_rate,success_rate,avg_position_day,week_avg_profit_rate,round((funds-available_funds)/funds*100,2) as position,{$tmp[$data['condition']]} as rownum")->select();
+		foreach ($rankList as $key => $value) {
+			$value->append(['username']);
+		}
 		if($rankList){
 			$result = json(['status'=>'success','data'=>$rankList]);
 		}else{
