@@ -11,6 +11,7 @@ use app\common\model\UserPosition;
 use app\common\model\UserFunds;
 use app\common\model\Rank;
 use app\common\model\AutoUpdate;
+use app\common\model\WeeklyRatio;
 
 class Index extends Controller
 {
@@ -113,7 +114,6 @@ class Index extends Controller
                     $userInfo[$key] = $value->toArray();
                     //把某一个用户的市值统计出来
                     $userTotal[$value['uid']][] = $value['number'] * $stockTmp[$value['stock']][1];
-
                 }
                 //更新现在的持仓比例,最新资产
                 $userPosition->saveAll($userInfo);
@@ -141,6 +141,115 @@ class Index extends Controller
         }
     }
 
+    /**
+     * [autoSuccessRate 自动更新胜率]
+     * @return [type] [description]
+     */
+    public function autoSuccessRate(){
+        // 启动事务
+        Db::startTrans();
+        try {
+            UserPosition::group('uid')->Field('id,uid')->chunk(500,function($list){
+                $userPosition = new UserPosition;
+                $userGather = '';
+                foreach ($list as $key => $value) {
+                    $userGather .= $value['uid'].',';
+                }
+                $userGather = substr($userGather,0,-1);
+                //获取持仓的集合
+                $userInfo = $userPosition->where(['uid'=>['in',$userGather]])->Field('id,uid,ratio')->select();
+                //计算选股成功率
+                foreach ($userInfo as $key => $value) {
+                    $winRate[$value['uid']][] = $value['ratio'];
+                }
+                $userFunds = new userFunds;
+                $funds = $userFunds->where(['uid'=>['in',$userGather]])->Field('id,uid,success_rate')->select();
+                foreach ($funds as $key => $value) {
+                    $tmp = 0;
+                    for ($i=0; $i < count($winRate[$value['uid']]); $i++) { 
+                        if($winRate[$value['uid']][$i] > 0 ){
+                            $tmp += 1;
+                        }
+                    }
+                    $funds[$key]['success_rate'] = round($tmp/count($winRate[$value['uid']])*100,3);
+                    $funds[$key] = $value->toArray();
+                }
+                //更新选股成功率
+                $userFunds->saveAll($funds);
+            });
+            Db::commit();
+            return json(['status'=>'success','data'=> '更新成功']);
+        } catch (\Exception $e) {
+            Db::rollback();
+            return json(['status'=>'failed','data'=> $e]);
+        }
+    }
+
+    /**
+     * [autoWeekRatio 自动添加和更新周赛数据]
+     * @return [type] [description]
+     */
+    public function autoWeekRatio(){
+        //获取一周的时间
+        $week = date('w');
+        if($week == 6 || $week == 0) return json(['status'=>'failed','data'=> '周末不能操作']);
+        // 启动事务
+        Db::startTrans();
+        try {
+            $weekInfo = WeeklyRatio::whereTime('time','week')->find();
+            if($weekInfo){
+                WeeklyRatio::whereTime('time','week')->Field('id,uid,initialCapital')->chunk(500,function($list){
+                    $userGather = '';
+                    foreach ($list as $key => $value) {
+                        $userGather .= $value['uid'].',';
+                    }
+                    $userGather = substr($userGather,0,-1);
+                    $funds = userFunds::where(['uid'=>['in',$userGather]])->Field('id,uid,funds')->select();
+                    
+                    foreach ($list as $key => $value) {
+                        $value['endFunds'] = $funds[$key]['funds'];
+                        $value['proportion'] = round(($value['endFunds'] - $value['initialCapital'])/$value['initialCapital'] * 100 , 8);
+
+                        $list[$key] = $value->toArray();
+                    }
+                    $weeklyRatio = new WeeklyRatio;
+                    $weeklyRatio->allowField(true)->saveAll($list);
+                });
+                Db::commit();
+                return json(['status'=>'success','data'=> '更新成功']);
+            }else{
+                if($week != 1){
+                    return json(['status'=>'failed','data'=> '周一才能创建比赛']);
+                }
+                UserPosition::group('uid')->Field('id,uid')->chunk(500,function($list){
+                    $userGather = '';
+                    foreach ($list as $key => $value) {
+                        $userGather .= $value['uid'].',';
+                    }
+                    $userGather = substr($userGather,0,-1);
+                    $funds = userFunds::where(['uid'=>['in',$userGather]])->Field('id,uid,funds')->select();
+                    $weekInfo = WeeklyRatio::whereTime('time','last week')->find();
+                    foreach ($funds as $key => $value) {
+                        $value['initialCapital'] = $value['funds'];
+                        $value['endFunds'] = $value['initialCapital'];
+                        $value['periods'] = $weekInfo['periods'] + 1;
+                        $value['proportion'] = round(($value['endFunds'] - $value['initialCapital'])/$value['initialCapital'] * 100 , 8);
+                        $value['time'] = date('Y-m-d H:i:s',time());
+                        unset($value['id']);
+                        unset($value['funds']);
+                        $funds[$key] = $value->toArray();
+                    }
+                    $weeklyRatio = new WeeklyRatio;
+                    $weeklyRatio->allowField(true)->saveAll($funds); 
+                });
+                Db::commit();
+                return json(['status'=>'success','data'=> '新增成功']);
+            }
+        } catch (\Exception $e) {
+            Db::rollback();
+            return json(['status'=>'failed','data'=> $e]);
+        }    
+    }
 
     // /**
     //  * [updateTime 更新时间]

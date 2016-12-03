@@ -504,7 +504,7 @@ class Index extends Base
                 if(count($buyInfo) == 1){
                     $costTotal = $buyInfo[0]['price'] * $buyInfo[0]['number'] + $buyInfo[0]['fee'];
                     $totalNum = $buyInfo[0]['number'];
-                }else{
+                }else if(count($buyInfo) >= 2){
                     foreach ($buyInfo as $key => $value) {
                         $tmpTotal[] = $value['price'] * $value['number'] + $value['fee'];
                         $tmpNum[] = $value['number'];
@@ -514,7 +514,7 @@ class Index extends Base
                 }
                 if(count($sellInfo) == 1){
                     $profits = $data['price'] * $sellInfo[0]['number'] - $sellInfo[0]['fee'];
-                }else{
+                }else if(count($sellInfo) >= 2){
                     foreach ($sellInfo as $key => $value) {
                         $tmp[] = $data['price'] * $value['number'] - $value['fee'];
                     }
@@ -527,6 +527,7 @@ class Index extends Base
                 $da['cost_price'] = round($da['cost'] / $totalNum,8);
                 $da['ratio'] = round(($da['assets'] - $da['cost'])/$da['cost']*100,8);
                 $da['delete_time'] = time();
+
                 //添加订单到数据库
                 UserPosition::where(['id'=>$userInfo['id']])->update($da);
                 $data['pid'] = $userInfo['id'];
