@@ -36,7 +36,7 @@ class Index extends Controller
      * @return [boolean] [布尔值]
      */
     public function autoUpdateFrozen(){
-        $updateTime = strtotime(date("Y-m-d 00:00:00",strtotime('+1 day')));
+        $updateTime = strtotime(date("Y-m-d 00:00:00",time()));
         if(time() - $updateTime < 3600 && time() - $updateTime > 0 ){
             $sql = "SELECT id,(available_number + freeze_number) as available_number, (freeze_number=0) as freeze_number FROM `sjq_users_position` WHERE `is_position` = 1 AND ( `freeze_number` >0 )";
             $availableInfo = Db::query($sql);
@@ -140,6 +140,8 @@ class Index extends Controller
             return json(['status'=>'failed','data'=> $e]);
         }
     }
+
+
     // /**
     //  * [updateTime 更新时间]
     //  * @return [type] [description]

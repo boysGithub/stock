@@ -526,6 +526,7 @@ class Index extends Base
                 $da['cost'] = $costTotal;
                 $da['cost_price'] = round($da['cost'] / $totalNum,8);
                 $da['ratio'] = round(($da['assets'] - $da['cost'])/$da['cost']*100,8);
+                $da['delete_time'] = time();
                 //添加订单到数据库
                 UserPosition::where(['id'=>$userInfo['id']])->update($da);
                 $data['pid'] = $userInfo['id'];

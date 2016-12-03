@@ -10,15 +10,7 @@
 // +----------------------------------------------------------------------
 
 // [ 应用入口文件 ]
-// ini_set('session.cookie_path', '/');
-// ini_set("session.cookie_domain", 'sjqcj.com');
-// ini_set('session.cookie_lifetime', '1800');
-// session_start();
-// print_r($_COOKIE);
-// print_r($_SESSION);
-// exit;
 // 定义应用目录
-//phpinfo();exit;
 define('APP_PATH', __DIR__ . '/../application/');
 // 加载框架引导文件
 require __DIR__ . '/../thinkphp/start.php';

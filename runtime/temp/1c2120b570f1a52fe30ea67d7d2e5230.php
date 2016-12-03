@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:4:{s:84:"/Users/ducong/nginxroot/stock/public/../application/index/view/rank/RankingList.html";i:1479803447;s:72:"/Users/ducong/nginxroot/stock/public/../application/index/view/base.html";i:1479455582;s:81:"/Users/ducong/nginxroot/stock/public/../application/index/view/public/header.html";i:1479798992;s:81:"/Users/ducong/nginxroot/stock/public/../application/index/view/public/footer.html";i:1479187842;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:4:{s:84:"/Users/ducong/nginxroot/stock/public/../application/index/view/rank/RankingList.html";i:1479805602;s:72:"/Users/ducong/nginxroot/stock/public/../application/index/view/base.html";i:1480646252;s:81:"/Users/ducong/nginxroot/stock/public/../application/index/view/public/header.html";i:1480644725;s:81:"/Users/ducong/nginxroot/stock/public/../application/index/view/public/footer.html";i:1480644253;}*/ ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,8 +10,8 @@
 <title>列表</title>
 
 <!-- Amaze ui -->
-<link rel="stylesheet" href="/static/amaze/css/amazeui.min.css">
-<link rel="stylesheet" href="/static/amaze/css/app.css">
+<link rel="stylesheet" href="/static/css/public/amazeui.min.css">
+<link rel="stylesheet" href="/static/css/public/app.css">
 
 
 <link rel="stylesheet" type="text/css" href="/static/amaze/css/pagination.css" />
@@ -30,26 +30,27 @@
 .tr-table-ranking .tr-icon-3th{background-position: 3px -66px;}
 </style>
 
+
 </head>
 <body>
-<header class="am-topbar am-topbar-fixed-top">
+<header class="am-topbar am-topbar-fixed-top" id="header">
 	<div class="am-g tr-login-topbar">
 		<div class="am-container">
 			<div class="am-u-sm-12">
 				<div class="am-nav am-nav-pills am-topbar-nav am-fl">
-					<a href="http://www.sjqcj.com/" target="_blank" title="水晶球网">水晶球首页</a>&nbsp;|&nbsp;<a href="http://www.baidu.com" target="_blank">CCC</a>
+					欢迎来到水晶球！
 				</div>
 				<div class="am-topbar-right am-fr">
-					<?php if(false): ?>
-						欢迎来到模拟炒股，请&nbsp;
-						<a href="<?php echo url('stocks/member/login'); ?>" title="登录" class="topbar-login">登录</a>
-						&nbsp;|&nbsp;
-						<a href="<?php echo url('stocks/member/register'); ?>" title="注册" class="topbar-register">注册</a>
-					<?php else: ?>
+					<template v-if="logined">
 						您好，
 						<a href="<?php echo url('stocks/member/index'); ?>" title="个人中心" class="topbar-login">username</a>
 						<a href="<?php echo url('stocks/member/loginout'); ?>" title="退出" class="topbar-out">退出</a>
-					<?php endif; ?>
+					</template>	
+					<template v-else>
+						<a href="<?php echo url('index/index/login'); ?>" title="登录" class="topbar-login">登录</a>
+						&nbsp;|&nbsp;
+						<a href="<?php echo url('stocks/member/register'); ?>" title="注册" class="topbar-register">注册</a>
+					</template>
 				</div>
 			</div>
 		</div>
@@ -63,10 +64,11 @@
 			<div class="am-collapse am-topbar-collapse tr-menu-nav" id="tr-header-nav">
 				<div class="tr-menu-nav-item">
 				<ul class="am-nav am-nav-pills am-topbar-nav">
-				    <li class="home<?php if(\think\Request::instance()->controller() == 'index' and \think\Request::instance()->action() == 'index'): ?> am-active<?php endif; ?>"><a href="/" title="模拟炒股首页">首页</a></li>
-				    <li class="<?php if(\think\Request::instance()->controller() == 'index' and \think\Request::instance()->action() == 'matchList'): ?> am-active<?php endif; ?>"><a href="<?php echo url('index/index/matchList'); ?>">模拟赛场</a></li>
-				    <li class="<?php if(\think\Request::instance()->controller() == 'index' and \think\Request::instance()->action() == 'rankingList'): ?> am-active<?php endif; ?>"><a href="<?php echo url('index/index/rankingList'); ?>">牛人排行榜</a></li>
-				    <li class="<?php if(\think\Request::instance()->controller() == 'index' and \think\Request::instance()->action() == 'index'): ?> am-active<?php endif; ?>"><a href="<?php echo url('index/index/tradingRules'); ?>">交易规则</a></li>
+				    <li class="home<?php if(\think\Request::instance()->controller() == 'Index' and \think\Request::instance()->action() == 'index'): ?> am-active<?php endif; ?>"><a href="/" title="模拟炒股首页">首页</a></li>
+				    <li class="<?php if(\think\Request::instance()->controller() == 'Index' and \think\Request::instance()->action() == 'matchlist'): ?> am-active<?php endif; ?>"><a href="<?php echo url('index/index/matchList'); ?>">模拟赛场</a></li>
+				    <li class="<?php if(\think\Request::instance()->controller() == 'Index' and \think\Request::instance()->action() == 'rankinglist'): ?> am-active<?php endif; ?>"><a href="<?php echo url('index/index/rankingList'); ?>">牛人排行榜</a></li>
+				    <li class="<?php if(\think\Request::instance()->controller() == 'Index' and \think\Request::instance()->action() == 'tradecenter'): ?> am-active<?php endif; ?>"><a href="<?php echo url('index/index/tradeCenter'); ?>">交易中心</a></li>
+				    <li class="<?php if(\think\Request::instance()->controller() == 'Index' and \think\Request::instance()->action() == 'tradingrules'): ?> am-active<?php endif; ?>"><a href="<?php echo url('index/index/tradingRules'); ?>">交易规则</a></li>
 				</ul>
 				</div>
 			</div>
@@ -520,20 +522,18 @@
 </div>
 
 <footer>
-	<br>
-	<hr >
-	<br>
-	<div class="am-g am-text-center">
+	<div class="am-g am-text-center tr-copy">
 		&copy;2016 成都水晶球股份有限公司  All rights reserved.
 	</div>
-	<br>
 </footer>
 
 <!--[if (gte IE 9)|!(IE)]><!-->
-<script src="/static/amaze/js/jquery.min.js"></script>
+<script src="/static/js/public/jquery.min.js"></script>
 <!--<![endif]-->
-<script src="/static/amaze/js/amazeui.min.js"></script>
-<script src="/static/js/vue.js"></script>
+<script src="/static/js/public/amazeui.min.js"></script>
+<script src="/static/js/public/vue.js"></script>
+
+<script src="/static/js/public/common.js"></script>
 
 
 
