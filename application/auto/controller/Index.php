@@ -14,6 +14,8 @@ use app\common\model\AutoUpdate;
 use app\common\model\WeeklyRatio;
 use app\order\controller\Index as OrderIndex;
 use app\common\model\Transaction;
+use app\common\model\DaysRatio;
+use app\common\model\MonthRatio;
 
 class Index extends Controller
 {
@@ -29,23 +31,20 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoTrans(){
-        $button = true;
-        $time1 = strtotime(date("Y-m-d 9:30:00"));
-        $time2 = strtotime(date("Y-m-d 11:30:00"));
-        $time3 = strtotime(date("Y-m-d 13:00:00"));
-        $time4 = strtotime(date("Y-m-d 15:00:00"));
-        dump($time1);
-        dump($time2);
-        dump($time3);
-        dump($time4);
-        exit;
-        $data['column'] = "自动交易的方法";
-        $data['sorts'] = 1;
-        $data['is_update'] = 1;
-        AutoUpdate::create($data);
+        // $button = true;
+        // $time1 = strtotime(date("Y-m-d 9:30:00"));
+        // $time2 = strtotime(date("Y-m-d 11:30:00"));
+        // $time3 = strtotime(date("Y-m-d 13:00:00"));
+        // $time4 = strtotime(date("Y-m-d 15:00:00"));
+        // dump($time1);
+        // dump($time2);
+        // dump($time3);
+        // dump($time4);
+        // exit;
         $redis = new Redis();
         $buyKeys = $redis->keys("*noBuyOrder*");
         $sellKeys = $redis->keys("*noSellOrder*");
+        //卖出操作
         if($buyKeys){
             for ($i=0; $i < count($buyKeys); $i++) { 
                 $tmpBuy = $redis->get($buyKeys[$i]);
@@ -60,10 +59,11 @@ class Index extends Controller
                     $funds = UserFunds::where(['uid'=>$value['uid']])->find();
                     $orderIndex->buyProcess($value,$stockInfo,$funds,true);
                     $redis->rm($key);
+                    $this->handle($value['stock_name']."买入成功;成交价:".$stockInfo[$value['stock']][1],1);
                 }
             }
         }
-
+        //卖出操作
         if($sellKeys){
             for ($i=0; $i < count($sellKeys); $i++) { 
                 $tmpSell = $redis->get($sellKeys[$i]);
@@ -77,6 +77,7 @@ class Index extends Controller
                     $funds = UserFunds::where(['uid'=>$value['uid']])->find();
                     $orderIndex->sellProcess($value,$stockInfo,$funds,true);
                     $redis->rm($key);
+                    $this->handle($value['stock_name']."卖出成功;成交价:".$stockInfo[$value['stock']][1],1);
                 }
             }
         }
@@ -87,10 +88,6 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoClearOrder(){
-        $data['column'] = "自动清空未成交订单";
-        $data['sorts'] = 1;
-        $data['is_update'] = 1;
-        AutoUpdate::create($data);
         $redis = new Redis();
         $orderInfo = Transaction::whereTime('time','today')->where('status',0)->select();
         foreach ($orderInfo as $key => $value) {
@@ -109,26 +106,19 @@ class Index extends Controller
                     UserPosition::where(['id'=>$position['id']])->update($da);
                 }
                 Db::commit();
-
-                $result = json(['status'=>'success','data'=>'撤单成功']);
+                $this->handle("自动清空未成交订单成功".$value['id'],1);
             } catch (\Exception $e){
                 Db::rollback();
-                $result = json(['status'=>'failed','data'=>'撤单失败']);
+                $this->handle("自动清空未成交订单失败".$value['id'],0);
             }
         }
     }
-
-
 
     /**
      * [autoUpdateFrozen 自动更新冻结数量]
      * @return [boolean] [布尔值]
      */
     public function autoUpdateFrozen(){
-        $data['column'] = "自动更新冻结数量";
-        $data['sorts'] = 1;
-        $data['is_update'] = 1;
-        AutoUpdate::create($data);
         $updateTime = strtotime(date("Y-m-d 00:00:00",time()));
         if(time() - $updateTime < 3600 && time() - $updateTime > 0 ){
             $sql = "SELECT id,(available_number + freeze_number) as available_number, (freeze_number=0) as freeze_number FROM `sjq_users_position` WHERE `is_position` = 1 AND ( `freeze_number` >0 )";
@@ -136,15 +126,15 @@ class Index extends Controller
             if($availableInfo){
                 $userPosition = new UserPosition;
                 if($result = $userPosition->saveAll($availableInfo)){
-                    return json(['status'=>'success','data'=> '更新成功']);
+                    $this->handle("解冻冻结股票数量成功",1);
                 }else{
-                    return json(['status'=>'failed','data'=> '更新失败']);
+                    $this->handle("解冻冻结股票数量成功",0);
                 }
             }else{
                 return json(['status'=>'failed','data'=> '没有可以更新的数据']);
             }
         }else{
-            return json(['status'=>'failed','data'=> '现在的时间不能更新']);
+            exit("非法请求");
         }
           
     }
@@ -160,15 +150,11 @@ class Index extends Controller
         if (true !== $result) {
             return json(['status'=>'failed','data'=>$result]);
         }
-        $da['column'] = "自动更新".$data['condition'];
-        $da['sorts'] = 1;
-        $da['is_update'] = 1;
-        AutoUpdate::create($da);
         $rank = new Rank;
         if($rank->updateRank($data['condition'],$data['sorts'],$data['rankFiled']) === TRUE){
-            return json(['status'=>'success','data'=> '更新成功']);
+            $this->handle("自动更新".$data['condition']."成功",1);
         }else{
-            return json(['status'=>'failed','data'=> '更新成功']);
+            $this->handle("自动更新".$data['condition']."失败",0);
         }
     }
 
@@ -177,10 +163,6 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoCalcGrossProfitRate(){
-        $data['column'] = "自动更新总资产和盈利率";
-        $data['sorts'] = 1;
-        $data['is_update'] = 1;
-        AutoUpdate::create($data);
         // 启动事务
         Db::startTrans();
         try {
@@ -242,12 +224,12 @@ class Index extends Controller
                 }       
                 //更新总资产，总盈利率
                 $userFunds->saveAll($funds);
+                Db::commit();
+                $this->handle("自动更新总资产和盈利率成功",1);
             });
-            Db::commit();
-            return json(['status'=>'success','data'=> '更新成功']);
         } catch (\Exception $e) {
             Db::rollback();
-            return json(['status'=>'failed','data'=> '更新失败']);
+            $this->handle("自动更新总资产和盈利率失败",0);
         }
     }
 
@@ -256,10 +238,6 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoSuccessRate(){
-        $data['column'] = "自动更新胜率";
-        $data['sorts'] = 1;
-        $data['is_update'] = 1;
-        AutoUpdate::create($data);
         // 启动事务
         Db::startTrans();
         try {
@@ -290,17 +268,51 @@ class Index extends Controller
                 }
                 //更新选股成功率
                 $userFunds->saveAll($funds);
+                Db::commit();
+                $this->handle("自动更新胜率成功",1);
             });
-            Db::commit();
-            return json(['status'=>'success','data'=> '更新成功']);
         } catch (\Exception $e) {
             Db::rollback();
-            return json(['status'=>'failed','data'=> $e]);
+            $this->handle("自动更新胜率失败",0);
         }
     }
 
     /**
-     * [autoWeekRatio 自动添加和更新周盈利率]
+     * [autoDayRatio 自动更新日盈利率]
+     * @return [type] [description]
+     */
+    public function autoDayRatio(){
+        //获取一周的时间
+        $week = date('w');
+        if($week == 6 || $week == 0) return json(['status'=>'failed','data'=> '周末不能操作']);
+        // 启动事务
+        Db::startTrans();
+        try {
+            DaysRatio::whereTime('time','today')->Field('id,uid,initialCapital')->chunk(500,function($list,$i){
+                $userGather = '';
+                foreach ($list as $key => $value) {
+                    $userGather .= $value['uid'].',';
+                }
+                $userGather = substr($userGather,0,-1);
+                $funds = userFunds::where(['uid'=>['in',$userGather]])->Field('id,uid,funds')->select();
+                foreach ($list as $key => $value) {
+                    $value['endFunds'] = $funds[$key]['funds'];
+                    $value['proportion'] = round(($value['endFunds'] - $value['initialCapital'])/$value['initialCapital'] * 100 , 8);
+                    $list[$key] = $value->toArray();
+                }
+                $weeklyRatio = new DaysRatio;
+                $weeklyRatio->allowField(true)->saveAll($list);
+                Db::commit();
+                $this->handle("自动更新日盈利率成功",1);
+            });
+        } catch (\Exception $e) {
+            Db::rollback();
+            $this->handle("自动更新日盈利率失败",0);
+        }    
+    }
+
+    /**
+     * [autoWeekRatio 自动更新周盈利率]
      * @return [type] [description]
      */
     public function autoWeekRatio(){
@@ -310,59 +322,174 @@ class Index extends Controller
         // 启动事务
         Db::startTrans();
         try {
-            $weekInfo = WeeklyRatio::whereTime('time','week')->find();
-            if($weekInfo){
-                WeeklyRatio::whereTime('time','week')->Field('id,uid,initialCapital')->chunk(500,function($list){
-                    $userGather = '';
-                    foreach ($list as $key => $value) {
-                        $userGather .= $value['uid'].',';
-                    }
-                    $userGather = substr($userGather,0,-1);
-                    $funds = userFunds::where(['uid'=>['in',$userGather]])->Field('id,uid,funds')->select();
-                    
-                    foreach ($list as $key => $value) {
-                        $value['endFunds'] = $funds[$key]['funds'];
-                        $value['proportion'] = round(($value['endFunds'] - $value['initialCapital'])/$value['initialCapital'] * 100 , 8);
-
-                        $list[$key] = $value->toArray();
-                    }
-                    $weeklyRatio = new WeeklyRatio;
-                    $weeklyRatio->allowField(true)->saveAll($list);
-                });
-                Db::commit();
-                return json(['status'=>'success','data'=> '更新成功']);
-            }else{
-                if($week != 1){
-                    return json(['status'=>'failed','data'=> '周一才能创建比赛']);
+            WeeklyRatio::whereTime('time','week')->Field('id,uid,initialCapital')->chunk(500,function($list){
+                $userGather = '';
+                foreach ($list as $key => $value) {
+                    $userGather .= $value['uid'].',';
                 }
-                UserPosition::group('uid')->Field('id,uid')->chunk(500,function($list){
-                    $userGather = '';
-                    foreach ($list as $key => $value) {
-                        $userGather .= $value['uid'].',';
-                    }
-                    $userGather = substr($userGather,0,-1);
-                    $funds = userFunds::where(['uid'=>['in',$userGather]])->Field('id,uid,funds')->select();
-                    $weekInfo = WeeklyRatio::whereTime('time','last week')->find();
-                    foreach ($funds as $key => $value) {
-                        $value['initialCapital'] = $value['funds'];
-                        $value['endFunds'] = $value['initialCapital'];
-                        $value['periods'] = $weekInfo['periods'] + 1;
-                        $value['proportion'] = round(($value['endFunds'] - $value['initialCapital'])/$value['initialCapital'] * 100 , 8);
-                        $value['time'] = date('Y-m-d H:i:s',time());
-                        unset($value['id']);
-                        unset($value['funds']);
-                        $funds[$key] = $value->toArray();
-                    }
-                    $weeklyRatio = new WeeklyRatio;
-                    $weeklyRatio->allowField(true)->saveAll($funds); 
-                });
+                $userGather = substr($userGather,0,-1);
+                $funds = userFunds::where(['uid'=>['in',$userGather]])->Field('id,uid,funds')->select();
+                foreach ($list as $key => $value) {
+                    $value['endFunds'] = $funds[$key]['funds'];
+                    $value['proportion'] = round(($value['endFunds'] - $value['initialCapital'])/$value['initialCapital'] * 100 , 8);
+                    $list[$key] = $value->toArray();
+                }
+                $weeklyRatio = new WeeklyRatio;
+                $weeklyRatio->allowField(true)->saveAll($list);
+                ++$i;
                 Db::commit();
-                return json(['status'=>'success','data'=> '新增成功']);
-            }
+                $this->handle("自动更新周盈利率成功",1);
+            });
         } catch (\Exception $e) {
             Db::rollback();
-            return json(['status'=>'failed','data'=> $e]);
+            $this->handle("自动更新周盈利率失败",0);
         }    
+    }
+
+    /**
+     * [autoMonthRatio 自动更新月盈利率]
+     * @return [type] [description]
+     */
+    public function autoMonthRatio(){
+        //获取一周的时间
+        $week = date('w');
+        if($week == 6 || $week == 0) return json(['status'=>'failed','data'=> '周末不能操作']);
+        // 启动事务
+        Db::startTrans();
+        try {
+            MonthRatio::whereTime('time','month')->Field('id,uid,initialCapital')->chunk(500,function($list){
+                $userGather = '';
+                foreach ($list as $key => $value) {
+                    $userGather .= $value['uid'].',';
+                }
+                $userGather = substr($userGather,0,-1);
+                $funds = userFunds::where(['uid'=>['in',$userGather]])->Field('id,uid,funds')->select();
+                foreach ($list as $key => $value) {
+                    $value['endFunds'] = $funds[$key]['funds'];
+                    $value['proportion'] = round(($value['endFunds'] - $value['initialCapital'])/$value['initialCapital'] * 100 , 8);
+                    $list[$key] = $value->toArray();
+                }
+                $weeklyRatio = new MonthRatio;
+                $weeklyRatio->allowField(true)->saveAll($list);
+                ++$i;
+                Db::commit();
+                $this->handle("自动更新月盈利率成功",1);
+            });
+        } catch (\Exception $e) {
+            Db::rollback();
+            $this->handle("自动更新月盈利率失败",0);
+        }    
+    }
+
+    /**
+     * [autoAddWeek 自动添加日盈利率]
+     * @return [type] [description]
+     */
+    public function autoAddDay(){
+        $week = Date('w');
+        if($week == 0 || $week == 6){
+            exit("非法请求");
+        }
+        if(DaysRatio::whereTime('time','today')->value('id')){
+            $this->handle("添加日盈利率报警，请检查",2);
+        }else{
+            $user = new UserFunds;
+            $user->Field('id,uid,funds')->chunk(500,function($list){
+                // 启动事务
+                Db::startTrans();
+                try {
+                    $day = new DaysRatio;
+                    foreach ($list as $key => $value) {
+                        $data[$key]['uid'] = $value['uid'];
+                        $data[$key]['initialCapital'] = $value['funds'];
+                        $data[$key]['endFunds'] = $value['funds'];
+                        $data[$key]['proportion'] = 0;
+                        $data[$key]['time'] = date("Y-m-d H:i:s");
+                    }
+                    ++$i;
+                    $day->saveAll($data);
+                    Db::commit();
+                    $this->handle("自动添加日盈利率成功",1);
+                } catch (\Exception $e) {
+                    Db::rollback();
+                    $this->handle("自动添加日盈利率失败",0);
+                }
+            });
+        } 
+    }
+
+    /**
+     * [autoAddWeek 自动添加周赛]
+     * @return [type] [description]
+     */
+    public function autoAddWeek(){
+        $week = Date('w');
+        if($week != 1){
+            exit("非法请求");
+        }
+        if(WeeklyRatio::whereTime('time','week')->value('id')){
+            $this->handle("添加周盈利率报警，请检查",2);
+        }else{
+            $user = new UserFunds;
+            $user->Field('id,uid,funds')->chunk(500,function($list){
+                // 启动事务
+                Db::startTrans();
+                try {
+                    $day = new WeeklyRatio;
+                    foreach ($list as $key => $value) {
+                        $data[$key]['uid'] = $value['uid'];
+                        $data[$key]['initialCapital'] = $value['funds'];
+                        $data[$key]['endFunds'] = $value['funds'];
+                        $data[$key]['proportion'] = 0;
+                        $data[$key]['time'] = date("Y-m-d H:i:s");
+                    }
+                    ++$i;
+                    $day->saveAll($data);
+                    Db::commit();
+                    $this->handle("自动添加周盈利率成功",1);
+                } catch (\Exception $e) {
+                    Db::rollback();
+                    $this->handle("自动添加周盈利率失败",0);
+                }
+            }); 
+        }
+    }
+
+    /**
+     * [autoAddonth 自动添加月盈利率]
+     * @return [type] [description]
+     */
+    public function autoAddonth(){
+        $monthOne = date("d");
+        if($monthOne != 1){
+            exit("非法请求");
+        }
+        if(MonthRatio::whereTime('time','month')->value('id')){
+            $this->handle("添加月盈利率报警，请检查",2);
+        }else{ 
+            $user = new UserFunds;
+            $user->Field('id,uid,funds')->chunk(500,function($list){
+                // 启动事务
+                Db::startTrans();
+                try {
+                    $day = new MonthRatio;
+                    foreach ($list as $key => $value) {
+                        $data[$key]['uid'] = $value['uid'];
+                        $data[$key]['initialCapital'] = $value['funds'];
+                        $data[$key]['endFunds'] = $value['funds'];
+                        $data[$key]['proportion'] = 0;
+                        $data[$key]['time'] = date("Y-m-d H:i:s");
+                    }
+                    ++$i;
+                    $day->saveAll($data);
+                    Db::commit();
+                    $this->handle("自动添加月盈利率成功",1);
+                } catch (\Exception $e) {
+                    Db::rollback();
+                    $this->handle("自动添加月盈利率失败",0);
+                }
+            });
+        } 
     }
 
     /**
@@ -370,22 +497,40 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoBuildToken(){
-        $data['column'] = "自动更新token";
+        // 启动事务
+        Db::startTrans();
+        try {
+            $redis = new Redis;
+            //固定的token
+            $token = Config::has("stocktell.token") ? Config::get('stocktell.token') : '';
+            $randToken = getRandChar(10);
+            $sql = "UPDATE `ts_user` a,(select `uid`,`stock_token` from `ts_user`) obj set a.expired_token = obj.stock_token,a.stock_token=sha1(CONCAT('{$token}',obj.uid,'{$randToken}')) where a.uid=obj.uid";
+            Db::connect('sjq1')->query($sql);
+            $sql1 = "SELECT `uid`,`stock_token`,`expired_token` from `ts_user`";
+            $tokenInfo = Db::connect('sjq1')->query($sql1);
+            foreach ($tokenInfo as $key => $value) {
+                $tmp[$value['uid']]['stock_token'] = $value['stock_token'];
+                $tmp[$value['uid']]['expired_token'] = $value['expired_token'];
+            }
+            $redis->set('token',$tmp,3600);
+            Db::commit();
+            $this->handle("自动更新token成功",1);
+        } catch (\Exception $e) {
+            Db::rollback();
+            $this->handle("自动更新token失败",0);
+        }
+        
+    }
+
+    /**
+     * [handle 自动操作添加]
+     * @return [type] [description]
+     */
+    private function handle($da,$normal){
+        $data['column'] = $da;
         $data['sorts'] = 1;
         $data['is_update'] = 1;
+        $data['normal'] = $normal;
         AutoUpdate::create($data);
-        $redis = new Redis;
-        //固定的token
-        $token = Config::has("stocktell.token") ? Config::get('stocktell.token') : '';
-        $randToken = getRandChar(10);
-        $sql = "UPDATE `ts_user` a,(select `uid`,`stock_token` from `ts_user`) obj set a.expired_token = obj.stock_token,a.stock_token=sha1(CONCAT('{$token}',obj.uid,'{$randToken}')) where a.uid=obj.uid";
-        Db::connect('sjq1')->query($sql);
-        $sql1 = "SELECT `uid`,`stock_token`,`expired_token` from `ts_user`";
-        $tokenInfo = Db::connect('sjq1')->query($sql1);
-        foreach ($tokenInfo as $key => $value) {
-            $tmp[$value['uid']]['stock_token'] = $value['stock_token'];
-            $tmp[$value['uid']]['expired_token'] = $value['expired_token'];
-        }
-        $redis->set('token',$tmp,3600);
-    }
+    } 
 }
