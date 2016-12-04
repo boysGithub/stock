@@ -1,11 +1,11 @@
 <?php 
 namespace app\index\controller;
 
-use app\index\controller\Base;
+use think\Controller;
 /**
 * 首页的控制器
 */
-class Index extends Base
+class Index extends Controller
 {
 	public function index(){
 		return $this->fetch();
