@@ -15,6 +15,7 @@ class Base extends Controller
 	public $_limit = 20; //显示的条数
 	public $_stockFunds = 1000000; //股票账户初始金额
 	public $_scale = 0.0003; //股票手续费
+    public $_sorts = 1;
     public function _initialize()
     {
     	$data = input('get.');
@@ -36,7 +37,7 @@ class Base extends Controller
         		$sql = "UPDATE `ts_user` a,(select uid from `ts_user`) obj set a.stock_token=sha1(concat('{$token}',obj.uid,'{$randToken}')) where a.uid=obj.uid";
         		Db::connect('sjq1')->query($sql);
         		Db::commit();
-        		$redis->set('rand_token',$randToken,30);
+        		$redis->set('rand_token',$randToken,3600);
         	} catch (\Exception $e) {
         		Db::rollback();
         		exit(JN(['status'=>'failed','data'=>'token生成失败']));
