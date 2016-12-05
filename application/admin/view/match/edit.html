@@ -1,0 +1,95 @@
+{extend name="base" /}
+{block name="head"}
+<meta name="description" content="">
+<meta name="keywords" content="">
+<title>编辑比赛</title>
+{/block}
+{block name="css"}
+{/block}
+ <div class="am-g tpl-g">
+{block name="header"}{include file="public/header" /}{/block}
+{block name="left"}{include file="public/left" /}{/block}
+{block name="right"}<!-- 内容区域 -->
+<div class="tpl-content-wrapper">
+    <div class="container-fluid am-cf">
+        <div class="row">
+            <div class="am-u-sm-12 am-u-md-12 am-u-lg-9">
+                <div class="page-header-heading"><span class="am-icon-home page-header-heading-icon"></span> 编辑比赛 <small></small></div>
+                <p class="page-header-description"></p>
+            </div>
+        </div>
+    </div>
+    <div class="row-content am-cf">
+        <div class="row">
+            <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                <div class="widget am-cf">
+                    <div class="widget-head am-cf">
+                        <div class="widget-title am-fl"></div>
+                        <div class="widget-function am-fr">
+                            <a href="javascript:;" class="am-icon-cog"></a>
+                        </div>
+                    </div>
+                    <div class="widget-body am-fr">
+                        <form action="{:url('match/update')}" class="am-form tpl-form-border-form tpl-form-border-br" enctype="multipart/form-data" method="post">
+                            <input type="hidden" name="id" value="{$match.id}">
+                            <div class="am-form-group">
+                                <label for="name" class="am-u-sm-3 am-form-label">比赛名称<span class="tpl-form-line-small-title"></span></label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" name="name" class="tpl-form-input" id="name" value="{$match.name}" placeholder="请输入比赛名称">
+                                    <small></small>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="periods" class="am-u-sm-3 am-form-label">期数<span class="tpl-form-line-small-title"></span></label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" value="{$match.periods}" name="periods" class="tpl-form-input" id="periods" placeholder="请输入比赛名称">
+                                    <small></small>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="image" class="am-u-sm-3 am-form-label">比赛logo <span class="tpl-form-line-small-title"></span></label>
+                                <div class="am-u-sm-9">
+                                    <img src="{$match.image}" alt="logo">
+                                    <input type="file" id="image" name="image">
+                                    <small></small>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="type" class="am-u-sm-3 am-form-label">比赛类型<span class="tpl-form-line-small-title"></span></label>
+                                <div class="am-u-sm-9">
+                                    <select name="type" data-am-selected="{}" id="type">
+                                    <option value="1"{eq name="$match.type" value="1"} selected="" {/eq}>周赛</option>
+                                    <option value="2"{eq name="$match.type" value="2"} selected="" {/eq}>月赛</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="start_date" class="am-u-sm-3 am-form-label">开始时间 <span class="tpl-form-line-small-title">Time</span></label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" value="{$match.start_date}" name="start_date" class="am-form-field tpl-form-no-bg" placeholder="开始时间" data-am-datepicker="" id="start_date" readonly="">
+                                    <small></small>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="end_date" class="am-u-sm-3 am-form-label">结束时间 <span class="tpl-form-line-small-title">Time</span></label>
+                                <div class="am-u-sm-9">
+                                    <input type="text" value="{$match.end_date}" name="end_date" id="end_date" class="am-form-field tpl-form-no-bg" placeholder="结束时间" data-am-datepicker="" readonly="">
+                                    <small></small>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <div class="am-u-sm-9 am-u-sm-push-3">
+                                    <button type="submit" class="am-btn am-btn-primary tpl-btn-bg-color-success ">提交</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>    
+    </div>
+</div>    
+{/block}
+</div>
+{block name="js"}
+{/block}

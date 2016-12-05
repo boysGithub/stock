@@ -2,16 +2,26 @@
 namespace app\admin\controller;
 
 use app\admin\controller\Base;
-use think\Db;
-
+use app\common\model\Advertisement as AdModel;
 
 /**
 * 广告管理
 */
 class Advertisement extends Base
 {
+	//轮播图
 	public function index(){
-		$advertisement = Db::name('advertisement')->select();
+		$advertisement = AdModel::where(['type'=>1])->select();
+
+		$this->assign('ads', $advertisement);
+
+		return $this->fetch();
+	}
+
+	//公告
+	public function announcement()
+	{
+		$advertisement = AdModel::where(['type'=>2])->select();
 
 		$this->assign('ads', $advertisement);
 
@@ -20,27 +30,22 @@ class Advertisement extends Base
 
 	public function save_add()
 	{
-		$file = request()->file('image');
-	    // 移动到框架应用根目录/public/uploads/ 目录下
-	    $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads');
-		if($info === false){
-			$this->error('上传图片失败');
-	        // 成功上传后 获取上传信息
-	        // 输出 jpg
-	        echo $info->getExtension();
-	        // 输出 20160820/42a79759f284b767dfcb2a0197904287.jpg
-	        echo $info->getSaveName();
-	        // 输出 42a79759f284b767dfcb2a0197904287.jpg
-	        echo $info->getFilename(); 
-	    }
-
-	    $image = '/uploads/'.$info->getSaveName();
 		$data = [
-			'image' => $image,
 			'url' => trim(input('post.url')),
+			'enabled' => input('post.enabled', 0),
+			'type' => input('post.type', 1),
+			'title' => input('post.title', '')
 		];
+
+		$file = request()->file('image');
+		if(!empty($file)){
+	    	$info = $file->move(ROOT_PATH . 'public' . DS . 'uploads' . DS . 'ad');
+	    	if($info){
+	    		$data['image'] = '/uploads/ad/'.$info->getSaveName();
+	    	}
+		}
 		
-		if(Db::name('advertisement')->insert($data) === false){
+		if(AdModel::create($data) === false){
 			$this->error('添加失败');
 		} else {
 			$this->success('添加成功');
@@ -49,11 +54,42 @@ class Advertisement extends Base
 
 	public function save_edit()
 	{
+		$data = input('post.');
+		if(empty($data['id'])){
+			$this->error('参数错误');
+		}
+		
+		$s_data['url'] = trim($data['url']);
+		$s_data['enabled'] = $data['enabled'];
+		isset($data['title']) && $s_data['title'] = trim($s_data['title']);
 
+		$file = request()->file('image');
+		if(!empty($file)){
+	    	$info = $file->move(ROOT_PATH . 'public' . DS . 'uploads' . DS . 'ad');
+	    	if($info){
+	    		$s_data['image'] = '/uploads/ad/'.$info->getSaveName();
+	    	}
+		}
+		
+		if(AdModel::update($s_data,['id'=>intval($data['id'])]) === false){
+			$this->error('修改失败');
+		} else {
+			$this->success('修改成功');
+		}
 	}
 
-	public function delete(){
-		
+	public function delete()
+	{
+		$id = intval(input('param.id'));
+		if(empty($id)){
+			$this->error('参数错误');
+		}
+
+		if(AdModel::where(['id'=>$id])->delete()){
+			$this->success('删除成功');
+		} else {
+			$this->error('删除失败');
+		}
 	}
 }
 ?>

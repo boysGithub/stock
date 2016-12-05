@@ -17,6 +17,7 @@ Route::get('rank/:method','user/rank/:method');
 Route::get('share/:method','order/share/:method');
 Route::get('user/:method','user/index/:method');
 Route::get('match/:method','user/match/:method');
+Route::get('ad','user/ad/index');
 Route::post('user/:method','user/index/:method');
 Route::post('match/:method','user/match/:method');
 //Route::resource('api/:version/:controller','api/:version.:controller');
