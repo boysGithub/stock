@@ -30,7 +30,7 @@ class Base extends Controller
             if(!UserFunds::where(['uid'=>$data['uid']])->value('id')){
                 $this->createStock($data['uid']);
             }else{
-                $redis->set('create_'.$uid,true);
+                $redis->set('create_'.$data['uid'],true);
             }
         }
         //固定的token
@@ -64,7 +64,6 @@ class Base extends Controller
         if(UserFunds::create($data)){
             $redis = new Redis;
             $redis->set('create_'.$uid,true);
-            return json(['status'=>'success','data'=>'准备开始交易吧']);
         }else{
             return json(['status'=>'failed','data'=>'创建账户失败']);
         } 
