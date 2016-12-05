@@ -288,7 +288,7 @@ class Index extends Controller
         // 启动事务
         Db::startTrans();
         try {
-            DaysRatio::whereTime('time','today')->Field('id,uid,initialCapital')->chunk(500,function($list,$i){
+            DaysRatio::whereTime('time','today')->Field('id,uid,initialCapital')->chunk(500,function($list){
                 $userGather = '';
                 foreach ($list as $key => $value) {
                     $userGather .= $value['uid'].',';
@@ -336,7 +336,6 @@ class Index extends Controller
                 }
                 $weeklyRatio = new WeeklyRatio;
                 $weeklyRatio->allowField(true)->saveAll($list);
-                ++$i;
                 Db::commit();
                 $this->handle("自动更新周盈利率成功",1);
             });
@@ -371,7 +370,6 @@ class Index extends Controller
                 }
                 $weeklyRatio = new MonthRatio;
                 $weeklyRatio->allowField(true)->saveAll($list);
-                ++$i;
                 Db::commit();
                 $this->handle("自动更新月盈利率成功",1);
             });
@@ -406,7 +404,6 @@ class Index extends Controller
                         $data[$key]['proportion'] = 0;
                         $data[$key]['time'] = date("Y-m-d H:i:s");
                     }
-                    ++$i;
                     $day->saveAll($data);
                     Db::commit();
                     $this->handle("自动添加日盈利率成功",1);
@@ -443,7 +440,6 @@ class Index extends Controller
                         $data[$key]['proportion'] = 0;
                         $data[$key]['time'] = date("Y-m-d H:i:s");
                     }
-                    ++$i;
                     $day->saveAll($data);
                     Db::commit();
                     $this->handle("自动添加周盈利率成功",1);
@@ -480,7 +476,6 @@ class Index extends Controller
                         $data[$key]['proportion'] = 0;
                         $data[$key]['time'] = date("Y-m-d H:i:s");
                     }
-                    ++$i;
                     $day->saveAll($data);
                     Db::commit();
                     $this->handle("自动添加月盈利率成功",1);
