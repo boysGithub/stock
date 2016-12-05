@@ -4,9 +4,9 @@ namespace app\auto\controller;
 
 use think\Controller;
 use think\Request;
-use think\cache\driver\Redis;
 use think\Db;
 use think\Config;
+use think\cache\driver\Redis;
 use app\common\model\UserPosition;
 use app\common\model\UserFunds;
 use app\common\model\Rank;
@@ -16,10 +16,10 @@ use app\common\model\WeeklyRatio;
 class Index extends Controller
 {
     public $_stockFunds = 1000000; //股票账户初始金额
-    public function __construct(){
-        $addr = $_SERVER['REMOTE_ADDR'];
-        if(!($addr=='127.0.0.1')) exit("非法请求");
-    }
+    // public function __construct(){
+    //     $addr = $_SERVER['REMOTE_ADDR'];
+    //     if(!($addr=='127.0.0.1')) exit("非法请求");
+    // }
 
     public function autoTrans(){
         $redis = new Redis();
@@ -251,7 +251,25 @@ class Index extends Controller
         }    
     }
 
-    
+    /**
+     * [autoBuildToken 自动生成token]
+     * @return [type] [description]
+     */
+    public function autoBuildToken(){
+        $redis = new Redis;
+        //固定的token
+        $token = Config::has("stocktell.token") ? Config::get('stocktell.token') : '';
+        $uid = input('get.uid');
+        $randToken = getRandChar(10);
+        $tmp = Db::connect('sjq1')->query("select `stock_token` from `ts_user` where uid = {$uid}");
+        $expired_token = $tmp[0]['stock_token'];
+        $redis->set('expired_token_'.$uid,$expired_token,3600);
+        $encrypt = sha1($token.$uid.$randToken);
+        $sql = "UPDATE `ts_user` a,(select `stock_token` from `ts_user` where uid = {$uid}) obj set a.expired_token = obj.stock_token,a.stock_token='{$encrypt}' where uid={$uid}";
+        $redis->set('rand_token_old_'.$uid,$redis->get('rand_token_'.$uid),3600);
+        $redis->set('rand_token_'.$uid,$randToken,3600);
+        Db::connect('sjq1')->query($sql);
+    }
     
     
     // /**

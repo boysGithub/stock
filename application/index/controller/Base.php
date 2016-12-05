@@ -28,23 +28,17 @@ class Base extends Controller
         //固定的token
     	$token = Config::has("stocktell.token") ? Config::get('stocktell.token') : '';
     	//随机token字符串
-        if($redis->has('rand_token')){
-        	$randToken = $redis->get('rand_token');
+        if($redis->has('rand_token_'.$data['uid'])){
+        	$randToken = $redis->get('rand_token_'.$data['uid']);
         }else{
-        	$randToken = getRandChar(10);
-        	Db::startTrans();
-        	try {
-        		$sql = "UPDATE `ts_user` a,(select uid from `ts_user`) obj set a.stock_token=sha1(concat('{$token}',obj.uid,'{$randToken}')) where a.uid=obj.uid";
-        		Db::connect('sjq1')->query($sql);
-        		Db::commit();
-        		$redis->set('rand_token',$randToken,3600);
-        	} catch (\Exception $e) {
-        		Db::rollback();
-        		exit(JN(['status'=>'failed','data'=>'token生成失败']));
-        	}
+        	exit(JN(['status'=>'failed','data'=>'token过期，请重新登录']));
         }
-    	if(sha1($token.$data['uid'].$randToken) != $data['token']){
-    		exit(JN(['status'=>'failed','data'=>'token过期，请重新登录']));
-    	}
+        if($redis->get('expired_token_'.$data['uid']) != ''){
+            if(sha1($token.$data['uid'].$randToken) != $data['token'] && $redis->get('expired_token_'.$data['uid']) != $data['token']){
+                exit(JN(['status'=>'failed','data'=>'token过期，请重新登录']));
+            }
+        }else{
+            if(sha1($token.$data['uid'].$randToken) != $data['token']) exit(JN(['status'=>'failed','data'=>'token过期，请重新登录']));
+        }
     }
 }
