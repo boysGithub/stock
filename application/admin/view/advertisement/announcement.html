@@ -2,7 +2,7 @@
 {block name="head"}
 <meta name="description" content="">
 <meta name="keywords" content="">
-<title>轮播图管理</title>
+<title>公告管理</title>
 {/block}
 {block name="css"}
 {/block}
@@ -17,7 +17,7 @@
             <div class="am-u-sm-12 am-u-md-12 am-u-lg-8">
                 <div class="widget am-cf">
                     <div class="widget-head am-cf">
-                        <div class="widget-title  am-cf">轮播图列表</div>
+                        <div class="widget-title am-cf">公告列表</div>
                     </div>
                     <div class="widget-body  am-fr">
                         <div class="am-u-sm-12 tpl-ad">
@@ -25,7 +25,7 @@
                             {volist name="ads" id="vo" mod="2"}
                                 <dl class="am-accordion-item{eq name="$i" value="1"} am-active{/eq}">
                                     <dt class="am-accordion-title">
-                                      {$vo.id}
+                                      {$vo.title}
                                       <div class="am-fr">{if condition="$vo.enabled"}启用{else /}停用{/if}</div>
                                     </dt>
                                     <dd class="am-accordion-bd am-collapse{eq name="$i" value="1"} am-in{/eq}">
@@ -33,10 +33,9 @@
                                         <form action="{:url('advertisement/save_edit')}" class="am-form tpl-form-border-form tpl-form-border-br" method="post" enctype="multipart/form-data">
                                             <input type="hidden" name="id" value="{$vo.id}" />
                                             <div class="am-form-group">
-                                                <label class="am-u-sm-3 am-form-label">图片<span class="tpl-form-line-small-title"></span></label>
+                                                <label class="am-u-sm-3 am-form-label">标题<span class="tpl-form-line-small-title"></span></label>
                                                 <div class="am-u-sm-9">
-                                                    <img src="{$vo.image}" alt="">
-                                                    <input type="file" name="image" /> <br> 
+                                                    <input type="text" value="{$vo.title}" name="url" class="am-form-field tpl-form-no-bg" placeholder="请输入标题">
                                                     <small></small>
                                                 </div>
                                             </div>
@@ -74,18 +73,18 @@
             <div class="am-u-sm-12 am-u-md-12 am-u-lg-4">
                 <div class="widget am-cf">
                     <div class="widget-head am-cf">
-                        <div class="widget-title am-fl">添加轮播图</div>
+                        <div class="widget-title am-fl">添加公告</div>
                         <div class="widget-function am-fr">
                             <a href="javascript:;" class="am-icon-cog"></a>
                         </div>
                     </div>
                     <div class="widget-body  widget-body-lg am-fr">
                     	<form action="{:url('advertisement/save_add')}" class="am-form tpl-form-border-form tpl-form-border-br" method="post" enctype="multipart/form-data">
-                            <input type="hidden" name="type" value="1">
+                            <input type="hidden" name="type" value="2">
                             <div class="am-form-group">
-                                <label class="am-u-sm-3 am-form-label">图片<span class="tpl-form-line-small-title"></span></label>
+                                <label class="am-u-sm-3 am-form-label">标题<span class="tpl-form-line-small-title"></span></label>
                                 <div class="am-u-sm-9">
-                                    <input type="file" name="image" /> <br> 
+                                    <input type="text" name="title" class="am-form-field tpl-form-no-bg" placeholder="请输入标题">
                                     <small></small>
                                 </div>
                             </div>
