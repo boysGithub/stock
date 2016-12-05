@@ -1,0 +1,94 @@
+{extend name="base" /}
+{block name="head"}
+<meta name="description" content="">
+<meta name="keywords" content="">
+<title>后台首页</title>
+{/block}
+{block name="css"}
+{/block}
+ <div class="am-g tpl-g">
+{block name="header"}{include file="public/header" /}{/block}
+{block name="left"}{include file="public/left" /}{/block}
+{block name="right"}
+<!-- 内容区域 -->
+<div class="tpl-content-wrapper">
+    <div class="row-content am-cf">
+        <div class="row">
+            <div class="am-u-sm-12 am-u-md-12 am-u-lg-9">
+                <div class="widget am-cf">
+                    <div class="widget-head am-cf">
+                        <div class="widget-title  am-cf">轮播图列表</div>
+                    </div>
+                    <div class="widget-body  am-fr">
+                        <div class="am-u-sm-12">
+                            <table width="100%" class="am-table am-table-compact am-table-striped tpl-table-black ">
+                                <thead>
+                                    <tr>
+                                        <th>图片</th>
+                                        <th>链接地址</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                	{if condition="!empty($ads)"}
+                                	{volist name="ads" id="vo" mod="2"}
+                                    <tr class="{eq name="mod" value="1"}gradeX{/eq}{eq name="mod" value="0"}even gradeC{/eq}">
+                                        <td>
+                                            <img src="{$vo.image}" class="tpl-table-line-img" alt="">
+                                        </td>
+                                        <td class="am-text-middle">{$vo.url}</td>
+                                        <td class="am-text-middle">
+                                            
+                                        </td>
+                                    </tr>
+                                    {/volist}
+									{else /}
+
+									{/if}
+                                    <!-- more data -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="am-u-sm-12 am-u-md-12 am-u-lg-3">
+                <div class="widget am-cf">
+                    <div class="widget-head am-cf">
+                        <div class="widget-title am-fl">添加轮播图</div>
+                        <div class="widget-function am-fr">
+                            <a href="javascript:;" class="am-icon-cog"></a>
+                        </div>
+                    </div>
+                    <div class="widget-body  widget-body-lg am-fr">
+                    	<form action="{:url('advertisement/save_add')}" class="am-form tpl-form-border-form tpl-form-border-br" method="post" enctype="multipart/form-data">
+                            <div class="am-form-group">
+                                <label for="user-name" class="am-u-sm-3 am-form-label">图片<span class="tpl-form-line-small-title"></span></label>
+                                <div class="am-u-sm-9">
+                                    <input type="file" name="image" /> <br> 
+                                    <small></small>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <label for="user-email" class="am-u-sm-3 am-form-label">链接地址<span class="tpl-form-line-small-title"></span></label>
+                                <div class="am-u-sm-9">
+                                    <input type="text"  name="url" class="am-form-field tpl-form-no-bg" placeholder="请输入链接地址">
+                                    <small></small>
+                                </div>
+                            </div>
+                            <div class="am-form-group">
+                                <div class="am-u-sm-9 am-u-sm-push-3">
+                                    <button type="submit" class="am-btn am-btn-primary tpl-btn-bg-color-success ">提交</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+</div>
+{block name="js"}
+{/block}
