@@ -6,4 +6,3 @@
 /application/command.php
 !.gitignore
 /runtime
-/public/uploads
