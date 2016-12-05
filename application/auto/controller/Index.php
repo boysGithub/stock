@@ -17,9 +17,9 @@ class Index extends Controller
 {
     public $_stockFunds = 1000000; //股票账户初始金额
     public function __construct(){
-        $addr = $_SERVER;
+        $addr = getIP();
         dump($addr);exit;
-        if(!($addr=='127.0.0.1')) exit("非法请求");
+        if(!($addr=='115.29.199.94')) exit("非法请求");
 
     }
 
