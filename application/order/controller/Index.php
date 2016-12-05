@@ -45,15 +45,13 @@ class Index extends Base
     public function save(Request $request)
     {
         $tell = Config::has('stocktell.transactiontime') ? Config::get('stocktell.transactiontime'): true;
-        
+        $data = $request->param();
+        //验证传递的参数
+        $result = $this->validate($data,'SaveOrder');
+        if (true !== $result) {
+            return json(['status'=>'failed','data'=>$result]);
+        }
         if($this->isCanTrade($tell)){
-            $data = $request->param();
-
-            //验证传递的参数
-            $result = $this->validate($data,'SaveOrder');
-            if (true !== $result) {
-                return json(['status'=>'failed','data'=>$result]);
-            }
             if($data['type'] == 1){
                 //获取股票信息
                 if($data['number']%100 == 0){

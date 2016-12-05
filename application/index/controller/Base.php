@@ -7,6 +7,7 @@ use think\Request;
 use think\Config;
 use think\Db;
 use think\cache\driver\Redis;
+use app\common\model\UserFunds;
 /**
 * 
 */
@@ -18,13 +19,20 @@ class Base extends Controller
     public $_sorts = 1;
     public function _initialize()
     {
-    	$data = input('get.');
-
+        $redis = new Redis;
+        $data['uid'] = Request::instance()->param('uid') ? Request::instance()->param('uid') : Request::instance()->param('id');
+        $data['token'] = Request::instance()->param('token');
     	$res = $this->validate($data,'TellToken');
         if (true !== $res) {
             exit(JN(['status'=>'failed','data'=>$res]));
         }
-        $redis = new Redis;
+        if($redis->get('create_'.$data['uid']) !== true){
+            if(!UserFunds::where(['uid'=>$data['uid']])->value('id')){
+                $this->createStock($data['uid']);
+            }else{
+                $redis->set('create_'.$uid,true);
+            }
+        }
         //固定的token
     	$token = Config::has("stocktell.token") ? Config::get('stocktell.token') : '';
     	//随机token字符串
@@ -33,6 +41,7 @@ class Base extends Controller
         }else{
         	exit(JN(['status'=>'failed','data'=>'token过期，请重新登录']));
         }
+
         if($redis->get('expired_token_'.$data['uid']) != ''){
             if(sha1($token.$data['uid'].$randToken) != $data['token'] && $redis->get('expired_token_'.$data['uid']) != $data['token']){
                 exit(JN(['status'=>'failed','data'=>'token过期，请重新登录']));
@@ -40,5 +49,24 @@ class Base extends Controller
         }else{
             if(sha1($token.$data['uid'].$randToken) != $data['token']) exit(JN(['status'=>'failed','data'=>'token过期，请重新登录']));
         }
+    }
+
+    /**
+     * [createStock 股票账户的创建]
+     * @return [type] [description]
+     */
+    protected function createStock($uid){
+        $data['uid'] = $uid;
+        $data['sorts'] = $this->_sorts;
+        $data['funds'] = $this->_stockFunds;
+        $data['time'] = date("Y-m-d H:i:s",time());
+        $data['available_funds'] = $data['funds'];
+        if(UserFunds::create($data)){
+            $redis = new Redis;
+            $redis->set('create_'.$uid,true);
+            return json(['status'=>'success','data'=>'准备开始交易吧']);
+        }else{
+            return json(['status'=>'failed','data'=>'创建账户失败']);
+        } 
     }
 }
