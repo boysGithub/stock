@@ -16,10 +16,10 @@ use app\common\model\WeeklyRatio;
 class Index extends Controller
 {
     public $_stockFunds = 1000000; //股票账户初始金额
-    // public function __construct(){
-    //     $addr = $_SERVER['REMOTE_ADDR'];
-    //     if(!($addr=='127.0.0.1')) exit("非法请求");
-    // }
+    public function __construct(){
+        $addr = $_SERVER['REMOTE_ADDR'];
+        if(!($addr=='127.0.0.1')) exit("非法请求");
+    }
 
     public function autoTrans(){
         $redis = new Redis();
@@ -273,30 +273,4 @@ class Index extends Controller
         $redis->set('rand_token',$randToken,3600);
         
     }
-    
-    
-    // /**
-    //  * [updateTime 更新时间]
-    //  * @return [type] [description]
-    //  */
-    // protected function updateTime(){
-    //     //是否开启手动更新
-    //     $tell = Config::has('autoData.manualupdate') ? Config::get('autoData.manualupdate') : false;
-        
-    // }
-
-    // /**
-    //  * [autoUpdateFunc 自动更新的方法]
-    //  * @return [type] [description]
-    //  */
-    // protected function autoUpdateFunc($func){
-    //     switch ($func) {
-    //         case 'autoUpdateFrozen':
-                
-    //             break;
-    //         default:
-    //             # code...
-    //             break;
-    //     }
-    // }
 }
