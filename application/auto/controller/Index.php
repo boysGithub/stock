@@ -19,7 +19,7 @@ class Index extends Controller
     public function __construct(){
         $addr = getIP();
         if(!($addr=='115.29.199.94')) exit("非法请求");
-
+        
     }
 
     public function autoTrans(){
