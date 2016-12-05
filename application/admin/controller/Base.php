@@ -25,6 +25,8 @@ class Base extends Controller
     		$user = $this->get_user();
     		$this->assign('user', $user);
     	}
+
+    	$this->assign('img_url', Config('use_url.img_url'));
     }
 
 	public function get_user()
