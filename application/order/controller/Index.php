@@ -430,7 +430,7 @@ class Index extends Base
                 $Trans = new Trans();
                 $Trans->allowField(true)->save($data);
                 Db::commit();
-                $result = json(['status'=>'success','data'=>'购买成功']);
+                $result = json(['status'=>'success','data'=>'买入提交成功']);
             }else{
                 //添加成交的订单到持仓表
                 $da['fee'] = $data['fee'];
@@ -451,7 +451,7 @@ class Index extends Base
                 $Trans = new Trans();
                 $Trans->allowField(true)->save($data);
                 Db::commit();
-                $result = json(['status'=>'success','data'=>'购买成功']);;
+                $result = json(['status'=>'success','data'=>'买入提交成功']);;
             }
         } catch (\Exception $e){
             Db::rollback();
@@ -532,7 +532,7 @@ class Index extends Base
                 $Trans = new Trans();
                 $Trans->allowField(true)->save($data);
                 Db::commit();
-                $result = json(['status'=>'success','data'=>'卖出成功']);
+                $result = json(['status'=>'success','data'=>'卖出提交成功']);
             }else{
                 //更新用户信息
                 $da['available_number'] = $userInfo['available_number'] - $data['number'];
@@ -551,7 +551,7 @@ class Index extends Base
                 $Trans = new Trans();
                 $Trans->allowField(true)->save($data);
                 Db::commit();
-                $result = json(['status'=>'success','data'=>'卖出成功']);
+                $result = json(['status'=>'success','data'=>'卖出提交成功']);
             }
         } catch (\Exception $e){
             Db::rollback();
