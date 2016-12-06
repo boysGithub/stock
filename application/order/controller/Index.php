@@ -44,6 +44,7 @@ class Index extends Base
      */
     public function save(Request $request)
     {
+        $this->_base->checkToken();
         $tell = Config::has('stocktell.transactiontime') ? Config::get('stocktell.transactiontime'): true;
         $data = $request->param();
         //验证传递的参数
@@ -94,7 +95,6 @@ class Index extends Base
     public function read($id)
     {
         $data   = input('get.');
-
         //验证传递的参数
         $result = $this->validate($data,'GetUserOrderInfo');
         if (true !== $result) {
@@ -124,8 +124,8 @@ class Index extends Base
      */
     public function update(Request $request, $id)
     {
+        $this->_base->checkToken();
         $data   = $request->param();
-
         $res = $this->validate($data,'UpdateOrder');
         if (true !== $res) {
             return json(['status'=>'failed','data'=>$res]);

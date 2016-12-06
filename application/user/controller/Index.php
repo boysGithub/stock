@@ -45,6 +45,7 @@ class Index extends Base
      */
     public function save(Request $request)
     {
+        $this->_base->checkToken();
         $data = $request->param();
         $res = $this->validate($data,'OptionalStock');
         if (true !== $res) {
@@ -128,6 +129,7 @@ class Index extends Base
      * @return [type] [description]
      */
     public function delete(Request $request,$id){
+        $this->_base->checkToken();
         $uid = $request->param();
         $res = $this->validate($uid,'UserPosition');
         if (true !== $res) {

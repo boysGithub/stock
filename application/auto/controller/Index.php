@@ -259,16 +259,19 @@ class Index extends Controller
         $redis = new Redis;
         //固定的token
         $token = Config::has("stocktell.token") ? Config::get('stocktell.token') : '';
-        $uid = input('get.uid');
         $randToken = getRandChar(10);
-        $tmp = Db::connect('sjq1')->query("select `stock_token` from `ts_user` where uid = {$uid}");
-        $expired_token = $tmp[0]['stock_token'];
-        $redis->set('expired_token_'.$uid,$expired_token,3600);
-        $encrypt = sha1($token.$uid.$randToken);
-        $sql = "UPDATE `ts_user` a,(select `stock_token` from `ts_user` where uid = {$uid}) obj set a.expired_token = obj.stock_token,a.stock_token='{$encrypt}' where uid={$uid}";
-        $redis->set('rand_token_old_'.$uid,$redis->get('rand_token_'.$uid),3600);
-        $redis->set('rand_token_'.$uid,$randToken,3600);
+        $sql = "UPDATE `ts_user` a,(select `uid`,`stock_token` from `ts_user`) obj set a.expired_token = obj.stock_token,a.stock_token=sha1(CONCAT('{$token}',obj.uid,'{$randToken}')) where a.uid=obj.uid";
         Db::connect('sjq1')->query($sql);
+        $sql1 = "SELECT `uid`,`stock_token`,`expired_token` from `ts_user`";
+        $tokenInfo = Db::connect('sjq1')->query($sql1);
+        foreach ($tokenInfo as $key => $value) {
+            $tmp[$value['uid']]['stock_token'] = $value['stock_token'];
+            $tmp[$value['uid']]['expired_token'] = $value['expired_token'];
+        }
+        $redis->set('token',$tmp,3600);
+        $redis->set('rand_token_old',$redis->get('rand_token'),3600);
+        $redis->set('rand_token',$randToken,3600);
+        
     }
     
     
