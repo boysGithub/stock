@@ -50,9 +50,10 @@ class Index extends Base
         if (true !== $res) {
             return json(['status'=>'failed','data'=>$res]);
         }
+        $optionalStock = new OptionalStock;
         $data['time'] = date("Y-m-d H:i:s");
         if(UserFunds::where(['uid'=>$data['uid']])->find()){
-            if(OptionalStock::where(['uid'=>$data['uid'],'stock'=>$data['stock']])->find()){
+            if($optionalStock->where(['uid'=>$data['uid'],'stock'=>$data['stock']])->find()){
                 $result = json(['status'=>'failed','data'=>'股票已经存在']);
             }else{
                 $stockData = getStock($data['stock'],'s_');
@@ -60,7 +61,8 @@ class Index extends Base
                 //这里后期更改 先暂时这样处理
                 Db::startTrans();
                 try {
-                    $id = OptionalStock::create($data)->id;
+                    $optionalStock->allowField(true)->save($data);
+                    $id = $optionalStock->id;
                     $count = OptionalStock::where(['stock'=>$data['stock']])->count();
                     OptionalStock::where(['stock'=>$data['stock']])->update(['follow'=>$count]);
                     Db::commit();
