@@ -34,7 +34,7 @@ class Index extends Base
         }
         $position = $this->getUserPosition($data); //获取持仓信息
         $noOrder = $this->getUserNoOrder($data); //获取待成交信息
-        return json(['status'=>'success','data'=>$position['data'],'totalPage'=>$position['totalPage'],'nData'=>$noOrder['data'],'nTotalPage'=>$noOrder['totalPage']]);
+        return json(['status'=>'success','data'=>$position['data'],'nData'=>$noOrder['data']]);
     }
 
     /**
@@ -188,24 +188,17 @@ class Index extends Base
      * @return [json]       [description]
      */
     protected function getUserPosition($data){
-        $limit = $this->_base->_limit;
-
-        $data['p'] = isset($data['p']) ? (int)$data['p'] > 0 ? $data['p'] : 1 : 1;
-        $result['totalPage'] = ceil(UserPosition::where(['uid'=>$data['uid'],'is_position'=>1])->count()/$limit);
-        $result['data'] = UserPosition::where(['uid'=>$data['uid'],'is_position'=>1])->limit(($data['p']-1)*$limit,$limit)->select();
+        $result['data'] = UserPosition::where(['uid'=>$data['uid'],'is_position'=>1])->select();
         return $result;
     }
 
     /**
-     * [getUserNoOrder 获取用户带成交的订单]
+     * [getUserNoOrder 获取用户待成交的订单]
      * @param  [array] $data [用户的uid]
      * @return [json]       [返回订单详情]
      */
     protected function getUserNoOrder($data){
-        $limit = $this->_base->_limit;
-        $data['np'] = isset($data['np']) ? (int)$data['np'] > 0 ? $data['np'] : 1 : 1;
-        $result['totalPage'] = ceil(Trans::where(['uid'=>$data['uid'],'status'=>0])->whereTime('time','today')->count()/$limit);
-        $result['data'] = Trans::where(['uid'=>$data['uid'],'status'=>0])->whereTime('time','today')->limit(($data['np']-1)*$limit,$limit)->order('time desc')->select();
+        $result['data'] = Trans::where(['uid'=>$data['uid'],'status'=>0])->whereTime('time','today')->order('time desc')->select();
         return $result;
     }
 }
