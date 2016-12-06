@@ -1,179 +1,295 @@
 var index = new Vue({
     el: "#index",
     data: {
+        cache_t: 600000,//毫秒
+        ad_slider: [],//轮播
         proclamation: [],//公告
         talent_dynamic: [],//牛人动态
+        week_rate: [],//周赛
+        month_rate: [],//月赛
         total_rate_5: [],//总收益榜
         total_rate_10: [],//总盈利率
         success_rate: [],//选股牛人
         week_avg_profit_rate: []//常胜牛人
-    }
-});
-var cache_t = 600000;//毫秒
+    },
+    methods: {
+        ad_slider(){
+            var timestamp = new Date().getTime();
+            var data = localStorage.getItem('ad_slider');
+            var _this = this;
+            data = JSON.parse(data);
+            if(data == null || data.timestamp < timestamp){
+                $.getJSON(api_host + '/ad',{type:1},function(data){
+                    if(data.status == 'success'){
+                        var ret = data.data;
+                        var ad_slider = [];
+                        for (var i = 0; i < ret.length; i++) {
+                            ad_slider.push({
+                                href: ret[i].url,
+                                title: ret[i].title,
+                                img: ret[i].image
+                            });
+                        }
 
-$(function(){
-    var AStorage = getLocalStorage(['proclamation','talent_dynamic','total_rate_5','total_rate_10','success_rate','week_avg_profit_rate']);
-
-    //公告
-    if(AStorage.proclamation == true){
-        var data = [
-            {href: 'http://www.sjqcj.com/weibo/715816', title: '水晶球牛人选股大赛第57周战况：名人组花荣顺利夺冠 温州叶荣添奇正藏药5天3板夺魁'},
-            {href: 'http://www.sjqcj.com/weibo/712715', title: '水晶球2016推股高手排行榜出炉：金一平擒四川双马成第一高手！'},
-            {href: 'http://www.sjqcj.com/weibo/714541', title: '金一平：最看好的高送转潜力股'},
-            {href: 'http://www.sjqcj.com/weibo/715149', title: '选股比赛播报（11.18）：高送转第一枪打响，涨停板接踵而至'}
-        ];
-        localStorage.setItem('proclamation',JSON.stringify({timestamp: new Date().getTime() + cache_t, data: data}));
-        index.proclamation = data;
-    } else {
-        index.proclamation = AStorage.proclamation;
-    }
-    setTimeout(proclamationSlider, 100);
-
-    //牛人动态
-    if(AStorage.talent_dynamic == true){
-        $.getJSON(api_host + '/orders',{},function(data){
-            if(data.status == 'success'){
-                var ret = data.data;
-                var talent_dynamic = [];
-                var length = (ret.length > 10) ? 10 : ret.length;
-                for (var i = 0; i < length; i++) {
-                    var state = '';
-                    var state_class = '';
-                    if(ret[i].type == 1){
-                        state = '买入';
-                        state_class = 'tr-color-buy';
-                    } else {
-                        state = '卖出';
-                        state_class = 'tr-color-sale';
+                        localStorage.setItem('ad_slider',JSON.stringify({timestamp: timestamp + _this.cache_t, data: ad_slider}));
+                        _this.ad_slider = ad_slider;
                     }
-                    talent_dynamic.push({
-                        user_name: ret[i].username,
-                        stock: ret[i].stock_name+'('+ret[i].stock+')',
-                        state: state,
-                        state_class: state_class,
-                        price: ret[i].price,
-                        url: '#'+ret[i].uid
-                    });
-                }
+                });
+            } else {
+                _this.ad_slider = data.data;
+            } 
+            setTimeout(function(){
+                $('#tr-slider-ad').flexslider({
+                    directionNav: false,
+                    slideshowSpeed:3000
+                });
+            }, 100);
+        },
+        updateProclamation(){
+            var timestamp = new Date().getTime();
+            var data = localStorage.getItem('proclamation');
+            var _this = this;
+            data = JSON.parse(data);
+            if(data == null || data.timestamp < timestamp){
+                $.getJSON(api_host + '/ad',{type:2},function(data){
+                    if(data.status == 'success'){
+                        var ret = data.data;
+                        var proclamation = [];
+                        for (var i = 0; i < ret.length; i++) {
+                            proclamation.push({
+                                href: ret[i].url,
+                                title: ret[i].title
+                            });
+                        }
 
-                localStorage.setItem('talent_dynamic',JSON.stringify({timestamp: new Date().getTime() + cache_t, data: talent_dynamic}));
-                index.talent_dynamic = talent_dynamic;
+                        localStorage.setItem('proclamation',JSON.stringify({timestamp: timestamp + _this.cache_t, data: proclamation}));
+                        _this.proclamation = proclamation;
+                    }
+                });
+            } else {
+                _this.proclamation = data.data;
+            }    
+            setTimeout(proclamationSlider, 300);
+        },
+        updateTalentDynamic(){
+            var timestamp = new Date().getTime();
+            var data = localStorage.getItem('talent_dynamic');
+            var _this = this;
+            data = JSON.parse(data);
+            if(data == null || data.timestamp < timestamp){
+                $.getJSON(api_host + '/orders',{},function(data){
+                    if(data.status == 'success'){
+                        var ret = data.data;
+                        var talent_dynamic = [];
+                        var length = (ret.length > 10) ? 10 : ret.length;
+                        for (var i = 0; i < length; i++) {
+                            var state = '';
+                            var state_class = '';
+                            if(ret[i].type == 1){
+                                state = '买入';
+                                state_class = 'tr-color-buy';
+                            } else {
+                                state = '卖出';
+                                state_class = 'tr-color-sale';
+                            }
+                            talent_dynamic.push({
+                                user_name: ret[i].username,
+                                stock: ret[i].stock_name+'('+ret[i].stock+')',
+                                state: state,
+                                state_class: state_class,
+                                price: ret[i].price,
+                                url: '#'+ret[i].uid
+                            });
+                        }
+
+                        localStorage.setItem('talent_dynamic',JSON.stringify({timestamp: timestamp + _this.cache_t, data: talent_dynamic}));
+                        _this.talent_dynamic = talent_dynamic;
+                    }
+                });
+            } else {
+                _this.talent_dynamic = data.data;
+            }    
+        },
+        week_rate(){
+            var timestamp = new Date().getTime();
+            var data = localStorage.getItem('week_rate');
+            var _this = this;
+            data = JSON.parse(data);
+            if(data == null || data.timestamp < timestamp){
+                $.getJSON('http://www.tp5.com/match/detail.html',{type:1, np: 1, limit: 10},function(data){
+                    if(data.status == 'success'){
+                        var ret = data.data.rankList;
+                        var week_rate = [];
+                        if(ret.length > 0){
+                            for (var i = 0; i < ret.length; i++) {
+                                week_rate.push({
+                                    user_name: ret[i].user_name,
+                                    ranking: ret[i].ranking,
+                                    ranking_icon: (ret[i].ranking < 4) ? ' tr-icon' : '',
+                                    total_rate: ret[i].total_rate,
+                                    total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                    url: '#'+ret[i].uid
+                                });
+                            }
+
+                            localStorage.setItem('week_rate',JSON.stringify({timestamp: timestamp + _this.cache_t, data: week_rate}));
+                        }
+                        _this.week_rate = week_rate;
+                    }
+                });
+            } else {
+                _this.week_rate = data.data;
+            } 
+        },
+        month_rate(){
+            var timestamp = new Date().getTime();
+            var data = localStorage.getItem('month_rate');
+            var _this = this;
+            data = JSON.parse(data);
+            if(data == null || data.timestamp < timestamp){
+                $.getJSON('http://www.tp5.com/match/detail.html',{type:2, np: 1, limit: 10},function(data){
+                    if(data.status == 'success'){
+                        var ret = data.data.rankList;
+                        var month_rate = [];
+                        if(ret.length > 0){
+                            for (var i = 0; i < ret.length; i++) {
+                                month_rate.push({
+                                    user_name: ret[i].user_name,
+                                    ranking: ret[i].ranking,
+                                    ranking_icon: (ret[i].ranking < 4) ? ' tr-icon' : '',
+                                    total_rate: ret[i].total_rate,
+                                    total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                    url: '#'+ret[i].uid
+                                });
+                            }
+
+                            localStorage.setItem('month_rate',JSON.stringify({timestamp: timestamp + _this.cache_t, data: month_rate}));
+                        }
+                        _this.month_rate = month_rate;
+                    }
+                });
+            } else {
+                _this.month_rate = data.data;
             }
-        });
-    } else {
-        index.talent_dynamic = AStorage.talent_dynamic;
-    }
+        },
+        updateTotalRate(){
+            var timestamp = new Date().getTime();
+            var data = localStorage.getItem('total_rate_5');
+            var data_10 = localStorage.getItem('total_rate_10');
+            var _this = this;
+            data = JSON.parse(data);
+            data_10 = JSON.parse(data_10);
+            if(data == null || data.timestamp < timestamp){
+                $.getJSON(api_host + '/rank/getRankList',{condition:'total_rate'},function(data){
+                    if(data.status == 'success'){
+                        var ret = data.data;
+                        var total_rate_5 = [];
+                        var total_rate_10 = [];
+                        var length = (ret.length > 10) ? 10 : ret.length;
+                        for (var i = 0; i < length; i++) {
+                            if(i < 5){
+                                total_rate_5.push({
+                                    user_name: ret[i].username,
+                                    portrait: '/static/img/portrait.gif',
+                                    total_rate: ret[i].total_rate+'%',
+                                    total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                    url: '#'+ret[i].uid
+                                });
+                            }
+                            total_rate_10.push({
+                                user_name: ret[i].username,
+                                rownum: ret[i].rownum,
+                                rownum_class: (ret[i].rownum > 3) ? '' : ' tr-icon',
+                                total_rate: ret[i].total_rate+'%',
+                                total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                success_rate: ret[i].success_rate+'%',
+                                avg_position_day: ret[i].avg_position_day,
+                                week_avg_profit_rate: ret[i].week_avg_profit_rate+'%',
+                                week_avg_profit_rate_class: (ret[i].week_avg_profit_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                url: '#'+ret[i].uid
+                            });
+                        }
 
-    //总盈利率排行
-    if(AStorage.total_rate_5 == true || AStorage.total_rate_10 == true){
-        $.getJSON(api_host + '/rank/getRankList',{condition:'total_rate'},function(data){
-            if(data.status == 'success'){
-                var ret = data.data;
-                var total_rate_5 = [];
-                var total_rate_10 = [];
-                var length = (ret.length > 10) ? 10 : ret.length;
-                for (var i = 0; i < length; i++) {
-                    if(i < 5){
-                        total_rate_5.push({
-                            user_name: ret[i].username,
-                            portrait: '/static/img/portrait.gif',
-                            total_rate: ret[i].total_rate+'%',
-                            total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                            url: '#'+ret[i].uid
-                        });
-                    }
-                    total_rate_10.push({
-                        user_name: ret[i].username,
-                        rownum: ret[i].rownum,
-                        rownum_class: (ret[i].rownum > 3) ? '' : ' tr-icon',
-                        total_rate: ret[i].total_rate+'%',
-                        total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                        success_rate: ret[i].success_rate+'%',
-                        avg_position_day: ret[i].avg_position_day,
-                        week_avg_profit_rate: ret[i].week_avg_profit_rate+'%',
-                        week_avg_profit_rate_class: (ret[i].week_avg_profit_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                        url: '#'+ret[i].uid
-                    });
-                }
-
-                localStorage.setItem('total_rate_5',JSON.stringify({timestamp: new Date().getTime() + cache_t, data: total_rate_5}));
-                localStorage.setItem('total_rate_10',JSON.stringify({timestamp: new Date().getTime() + cache_t, data: total_rate_10}));
-                index.total_rate_5 = total_rate_5;
-                index.total_rate_10 = total_rate_10;
+                        localStorage.setItem('total_rate_5',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: total_rate_5}));
+                        localStorage.setItem('total_rate_10',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: total_rate_10}));
+                        _this.total_rate_5 = total_rate_5;
+                        _this.total_rate_10 = total_rate_10;
+                    }    
+                });
+            } else {
+                _this.total_rate_5 = data.data;
+                _this.total_rate_10 = data.data_10;
             }    
-        });
-    } else {
-        index.total_rate_5 = AStorage.total_rate_5;
-        index.total_rate_10 = AStorage.total_rate_10;
-    }
+        },
+        updateSuccessRate(){
+            var timestamp = new Date().getTime();
+            var data = localStorage.getItem('success_rate');
+            var _this = this;
+            data = JSON.parse(data);
+            if(data == null || data.timestamp < timestamp){
+                $.getJSON(api_host + '/rank/getRankList',{condition:'success_rate'},function(data){
+                    if(data.status == 'success'){
+                        var ret = data.data;
+                        var success_rate = [];
+                        var length = (ret.length > 5) ? 5 : ret.length;
+                        for (var i = 0; i < length; i++) {
+                            success_rate.push({
+                                user_name: ret[i].username,
+                                portrait: '/static/img/portrait.gif',
+                                success_rate: ret[i].success_rate+'%',
+                                success_rate_class: (ret[i].success_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                url: '#'+ret[i].uid
+                            });
+                        }
 
-    //选股牛人
-    if(AStorage.success_rate == true){
-        $.getJSON(api_host + '/rank/getRankList',{condition:'success_rate'},function(data){
-            if(data.status == 'success'){
-                var ret = data.data;
-                var success_rate = [];
-                var length = (ret.length > 5) ? 5 : ret.length;
-                for (var i = 0; i < length; i++) {
-                    success_rate.push({
-                        user_name: ret[i].username,
-                        portrait: '/static/img/portrait.gif',
-                        success_rate: ret[i].success_rate+'%',
-                        success_rate_class: (ret[i].success_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                        url: '#'+ret[i].uid
-                    });
-                }
-
-                localStorage.setItem('success_rate',JSON.stringify({timestamp: new Date().getTime() + cache_t, data: success_rate}));
-                index.success_rate = success_rate;
+                        localStorage.setItem('success_rate',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: success_rate}));
+                        _this.success_rate = success_rate;
+                    }    
+                });
+            } else {
+                _this.success_rate = data.data;
             }    
-        });
-    } else {
-        index.success_rate = AStorage.success_rate;
-    }
+        },
+        week_avg_profit_rate(){
+            var timestamp = new Date().getTime();
+            var data = localStorage.getItem('week_avg_profit_rate');
+            var _this = this;
+            data = JSON.parse(data);
+            if(data == null || data.timestamp < timestamp){
+                $.getJSON(api_host + '/rank/getRankList',{condition:'week_avg_profit_rate'},function(data){
+                    if(data.status == 'success'){
+                        var ret = data.data;
+                        var week_avg_profit_rate = [];
+                        var length = (ret.length > 5) ? 5 : ret.length;
+                        for (var i = 0; i < length; i++) {
+                            week_avg_profit_rate.push({
+                                user_name: ret[i].username,
+                                portrait: '/static/img/portrait.gif',
+                                week_avg_profit_rate: ret[i].week_avg_profit_rate+'%',
+                                week_avg_profit_rate_class: (ret[i].week_avg_profit_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                url: '#'+ret[i].uid
+                            });
+                        }
 
-    //常胜牛人
-    if(AStorage.week_avg_profit_rate == true){
-        $.getJSON(api_host + '/rank/getRankList',{condition:'week_avg_profit_rate'},function(data){
-            if(data.status == 'success'){
-                var ret = data.data;
-                var week_avg_profit_rate = [];
-                var length = (ret.length > 5) ? 5 : ret.length;
-                for (var i = 0; i < length; i++) {
-                    week_avg_profit_rate.push({
-                        user_name: ret[i].username,
-                        portrait: '/static/img/portrait.gif',
-                        week_avg_profit_rate: ret[i].week_avg_profit_rate+'%',
-                        week_avg_profit_rate_class: (ret[i].week_avg_profit_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                        url: '#'+ret[i].uid
-                    });
-                }
-
-                localStorage.setItem('week_avg_profit_rate',JSON.stringify({timestamp: new Date().getTime() + cache_t, data: week_avg_profit_rate}));
-                index.week_avg_profit_rate = week_avg_profit_rate;
+                        localStorage.setItem('week_avg_profit_rate',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: week_avg_profit_rate}));
+                        _this.week_avg_profit_rate = week_avg_profit_rate;
+                    }    
+                });
+            } else {
+                _this.week_avg_profit_rate = data.data;
             }    
-        });
-    } else {
-        index.week_avg_profit_rate = AStorage.week_avg_profit_rate;
+        } 
+    },
+    created(){
+        this.ad_slider();
+        this.updateProclamation();
+        this.updateTalentDynamic();
+        this.updateTotalRate();
+        this.updateSuccessRate();
+        this.week_avg_profit_rate();
     }
 });
 
-function getLocalStorage(keys){
-    var timestamp = new Date().getTime();
-    var ret = [];
-    for (var i = 0; i < keys.length; i++) {
-        var data = localStorage.getItem(keys[i]);
-        data = JSON.parse(data);
-        var res = {};
-        if(data == null || data.timestamp < timestamp){
-            ret[keys[i]] = true;
-        } else {
-            ret[keys[i]] = data.data;
-        }
-    }
-
-    return ret;
-}
 
 function proclamationSlider(){
     var _scroll = {
@@ -195,4 +311,5 @@ function proclamationSlider(){
         },
         scroll: _scroll
     });
-}   
+} 
+ 

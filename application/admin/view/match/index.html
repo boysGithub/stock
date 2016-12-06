@@ -43,7 +43,7 @@
                                 <tbody>
                                     {volist name="matchs" id="vo" mod="2"}
                                     <tr class="{eq name="mod" value="1"}gradeX{/eq}{eq name="mod" value="0"}even gradeC{/eq}">
-                                        <td><img src="{$img_url}{$vo.image}" class="tpl-table-line-img" alt=""></td>
+                                        <td><img src="{$img_url}{$vo.image}" class="tpl-table-line-img" alt="" class="am-img-responsive" style="max-height: 200px;"></td>
                                         <td class="am-text-middle">{$vo.name}</td>
                                         <td class="am-text-middle">{$vo.start_date} - {$vo.end_date}</td>
                                         <td class="am-text-middle">{if condition="$vo.type eq 1"}周赛{/if}{if condition="$vo.type eq 2"}月赛{/if}</td>
