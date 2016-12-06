@@ -11,6 +11,10 @@ use app\common\model\User;
 */
 class Match extends Base
 {
+    protected $_base;
+    public function __construct(){
+        $this->_base = new Base();
+    }
 	/**
      * 比赛列表
      *
@@ -146,6 +150,7 @@ class Match extends Base
      */
     public function join()
     {
+        $this->_base->checkToken();
         $data = input('post.');
         $res = $this->validate($data,'Match.detail');
         if (true !== $res) {
