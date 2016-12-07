@@ -75,8 +75,6 @@ class Base extends Controller
         //固定的token
         $token = Config::has("stocktell.token") ? Config::get('stocktell.token') : '';
         $randToken = getRandChar(10);
-        $sql = "UPDATE `ts_user` a,(select `uid`,`stock_token` from `ts_user`) obj set a.expired_token = obj.stock_token,a.stock_token=sha1(CONCAT('{$token}',obj.uid,'{$randToken}')) where a.uid=obj.uid";
-        Db::connect('sjq1')->query($sql);
         $sql1 = "SELECT `uid`,`stock_token`,`expired_token` from `ts_user`";
         $tokenInfo = Db::connect('sjq1')->query($sql1);
         foreach ($tokenInfo as $key => $value) {
