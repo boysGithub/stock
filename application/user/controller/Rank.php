@@ -37,7 +37,9 @@ class Rank extends Base
 		$rankList = Userfunds::order("{$tmp[$data['condition']]} asc")->limit(($data['p']-1)*$limit,$limit)->Field("uid,total_rate,success_rate,avg_position_day,week_avg_profit_rate,round((funds-available_funds)/funds*100,2) as position,{$tmp[$data['condition']]} as rownum")->select();
 		foreach ($rankList as $key => $value) {
 			$value->append(['username']);
+			$rankList[$key] = $value->toArray();
 		}
+		dump($rankList);exit;
 		if($rankList){
 			$result = json(['status'=>'success','data'=>$rankList]);
 		}else{

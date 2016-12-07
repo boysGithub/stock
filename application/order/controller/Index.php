@@ -130,29 +130,25 @@ class Index extends Base
         if (true !== $res) {
             return json(['status'=>'failed','data'=>$res]);
         }
-
         $userOrder = Trans::where(['id'=>$id,'uid'=>$data['uid']])->find();
-
         if($userOrder['status'] === 0){
-            if($data['status'] == 2){
-                Db::startTrans();
-                try {
-                    Trans::update($data,['id'=>$id,'uid'=>$data['uid']]);
-                    if($userOrder['type'] == 1){
-                        $availableFunds = UserFunds::where(['uid'=>$userOrder['uid']])->value('available_funds');
-                        $da['available_funds'] = $userOrder['fee'] + $userOrder['price'] * $userOrder['number'] + $availableFunds;
-                        UserFunds::update($da,['uid'=>$userOrder['uid']]);
-                    }else if($userOrder['type'] == 2){
-                        $position = UserPosition::where(['uid'=>$data['uid'],'stock'=>$userOrder['stock'],'is_position'=>1,'sorts'=>$userOrder['sorts']])->Field('id,available_number')->find();
-                        $da['available_number'] = $position['available_number'] + $userOrder['number'];
-                        UserPosition::where(['id'=>$position['id']])->update($da);
-                    }
-                    Db::commit();
-                    $result = json(['status'=>'success','data'=>'撤单成功']);
-                } catch (\Exception $e){
-                    Db::rollback();
-                    $result = json(['status'=>'failed','data'=>'撤单失败']);
+            Db::startTrans();
+            try {
+                Trans::update(['status'=>$data['status']],['id'=>$id,'uid'=>$data['uid']]);
+                if($userOrder['type'] == 1){
+                    $availableFunds = UserFunds::where(['uid'=>$userOrder['uid']])->value('available_funds');
+                    $da['available_funds'] = $userOrder['fee'] + $userOrder['price'] * $userOrder['number'] + $availableFunds;
+                    UserFunds::update($da,['uid'=>$userOrder['uid']]);
+                }else if($userOrder['type'] == 2){
+                    $position = UserPosition::where(['uid'=>$data['uid'],'stock'=>$userOrder['stock'],'is_position'=>1,'sorts'=>$userOrder['sorts']])->Field('id,available_number')->find();
+                    $da['available_number'] = $position['available_number'] + $userOrder['number'];
+                    UserPosition::where(['id'=>$position['id']])->update($da);
                 }
+                Db::commit();
+                $result = json(['status'=>'success','data'=>'撤单成功']);
+            } catch (\Exception $e){
+                Db::rollback();
+                $result = json(['status'=>'failed','data'=>'撤单失败']);
             }
         }else if($userOrder['status'] === 1){
             $result = json(['status'=>'failed','data'=>'订单已经成交']);

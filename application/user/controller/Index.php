@@ -8,6 +8,7 @@ use app\index\controller\Base;
 use app\common\model\UserPosition;
 use app\common\model\Transaction as Trans;
 use app\common\model\UserFunds;
+use app\common\model\User;
 use app\common\model\DaysRatio;
 use app\common\model\OptionalStock;
 use think\Db;
@@ -35,10 +36,14 @@ class Index extends Base
             return json(['status'=>'failed','data'=>$res]);
         }
         if($redis->get('create_'.$data['uid']) !== true){
-            if(!UserFunds::where(['uid'=>$data['uid']])->value('id')){
-                $this->_base->createStock($data['uid']);
+            if(User::where(['uid'=>$data['uid']])->value('uid')){
+                if(!UserFunds::where(['uid'=>$data['uid']])->value('id')){
+                    $this->_base->createStock($data['uid']);
+                }else{
+                    $redis->set('create_'.$data['uid'],true);
+                }
             }else{
-                $redis->set('create_'.$data['uid'],true);
+               return json(['status'=>'failed','data'=>'用户不存在']); 
             }
         }
         $position = $this->getUserPosition($data); //获取持仓信息
