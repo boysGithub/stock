@@ -8,6 +8,7 @@ use think\Config;
 use think\Db;
 use think\cache\driver\Redis;
 use app\common\model\UserFunds;
+use app\auto\controller\index as auto;
 /**
 * 
 */
@@ -56,8 +57,14 @@ class Base extends Controller
             }
         }
         $tokenInfo = $redis->get('token');
-        if($tokenInfo[$data['uid']]['stock_token'] != $data['token'] && $tokenInfo[$data['uid']]['expired_token'] != $data['token']){
-            exit(JN(['status'=>'failed','data'=>'token过期，请重新登录']));
+        if($tokenInfo){
+            if($tokenInfo[$data['uid']]['stock_token'] != $data['token'] && $tokenInfo[$data['uid']]['expired_token'] != $data['token']){
+                exit(JN(['status'=>'failed','data'=>'token过期，请重新登录']));
+            }
+        }else{
+            $auto = new auto;
+            $auto->autoBuildToken();
+            $this->checkToken();
         }
     }
 }
