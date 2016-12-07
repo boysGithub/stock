@@ -23,6 +23,8 @@ class Rank extends Model
 				            @incrnum
 				        WHEN @rowtotal := obj.{$condition} THEN
 				            @rownum
+				        WHEN @rowtotal = 0 THEN
+				        	@rownum
 				        END AS rownum
 				FROM (SELECT uid, {$condition}
 					FROM `sjq_users_funds`
@@ -31,7 +33,6 @@ class Rank extends Model
 					) obj,(select @rownum := 0) r
 					order by obj.{$condition} desc) new_obj
 				SET a.{$rankFiled} = new_obj.rownum WHERE a.uid = new_obj.uid";
-				
 				Db::query($sql);
 				// 提交事务
     			Db::commit();
