@@ -4,20 +4,22 @@ namespace app\auto\controller;
 
 use think\Controller;
 use think\Request;
-use think\cache\driver\Redis;
 use think\Db;
 use think\Config;
+use think\cache\driver\Redis;
 use app\common\model\UserPosition;
 use app\common\model\UserFunds;
 use app\common\model\Rank;
 use app\common\model\AutoUpdate;
+use app\common\model\WeeklyRatio;
 
 class Index extends Controller
 {
     public $_stockFunds = 1000000; //股票账户初始金额
     public function __construct(){
-        $addr = $_SERVER['REMOTE_ADDR'];
-        if(!($addr=='127.0.0.1')) exit("非法请求");
+        $addr = getIP();
+        if(!($addr=='115.29.199.94') exit("非法请求");
+        
     }
 
     public function autoTrans(){
@@ -36,7 +38,7 @@ class Index extends Controller
      * @return [boolean] [布尔值]
      */
     public function autoUpdateFrozen(){
-        $updateTime = strtotime(date("Y-m-d 00:00:00",strtotime('+1 day')));
+        $updateTime = strtotime(date("Y-m-d 00:00:00",time()));
         if(time() - $updateTime < 3600 && time() - $updateTime > 0 ){
             $sql = "SELECT id,(available_number + freeze_number) as available_number, (freeze_number=0) as freeze_number FROM `sjq_users_position` WHERE `is_position` = 1 AND ( `freeze_number` >0 )";
             $availableInfo = Db::query($sql);
@@ -113,7 +115,6 @@ class Index extends Controller
                     $userInfo[$key] = $value->toArray();
                     //把某一个用户的市值统计出来
                     $userTotal[$value['uid']][] = $value['number'] * $stockTmp[$value['stock']][1];
-
                 }
                 //更新现在的持仓比例,最新资产
                 $userPosition->saveAll($userInfo);
@@ -140,28 +141,134 @@ class Index extends Controller
             return json(['status'=>'failed','data'=> $e]);
         }
     }
-    // /**
-    //  * [updateTime 更新时间]
-    //  * @return [type] [description]
-    //  */
-    // protected function updateTime(){
-    //     //是否开启手动更新
-    //     $tell = Config::has('autoData.manualupdate') ? Config::get('autoData.manualupdate') : false;
-        
-    // }
 
-    // /**
-    //  * [autoUpdateFunc 自动更新的方法]
-    //  * @return [type] [description]
-    //  */
-    // protected function autoUpdateFunc($func){
-    //     switch ($func) {
-    //         case 'autoUpdateFrozen':
-                
-    //             break;
-    //         default:
-    //             # code...
-    //             break;
-    //     }
-    // }
+    /**
+     * [autoSuccessRate 自动更新胜率]
+     * @return [type] [description]
+     */
+    public function autoSuccessRate(){
+        // 启动事务
+        Db::startTrans();
+        try {
+            UserPosition::group('uid')->Field('id,uid')->chunk(500,function($list){
+                $userPosition = new UserPosition;
+                $userGather = '';
+                foreach ($list as $key => $value) {
+                    $userGather .= $value['uid'].',';
+                }
+                $userGather = substr($userGather,0,-1);
+                //获取持仓的集合
+                $userInfo = $userPosition->where(['uid'=>['in',$userGather]])->Field('id,uid,ratio')->select();
+                //计算选股成功率
+                foreach ($userInfo as $key => $value) {
+                    $winRate[$value['uid']][] = $value['ratio'];
+                }
+                $userFunds = new userFunds;
+                $funds = $userFunds->where(['uid'=>['in',$userGather]])->Field('id,uid,success_rate')->select();
+                foreach ($funds as $key => $value) {
+                    $tmp = 0;
+                    for ($i=0; $i < count($winRate[$value['uid']]); $i++) { 
+                        if($winRate[$value['uid']][$i] > 0 ){
+                            $tmp += 1;
+                        }
+                    }
+                    $funds[$key]['success_rate'] = round($tmp/count($winRate[$value['uid']])*100,3);
+                    $funds[$key] = $value->toArray();
+                }
+                //更新选股成功率
+                $userFunds->saveAll($funds);
+            });
+            Db::commit();
+            return json(['status'=>'success','data'=> '更新成功']);
+        } catch (\Exception $e) {
+            Db::rollback();
+            return json(['status'=>'failed','data'=> $e]);
+        }
+    }
+
+    /**
+     * [autoWeekRatio 自动添加和更新周赛数据]
+     * @return [type] [description]
+     */
+    public function autoWeekRatio(){
+        //获取一周的时间
+        $week = date('w');
+        if($week == 6 || $week == 0) return json(['status'=>'failed','data'=> '周末不能操作']);
+        // 启动事务
+        Db::startTrans();
+        try {
+            $weekInfo = WeeklyRatio::whereTime('time','week')->find();
+            if($weekInfo){
+                WeeklyRatio::whereTime('time','week')->Field('id,uid,initialCapital')->chunk(500,function($list){
+                    $userGather = '';
+                    foreach ($list as $key => $value) {
+                        $userGather .= $value['uid'].',';
+                    }
+                    $userGather = substr($userGather,0,-1);
+                    $funds = userFunds::where(['uid'=>['in',$userGather]])->Field('id,uid,funds')->select();
+                    
+                    foreach ($list as $key => $value) {
+                        $value['endFunds'] = $funds[$key]['funds'];
+                        $value['proportion'] = round(($value['endFunds'] - $value['initialCapital'])/$value['initialCapital'] * 100 , 8);
+
+                        $list[$key] = $value->toArray();
+                    }
+                    $weeklyRatio = new WeeklyRatio;
+                    $weeklyRatio->allowField(true)->saveAll($list);
+                });
+                Db::commit();
+                return json(['status'=>'success','data'=> '更新成功']);
+            }else{
+                if($week != 1){
+                    return json(['status'=>'failed','data'=> '周一才能创建比赛']);
+                }
+                UserPosition::group('uid')->Field('id,uid')->chunk(500,function($list){
+                    $userGather = '';
+                    foreach ($list as $key => $value) {
+                        $userGather .= $value['uid'].',';
+                    }
+                    $userGather = substr($userGather,0,-1);
+                    $funds = userFunds::where(['uid'=>['in',$userGather]])->Field('id,uid,funds')->select();
+                    $weekInfo = WeeklyRatio::whereTime('time','last week')->find();
+                    foreach ($funds as $key => $value) {
+                        $value['initialCapital'] = $value['funds'];
+                        $value['endFunds'] = $value['initialCapital'];
+                        $value['periods'] = $weekInfo['periods'] + 1;
+                        $value['proportion'] = round(($value['endFunds'] - $value['initialCapital'])/$value['initialCapital'] * 100 , 8);
+                        $value['time'] = date('Y-m-d H:i:s',time());
+                        unset($value['id']);
+                        unset($value['funds']);
+                        $funds[$key] = $value->toArray();
+                    }
+                    $weeklyRatio = new WeeklyRatio;
+                    $weeklyRatio->allowField(true)->saveAll($funds); 
+                });
+                Db::commit();
+                return json(['status'=>'success','data'=> '新增成功']);
+            }
+        } catch (\Exception $e) {
+            Db::rollback();
+            return json(['status'=>'failed','data'=> $e]);
+        }    
+    }
+
+    /**
+     * [autoBuildToken 自动生成token]
+     * @return [type] [description]
+     */
+    public function autoBuildToken(){
+        $redis = new Redis;
+        //固定的token
+        $token = Config::has("stocktell.token") ? Config::get('stocktell.token') : '';
+        $randToken = getRandChar(10);
+        $sql = "UPDATE `ts_user` a,(select `uid`,`stock_token` from `ts_user`) obj set a.expired_token = obj.stock_token,a.stock_token=sha1(CONCAT('{$token}',obj.uid,'{$randToken}')) where a.uid=obj.uid";
+        Db::connect('sjq1')->query($sql);
+        $sql1 = "SELECT `uid`,`stock_token`,`expired_token` from `ts_user`";
+        $tokenInfo = Db::connect('sjq1')->query($sql1);
+        foreach ($tokenInfo as $key => $value) {
+            $tmp[$value['uid']]['stock_token'] = $value['stock_token'];
+            $tmp[$value['uid']]['expired_token'] = $value['expired_token'];
+        }
+        $redis->set('token',$tmp,3600);
+    }
 }

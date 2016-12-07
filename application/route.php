@@ -20,6 +20,7 @@ Route::get('match/:method','user/match/:method');
 Route::get('ad','user/ad/index');
 Route::post('user/:method','user/index/:method');
 Route::post('match/:method','user/match/:method');
+Route::get('stock/:method','user/stock/:method');
 //Route::resource('api/:version/:controller','api/:version.:controller');
 // Route::resource('blogs','index/blog');
 //return [

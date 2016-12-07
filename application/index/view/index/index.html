@@ -1,14 +1,8 @@
-{extend name="base" /}
-{block name="head"}
+{extend name="base" /} {block name="head"}
 <meta name="description" content="">
 <meta name="keywords" content="">
 <title>模拟炒股首页</title>
-{/block}
-{block name="css"}
-{css file="/static/css/index/index.css"}
-{/block}
-{block name="header"}{include file="public/header" /}{/block}
-{block name="main"}
+{/block} {block name="css"} {css file="/static/css/index/index.css"} {/block} {block name="header"}{include file="public/header" /}{/block} {block name="main"}
 <div class="am-g" id="index">
     <div class="am-g am-container">
         <div class="am-slider am-slider-default tr-slider-ad" id="tr-slider-ad">
@@ -20,7 +14,7 @@
             <div class="am-u-md-2 tr-pro-t">
                 <span class="am-icon-volume-up"></span>
                 <span class="tr-pro-t-c">通知公告</span>
-            </div> 
+            </div>
             <div class="am-u-md-10">
                 <dl id="ticker-1">
                     <dd v-for="item in proclamation"><a :href="item.href" :title="item.title" target="_blank">{{ item.title }}</a></dd>
@@ -51,7 +45,7 @@
                         </div>
                         <div class="tr-talent-reason am-padding-vertical-sm am-padding-horizontal">
                             推荐理由：选股有独特的眼光，并操作优秀,懂啊框架阿凯假两件阿赛况
-                        </div>    
+                        </div>
                     </li>
                     <li>
                         <div class="am-g tr-talent-info am-padding">
@@ -69,7 +63,7 @@
                         </div>
                         <div class="tr-talent-reason am-padding-vertical-sm am-padding-horizontal">
                             推荐理由：选股有独特的眼光，并操作优秀,懂啊框架阿凯假两件阿赛况
-                        </div>    
+                        </div>
                     </li>
                     <li>
                         <div class="am-g tr-talent-info am-padding">
@@ -87,7 +81,7 @@
                         </div>
                         <div class="tr-talent-reason am-padding-vertical-sm am-padding-horizontal">
                             推荐理由：选股有独特的眼光，并操作优秀,懂啊框架阿凯假两件阿赛况
-                        </div>    
+                        </div>
                     </li>
                     <li>
                         <div class="am-g tr-talent-info am-padding">
@@ -105,7 +99,7 @@
                         </div>
                         <div class="tr-talent-reason am-padding-vertical-sm am-padding-horizontal">
                             推荐理由：选股有独特的眼光，并操作优秀,懂啊框架阿凯假两件阿赛况
-                        </div>    
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -134,16 +128,18 @@
                         </thead>
                         <tbody>
                             <template v-if="talent_dynamic.length > 0">
-                            <tr v-for="item in talent_dynamic">
-                                <td><a :href="item.url" :title="item.user_name">{{ item.user_name }}</a></td>
-                                <td><span class="tr-shares-name">{{ item.stock }}</span></td>
-                                <td><span :class="item.state_class">{{ item.state }}</span></td>
-                                <td><span class="tr-color-price">{{ item.price }}</span></td>
-                                <td><a :href="item.url" class="am-btn am-btn-primary am-btn-xs am-radius">追踪可看</a></td>
-                            </tr>
+                                <tr v-for="item in talent_dynamic">
+                                    <td><a :href="item.url" :title="item.user_name">{{ item.user_name }}</a></td>
+                                    <td><span class="tr-shares-name">{{ item.stock }}</span></td>
+                                    <td><span :class="item.state_class">{{ item.state }}</span></td>
+                                    <td><span class="tr-color-price">{{ item.price }}</span></td>
+                                    <td><a :href="item.url" class="am-btn am-btn-primary am-btn-xs am-radius">追踪可看</a></td>
+                                </tr>
                             </template>
                             <template v-else>
-                            <tr><td colspan="5"><span>暂无数据</span></td></tr>
+                                <tr>
+                                    <td colspan="5"><span>暂无数据</span></td>
+                                </tr>
                             </template>
                         </tbody>
                     </table>
@@ -213,18 +209,20 @@
                         </thead>
                         <tbody>
                             <template v-if="total_rate_10.length > 0">
-                            <tr v-for="item in total_rate_10">
-                                <td><span :class="'tr-rank'+item.rownum_class">{{ item.rownum }}</span></td>
-                                <td><a :href="item.url" :title="item.user_name">{{ item.user_name }}</a></td>
-                                <td><span :class="item.total_rate_class">{{ item.total_rate }}</span></td>
-                                <td><span class="">{{ item.success_rate }}</span></td>
-                                <td><span>{{ item.avg_position_day }}</span></td>
-                                <td><span :class="item.week_avg_profit_rate_class">{{ item.week_avg_profit_rate }}</span></td>
-                                <td><a :href="item.url" class="am-btn am-btn-primary am-btn-xs am-radius">追踪可看</a></td>
-                            </tr>
+                                <tr v-for="item in total_rate_10">
+                                    <td><span :class="'tr-rank'+item.rownum_class">{{ item.rownum }}</span></td>
+                                    <td><a :href="item.url" :title="item.user_name">{{ item.user_name }}</a></td>
+                                    <td><span :class="item.total_rate_class">{{ item.total_rate }}</span></td>
+                                    <td><span class="">{{ item.success_rate }}</span></td>
+                                    <td><span>{{ item.avg_position_day }}</span></td>
+                                    <td><span :class="item.week_avg_profit_rate_class">{{ item.week_avg_profit_rate }}</span></td>
+                                    <td><a :href="item.url" class="am-btn am-btn-primary am-btn-xs am-radius">追踪可看</a></td>
+                                </tr>
                             </template>
                             <template v-else>
-                            <tr><td colspan="7"><span>暂无数据</span></td></tr>
+                                <tr>
+                                    <td colspan="7"><span>暂无数据</span></td>
+                                </tr>
                             </template>
                         </tbody>
                     </table>
@@ -234,7 +232,7 @@
         <div class="am-g">
             <div class="am-u-md-6 am-padding-right-sm">
                 <section class="am-panel am-panel-default">
-                    <div class="am-panel-hd" >
+                    <div class="am-panel-hd">
                         <h2 class="am-panel-title ">
                             总收益榜
                         </h2>
@@ -261,7 +259,7 @@
             </div>
             <div class="am-u-md-6 am-padding-left-sm">
                 <section class="am-panel am-panel-default">
-                    <div class="am-panel-hd" >
+                    <div class="am-panel-hd">
                         <h2 class="am-panel-title ">
                             选股牛人
                         </h2>
@@ -288,12 +286,12 @@
             </div>
         </div>
         <p class="tr-img-ad">
-            <a href="#" title="" target="_blank"><img src="/static/img/ad-img-1.png" alt="" class="am-img-responsive"/></a>
+            <a href="#" title="" target="_blank"><img src="/static/img/ad-img-1.png" alt="" class="am-img-responsive" /></a>
         </p>
         <div class="am-g">
             <div class="am-u-md-6 am-padding-right-sm">
                 <section class="am-panel am-panel-default">
-                    <div class="am-panel-hd" >
+                    <div class="am-panel-hd">
                         <h2 class="am-panel-title ">
                             常胜牛人
                         </h2>
@@ -320,7 +318,7 @@
             </div>
             <div class="am-u-md-6 am-padding-left-sm">
                 <section class="am-panel am-panel-default">
-                    <div class="am-panel-hd" >
+                    <div class="am-panel-hd">
                         <h2 class="am-panel-title ">
                             人气牛人
                         </h2>
@@ -384,8 +382,7 @@
                         </div>
                         <p class="am-margin-vertical-0">
                             报名时间：2016-06-01 到 2016-06-30
-                            <br>
-                            比赛时间：2016-06-01 到 2016-06-30
+                            <br> 比赛时间：2016-06-01 到 2016-06-30
                         </p>
                     </div>
                 </div>
@@ -400,8 +397,7 @@
                         </div>
                         <p class="am-margin-vertical-0">
                             报名时间：2016-06-01 到 2016-06-30
-                            <br>
-                            比赛时间：2016-06-01 到 2016-06-30
+                            <br> 比赛时间：2016-06-01 到 2016-06-30
                         </p>
                     </div>
                 </div>
@@ -416,8 +412,7 @@
                         </div>
                         <p class="am-margin-vertical-0">
                             报名时间：2016-06-01 到 2016-06-30
-                            <br>
-                            比赛时间：2016-06-01 到 2016-06-30
+                            <br> 比赛时间：2016-06-01 到 2016-06-30
                         </p>
                     </div>
                 </div>
@@ -432,19 +427,12 @@
                         </div>
                         <p class="am-margin-vertical-0">
                             报名时间：2016-06-01 到 2016-06-30
-                            <br>
-                            比赛时间：2016-06-01 到 2016-06-30
+                            <br> 比赛时间：2016-06-01 到 2016-06-30
                         </p>
                     </div>
                 </div>
             </div>
-        </div>  
+        </div>
     </div>
 </div>
-{/block}
-
-{block name="footer"}{include file="public/footer" /}{/block}
-{block name="js"}
-{js file="/static/js/widget/carouFredSel.js"}
-{js file="/static/js/index/index.js"}
-{/block}
+{/block} {block name="footer"}{include file="public/footer" /}{/block} {block name="js"} {js file="/static/js/widget/carouFredSel.js"} {js file="/static/js/index/index.js"} {/block}

@@ -515,16 +515,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.8.29",
+            "version": "4.8.30",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "f19d481b468b76a7fb55eb2b772ed487e484891e"
+                "reference": "a534e04d0bd39c557c2881c341efd06fa6f1292a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/sebastianbergmann/phpunit/f19d481b468b76a7fb55eb2b772ed487e484891e.zip",
-                "reference": "f19d481b468b76a7fb55eb2b772ed487e484891e",
+                "url": "https://packagist.phpcomposer.com/files/sebastianbergmann/phpunit/a534e04d0bd39c557c2881c341efd06fa6f1292a.zip",
+                "reference": "a534e04d0bd39c557c2881c341efd06fa6f1292a",
                 "shasum": ""
             },
             "require": {
@@ -583,7 +583,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-11-20 10:35:28"
+            "time": "2016-12-01 17:05:48"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -1130,25 +1130,31 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.1.7",
+            "version": "v3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "9da375317228e54f4ea1b013b30fa47417e84943"
+                "reference": "f2300ba8fbb002c028710b92e1906e7457410693"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/symfony/yaml/9da375317228e54f4ea1b013b30fa47417e84943.zip",
-                "reference": "9da375317228e54f4ea1b013b30fa47417e84943",
+                "url": "https://packagist.phpcomposer.com/files/symfony/yaml/f2300ba8fbb002c028710b92e1906e7457410693.zip",
+                "reference": "f2300ba8fbb002c028710b92e1906e7457410693",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.5.9"
             },
+            "require-dev": {
+                "symfony/console": "~2.8|~3.0"
+            },
+            "suggest": {
+                "symfony/console": "For validating YAML files using the lint command"
+            },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.1-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -1175,7 +1181,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-11-18 21:05:29"
+            "time": "2016-11-18 21:17:59"
         },
         {
             "name": "topthink/framework",
@@ -1267,23 +1273,26 @@
         },
         {
             "name": "topthink/think-helper",
-            "version": "v1.0.3",
+            "version": "v1.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-helper.git",
-                "reference": "28d0299ff3327420abe07df5492cdd9b6c968262"
+                "reference": "ed64408cdc4cdbd390365ba0906d208b987af520"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/top-think/think-helper/28d0299ff3327420abe07df5492cdd9b6c968262.zip",
-                "reference": "28d0299ff3327420abe07df5492cdd9b6c968262",
+                "url": "https://packagist.phpcomposer.com/files/top-think/think-helper/ed64408cdc4cdbd390365ba0906d208b987af520.zip",
+                "reference": "ed64408cdc4cdbd390365ba0906d208b987af520",
                 "shasum": ""
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "think\\helper\\": "src"
-                }
+                },
+                "files": [
+                    "src/helper.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -1296,7 +1305,7 @@
                 }
             ],
             "description": "The ThinkPHP5 Helper Package",
-            "time": "2016-07-13 01:56:39"
+            "time": "2016-12-01 07:08:40"
         },
         {
             "name": "topthink/think-image",
@@ -1340,16 +1349,16 @@
         },
         {
             "name": "topthink/think-installer",
-            "version": "v1.0.10",
+            "version": "v1.0.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-installer.git",
-                "reference": "ae50760ebd7c687c7a8573db2cfa94a41e5100e3"
+                "reference": "4c6e1ebecd1afce3f4ccc47e147d61bbe1bf641d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/top-think/think-installer/ae50760ebd7c687c7a8573db2cfa94a41e5100e3.zip",
-                "reference": "ae50760ebd7c687c7a8573db2cfa94a41e5100e3",
+                "url": "https://packagist.phpcomposer.com/files/top-think/think-installer/4c6e1ebecd1afce3f4ccc47e147d61bbe1bf641d.zip",
+                "reference": "4c6e1ebecd1afce3f4ccc47e147d61bbe1bf641d",
                 "shasum": ""
             },
             "require": {
@@ -1377,7 +1386,7 @@
                     "email": "448901948@qq.com"
                 }
             ],
-            "time": "2016-09-23 04:04:44"
+            "time": "2016-12-01 09:08:45"
         },
         {
             "name": "topthink/think-migration",
@@ -1451,25 +1460,34 @@
         },
         {
             "name": "topthink/think-queue",
-            "version": "v1.0.2",
+            "version": "v1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-queue.git",
-                "reference": "bd0cf0f18146fafd4314c30a26b105d8b71f72b2"
+                "reference": "503c5b809585ca60cba9485a233aa8be4b22c990"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/top-think/think-queue/bd0cf0f18146fafd4314c30a26b105d8b71f72b2.zip",
-                "reference": "bd0cf0f18146fafd4314c30a26b105d8b71f72b2",
+                "url": "https://packagist.phpcomposer.com/files/top-think/think-queue/503c5b809585ca60cba9485a233aa8be4b22c990.zip",
+                "reference": "503c5b809585ca60cba9485a233aa8be4b22c990",
                 "shasum": ""
             },
-            "type": "library",
+            "require": {
+                "topthink/think-helper": ">=1.0.4",
+                "topthink/think-installer": ">=1.0.10"
+            },
+            "type": "think-extend",
+            "extra": {
+                "think-config": {
+                    "queue": "src/config.php"
+                }
+            },
             "autoload": {
                 "psr-4": {
-                    "think\\queue\\": "src"
+                    "think\\": "src"
                 },
                 "files": [
-                    "src/config.php"
+                    "src/common.php"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1483,7 +1501,7 @@
                 }
             ],
             "description": "The ThinkPHP5 Queue Package",
-            "time": "2016-11-25 03:41:00"
+            "time": "2016-12-01 04:29:39"
         },
         {
             "name": "topthink/think-sae",

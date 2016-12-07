@@ -8,9 +8,11 @@ use app\index\controller\Base;
 use app\common\model\UserPosition;
 use app\common\model\Transaction as Trans;
 use app\common\model\UserFunds;
+use app\common\model\User;
 use app\common\model\DaysRatio;
 use app\common\model\OptionalStock;
 use think\Db;
+use think\cache\driver\Redis;
 /**
  * 用户控制器
  */
@@ -27,14 +29,26 @@ class Index extends Base
      */
     public function index()
     {
+        $redis = new Redis();
         $data = input('get.');
         $res = $this->validate($data,'UserPosition');
         if (true !== $res) {
             return json(['status'=>'failed','data'=>$res]);
         }
+        if($redis->get('create_'.$data['uid']) !== true){
+            if(User::where(['uid'=>$data['uid']])->value('uid')){
+                if(!UserFunds::where(['uid'=>$data['uid']])->value('id')){
+                    $this->_base->createStock($data['uid']);
+                }else{
+                    $redis->set('create_'.$data['uid'],true);
+                }
+            }else{
+               return json(['status'=>'failed','data'=>'用户不存在']); 
+            }
+        }
         $position = $this->getUserPosition($data); //获取持仓信息
         $noOrder = $this->getUserNoOrder($data); //获取待成交信息
-        return json(['status'=>'success','data'=>$position['data'],'totalPage'=>$position['totalPage'],'nData'=>$noOrder['data'],'nTotalPage'=>$noOrder['totalPage']]);
+        return json(['status'=>'success','data'=>$position['data'],'nData'=>$noOrder['data']]);
     }
 
     /**
@@ -45,14 +59,16 @@ class Index extends Base
      */
     public function save(Request $request)
     {
+        $this->_base->checkToken();
         $data = $request->param();
         $res = $this->validate($data,'OptionalStock');
         if (true !== $res) {
             return json(['status'=>'failed','data'=>$res]);
         }
+        $optionalStock = new OptionalStock;
         $data['time'] = date("Y-m-d H:i:s");
         if(UserFunds::where(['uid'=>$data['uid']])->find()){
-            if(OptionalStock::where(['uid'=>$data['uid'],'stock'=>$data['stock']])->find()){
+            if($optionalStock->where(['uid'=>$data['uid'],'stock'=>$data['stock']])->find()){
                 $result = json(['status'=>'failed','data'=>'股票已经存在']);
             }else{
                 $stockData = getStock($data['stock'],'s_');
@@ -60,7 +76,8 @@ class Index extends Base
                 //这里后期更改 先暂时这样处理
                 Db::startTrans();
                 try {
-                    $id = OptionalStock::create($data)->id;
+                    $optionalStock->allowField(true)->save($data);
+                    $id = $optionalStock->id;
                     $count = OptionalStock::where(['stock'=>$data['stock']])->count();
                     OptionalStock::where(['stock'=>$data['stock']])->update(['follow'=>$count]);
                     Db::commit();
@@ -126,6 +143,7 @@ class Index extends Base
      * @return [type] [description]
      */
     public function delete(Request $request,$id){
+        $this->_base->checkToken();
         $uid = $request->param();
         $res = $this->validate($uid,'UserPosition');
         if (true !== $res) {
@@ -184,24 +202,17 @@ class Index extends Base
      * @return [json]       [description]
      */
     protected function getUserPosition($data){
-        $limit = $this->_base->_limit;
-
-        $data['p'] = isset($data['p']) ? (int)$data['p'] > 0 ? $data['p'] : 1 : 1;
-        $result['totalPage'] = ceil(UserPosition::where(['uid'=>$data['uid'],'is_position'=>1])->count()/$limit);
-        $result['data'] = UserPosition::where(['uid'=>$data['uid'],'is_position'=>1])->limit(($data['p']-1)*$limit,$limit)->select();
+        $result['data'] = UserPosition::where(['uid'=>$data['uid'],'is_position'=>1])->select();
         return $result;
     }
 
     /**
-     * [getUserNoOrder 获取用户带成交的订单]
+     * [getUserNoOrder 获取用户待成交的订单]
      * @param  [array] $data [用户的uid]
      * @return [json]       [返回订单详情]
      */
     protected function getUserNoOrder($data){
-        $limit = $this->_base->_limit;
-        $data['np'] = isset($data['np']) ? (int)$data['np'] > 0 ? $data['np'] : 1 : 1;
-        $result['totalPage'] = ceil(Trans::where(['uid'=>$data['uid'],'status'=>0])->whereTime('time','today')->count()/$limit);
-        $result['data'] = Trans::where(['uid'=>$data['uid'],'status'=>0])->whereTime('time','today')->limit(($data['np']-1)*$limit,$limit)->order('time desc')->select();
+        $result['data'] = Trans::where(['uid'=>$data['uid'],'status'=>0])->whereTime('time','today')->order('time desc')->select();
         return $result;
     }
 }

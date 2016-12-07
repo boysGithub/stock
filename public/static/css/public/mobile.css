@@ -1,0 +1,5 @@
+@media screen (max-width: 450px){
+	.tr-menu-nav .am-nav>li {
+	    padding: 0;
+	}
+}
