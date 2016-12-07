@@ -12,25 +12,101 @@ use app\common\model\UserFunds;
 use app\common\model\Rank;
 use app\common\model\AutoUpdate;
 use app\common\model\WeeklyRatio;
+use app\order\controller\Index as OrderIndex;
+use app\common\model\Transaction;
 
 class Index extends Controller
 {
     public $_stockFunds = 1000000; //股票账户初始金额
     public function __construct(){
         $addr = getIP();
-        if(!($addr=='115.29.199.94')) exit("非法请求");
+        #if(!($addr=='115.29.199.94')) exit("非法请求");
         
     }
 
+    /**
+     * [autoTrans 自动成交的方法]
+     * @return [type] [description]
+     */
     public function autoTrans(){
+        $data['column'] = "自动交易的方法";
+        $data['sorts'] = 1;
+        $data['is_update'] = 1;
+        AutoUpdate::create($data);
         $redis = new Redis();
-        $buyKyes = $redis->keys("*noBuyOrder*");
-        $tmp = "";
-        for ($i=0; $i < count($buyKyes); $i++) { 
-            $tmp[] = $redis->get($buyKyes[$i]);
+        $buyKeys = $redis->keys("*noBuyOrder*");
+        $sellKeys = $redis->keys("*noSellOrder*");
+        if($buyKeys){
+            for ($i=0; $i < count($buyKeys); $i++) { 
+                $tmpBuy = $redis->get($buyKeys[$i]);
+                $buy[$buyKeys[$i]] = $tmpBuy;
+                $stockBuy[] = $tmpBuy['stock'];
+            }
+            $stockInfo = getStock($stockBuy,"s_");
+            $orderIndex = new OrderIndex;
+            foreach ($buy as $key => $value) {
+                if($stockInfo[$value['stock']][1] <= $value['price']){
+                    $funds = UserFunds::where(['uid'=>$value['uid']])->find();
+                    $orderIndex->buyProcess($value,$stockInfo,$funds);
+                    $redis->rm($key);
+                }
+            }
         }
-        dump($buyKyes);
+
+        if($sellKeys){
+            for ($i=0; $i < count($sellKeys); $i++) { 
+                $tmpSell = $redis->get($sellKeys[$i]);
+                $sell[$sellKeys[$i]] = $tmpSell;
+                $stockSell[] = $tmpSell['stock'];
+            }
+            $stockInfo = getStock($stockSell,"s_");
+            $orderIndex = new OrderIndex;
+            foreach ($sell as $key => $value) {
+                if($stockInfo[$value['stock']][1] >= $value['price']){
+                    $funds = UserFunds::where(['uid'=>$value['uid']])->find();
+                    $orderIndex->sellProcess($value,$stockInfo,$funds);
+                    $redis->rm($key);
+                }
+            }
+        }
     }
+
+    /**
+     * [autoClearOrder 自动清空所有的未成交的订单]
+     * @return [type] [description]
+     */
+    public function autoClearOrder(){
+        $data['column'] = "自动清空未成交订单";
+        $data['sorts'] = 1;
+        $data['is_update'] = 1;
+        AutoUpdate::create($data);
+        $redis = new Redis();
+        $orderInfo = Transaction::whereTime('time','today')->where('status',0)->select();
+        foreach ($orderInfo as $key => $value) {
+            Db::startTrans();
+            try {
+                Transaction::update(['status'=>2],['id'=>$value['id']]);
+                if($value['type'] == 1){
+                    $redis->rm("noBuyOrder_".$value['id']."_".$value['uid']);
+                    $availableFunds = UserFunds::where(['uid'=>$value['uid']])->value('available_funds');
+                    $da['available_funds'] = $value['fee'] + $value['price'] * $value['number'] + $availableFunds;
+                    UserFunds::update($da,['uid'=>$value['uid']]);
+                }else if($value['type'] == 2){
+                    $redis->rm("noSellOrder".$value['id']."_".$value['uid']);
+                    $position = UserPosition::where(['uid'=>$value['uid'],'stock'=>$value['stock'],'is_position'=>1,'sorts'=>$value['sorts']])->Field('id,available_number')->find();
+                    $da['available_number'] = $position['available_number'] + $value['number'];
+                    UserPosition::where(['id'=>$position['id']])->update($da);
+                }
+                Db::commit();
+
+                $result = json(['status'=>'success','data'=>'撤单成功']);
+            } catch (\Exception $e){
+                Db::rollback();
+                $result = json(['status'=>'failed','data'=>'撤单失败']);
+            }
+        }
+    }
+
 
 
     /**
@@ -38,6 +114,10 @@ class Index extends Controller
      * @return [boolean] [布尔值]
      */
     public function autoUpdateFrozen(){
+        $data['column'] = "自动更新冻结数量";
+        $data['sorts'] = 1;
+        $data['is_update'] = 1;
+        AutoUpdate::create($data);
         $updateTime = strtotime(date("Y-m-d 00:00:00",time()));
         if(time() - $updateTime < 3600 && time() - $updateTime > 0 ){
             $sql = "SELECT id,(available_number + freeze_number) as available_number, (freeze_number=0) as freeze_number FROM `sjq_users_position` WHERE `is_position` = 1 AND ( `freeze_number` >0 )";
@@ -73,6 +153,10 @@ class Index extends Controller
             if (true !== $result) {
                 return json(['status'=>'failed','data'=>$result]);
             }
+            $data['column'] = "自动更新".$data['condition'];
+            $data['sorts'] = 1;
+            $data['is_update'] = 1;
+            AutoUpdate::create($data);
             $rank = new Rank;
             if($rank->updateRank($data['condition'],$data['sorts'],$data['rankFiled']) === TRUE){
                 return json(['status'=>'success','data'=> '更新成功']);
@@ -89,6 +173,10 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoCalcGrossProfitRate(){
+        $data['column'] = "自动更新总资产和盈利率";
+        $data['sorts'] = 1;
+        $data['is_update'] = 1;
+        AutoUpdate::create($data);
         // 启动事务
         Db::startTrans();
         try {
@@ -147,6 +235,10 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoSuccessRate(){
+        $data['column'] = "自动更新胜率";
+        $data['sorts'] = 1;
+        $data['is_update'] = 1;
+        AutoUpdate::create($data);
         // 启动事务
         Db::startTrans();
         try {
@@ -187,7 +279,7 @@ class Index extends Controller
     }
 
     /**
-     * [autoWeekRatio 自动添加和更新周赛数据]
+     * [autoWeekRatio 自动添加和更新周盈利率]
      * @return [type] [description]
      */
     public function autoWeekRatio(){
@@ -257,6 +349,10 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoBuildToken(){
+        $data['column'] = "自动更新token";
+        $data['sorts'] = 1;
+        $data['is_update'] = 1;
+        AutoUpdate::create($data);
         $redis = new Redis;
         //固定的token
         $token = Config::has("stocktell.token") ? Config::get('stocktell.token') : '';
