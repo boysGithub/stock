@@ -11,6 +11,7 @@ use app\common\model\UserFunds;
 use app\common\model\DaysRatio;
 use app\common\model\OptionalStock;
 use think\Db;
+use think\cache\driver\Redis;
 /**
  * 用户控制器
  */
@@ -27,10 +28,18 @@ class Index extends Base
      */
     public function index()
     {
+        $redis = new Redis();
         $data = input('get.');
         $res = $this->validate($data,'UserPosition');
         if (true !== $res) {
             return json(['status'=>'failed','data'=>$res]);
+        }
+        if($redis->get('create_'.$data['uid']) !== true){
+            if(!UserFunds::where(['uid'=>$data['uid']])->value('id')){
+                $this->_base->createStock($data['uid']);
+            }else{
+                $redis->set('create_'.$data['uid'],true);
+            }
         }
         $position = $this->getUserPosition($data); //获取持仓信息
         $noOrder = $this->getUserNoOrder($data); //获取待成交信息
