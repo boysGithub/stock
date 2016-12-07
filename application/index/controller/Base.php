@@ -8,7 +8,6 @@ use think\Config;
 use think\Db;
 use think\cache\driver\Redis;
 use app\common\model\UserFunds;
-use app\auto\controller\index as auto;
 /**
 * 
 */
@@ -62,9 +61,28 @@ class Base extends Controller
                 exit(JN(['status'=>'failed','data'=>'token过期，请重新登录']));
             }
         }else{
-            $auto = new auto;
-            $auto->autoBuildToken();
+            $this->autoBuildToken();
             $this->checkToken();
         }
+    }
+
+     /**
+     * [autoBuildToken 自动生成token]
+     * @return [type] [description]
+     */
+    private function autoBuildToken(){
+        $redis = new Redis;
+        //固定的token
+        $token = Config::has("stocktell.token") ? Config::get('stocktell.token') : '';
+        $randToken = getRandChar(10);
+        $sql = "UPDATE `ts_user` a,(select `uid`,`stock_token` from `ts_user`) obj set a.expired_token = obj.stock_token,a.stock_token=sha1(CONCAT('{$token}',obj.uid,'{$randToken}')) where a.uid=obj.uid";
+        Db::connect('sjq1')->query($sql);
+        $sql1 = "SELECT `uid`,`stock_token`,`expired_token` from `ts_user`";
+        $tokenInfo = Db::connect('sjq1')->query($sql1);
+        foreach ($tokenInfo as $key => $value) {
+            $tmp[$value['uid']]['stock_token'] = $value['stock_token'];
+            $tmp[$value['uid']]['expired_token'] = $value['expired_token'];
+        }
+        $redis->set('token',$tmp,3600);
     }
 }
