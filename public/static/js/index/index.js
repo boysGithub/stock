@@ -116,7 +116,7 @@ var index = new Vue({
             var _this = this;
             data = JSON.parse(data);
             if(data == null || data.timestamp < timestamp){
-                $.getJSON('http://www.tp5.com/match/detail.html',{type:1, np: 1, limit: 10},function(data){
+                $.getJSON(api_host + '/match/detail',{type:1, np: 1, limit: 10},function(data){
                     if(data.status == 'success'){
                         var ret = data.data.rankList;
                         var week_rate = [];
@@ -126,7 +126,7 @@ var index = new Vue({
                                     user_name: ret[i].user_name,
                                     ranking: ret[i].ranking,
                                     ranking_icon: (ret[i].ranking < 4) ? ' tr-icon' : '',
-                                    total_rate: ret[i].total_rate,
+                                    total_rate: ret[i].total_rate + '%',
                                     total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
                                     url: '#'+ret[i].uid
                                 });
@@ -147,7 +147,7 @@ var index = new Vue({
             var _this = this;
             data = JSON.parse(data);
             if(data == null || data.timestamp < timestamp){
-                $.getJSON('http://www.tp5.com/match/detail.html',{type:2, np: 1, limit: 10},function(data){
+                $.getJSON(api_host + '/match/detail',{type:2, np: 1, limit: 10},function(data){
                     if(data.status == 'success'){
                         var ret = data.data.rankList;
                         var month_rate = [];
@@ -157,7 +157,7 @@ var index = new Vue({
                                     user_name: ret[i].user_name,
                                     ranking: ret[i].ranking,
                                     ranking_icon: (ret[i].ranking < 4) ? ' tr-icon' : '',
-                                    total_rate: ret[i].total_rate,
+                                    total_rate: ret[i].total_rate + '%',
                                     total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
                                     url: '#'+ret[i].uid
                                 });
@@ -284,6 +284,8 @@ var index = new Vue({
         this.ad_slider();
         this.updateProclamation();
         this.updateTalentDynamic();
+        this.week_rate();
+        this.month_rate();
         this.updateTotalRate();
         this.updateSuccessRate();
         this.week_avg_profit_rate();
