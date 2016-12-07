@@ -270,8 +270,5 @@ class Index extends Controller
             $tmp[$value['uid']]['expired_token'] = $value['expired_token'];
         }
         $redis->set('token',$tmp,3600);
-        $redis->set('rand_token_old',$redis->get('rand_token'),3600);
-        $redis->set('rand_token',$randToken,3600);
-        
     }
 }

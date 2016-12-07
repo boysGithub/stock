@@ -48,7 +48,7 @@ class Base extends Controller
         if (true !== $res) {
             exit(JN(['status'=>'failed','data'=>$res]));
         }
-       if($redis->get('create_'.$data['uid']) !== true){
+        if($redis->get('create_'.$data['uid']) !== true){
             if(!UserFunds::where(['uid'=>$data['uid']])->value('id')){
                 $this->createStock($data['uid']);
             }else{
