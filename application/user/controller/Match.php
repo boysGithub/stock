@@ -83,15 +83,21 @@ class Match extends Base
     public function detail()
     {
         $data = input('get.');
-        $res = $this->validate($data,'Match.match');
-        if (true !== $res) {
-            return json(['status'=>'failed','data'=>$res]);
+        $where = [];
+        if(!isset($data['id'])){
+            $where = [
+                'type'=> !isset($data['type']) ? 1 : intval($data['type']),
+                'start_date' => ['<=', date('Y-m-d')],
+                'end_date' => ['>=', date('Y-m-d')]
+            ];
+        } else {
+            $where = ['id'=> intval($data['id'])];
         }
 
         $page = isset($data['np']) && (int)$data['np'] > 0 ? $data['np'] : 1;
         $limit = isset($data['limit']) && (int)$data['limit'] > 0 ? $data['limit'] : 100;
 
-        $match = MatchModel::where(['m.id'=>$data['id']])->alias('m');
+        $match = MatchModel::where($where)->alias('m');
         $field = '';
         if(isset($data['uid']) && !empty($data['uid'])){//登录后获取总收益和排名
             $field .= ",u.id muid,FORMAT((u.end_capital - u.initial_capital) / u.initial_capital,2) total_rate,(SELECT count(*) FROM sjq_match_user WHERE total_rate < ( end_capital - initial_capital) / initial_capital AND match_id=m.id)+1 ranking";
@@ -104,7 +110,7 @@ class Match extends Base
         }
         
         //比赛排行
-        $rankList = MatchUser::where(['match_id'=>$data['id']])->limit(($page-1)*$limit, $limit)->order('total_rate desc')->field('id,uid,user_name,ROUND((end_capital - initial_capital) / initial_capital,2) total_rate,
+        $rankList = MatchUser::where(['match_id'=>$match['id']])->limit(($page-1)*$limit, $limit)->order('total_rate desc')->field('id,uid,user_name,ROUND((end_capital - initial_capital) / initial_capital,2) total_rate,
 (SELECT count(id) FROM sjq_match_user WHERE total_rate < ( end_capital - initial_capital) / initial_capital AND match_id=1)+1 ranking')->select();
 
         $res = [
@@ -113,34 +119,6 @@ class Match extends Base
         ];
 
         return json(['status'=>'success','data'=>$res]);
-    }
-
-    /**
-     * 添加比赛
-     *
-     * @return [json]
-     */
-    public function create()
-    {
-        $data = input('post.');
-        $res = $this->validate($data,'Match.add');
-        if (true !== $res) {
-            return json(['status'=>'failed','data'=>$res]);
-        }
-        
-        $match = MatchModel::create([
-            'name'=>$data['name'], 
-            'periods'=> $data['periods'],
-            'type'=> $data['type'],
-            'start_date'=> $data['start_date'],
-            'end_date'=> $data['end_date'],
-            ]);
-        
-        if(empty($match->id)){
-            return json(['status'=>'failed','data'=>'创建失败']);
-        }
-
-        return json(['status'=>'success','data'=>"创建成功"]);
     }
 
     /**
@@ -186,15 +164,6 @@ class Match extends Base
         }
 
         return json(['status'=>'success','data'=>'添加成功']);
-    }
-
-    /**
-     * 比赛排名
-     *
-     * @return [json]
-     */
-    public function ranking()
-    {
     }
 }
 ?>
