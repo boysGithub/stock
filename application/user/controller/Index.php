@@ -197,6 +197,27 @@ class Index extends Base
     }
 
     /**
+     * [获取牛人推荐]
+     * @return [json]
+     */
+    public function getRecommend()
+    {
+        $users = User::where(['u.recommend'=> 1])->alias('u')->field('u.*, (w.endFunds - w.initialCapital) / w.initialCapital week_rate,
+(SELECT count(id) FROM `sjq_weekly_ratio` WHERE week_rate> (endFunds - initialCapital) / initialCapital)+1 ranking')
+                    ->join('sjq_weekly_ratio w', 'u.uid=w.uid', 'LEFT')
+                    ->select();
+        
+        foreach ($users as $key => $val) {
+            $users[$key]['week_rate'] = empty($val['week_rate']) ? 0 : round($val['week_rate'] * 100, 2);
+            $users[$key]['avatar'] = $this->getAvatar($val['uid']);
+        }
+        
+        $result = json(['status'=>'success', 'data'=> $users]);
+
+        return $result;
+    }
+
+    /**
      * [getUserPosition 获取用户持仓]
      * @param  [array] $data [传入的数据]
      * @return [json]       [description]

@@ -27,78 +27,24 @@
                     高手推荐
                 </h2>
             </div>
-            <div class="am-slider am-slider-default am-margin-bottom-0 am-slider-carousel tr-slider" data-am-flexslider="{itemWidth: 320, itemMargin: 20, slideshow: false, controlNav: false}">
+            <div class="am-slider am-slider-default am-margin-bottom-0 am-slider-carousel tr-slider" id="tr-slider">
                 <ul class="am-slides">
-                    <li>
+                    <li v-for="item in recommend">
                         <div class="am-g tr-talent-info am-padding">
                             <div class="am-u-sm-5 am-padding-right">
-                                <a href="{:url('index/index/personal')}" title="personal">
-                                    <img src="/static/img/portrait.gif" alt="portrait" class="am-circle">
+                                <a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name">
+                                    <img :src="item.avatar" alt="portrait" class="am-circle">
                                 </a>
                             </div>
                             <div class="am-u-sm-7">
-                                <p class="tr-talent-name">阿西八1</p>
-                                <p class="tr-talent-ranking">排名：258</p>
-                                <p class="tr-talent-rate">周盈利率：<span class="tr-color-win">25.24%</span></p>
-                                <p class="tr-talent-btn"><a href="" class="am-btn am-btn-danger am-btn-sm am-radius" title="模拟炒股" width="50%">他的模拟炒股</a></p>
+                                <p class="tr-talent-name">{{ item.user_name }}</p>
+                                <p class="tr-talent-ranking">排名：{{ item.ranking }}</p>
+                                <p class="tr-talent-rate">周盈利率：<span :class="item.week_rate_class">{{ item.week_rate }}</span></p>
+                                <p class="tr-talent-btn"><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name" class="am-btn am-btn-danger am-btn-sm am-radius" width="50%">他的模拟炒股</a></p>
                             </div>
                         </div>
                         <div class="tr-talent-reason am-padding-vertical-sm am-padding-horizontal">
-                            推荐理由：选股有独特的眼光，并操作优秀,懂啊框架阿凯假两件阿赛况
-                        </div>
-                    </li>
-                    <li>
-                        <div class="am-g tr-talent-info am-padding">
-                            <div class="am-u-sm-5 am-padding-right">
-                                <a href="{:url('index/index/personal')}" title="personal">
-                                    <img src="/static/img/portrait.gif" alt="portrait" class="am-circle">
-                                </a>
-                            </div>
-                            <div class="am-u-sm-7">
-                                <p class="tr-talent-name">阿西八1</p>
-                                <p class="tr-talent-ranking">排名：258</p>
-                                <p class="tr-talent-rate">周盈利率：<span class="tr-color-win">25.24%</span></p>
-                                <p class="tr-talent-btn"><a href="" class="am-btn am-btn-danger am-btn-sm am-radius" title="模拟炒股" width="50%">他的模拟炒股</a></p>
-                            </div>
-                        </div>
-                        <div class="tr-talent-reason am-padding-vertical-sm am-padding-horizontal">
-                            推荐理由：选股有独特的眼光，并操作优秀,懂啊框架阿凯假两件阿赛况
-                        </div>
-                    </li>
-                    <li>
-                        <div class="am-g tr-talent-info am-padding">
-                            <div class="am-u-sm-5 am-padding-right">
-                                <a href="{:url('index/index/personal')}" title="personal">
-                                    <img src="/static/img/portrait.gif" alt="portrait" class="am-circle">
-                                </a>
-                            </div>
-                            <div class="am-u-sm-7">
-                                <p class="tr-talent-name">阿西八1</p>
-                                <p class="tr-talent-ranking">排名：258</p>
-                                <p class="tr-talent-rate">周盈利率：<span class="tr-color-win">25.24%</span></p>
-                                <p class="tr-talent-btn"><a href="" class="am-btn am-btn-danger am-btn-sm am-radius" title="模拟炒股" width="50%">他的模拟炒股</a></p>
-                            </div>
-                        </div>
-                        <div class="tr-talent-reason am-padding-vertical-sm am-padding-horizontal">
-                            推荐理由：选股有独特的眼光，并操作优秀,懂啊框架阿凯假两件阿赛况
-                        </div>
-                    </li>
-                    <li>
-                        <div class="am-g tr-talent-info am-padding">
-                            <div class="am-u-sm-5 am-padding-right">
-                                <a href="{:url('index/index/personal')}" title="personal">
-                                    <img src="/static/img/portrait.gif" alt="portrait" class="am-circle">
-                                </a>
-                            </div>
-                            <div class="am-u-sm-7">
-                                <p class="tr-talent-name">阿西八1</p>
-                                <p class="tr-talent-ranking">排名：258</p>
-                                <p class="tr-talent-rate">周盈利率：<span class="tr-color-win">25.24%</span></p>
-                                <p class="tr-talent-btn"><a href="" class="am-btn am-btn-danger am-btn-sm am-radius" title="模拟炒股" width="50%">他的模拟炒股</a></p>
-                            </div>
-                        </div>
-                        <div class="tr-talent-reason am-padding-vertical-sm am-padding-horizontal">
-                            推荐理由：选股有独特的眼光，并操作优秀,懂啊框架阿凯假两件阿赛况
+                            推荐理由：{{ item.reason }}
                         </div>
                     </li>
                 </ul>
@@ -229,6 +175,7 @@
                 </div>
             </div>
         </div>
+        
         <div class="am-g">
             <div class="am-u-md-6 am-padding-right-sm">
                 <section class="am-panel am-panel-default">

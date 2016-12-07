@@ -32,7 +32,7 @@
                         <form method="get" action="{:url('user/index')}">
                         <div class="am-u-sm-12 am-u-md-6 am-u-lg-3">
                             <div class="am-form-group tpl-table-list-select">
-                                <select name="recommed" data-am-selected="{btnSize: 'sm'}">
+                                <select name="recommend" data-am-selected="{btnSize: 'sm'}">
                                   <option value="">请选择</option>
                                   <option value="0">未推荐</option>
                                   <option value="1">推荐</option>
@@ -66,12 +66,12 @@
                                         <td class="am-text-middle">{if condition="empty($vo.recommend)"}否{else /}推荐{/if}</td>
                                         <td class="am-text-middle">
                                             <div class="tpl-table-black-operation">
-                                                {if condition="empty($vo.recommend)"}<a reason="{$vo.reason}" href="javascript:;" onclick="recommend($(this))" class="am-btn am-btn-default am-btn-success">
+                                                {if condition="empty($vo.recommend)"}<a uid="{$vo.uid}" reason="{$vo.reason}" href="javascript:;" onclick="recommend($(this))" class="am-btn am-btn-default am-btn-success">
                                                     <i class="am-icon-plus"></i>
                                                     推荐
                                                 </a>
                                                 {else /}
-                                                <a reason="{$vo.reason}" onclick="recommend($(this))" href="javascript:;">
+                                                <a uid="{$vo.uid}" reason="{$vo.reason}" recommend="{$vo.recommend}" onclick="recommend($(this))" href="javascript:;">
                                                     <i class="am-icon-pencil"></i> 查看推荐
                                                  </a>   
                                                 {/if}
@@ -96,16 +96,16 @@
 </div>
 <div class="am-modal am-modal-confirm" tabindex="-1" id="my-confirm">
   <div class="am-modal-dialog">
-    <div class="am-modal-hd">推荐</div>
-    <div class="am-modal-bd">
-      推荐理由：
-      <textarea id="reason_text">
+    <div class="am-modal-hd">推荐<a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a></div>
+    <div class="am-modal-bd am-g">
+      <div class="am-u-sm-3 am-text-right">推荐理由：</div>
+      <textarea class="am-u-sm-8 am-u-end" id="reason_text">
           
       </textarea>
     </div>
-    <div class="am-modal-footer">
-      <span class="am-modal-btn" id="confirm" data-am-modal-confirm>保存</span>
-      <span class="am-modal-btn" id="cancel" data-am-modal-cancel>取消推荐</span>
+    <div class="am-modal-footer am-g">
+      <span class="am-modal-btn am-u-sm-7" id="confirm" data-am-modal-confirm>保存</span>
+      <span class="am-modal-btn am-u-sm-5" id="cancel" style="color: #999;" data-am-modal-cancel>撤销推荐</span>
     </div>
   </div>
 </div>
@@ -116,13 +116,25 @@
 
 function recommend(e)
 {
-    $("#reason_text").html(e.attr('reason'));
+    $("#reason_text").val(e.attr('reason'));
+    var recommend = e.attr('recommend');
+    if(recommend == '1'){
+        $("#cancel").html('撤销推荐');
+    } else {
+        $("#cancel").html('取消');
+    }
     $('#my-confirm').modal({
         relatedTarget: this,
         onConfirm: function(options) {
-            window.location.href = "{:url('user/recommend')}?uid="+e.attr('uid')+"&reason="+$("#reason_text").val();
+            var reason = encodeURI($("#reason_text").val());
+            window.location.href = "{:url('user/recommend')}?uid="+e.attr('uid')+"&recommend=1&reason="+reason;
         },
         onCancel: function() {
+            if(recommend == '1'){
+                window.location.href = "{:url('user/recommend')}?uid="+e.attr('uid')+"&recommend=0";
+            } else {
+                $('#my-confirm').modal('close');
+            }
         }
       });
 }    
