@@ -12,24 +12,54 @@ use app\common\model\UserFunds;
 use app\common\model\Rank;
 use app\common\model\AutoUpdate;
 use app\common\model\WeeklyRatio;
+use app\order\controller\Index as OrderIndex;
 
 class Index extends Controller
 {
     public $_stockFunds = 1000000; //股票账户初始金额
     public function __construct(){
         $addr = getIP();
-        if(!($addr=='115.29.199.94')) exit("非法请求");
+        #if(!($addr=='115.29.199.94')) exit("非法请求");
         
     }
 
     public function autoTrans(){
         $redis = new Redis();
-        $buyKyes = $redis->keys("*noBuyOrder*");
-        $tmp = "";
-        for ($i=0; $i < count($buyKyes); $i++) { 
-            $tmp[] = $redis->get($buyKyes[$i]);
+        $buyKeys = $redis->keys("*noBuyOrder*");
+        $sellKeys = $redis->keys("*noSellOrder*");
+        if($buyKeys){
+            for ($i=0; $i < count($buyKeys); $i++) { 
+                $tmpBuy = $redis->get($buyKeys[$i]);
+                $buy[$buyKeys[$i]] = $tmpBuy;
+                $stockBuy[] = $tmpBuy['stock'];
+            }
+            $stockInfo = getStock($stockBuy,"s_");
+            $orderIndex = new OrderIndex;
+            foreach ($buy as $key => $value) {
+                if($stockInfo[$value['stock']][1] <= $value['price']){
+                    $funds = UserFunds::where(['uid'=>$value['uid']])->find();
+                    $orderIndex->buyProcess($value,$stockInfo,$funds);
+                    $redis->rm($key);
+                }
+            }
         }
-        dump($buyKyes);
+
+        if($sellKeys){
+            for ($i=0; $i < count($sellKeys); $i++) { 
+                $tmpSell = $redis->get($sellKeys[$i]);
+                $sell[$sellKeys[$i]] = $tmpSell;
+                $stockSell[] = $tmpSell['stock'];
+            }
+            $stockInfo = getStock($stockSell,"s_");
+            $orderIndex = new OrderIndex;
+            foreach ($sell as $key => $value) {
+                if($stockInfo[$value['stock']][1] >= $value['price']){
+                    $funds = UserFunds::where(['uid'=>$value['uid']])->find();
+                    $orderIndex->sellProcess($value,$stockInfo,$funds);
+                    $redis->rm($key);
+                }
+            }
+        }
     }
 
 

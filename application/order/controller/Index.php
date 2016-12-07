@@ -388,7 +388,7 @@ class Index extends Base
      * @param  [type] $funds     [用户的资金信息]
      * @return [json]            [json]
      */
-    protected function buyProcess($data,$stockData,$funds){
+    protected function buyProcess($data,$stockData,$funds,$auto=false){
         //手续费比例
         $scale = $this->_base->_scale;
         //买入成交的处理
@@ -580,11 +580,12 @@ class Index extends Base
             $Trans->allowField(true)->save($data);
             
             UserFunds::where(['uid'=>$funds['uid']])->update(['available_funds'=>$data['available_funds']]);
-            //添加进入redis   ----未完成
+            //添加进入redis
+            $da = $Trans->where(['id'=>$Trans->id])->find();
             $redis = new Redis();
-            $redis->set("noBuyOrder_".$Trans->id."_".$data['uid'],$data);
+            $redis->set("noBuyOrder_".$Trans->id."_".$data['uid'],$da);
             Db::commit();
-            $result = json(['status'=>'success','data'=>'下单成功']);
+            $result = json(['status'=>'success','data'=>'买入委托成功']);
         } catch (\Exception $e) {
             Db::rollback();
             $result = json(['status'=>'failed','data'=>'下单失败']);
@@ -620,10 +621,11 @@ class Index extends Base
             $data['pid'] = $info['id'];
             $Trans = new Trans();
             $Trans->allowField(true)->save($data);
+            $da = $Trans->where(['id'=>$Trans->id])->find();
             $redis = new Redis();
-            $redis->set("noSellOrder_".$Trans->id."_".$data['uid'],$data);
+            $redis->set("noSellOrder_".$Trans->id."_".$data['uid'],$da);
             Db::commit();
-            $result = json(['status'=>'success','data'=>'下单成功']);
+            $result = json(['status'=>'success','data'=>'卖出委托成功']);
         } catch (\Exception $e) {
             Db::rollback();
             $result = json(['status'=>'failed','data'=>'下单失败']);
