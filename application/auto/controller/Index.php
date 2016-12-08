@@ -29,6 +29,16 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoTrans(){
+        $button = true;
+        $time1 = strtotime(date("Y-m-d 9:30:00"));
+        $time2 = strtotime(date("Y-m-d 11:30:00"));
+        $time3 = strtotime(date("Y-m-d 13:00:00"));
+        $time4 = strtotime(date("Y-m-d 15:00:00"));
+        dump($time1);
+        dump($time2);
+        dump($time3);
+        dump($time4);
+        exit;
         $data['column'] = "自动交易的方法";
         $data['sorts'] = 1;
         $data['is_update'] = 1;
@@ -167,10 +177,10 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoCalcGrossProfitRate(){
-        $data['column'] = "自动更新总资产和盈利率";
-        $data['sorts'] = 1;
-        $data['is_update'] = 1;
-        AutoUpdate::create($data);
+        // $data['column'] = "自动更新总资产和盈利率";
+        // $data['sorts'] = 1;
+        // $data['is_update'] = 1;
+        // AutoUpdate::create($data);
         // 启动事务
         Db::startTrans();
         try {
@@ -190,13 +200,26 @@ class Index extends Controller
                 $stockTmp = getStock($stockGather,'s_');
                 //获取持仓的集合
                 $userInfo = $userPosition->where(['is_position'=>1,'uid'=>['in',$userGather]])->Field('id,uid,stock,(available_number + freeze_number) as number,cost_price')->select();
+                $sellFreezeNumber = Transaction::where(['type'=>2,'status'=>0,'uid'=>['in',$userGather]])->Field('uid,stock,number')->select();
+                $tmp = '';
+                foreach ($sellFreezeNumber as $key => $value) {
+                    $tmp[$value['uid']][$value['stock']] = $value['number'];
+                    $tmp1[] = $value['uid'];
+                    $tmp2[] = $value['stock'];
+                }
+                $tmp1 = array_unique($tmp1);
+                $tmp2 = array_unique($tmp2);
                 //计算市值
                 foreach ($userInfo as $key => $value) {
+                    //把某一个用户的市值统计出来
+                    if(in_array($value['uid'],$tmp1) && in_array($value['stock'],$tmp2)){
+                        $userTotal[$value['uid']][] = ($tmp[$value['uid']][$value['stock']] + $value['number']) * $stockTmp[$value['stock']][1];
+                    }else{
+                        $userTotal[$value['uid']][] = $value['number'] * $stockTmp[$value['stock']][1];
+                    }
                     $userInfo[$key]['assets'] = $value['number'] * $stockTmp[$value['stock']][1];
                     $userInfo[$key]['ratio'] = round(($stockTmp[$value['stock']][1] - $value['cost_price'])/$value['cost_price'] * 100,8);
-                    $userInfo[$key] = $value->toArray();
-                    //把某一个用户的市值统计出来
-                    $userTotal[$value['uid']][] = $value['number'] * $stockTmp[$value['stock']][1];
+                    $userInfo[$key] = $value->toArray();  
                 }
                 //更新现在的持仓比例,最新资产
                 $userPosition->saveAll($userInfo);
@@ -220,7 +243,7 @@ class Index extends Controller
             return json(['status'=>'success','data'=> '更新成功']);
         } catch (\Exception $e) {
             Db::rollback();
-            return json(['status'=>'failed','data'=> $e]);
+            return json(['status'=>'failed','data'=> '更新失败']);
         }
     }
 
