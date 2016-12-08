@@ -143,28 +143,21 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoUpdateRank(Request $request){
-        $updateTime1 = strtotime(date("Y-m-d 11:35:00",time()));
-        $updateTime2 = strtotime(date("Y-m-d 12:55:00",time()));
-        $updateTime3 = strtotime(date("Y-m-d 15:05:00",time()));
-        if(($updateTime1 < time() && time() < $updateTime2) || time() > $updateTime3){
-            $data = $request->param();
-            //验证传递的参数
-            $result = $this->validate($data,'AutoUpdateRank');
-            if (true !== $result) {
-                return json(['status'=>'failed','data'=>$result]);
-            }
-            $data['column'] = "自动更新".$data['condition'];
-            $data['sorts'] = 1;
-            $data['is_update'] = 1;
-            AutoUpdate::create($data);
-            $rank = new Rank;
-            if($rank->updateRank($data['condition'],$data['sorts'],$data['rankFiled']) === TRUE){
-                return json(['status'=>'success','data'=> '更新成功']);
-            }else{
-                return json(['status'=>'failed','data'=> '更新失败']);
-            }
+        $data = $request->param();
+        //验证传递的参数
+        $result = $this->validate($data,'AutoUpdateRank');
+        if (true !== $result) {
+            return json(['status'=>'failed','data'=>$result]);
+        }
+        $data['column'] = "自动更新".$data['condition'];
+        $data['sorts'] = 1;
+        $data['is_update'] = 1;
+        AutoUpdate::create($data);
+        $rank = new Rank;
+        if($rank->updateRank($data['condition'],$data['sorts'],$data['rankFiled']) === TRUE){
+            return json(['status'=>'success','data'=> '更新成功']);
         }else{
-            return json(['status'=>'failed','data'=> '现在的时间不能更新']);
+            return json(['status'=>'failed','data'=> '更新失败']);
         }
     }
 
