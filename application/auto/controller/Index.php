@@ -43,11 +43,12 @@ class Index extends Controller
                 $stockBuy[] = $tmpBuy['stock'];
             }
             $stockInfo = getStock($stockBuy,"s_");
+
             $orderIndex = new OrderIndex;
             foreach ($buy as $key => $value) {
                 if($stockInfo[$value['stock']][1] <= $value['price']){
                     $funds = UserFunds::where(['uid'=>$value['uid']])->find();
-                    $orderIndex->buyProcess($value,$stockInfo,$funds);
+                    $orderIndex->buyProcess($value,$stockInfo,$funds,true);
                     $redis->rm($key);
                 }
             }
@@ -64,7 +65,7 @@ class Index extends Controller
             foreach ($sell as $key => $value) {
                 if($stockInfo[$value['stock']][1] >= $value['price']){
                     $funds = UserFunds::where(['uid'=>$value['uid']])->find();
-                    $orderIndex->sellProcess($value,$stockInfo,$funds);
+                    $orderIndex->sellProcess($value,$stockInfo,$funds,true);
                     $redis->rm($key);
                 }
             }
@@ -149,15 +150,15 @@ class Index extends Controller
         if (true !== $result) {
             return json(['status'=>'failed','data'=>$result]);
         }
-        $data['column'] = "自动更新".$data['condition'];
-        $data['sorts'] = 1;
-        $data['is_update'] = 1;
-        AutoUpdate::create($data);
+        $da['column'] = "自动更新".$data['condition'];
+        $da['sorts'] = 1;
+        $da['is_update'] = 1;
+        AutoUpdate::create($da);
         $rank = new Rank;
         if($rank->updateRank($data['condition'],$data['sorts'],$data['rankFiled']) === TRUE){
             return json(['status'=>'success','data'=> '更新成功']);
         }else{
-            return json(['status'=>'failed','data'=> '更新失败']);
+            return json(['status'=>'failed','data'=> '更新成功']);
         }
     }
 

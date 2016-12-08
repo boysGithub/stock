@@ -388,13 +388,15 @@ class Index extends Base
      * @param  [type] $funds     [用户的资金信息]
      * @return [json]            [json]
      */
-    protected function buyProcess($data,$stockData,$funds,$auto=false){
+    public function buyProcess($data,$stockData,$funds,$auto=false){
+        
         //手续费比例
         $scale = $this->_base->_scale;
         //买入成交的处理
         Db::startTrans();
         //开启事务
         try {
+
             //订单参数
             $data['status'] = 1;
             $data['price'] = $stockData[$data['stock']][1];
@@ -410,7 +412,6 @@ class Index extends Base
             UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->update(['available_funds'=>$data['available_funds']]);
             //查看是否持有这只股票
             $userInfo = UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'is_position'=>1,'sorts'=>$data['sorts']])->find();
-
             if($userInfo){
                 //持有股票更改持仓表信息
                 $da['fee'] = $data['fee'] + $userInfo['fee'];
@@ -424,7 +425,11 @@ class Index extends Base
                 $data['pid'] = $userInfo['id'];
                 //添加订单到数据库
                 $Trans = new Trans();
-                $Trans->allowField(true)->save($data);
+                if($auto){
+                    $Trans->update($data);
+                }else{
+                    $Trans->allowField(true)->save($data);
+                }
                 Db::commit();
                 $result = json(['status'=>'success','data'=>'买入提交成功']);
             }else{
@@ -445,7 +450,11 @@ class Index extends Base
                 $data['pid'] = $UserPosition->id;
                 //添加订单到数据库
                 $Trans = new Trans();
-                $Trans->allowField(true)->save($data);
+                if($auto){
+                    $Trans->update($data);
+                }else{
+                    $Trans->allowField(true)->save($data);
+                }
                 Db::commit();
                 $result = json(['status'=>'success','data'=>'买入提交成功']);;
             }
@@ -463,7 +472,7 @@ class Index extends Base
      * @param  [array] $funds     [账户资金]
      * @return [json]            [返回信息]
      */
-    protected function sellProcess($data,$stockData,$funds){
+    public function sellProcess($data,$stockData,$funds,$auto=true){
         //手续费比例
         $scale = $this->_base->_scale;
         //买入成交的处理
@@ -526,7 +535,11 @@ class Index extends Base
                 UserPosition::where(['id'=>$userInfo['id']])->update($da);
                 $data['pid'] = $userInfo['id'];
                 $Trans = new Trans();
-                $Trans->allowField(true)->save($data);
+                if($auto){
+                    $Trans->update($data);
+                }else{
+                    $Trans->allowField(true)->save($data);
+                }
                 Db::commit();
                 $result = json(['status'=>'success','data'=>'卖出提交成功']);
             }else{
@@ -545,7 +558,11 @@ class Index extends Base
                 //添加订单到数据库
                 $data['pid'] = $userInfo['id'];
                 $Trans = new Trans();
-                $Trans->allowField(true)->save($data);
+                if($auto){
+                    $Trans->update($data);
+                }else{
+                    $Trans->allowField(true)->save($data);
+                }
                 Db::commit();
                 $result = json(['status'=>'success','data'=>'卖出提交成功']);
             }
