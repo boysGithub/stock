@@ -78,7 +78,7 @@ var index = new Vue({
             data = JSON.parse(data);
             if(data == null || data.timestamp < timestamp){
                 var _this = this;
-                $.getJSON('http://www.tp5.com/user/getRecommend.html',{},function(data){
+                $.getJSON(api_host + '/user/getRecommend',{},function(data){
                     if(data.status == 'success'){
                         var ret = data.data;
                         var recommend = [];
