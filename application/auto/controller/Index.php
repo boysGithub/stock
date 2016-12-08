@@ -157,7 +157,7 @@ class Index extends Controller
         if($rank->updateRank($data['condition'],$data['sorts'],$data['rankFiled']) === TRUE){
             return json(['status'=>'success','data'=> '更新成功']);
         }else{
-            return json(['status'=>'failed','data'=> '更新失败']);
+            return json(['status'=>'failed','data'=> '更新成功']);
         }
     }
 
