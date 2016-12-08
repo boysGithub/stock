@@ -83,4 +83,19 @@ class Base extends Controller
         }
         $redis->set('token',$tmp,3600);
     }
+
+    /**
+     * [获取用户头像]
+     * @return [string] 
+     */
+    protected function getAvatar($uid)
+    {
+        $avatar = 'http://www.sjqcj.com/data/upload/avatar/';
+
+        $str = md5($uid);
+        $avatar .= substr($str, 0, 2) . '/' . substr($str, 2, 2) . '/' . substr($str, 4, 2);
+        $avatar .= '/original_200_200.jpg';
+
+        return $avatar;
+    }
 }
