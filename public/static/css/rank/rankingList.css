@@ -1,0 +1,9 @@
+.tr-match-name h2{color: #cd3333; font-size: 2rem;}
+.tr-tabs .am-tabs-nav li a{font-size: 16px; border-radius: 4px 4px 0 0; background-color: #eee;border-width: 1px; border-color: #999 #999 #39f; border-style: solid;}
+.tr-tabs .am-nav>li>a:focus, .tr-tabs .am-nav>li>a:hover{background-color: #39f; color: #fff; border-color: #39f;}
+.tr-tabs .am-nav-tabs>li.am-active>a, .tr-tabs .am-nav-tabs>li.am-active>a:focus, .tr-tabs .am-nav-tabs>li.am-active>a:hover{background-color: #39f; color: #fff; border-color: #39f;}
+.tr-tabs .am-tabs-bd,.tr-tabs .am-nav-tabs{border-color: #39f;border-radius: 0 2px 2px;}
+.tr-tabs .am-table{margin-bottom: 0;}
+.tr-table-ranking>tbody>tr>td{height: 42px; line-height: 42px;}
+.tr-table-ranking>thead>tr>th{background:#f6f6f6; height: 28px; line-height: 28px; font-size: 1.4rem;font-weight: 400;}
+.tr-table-ranking .tr-icon{color: #fff; line-height: 30px;}

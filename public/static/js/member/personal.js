@@ -1,3 +1,79 @@
+var personal = new Vue({
+    el: "#personal",
+    data: {
+        info: {},//用户信息
+        positions: [],//用户持仓
+        entrust: []//用户委托
+    },
+    methods: {
+        info(){
+            var _this = this;
+            $.getJSON(api_host + '/users/11643',{},function(data){
+                if(data.status == 'success'){
+                    var ret = data.data;
+                    var info = {
+                        user_name: ret.username, 
+                        position: ret.position + '%',
+                        win_rate: ret.win_rate + '%', 
+                        time: ret.time, 
+                        operationTime: ret.operationTime, 
+                        funds: ret.funds, 
+                        available_funds: ret.available_funds, 
+                        total_rate: ret.total_rate,
+                        total_rate_class: (ret.total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                    };
+
+                    _this.matchList = matchList;
+                }    
+            });
+        },
+        positions(){
+            var _this = this;
+            $.getJSON(api_host + '/users',{uid: 11643},function(data){
+                if(data.status == 'success'){
+                    var positions = [];
+                    for (var i = 0; i < data.data.length; i++) {
+                        var stock = data.data[i];
+                        positions.push({
+                            stock: stock.stock,
+                            stock_name: stock.stock_name,
+                            ratio: stock.ratio + '%',
+                            ratio_class: (stock.ratio < 0) ? 'tr-color-lose' : 'tr-color-win',
+                            available_number: stock.available_number,
+                            cost_price: stock.cost_price,
+                            assets: stock.assets,
+                            cost: stock.cost,
+                        });
+                    }
+
+                    var entrust = [];
+                    for (var i = 0; i < data.nData.length; i++) {
+                        var et = data.nData[i];
+                        entrust.push({
+                            uid: et.uid,
+                            stock: et.stock,
+                            stock_name: et.stock_name,
+                            price: et.price,
+                            number: et.number,
+                            time: et.time,
+                            type: (et.type == 1) ? '买入' : '卖出',
+                            status: et.status,
+                            fee: et.fee
+                        });
+                    }
+
+                    _this.positions = positions;
+                    _this.entrust = entrust;
+                }    
+            });
+        }
+    },
+    created(){
+        this.info();
+        this.positions();
+    }
+})
+
 //k线图
 var myChart = echarts.init(document.getElementById('main')); 
 var option = {

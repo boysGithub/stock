@@ -5,23 +5,12 @@
 <title>模拟赛场</title>
 {/block}
 {block name="css"}
-{css file="/static/amaze/css/pagination.css"}
-<style type="text/css">
-    .tr-list{}
-    .tr-list .tr-list-li,.tr-list .tr-list-li a{font-size: 14px;}
-    .tr-list .tr-list-li{border:1px solid #e8e8e8;margin-top: 1rem; padding: 1rem;}
-    .tr-list .tr-list-li .tr-list-main{border-right: 1px solid #e8e8e8;}
-    .tr-list .tr-list-li .tr-list-button{ padding-top: 2rem;}
-
-
-    @media only screen and (max-width: 1024px){  
-        .tr-list .tr-list-li .tr-list-main{border-right: none;}
-    }
-</style>
+{css file="/static/css/public/pagination.css"}
+{css file="/static/css/match/matchs.css"}
 {/block}
 {block name="header"}{include file="public/header" /}{/block}
 {block name="main"}
-<div class="am-g tr-main">
+<div class="am-g tr-main" id="matchs">
     <div class="am-container">
         <div class="am-g">
             <div class="am-u-md-10">
@@ -31,35 +20,43 @@
                 </div>
                 <div class="am-list-news-bd tr-list">
                     <ul class="am-list">
-                        
-                            <li class="am-g tr-list-li">
-                                <div class="am-u-lg-10 tr-list-main">
-                                    <div class="am-u-md-3 am-list-thumb am-text-center">
-                                        <a href="{:url('stocks/match/matchDetails')}" title=""><img src="/static/img/u3890.png" alt="比赛广告" /></a>
+                        <li class="am-g tr-list-li" v-for="item in matchList">
+                            <div class="am-u-lg-10 tr-list-main">
+                                <div class="am-u-md-3 am-list-thumb am-text-center">
+                                    <a :href="'{:url('stocks/match/matchDetails')}?id=' + item.id" :title="item.name"><img :src="item.image" alt=":item.name" /></a>
+                                </div>
+                                <div class="am-u-md-9 am-list-main am-padding-left">
+                                    <div class="am-u-md-12">
+                                        <label>比赛名称：</label><a :href="'{:url('index/macthUser')}?id='+item.id" :title="item.name"><span>{{ item.name }}</span></a>&nbsp;&nbsp;&nbsp;&nbsp;{{ item.status_name }}
                                     </div>
-                                    <div class="am-u-md-9 am-list-main am-padding-left">
-                                        <div class="am-u-md-12">
-                                            <label>比赛名称：</label><a href="{:url('stocks/match/matchDetails')}" title=""><span></span></a>
+                                    <div class="am-g">
+                                        <div class="am-u-md-7">
+                                            <label>比赛时间：</label><span>{{ item.start_date }} - {{ item.end_date }}</span>
                                         </div>
-                                        <div class="am-g">
-                                            <div class="am-u-md-7">
-                                                <label>比赛时间：</label><span></span>
-                                            </div>
-                                            <div class="am-u-md-5">
-                                                <label>我在比赛中的排名：</label><span>名</span>
-                                            </div>
+                                        <div class="am-u-md-5">
+                                            <template v-if="item.joined == 1">
+                                            <label>我在比赛中的排名：</label><span>{{ item.ranking }}名</span>
+                                            </template>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="am-u-lg-2 am-list-main am-text-center tr-list-button">
-                                    
-                                        <a href="{:url('stocks/match/matchDetails')}" class="am-btn am-btn-warning am-btn-lg" onclick="jumpDetails('',0)">参加比赛</a>
-                                    
-                                        <!-- <a href="{:url('stocks/match/matchDetails')}" class="am-btn am-btn-danger am-btn-lg" onclick="jumpDetails('',1)">已参加</a> -->
-                                    
-                                </div>
-                            </li>
-                        
+                            </div>
+                            <div class="am-u-lg-2 am-list-main am-text-center tr-list-button">
+                                
+                                    <template v-if="item.status == 3">
+                                    <a href="{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-warning am-btn-lg">查看</a>
+                                    </template>
+                                    <template v-if="item.status == 1 && item.joined == 0">
+                                    <a href="javascript:;" :href-url="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-lg" :id="item.id" v-on:click="join_match">参加比赛</a>
+                                    </template>
+                                    <template v-if="item.status == 1 && item.joined == 1">
+                                    <a href="{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-warning am-btn-lg">进入比赛</a>
+                                    </template>
+                                
+                                    <!-- <a href="{:url('stocks/match/matchDetails')}" class="am-btn am-btn-danger am-btn-lg" onclick="jumpDetails('',1)">已参加</a> -->
+                                
+                            </div>
+                        </li>
                     </ul>
                 </div>    
                 <div class="pages am-text-center">
@@ -76,15 +73,5 @@
 
 {block name="footer"}{include file="public/footer" /}{/block}
 {block name="js"}
-    <script>
-        /**
-         *
-         * @param id 数据id
-         * @param type 参加类型 0 为未参加 1为已参加
-         */
-        function jumpDetails(id,type){
-            var url  = "matchds/"+id+"/"+type+"";
-            window.location.href = url;
-        }
-    </script>
+{js file="/static/js/match/matchs.js"}
 {/block}

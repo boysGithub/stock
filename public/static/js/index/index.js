@@ -11,7 +11,8 @@ var index = new Vue({
         total_rate_5: [],//总收益榜
         total_rate_10: [],//总盈利率
         success_rate: [],//选股牛人
-        week_avg_profit_rate: []//常胜牛人
+        week_avg_profit_rate: [],//常胜牛人
+        matchs: []//赛场
     },
     methods: {
         ad_slider(){
@@ -108,7 +109,7 @@ var index = new Vue({
                      slideshow: false, 
                      controlNav: false
                 });
-            }, 100);
+            }, 200);
         },
         updateTalentDynamic(){
             var timestamp = new Date().getTime();
@@ -317,6 +318,35 @@ var index = new Vue({
             } else {
                 this.week_avg_profit_rate = data.data;
             }    
+        },
+        updateMatchs(){
+            var timestamp = new Date().getTime();
+            var data = localStorage.getItem('matchs');
+            data = JSON.parse(data);
+            if(data == null || data.timestamp < timestamp){                
+                var _this = this;
+                $.getJSON(api_host + '/match/index',{limit:4},function(data){
+                    if(data.status == 'success'){
+                        var ret = data.data;
+                        var matchs = [];
+                        for (var i = 0; i < ret.length; i++) {
+                            matchs.push({
+                                name: ret[i].name,
+                                image: ret[i].image,
+                                id: ret[i].id,
+                                start_date: ret[i].start_date,
+                                end_date: ret[i].end_date,
+                                status_name: ret[i].status_name
+                            });
+                        }
+
+                        localStorage.setItem('matchs',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: matchs}));
+                        _this.matchs = matchs;
+                    }    
+                });
+            } else {
+                this.matchs = data.data;
+            } 
         } 
     },
     created(){
@@ -329,6 +359,7 @@ var index = new Vue({
         this.updateTotalRate();
         this.updateSuccessRate();
         this.week_avg_profit_rate();
+        this.updateMatchs();
     }
 });
 

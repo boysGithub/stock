@@ -12,7 +12,7 @@ class Match extends Base
 {
 	public function index()
 	{
-		$matchs = MatchModel::where([])->order('id DESC')->paginate(1);
+		$matchs = MatchModel::where([])->order('id DESC')->paginate(10);
 
 		$this->assign('matchs', $matchs);
 		$this->assign('page', $matchs->render());

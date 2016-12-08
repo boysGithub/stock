@@ -9,14 +9,14 @@
 {/block}
 {block name="header"}{include file="public/header" /}{/block}
 {block name="main"}
-<div class="am-g">
+<div class="am-g" id="personal">
     <div class="am-container am-margin-top tr-personal">
         <div class="am-u-md-3 am-padding-right-sm">
             <section class="am-panel am-panel-default">
               <div class="am-panel-bd am-text-center">
                 <p class="tr-portrait am-padding-horizontal-lg"><img src="/static/img/portrait.gif" class="am-img-thumbnail am-circle" />
                 </p>
-                <p class="am-margin-top-sm">mo_20640***6</p>
+                <p class="am-margin-top-sm">{{ info.user_name }}</p>
                 <hr data-am-widget="divider" style="" class="am-divider am-divider-dotted" />
                 <p><a href="" class="am-btn am-btn-primary am-btn-xs am-radius am-margin-right">去他的微博</a><a href="{:url('stocks/trading/tradingCenter')}" class="am-btn am-btn-primary am-btn-xs am-radius">进入交易区</a></p>
               </div>
@@ -31,7 +31,7 @@
                         </tr>
                         <tr>
                             <td>仓位</td>
-                            <td>90.5%</td>
+                            <td>{{ info.position }}</td>
                         </tr>
                         <tr>
                             <td>选股成功率</td>
@@ -43,11 +43,11 @@
                         </tr>
                         <tr>
                             <td>加入时间</td>
-                            <td>2015年6月11日</td>
+                            <td>{{ info.time }}</td>
                         </tr>
                         <tr>
                             <td>最后操作时间</td>
-                            <td>2015年6月11日</td>
+                            <td>{{ info.operationTime }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -66,7 +66,7 @@
                             <div class="am-u-sm-4">总盈亏</div>
                             <div class="am-u-sm-4">浮动盈亏</div>
                             <div class="am-u-sm-2">实现盈亏</div>
-                            <div class="am-u-sm-2"><span class="tr-color-win">35%</span></div>
+                            <div class="am-u-sm-2"><span :class="info.total_rate_class">{{ info.total_rate }}</span></div>
                             <div class="am-u-sm-4"><span class="tr-color-win">35%</span></div>
                             <div class="am-u-sm-4"><span class="tr-color-win">35%</span></div>
                             <div class="am-u-sm-2"><span class="tr-color-lose">35%</span></div>
@@ -77,9 +77,9 @@
                             <div class="am-u-sm-4">起始资产</div>
                             <div class="am-u-sm-4">资金余额</div>
                             <div class="am-u-sm-2">股票市值</div>
-                            <div class="am-u-sm-2"><span class="tr-color-price">10</span>元</div>
-                            <div class="am-u-sm-4"><span class="tr-color-price">10</span>元</div>
-                            <div class="am-u-sm-4"><span class="tr-color-price">10</span>元</div>
+                            <div class="am-u-sm-2"><span class="tr-color-price">{{ info.funds }}</span>元</div>
+                            <div class="am-u-sm-4"><span class="tr-color-price">1000000</span>元</div>
+                            <div class="am-u-sm-4"><span class="tr-color-price">{{ info.available_funds }}</span>元</div>
                             <div class="am-u-sm-2"><span class="tr-color-price">10</span>元</div>
                         </div>
                     </div>    
@@ -99,39 +99,21 @@
                                     <th>股票名称</th>
                                     <th>股票代码</th>
                                     <th>持仓数量</th>
-                                    <th>最新价格</th>
+                                    <th>买入价格</th>
+                                    <th>成本金额</th>
+                                    <th>最新资产</th>
                                     <th>盈亏比例</th>
-                                    <th>仓数比重</th>
-                                    <th>操作详情</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>浦发银行</td>
-                                    <td>600000</td>
-                                    <td>3000</td>
-                                    <td>10</td>
-                                    <td><span class="tr-color-win">50%</span></td>
-                                    <td>100%</td>
-                                    <td><a href="#" title="详情">查看详情</a></td>
-                                </tr>
-                                <tr>
-                                    <td>浦发银行</td>
-                                    <td>600000</td>
-                                    <td>3000</td>
-                                    <td>10</td>
-                                    <td><span class="tr-color-win">50%</span></td>
-                                    <td>100%</td>
-                                    <td><a href="#" title="详情">查看详情</a></td>
-                                </tr>
-                                <tr>
-                                    <td>浦发银行</td>
-                                    <td>600000</td>
-                                    <td>3000</td>
-                                    <td>10</td>
-                                    <td><span class="tr-color-lose">-3.2%</span></td>
-                                    <td>100%</td>
-                                    <td><a href="#" title="详情">查看详情</a></td>
+                                <tr v-for="item in positions">
+                                    <td>{{ item.stock_name }}</td>
+                                    <td>{{ item.stock }}</td>
+                                    <td>{{ item.available_number }}</td>
+                                    <td>{{ item.cost_price }}</td>
+                                    <td>{{ item.cost }}</td>
+                                    <td>{{ item.assets }}</td>
+                                    <td><span :class="item.ratio_class">{{ item.ratio }}</span></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -152,29 +134,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>浦发银行</td>
-                                    <td>600000</td>
-                                    <td><span class="tr-color-buy">买入</span></td>
-                                    <td>11</td>
-                                    <td>200</td>
-                                    <td>2016年8月3日</td>
-                                </tr>
-                                <tr>
-                                    <td>浦发银行</td>
-                                    <td>600000</td>
-                                    <td><span class="tr-color-buy">买入</span></td>
-                                    <td>11</td>
-                                    <td>200</td>
-                                    <td>2016年8月3日</td>
-                                </tr>
-                                <tr>
-                                    <td>浦发银行</td>
-                                    <td>600000</td>
-                                    <td><span class="tr-color-sale">卖出</span></td>
-                                    <td>11</td>
-                                    <td>200</td>
-                                    <td>2016年8月3日</td>
+                                <tr v-for="item in entrust">
+                                    <td>{{ item.stock_name }}</td>
+                                    <td>{{ item.stock }}</td>
+                                    <td>{{ item.type }}</td>
+                                    <td>{{ item.price }}</td>
+                                    <td>{{ item.number }}</td>
+                                    <td>{{ item.time }}</td>
                                 </tr>
                             </tbody>
                         </table>
