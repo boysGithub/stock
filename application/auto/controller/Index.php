@@ -149,10 +149,10 @@ class Index extends Controller
         if (true !== $result) {
             return json(['status'=>'failed','data'=>$result]);
         }
-        $data['column'] = "自动更新".$data['condition'];
-        $data['sorts'] = 1;
-        $data['is_update'] = 1;
-        AutoUpdate::create($data);
+        $da['column'] = "自动更新".$data['condition'];
+        $da['sorts'] = 1;
+        $da['is_update'] = 1;
+        AutoUpdate::create($da);
         $rank = new Rank;
         if($rank->updateRank($data['condition'],$data['sorts'],$data['rankFiled']) === TRUE){
             return json(['status'=>'success','data'=> '更新成功']);
