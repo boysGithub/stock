@@ -471,7 +471,7 @@ class Index extends Base
      * @param  [array] $funds     [账户资金]
      * @return [json]            [返回信息]
      */
-    public function sellProcess($data,$stockData,$funds,$auto=true){
+    public function sellProcess($data,$stockData,$funds,$auto=false){
         //手续费比例
         $scale = $this->_base->_scale;
         //买入成交的处理
