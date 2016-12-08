@@ -396,7 +396,6 @@ class Index extends Base
         Db::startTrans();
         //开启事务
         try {
-
             //订单参数
             $data['status'] = 1;
             $data['price'] = $stockData[$data['stock']][1];
@@ -544,7 +543,7 @@ class Index extends Base
                 $result = json(['status'=>'success','data'=>'卖出提交成功']);
             }else{
                 //更新用户信息
-                $da['available_number'] = $userInfo['available_number'] - $data['number'];
+                $da['available_number'] = $userInfo['available_number'];
                 $da['cost'] = $userInfo['cost'] - $data['price'] * $data['number'] + $data['fee'];
                 $da['cost_price'] = round($da['cost'] / ($userInfo['freeze_number']+$da['available_number']),8);
                 $da['fee'] = $userInfo['fee'] + $data['fee'];
