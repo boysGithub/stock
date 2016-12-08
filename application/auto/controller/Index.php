@@ -43,11 +43,12 @@ class Index extends Controller
                 $stockBuy[] = $tmpBuy['stock'];
             }
             $stockInfo = getStock($stockBuy,"s_");
+
             $orderIndex = new OrderIndex;
             foreach ($buy as $key => $value) {
                 if($stockInfo[$value['stock']][1] <= $value['price']){
                     $funds = UserFunds::where(['uid'=>$value['uid']])->find();
-                    $orderIndex->buyProcess($value,$stockInfo,$funds);
+                    $orderIndex->buyProcess($value,$stockInfo,$funds,true);
                     $redis->rm($key);
                 }
             }
@@ -64,7 +65,7 @@ class Index extends Controller
             foreach ($sell as $key => $value) {
                 if($stockInfo[$value['stock']][1] >= $value['price']){
                     $funds = UserFunds::where(['uid'=>$value['uid']])->find();
-                    $orderIndex->sellProcess($value,$stockInfo,$funds);
+                    $orderIndex->sellProcess($value,$stockInfo,$funds,true);
                     $redis->rm($key);
                 }
             }
