@@ -177,10 +177,10 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoCalcGrossProfitRate(){
-        // $data['column'] = "自动更新总资产和盈利率";
-        // $data['sorts'] = 1;
-        // $data['is_update'] = 1;
-        // AutoUpdate::create($data);
+        $data['column'] = "自动更新总资产和盈利率";
+        $data['sorts'] = 1;
+        $data['is_update'] = 1;
+        AutoUpdate::create($data);
         // 启动事务
         Db::startTrans();
         try {
@@ -202,18 +202,22 @@ class Index extends Controller
                 $userInfo = $userPosition->where(['is_position'=>1,'uid'=>['in',$userGather]])->Field('id,uid,stock,(available_number + freeze_number) as number,cost_price')->select();
                 $sellFreezeNumber = Transaction::where(['type'=>2,'status'=>0,'uid'=>['in',$userGather]])->Field('uid,stock,number')->select();
                 $tmp = '';
+                $tmp1 = '';
+                $tmp2 = '';
                 foreach ($sellFreezeNumber as $key => $value) {
                     $tmp[$value['uid']][$value['stock']] = $value['number'];
                     $tmp1[] = $value['uid'];
                     $tmp2[] = $value['stock'];
                 }
-                $tmp1 = array_unique($tmp1);
-                $tmp2 = array_unique($tmp2);
                 //计算市值
                 foreach ($userInfo as $key => $value) {
                     //把某一个用户的市值统计出来
-                    if(in_array($value['uid'],$tmp1) && in_array($value['stock'],$tmp2)){
-                        $userTotal[$value['uid']][] = ($tmp[$value['uid']][$value['stock']] + $value['number']) * $stockTmp[$value['stock']][1];
+                    if(is_array($tmp1) && is_array($tmp2)){
+                        if(in_array($value['uid'],$tmp1) && in_array($value['stock'],$tmp2)){
+                            $userTotal[$value['uid']][] = ($tmp[$value['uid']][$value['stock']] + $value['number']) * $stockTmp[$value['stock']][1];
+                        }else{
+                            $userTotal[$value['uid']][] = $value['number'] * $stockTmp[$value['stock']][1];
+                        }
                     }else{
                         $userTotal[$value['uid']][] = $value['number'] * $stockTmp[$value['stock']][1];
                     }
