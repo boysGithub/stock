@@ -19,11 +19,11 @@ var personal = new Vue({
                         operationTime: ret.operationTime, 
                         funds: ret.funds, 
                         available_funds: ret.available_funds, 
-                        total_rate: ret.total_rate,
+                        total_rate: ret.total_rate + '%',
                         total_rate_class: (ret.total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
                     };
 
-                    _this.matchList = matchList;
+                    _this.info = info;
                 }    
             });
         },

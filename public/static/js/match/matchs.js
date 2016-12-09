@@ -1,3 +1,5 @@
+
+var uid = $("#uid").val();
 var matchs = new Vue({
     el: "#matchs",
     data: {
@@ -8,10 +10,10 @@ var matchs = new Vue({
         join_match: function(e){
             var id = e.currentTarget.id;
             var url = e.currentTarget.attributes["href-url"].nodeValue;
-            var uid = 49125;
             $.post(api_host + '/match/join',{id: id, uid: uid},function(data){
                 if(data.status == 'success'){
                     window.location.href = url;
+                    localStorage.removeItem('matchList');
                 }else{
                     alert(data.data);
                 }     
@@ -23,7 +25,11 @@ var matchs = new Vue({
             data = JSON.parse(data);
             if(data == null || data.timestamp < timestamp){                
                 var _this = this;
-                $.getJSON(api_host + '/match/index',{},function(data){
+                var r_data = {};
+                if(uid > 0){
+                    r_data = {uid: uid};
+                }
+                $.getJSON(api_host + '/match/index',r_data,function(data){
                     if(data.status == 'success'){
                         var ret = data.data;
                         var matchList = [];

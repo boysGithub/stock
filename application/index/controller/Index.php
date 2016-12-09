@@ -16,10 +16,23 @@ class Index extends Controller
 	 * @return [type] [description]
 	 */
 	public function matchList(){
+		$uid = 49125;//$_SESSION['uid'];
+
+		$this->assign('uid', $uid);
 		return $this->fetch('match/matchpage');
 	}
 
 	public function macthUser(){
+		$id = input('param.id', 0);
+		if(empty($id)){
+			$this->error('错误', 'index/matchList');
+		}
+
+		$uid = 49125;//$_SESSION['uid'];
+
+		$this->assign('uid', $uid);
+		$this->assign('id', $id);
+
 		return $this->fetch('match/matchDetails');
 	}
 
@@ -36,6 +49,9 @@ class Index extends Controller
 	 * @return [type] [description]
 	 */
 	public function rankingList(){
+
+		$this->assign('order', input('param.order', 'total_rate'));
+
 		return $this->fetch('rank/RankingList');
 	}
 

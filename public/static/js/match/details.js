@@ -12,7 +12,8 @@ var match_details = new Vue({
             data = JSON.parse(data);
             if(data == null || data.timestamp < timestamp){                
                 var _this = this;
-                $.getJSON(api_host + '/match/detail',{},function(data){
+                var id = $("#match_id").val();
+                $.getJSON(api_host + '/match/detail',{id: id},function(data){
                     if(data.status == 'success'){
                         var ret = data.data.rankList;
                         var match = data.data.match;
