@@ -31,16 +31,6 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoTrans(){
-        // $button = true;
-        // $time1 = strtotime(date("Y-m-d 9:30:00"));
-        // $time2 = strtotime(date("Y-m-d 11:30:00"));
-        // $time3 = strtotime(date("Y-m-d 13:00:00"));
-        // $time4 = strtotime(date("Y-m-d 15:00:00"));
-        // dump($time1);
-        // dump($time2);
-        // dump($time3);
-        // dump($time4);
-        // exit;
         $redis = new Redis();
         $buyKeys = $redis->keys("*noBuyOrder*");
         $sellKeys = $redis->keys("*noSellOrder*");
@@ -528,4 +518,73 @@ class Index extends Controller
         $data['normal'] = $normal;
         AutoUpdate::create($data);
     } 
+
+    /**
+     * [redone 清算某一个用户所有的数据]
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function redone(Request $request){
+        $uid = $request->param('uid');
+        //获取用户资产
+        // $funds = UserFunds::where(['uid'=>$uid])->Field('uid')->find();
+        //获取用户所有的持仓
+        // 启动事务
+        Db::startTrans();
+        try {
+            $position = UserPosition::where(['uid'=>$uid])->select();
+            foreach ($position as $key => $value) {
+                //获取持仓对应的操作
+                $buyInfo = Transaction::where(['pid'=>$value['id'],'type'=>1,'status'=>1])->select();
+                $sellInfo = Transaction::where(['pid'=>$value['id'],'type'=>2,'status'=>1])->select();
+                $tmpBuy = '';
+                $numBuy = '';
+                $tmpSell = '';
+                $numSell = '';
+                $sell = 0;
+                $snum = 0;
+                $stockData = getStock($value['stock'],'s_');
+                foreach ($buyInfo as $k => $v) {
+                    $tmpBuy[] = $v['price'] * $v['number'] + $v['fee'];
+                    $numBuy[] = $v['number'];
+                }
+                if($sellInfo){
+                    foreach ($sellInfo as $k => $v) {
+                        $tmpSell[] = $v['price'] * $v['number'] - $v['fee'];
+                        $numSell[] = $v['number'];
+                    }
+                    $sell = array_sum($tmpSell);
+                    $snum = array_sum($numSell);
+                }
+                $buy = array_sum($tmpBuy);
+                $num = array_sum($numBuy);
+                $market = $stockData[$value['stock']][1] * ($num - $snum);
+                //获取用户资产
+                $availableFunds = UserFunds::where(['uid'=>$uid])->value('available_funds');
+                $data['funds'] = $sell - $buy + $market + $availableFunds;
+                UserFunds::where(['uid'=>$uid])->update($data);
+                $d['available_number'] = $num - $snum;
+                $d['assets'] = $market;
+                $d['cost'] = $buy;
+                $d['cost_price'] = round(($buy - $sell)/($num - $snum),8);
+                $d['ratio'] = round(($stockData[$value['stock']][1] - $d['cost_price']) / $value['cost_price'] * 100,8);
+                UserPosition::where(['id'=>$value['id']])->update($d);
+            }
+            $funds = UserFunds::where(['uid'=>$uid])->value('funds');
+            $da['funds'] = 1000000 + $funds;
+            UserFunds::where(['uid'=>$uid])->update($da);
+            Db::commit();
+            return json("成功");
+        } catch (\Exception $e) {
+            Db::rollback();
+            return json("失败");
+        }
+        
+            
+        
+        
+        //统计结算对应操作的资金
+        
+        //更新所有的数据
+    }
 }

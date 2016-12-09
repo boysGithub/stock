@@ -144,7 +144,12 @@ class Index extends Base
                 }else if($userOrder['type'] == 2){
                     $position = UserPosition::where(['uid'=>$data['uid'],'stock'=>$userOrder['stock'],'is_position'=>1,'sorts'=>$userOrder['sorts']])->Field('id,available_number')->find();
                     $da['available_number'] = $position['available_number'] + $userOrder['number'];
+                    $stockData = getStock($userOrder['stock'],'s_');
+                    $da['assets'] = $stockData[$userOrder['stock']][1] * $da['available_number'];
                     UserPosition::where(['id'=>$position['id']])->update($da);
+                    $uInfo = UserFunds::where(['uid'=>$userOrder['uid']])->Filed('funds,available_funds')->find();
+                    $uInfo['funds'] = $uInfo['funds'] + $da['assets'];
+                    UserFunds::update($uInfo,['uid'=>$userOrder['uid']]);
                     $redis->rm('noSellOrder_'.$id.'_'.$data['uid']);
                 }
                 Db::commit();
@@ -504,8 +509,8 @@ class Index extends Base
                 //更新用户信息
                 $da['available_number'] = 0;
                 $da['is_position'] = 2;
-                $buyInfo = Trans::where(['pid'=>$userInfo['id'],'type'=>1])->select();
-                $sellInfo = Trans::where(['pid'=>$userInfo['id'],'type'=>2])->select();
+                $buyInfo = Transaction::where(['pid'=>$value['id'],'type'=>1,'status'=>1])->select();
+                $sellInfo = Transaction::where(['pid'=>$value['id'],'type'=>2,'status'=>1])->select();
                 if(count($buyInfo) == 1){
                     $costTotal = $buyInfo[0]['price'] * $buyInfo[0]['number'] + $buyInfo[0]['fee'];
                     $totalNum = $buyInfo[0]['number'];
