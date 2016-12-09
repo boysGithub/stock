@@ -31,6 +31,7 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoTrans(){
+        $this->handle("进入交易",1);
         $redis = new Redis();
         $buyKeys = $redis->keys("*noBuyOrder*");
         $sellKeys = $redis->keys("*noSellOrder*");
