@@ -8,6 +8,9 @@ use think\Config;
 use think\Db;
 use think\cache\driver\Redis;
 use app\common\model\UserFunds;
+use app\common\model\DaysRatio;
+use app\common\model\WeeklyRatio;
+use app\common\model\MonthRatio;
 /**
 * 
 */
@@ -28,12 +31,22 @@ class Base extends Controller
         $data['funds'] = $this->_stockFunds;
         $data['time'] = date("Y-m-d H:i:s",time());
         $data['available_funds'] = $data['funds'];
-        if(UserFunds::create($data)){
-            $redis = new Redis;
-            $redis->set('create_'.$uid,true);
-        }else{
-            return json(['status'=>'failed','data'=>'创建账户失败']);
-        } 
+        //开启事务
+        Db::startTrans();
+        try {
+            UserFunds::create($data);
+            $da['uid'] = $uid;
+            $da['initialCapital'] = $data['funds'];
+            $da['endFunds'] = $data['funds'];
+            $da['proportion'] = 0;
+            $da['time'] = date("Y-m-d H:i:s",time());
+            DaysRatio::create($da);
+            WeeklyRatio::create($da);
+            MonthRatio::create($da);
+            Db::commit();
+        } catch (\Exception $e) {
+            Db::rollback();
+        }
     }
 
     /**
@@ -48,17 +61,17 @@ class Base extends Controller
         if (true !== $res) {
             exit(JN(['status'=>'failed','data'=>$res]));
         }
-        if($redis->get('create_'.$data['uid']) !== true){
-            if(!UserFunds::where(['uid'=>$data['uid']])->value('id')){
-                $this->createStock($data['uid']);
-            }else{
-                $redis->set('create_'.$data['uid'],true);
-            }
-        }
         $tokenInfo = $redis->get('token');
         if($tokenInfo){
             if($tokenInfo[$data['uid']]['stock_token'] != $data['token'] && $tokenInfo[$data['uid']]['expired_token'] != $data['token']){
                 exit(JN(['status'=>'failed','data'=>'token过期，请重新登录']));
+            }
+            if($redis->get('create_'.$data['uid']) !== true){
+                if(!UserFunds::where(['uid'=>$data['uid']])->value('id')){
+                    $this->createStock($data['uid']);
+                }else{
+                    $redis->set('create_'.$data['uid'],true);
+                }
             }
         }else{
             $this->autoBuildToken();
