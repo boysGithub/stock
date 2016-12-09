@@ -561,7 +561,7 @@ class Index extends Controller
                 $tmpSell = '';
                 $numSell = '';
                 $sell = 0;
-                $snum = 0;
+                $snum = 0; 
                 $stockData = getStock($value['stock'],'s_');
                 foreach ($buyInfo as $k => $v) {
                     $tmpBuy[] = $v['price'] * $v['number'] + $v['fee'];
