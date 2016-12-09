@@ -134,15 +134,18 @@ class Index extends Base
         if($userOrder['status'] === 0){
             Db::startTrans();
             try {
+                $redis = new Redis;
                 Trans::update(['status'=>$data['status']],['id'=>$id,'uid'=>$data['uid']]);
                 if($userOrder['type'] == 1){
                     $availableFunds = UserFunds::where(['uid'=>$userOrder['uid']])->value('available_funds');
                     $da['available_funds'] = $userOrder['fee'] + $userOrder['price'] * $userOrder['number'] + $availableFunds;
                     UserFunds::update($da,['uid'=>$userOrder['uid']]);
+                    $redis->rm('noBuyOrder_'.$id.'_'.$data['uid']);
                 }else if($userOrder['type'] == 2){
                     $position = UserPosition::where(['uid'=>$data['uid'],'stock'=>$userOrder['stock'],'is_position'=>1,'sorts'=>$userOrder['sorts']])->Field('id,available_number')->find();
                     $da['available_number'] = $position['available_number'] + $userOrder['number'];
                     UserPosition::where(['id'=>$position['id']])->update($da);
+                    $redis->rm('noSellOrder_'.$id.'_'.$data['uid']);
                 }
                 Db::commit();
                 $result = json(['status'=>'success','data'=>'撤单成功']);
