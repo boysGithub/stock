@@ -551,7 +551,11 @@ class Index extends Base
                 $result = json(['status'=>'success','data'=>'卖出提交成功']);
             }else{
                 //更新用户信息
-                $da['available_number'] = $userInfo['available_number'];
+                if($auto){
+                    $da['available_number'] = $userInfo['available_number'];
+                }else{
+                    $da['available_number'] = $userInfo['available_number'] - $data['number'];
+                }
                 $da['cost'] = $userInfo['cost'] - $data['price'] * $data['number'] + $data['fee'];
                 $da['cost_price'] = round($da['cost'] / ($userInfo['freeze_number']+$da['available_number']),8);
                 $da['fee'] = $userInfo['fee'] + $data['fee'];
