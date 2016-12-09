@@ -318,63 +318,16 @@
                 </h2>
             </div>
             <div class="am-panel-bd am-container">
-                <div class="am-u-md-6 am-padding-sm">
+                <div class="am-u-md-6 am-padding-sm" v-for="item in matchs">
                     <div class="am-u-sm-5">
-                        <a href="#"><img src="/static/img/match.png" alt="第2期周赛" width="100%" /></a>
+                        <a :href="'{:url('index/macthUser')}?id=' + item.id"><img :src="item.image" :alt="item.name" width="100%" /></a>
                     </div>
                     <div class="am-u-sm-7 am-padding-left-sm am-margin-top">
                         <div class="am-u-sm-12">
-                            <a href="#" title="第2期周赛" class="am-margin-right tr-simulation-name">第2期周赛</a>
-                            <span class="">比赛中</span>
+                            <a :href="'{:url('index/macthUser')}?id=' + item.id" :title="item.name" class="am-margin-right tr-simulation-name">{{ item.name }}</a>
+                            <span class="">{{ item.status_name }}</span>
                         </div>
-                        <p class="am-margin-vertical-0">
-                            报名时间：2016-06-01 到 2016-06-30
-                            <br> 比赛时间：2016-06-01 到 2016-06-30
-                        </p>
-                    </div>
-                </div>
-                <div class="am-u-md-6 am-padding-sm">
-                    <div class="am-u-sm-5">
-                        <a href="#"><img src="/static/img/match.png" alt="第2期周赛" width="100%" /></a>
-                    </div>
-                    <div class="am-u-sm-7 am-padding-left-sm am-margin-top">
-                        <div class="am-u-sm-12">
-                            <a href="#" title="第2期周赛" class="am-margin-right tr-simulation-name">第2期周赛</a>
-                            <span class="">比赛中</span>
-                        </div>
-                        <p class="am-margin-vertical-0">
-                            报名时间：2016-06-01 到 2016-06-30
-                            <br> 比赛时间：2016-06-01 到 2016-06-30
-                        </p>
-                    </div>
-                </div>
-                <div class="am-u-md-6 am-padding-sm">
-                    <div class="am-u-sm-5">
-                        <a href="#"><img src="/static/img/match.png" alt="第2期周赛" width="100%" /></a>
-                    </div>
-                    <div class="am-u-sm-7 am-padding-left-sm am-margin-top">
-                        <div class="am-u-sm-12">
-                            <a href="#" title="第2期周赛" class="am-margin-right tr-simulation-name">第2期周赛</a>
-                            <span class="">比赛中</span>
-                        </div>
-                        <p class="am-margin-vertical-0">
-                            报名时间：2016-06-01 到 2016-06-30
-                            <br> 比赛时间：2016-06-01 到 2016-06-30
-                        </p>
-                    </div>
-                </div>
-                <div class="am-u-md-6 am-padding-sm">
-                    <div class="am-u-sm-5">
-                        <a href="#"><img src="/static/img/match.png" alt="第2期周赛" width="100%" /></a>
-                    </div>
-                    <div class="am-u-sm-7 am-padding-left-sm am-margin-top">
-                        <div class="am-u-sm-12">
-                            <a href="#" title="第2期周赛" class="am-margin-right tr-simulation-name">第2期周赛</a>
-                            <span class="">比赛中</span>
-                        </div>
-                        <p class="am-margin-vertical-0">
-                            报名时间：2016-06-01 到 2016-06-30
-                            <br> 比赛时间：2016-06-01 到 2016-06-30
+                        <p class="am-margin-vertical-0">比赛时间：{{ item.start_date }} 到 {{ item.end_date }}
                         </p>
                     </div>
                 </div>

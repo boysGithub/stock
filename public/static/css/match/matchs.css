@@ -1,0 +1,10 @@
+.tr-list{}
+.tr-list .tr-list-li,.tr-list .tr-list-li a{font-size: 14px;}
+.tr-list .tr-list-li{border:1px solid #e8e8e8;margin-top: 1rem; padding: 1rem;}
+.tr-list .tr-list-li .tr-list-main{border-right: 1px solid #e8e8e8;}
+.tr-list .tr-list-li .tr-list-button{ padding-top: 2rem;}
+
+
+@media only screen and (max-width: 1024px){  
+    .tr-list .tr-list-li .tr-list-main{border-right: none;}
+}

@@ -11,7 +11,7 @@ class User extends Base
 	public function index(){
 		$where = [];
 
-		$hot = input('get.recommend', '');//var_dump($hot);die;
+		$hot = input('get.recommend', '');
 		if($hot != ''){//推荐
 			$where['recommend'] = $hot;
 		}
@@ -21,7 +21,7 @@ class User extends Base
 			$where['username'] = ['like', "%{$key}%"];
 		}
 
-		$users = UserModel::where($where)->order('uid desc')->paginate(10);
+		$users = UserModel::where($where)->order('uid desc')->paginate(20);
 
 
 		$this->assign([

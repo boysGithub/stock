@@ -5,469 +5,133 @@
 <title>列表</title>
 {/block}
 {block name="css"}
-{css file="/static/amaze/css/pagination.css"}
-<style type="text/css">
-.tr-match-name h2{color: #cd3333; font-size: 2rem;}
-.tr-tabs .am-tabs-nav li a{font-size: 16px; border-radius: 4px 4px 0 0; background-color: #eee;border-width: 1px; border-color: #999 #999 #39f; border-style: solid;}
-.tr-tabs .am-nav>li>a:focus, .tr-tabs .am-nav>li>a:hover{background-color: #39f; color: #fff; border-color: #39f;}
-.tr-tabs .am-nav-tabs>li.am-active>a, .tr-tabs .am-nav-tabs>li.am-active>a:focus, .tr-tabs .am-nav-tabs>li.am-active>a:hover{background-color: #39f; color: #fff; border-color: #39f;}
-.tr-tabs .am-tabs-bd,.tr-tabs .am-nav-tabs{border-color: #39f;border-radius: 0 2px 2px;}
-.tr-tabs .am-table{margin-bottom: 0;}
-.tr-table-ranking>tbody>tr>td{height: 42px; line-height: 42px;}
-.tr-table-ranking>thead>tr>th{background:#f6f6f6; height: 28px; line-height: 28px; font-size: 1.4rem;font-weight: 400;}
-.tr-table-ranking .tr-icon{width: 24px; height: 28px;}
-.tr-table-ranking .tr-icon-1th{background-position: 3px -6px;}
-.tr-table-ranking .tr-icon-2th{background-position: 3px -36px;}
-.tr-table-ranking .tr-icon-3th{background-position: 3px -66px;}
-</style>
+{css file="/static/css/public/pagination.css"}
+{css file="/static/css/rank/rankingList.css"}
 {/block}
 {block name="header"}{include file="public/header" /}{/block}
 {block name="main"}
-<div class="am-g tr-main">
+<div class="am-g tr-main" id="ranking">
     <div class="am-container">
         <div class="am-g">
             
         </div>
-        <div class="am-tabs tr-tabs" data-am-tabs="{noSwipe: 1}" id="tr-tabs-1">
-                <ul class="am-tabs-nav am-nav am-nav-tabs">
-                    <li class="am-active"><a href="javascript:;">日盈利率排名</a></li>
-                    <li><a href="javascript:;">周盈利率排名</a></li>
-                    <li><a href="javascript:;">月盈利率排名</a></li>
-                    <li><a href="javascript:;">总盈利率排名</a></li>
-                </ul>
-                
-                <div class="am-tabs-bd">
-                    <div class="am-tab-panel am-active">
-                        <table class="am-table am-table-centered">
-                            <thead>
-                                <tr>
-                                    <th>排名</th>
-                                    <th>用户名</th>
-                                    <th>股票名称</th>
-                                    <th>状态</th>
-                                    <th>价格(&yen;)</th>
-                                    <th>今日动态</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><span class="tr-rank tr-icon tr-icon-1th"></span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-shares-name">兔宝宝(002572)</span></td>
-                                    <td><span class="tr-color-sale">卖出</span></td>
-                                    <td><span class="tr-price">7.52</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank tr-icon tr-icon-2th"></span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-shares-name">兔宝宝(002572)</span></td>
-                                    <td><span class="tr-color-sale">卖出</span></td>
-                                    <td><span class="tr-price">7.52</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank tr-icon tr-icon-3th"></span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-shares-name">兔宝宝(002572)</span></td>
-                                    <td><span class="tr-color-sale">卖出</span></td>
-                                    <td><span class="tr-price">7.52</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">4</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-shares-name">兔宝宝(002572)</span></td>
-                                    <td><span class="tr-color-sale">卖出</span></td>
-                                    <td><span class="tr-price">7.52</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">5</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-shares-name">兔宝宝(002572)</span></td>
-                                    <td><span class="tr-color-buy">买入</span></td>
-                                    <td><span class="tr-price">7.52</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">6</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-shares-name">兔宝宝(002572)</span></td>
-                                    <td><span class="tr-color-buy">买入</span></td>
-                                    <td><span class="tr-price">7.52</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">7</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-shares-name">兔宝宝(002572)</span></td>
-                                    <td><span class="tr-color-sale">卖出</span></td>
-                                    <td><span class="tr-price">7.52</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">8</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-shares-name">兔宝宝(002572)</span></td>
-                                    <td><span class="tr-color-sale">卖出</span></td>
-                                    <td><span class="tr-price">7.52</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">9</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-shares-name">兔宝宝(002572)</span></td>
-                                    <td><span class="tr-color-sale">卖出</span></td>
-                                    <td><span class="tr-price">7.52</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">10</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-shares-name">兔宝宝(002572)</span></td>
-                                    <td><span class="tr-color-sale">卖出</span></td>
-                                    <td><span class="tr-price">7.52</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="am-tab-panel">
-                        <table class="am-table am-table-centered">
-                            <thead>
-                                <tr>
-                                    <th>排名</th>
-                                    <th>用户名</th>
-                                    <th>总盈利率</th>
-                                    <th>月盈利率</th>
-                                    <th>周盈利率</th>
-                                    <th>选股成功率</th>
-                                    <th>今日动态</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><span class="tr-rank tr-icon tr-icon-1th"></span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank tr-icon tr-icon-2th"></span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank tr-icon tr-icon-3th"></span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">4</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">5</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">6</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">7</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">8</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">9</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">10</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="am-tab-panel">
-                        <table class="am-table am-table-centered">
-                            <thead>
-                                <tr>
-                                    <th>排名</th>
-                                    <th>用户名</th>
-                                    <th>总盈利率</th>
-                                    <th>月盈利率</th>
-                                    <th>周盈利率</th>
-                                    <th>选股成功率</th>
-                                    <th>今日动态</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><span class="tr-rank tr-icon tr-icon-1th"></span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank tr-icon tr-icon-2th"></span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank tr-icon tr-icon-3th"></span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">4</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">5</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">6</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">7</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">8</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">9</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">10</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="am-tab-panel">
-                        <table class="am-table am-table-centered">
-                            <thead>
-                                <tr>
-                                    <th>排名</th>
-                                    <th>用户名</th>
-                                    <th>总盈利率</th>
-                                    <th>月盈利率</th>
-                                    <th>周盈利率</th>
-                                    <th>选股成功率</th>
-                                    <th>今日动态</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><span class="tr-rank tr-icon tr-icon-1th"></span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank tr-icon tr-icon-2th"></span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank tr-icon tr-icon-3th"></span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">4</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">5</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">6</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">7</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">8</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">9</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">10</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                                <tr>
-                                    <td><span class="tr-rank">11</span></td>
-                                    <td><a href="" title="">寻梦6188</a></td>
-                                    <td><span class="tr-color-lose">-27.28%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="tr-color-win">2.35%</span></td>
-                                    <td><span class="">70%</span></td>
-                                    <td><a href="" title="">追踪可看</a></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+        <div class="am-tabs tr-tabs" id="tr-tabs-1">
+            <input type="hidden" name="order" id="order" value="{$order}">
+            <ul class="am-tabs-nav am-nav am-nav-tabs">
+                <li{eq name="order" value="total_rate"} class="am-active"{/eq}><a href="{:url('index/rankingList')}">总盈利率排名</a></li>
+                <li{eq name="order" value="success_rate"} class="am-active"{/eq}><a href="{:url('index/rankingList')}">选股成功率排名</a></li>
+                <li{eq name="order" value="week_avg_profit_rate"} class="am-active"{/eq}><a href="{:url('index/rankingList')}">常胜牛人排名</a></li>
+            </ul>
+            
+            <div class="am-tabs-bd">
+                <div class="am-tab-panel am-active">
+                    <table class="am-table am-table-centered">
+                        <thead>
+                            <tr>
+                                <th>排名</th>
+                                <th>用户名</th>
+                                <th>股票名称</th>
+                                <th>状态</th>
+                                <th>价格(&yen;)</th>
+                                <th>今日动态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tr-rank tr-icon tr-icon-1th"></span></td>
+                                <td><a href="" title="">寻梦6188</a></td>
+                                <td><span class="tr-shares-name">兔宝宝(002572)</span></td>
+                                <td><span class="tr-color-sale">卖出</span></td>
+                                <td><span class="tr-price">7.52</span></td>
+                                <td><a href="" title="">追踪可看</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="am-tab-panel">
+                    <table class="am-table am-table-centered">
+                        <thead>
+                            <tr>
+                                <th>排名</th>
+                                <th>用户名</th>
+                                <th>总盈利率</th>
+                                <th>月盈利率</th>
+                                <th>周盈利率</th>
+                                <th>选股成功率</th>
+                                <th>今日动态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tr-rank tr-icon tr-icon-1th"></span></td>
+                                <td><a href="" title="">寻梦6188</a></td>
+                                <td><span class="tr-color-lose">-27.28%</span></td>
+                                <td><span class="tr-color-win">2.35%</span></td>
+                                <td><span class="tr-color-win">2.35%</span></td>
+                                <td><span class="">70%</span></td>
+                                <td><a href="" title="">追踪可看</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="am-tab-panel">
+                    <table class="am-table am-table-centered">
+                        <thead>
+                            <tr>
+                                <th>排名</th>
+                                <th>用户名</th>
+                                <th>总盈利率</th>
+                                <th>月盈利率</th>
+                                <th>周盈利率</th>
+                                <th>选股成功率</th>
+                                <th>今日动态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tr-rank tr-icon tr-icon-1th"></span></td>
+                                <td><a href="" title="">寻梦6188</a></td>
+                                <td><span class="tr-color-lose">-27.28%</span></td>
+                                <td><span class="tr-color-win">2.35%</span></td>
+                                <td><span class="tr-color-win">2.35%</span></td>
+                                <td><span class="">70%</span></td>
+                                <td><a href="" title="">追踪可看</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="am-tab-panel">
+                    <table class="am-table am-table-centered">
+                        <thead>
+                            <tr>
+                                <th>排名</th>
+                                <th>用户名</th>
+                                <th>总盈利率</th>
+                                <th>月盈利率</th>
+                                <th>周盈利率</th>
+                                <th>选股成功率</th>
+                                <th>今日动态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tr-rank tr-icon tr-icon-1th"></span></td>
+                                <td><a href="" title="">寻梦6188</a></td>
+                                <td><span class="tr-color-lose">-27.28%</span></td>
+                                <td><span class="tr-color-win">2.35%</span></td>
+                                <td><span class="tr-color-win">2.35%</span></td>
+                                <td><span class="">70%</span></td>
+                                <td><a href="" title="">追踪可看</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
+        </div>
     </div>
 </div>
 {/block}
 {block name="footer"}{include file="public/footer" /}{/block}
 {block name="js"}
+{js file="/static/js/rank/rank.js"}
 {/block}
