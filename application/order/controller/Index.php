@@ -147,9 +147,6 @@ class Index extends Base
                     $stockData = getStock($userOrder['stock'],'s_');
                     $da['assets'] = $stockData[$userOrder['stock']][1] * $da['available_number'];
                     UserPosition::where(['id'=>$position['id']])->update($da);
-                    $uInfo = UserFunds::where(['uid'=>$userOrder['uid']])->Filed('funds,available_funds')->find();
-                    $uInfo['funds'] = $uInfo['funds'] + $da['assets'];
-                    UserFunds::update($uInfo,['uid'=>$userOrder['uid']]);
                     $redis->rm('noSellOrder_'.$id.'_'.$data['uid']);
                 }
                 Db::commit();
@@ -211,17 +208,22 @@ class Index extends Base
      * @return [boolean] [成功为true,失败为false]
      */
     protected function trans($data,$stockData,$funds){
-        $data['number'] = $data['number']%100 ? $data['number'] - $data['number']%100 : $data['number'];
         //判断是否停牌
         if((float)$stockData[$data['stock']][1] != 0){
             //买入
             if($data['type'] == 1){
-                //判断是否涨跌停
-                if($highLimit = $this->isLimitMove($stockData[$data['stock']],$data['type'])){
-                    //是否市价买入
-                    if($data['isMarket'] == 1){
+                $data['number'] = $data['number']%100 ? $data['number'] - $data['number']%100 : $data['number'];
+                //是否市价买入
+                if($data['isMarket'] == 1){
+                    //判断是否涨跌停
+                    if($highLimit = $this->isLimitMove($stockData[$data['stock']],$data['type'])){
                         $result = $this->buyProcess($data,$stockData,$funds);
                     }else{
+                        $result = json(['status'=>'failed','data'=>'股票已经涨停,不能使用市价买入']);
+                    }
+                }else{
+                    $highLimit = $this->isLimitMove($stockData[$data['stock']],$data['type']);
+                    if($highLimit){
                         //购买的价格不能比今天的涨停价高
                         if($highLimit[0] > $data['price']){
                             if($highLimit[1] <= $data['price']){
@@ -238,17 +240,28 @@ class Index extends Base
                         }else{
                             $result = json(['status'=>'failed','data'=>'购买的价格不能高于今天的涨停的价格'.$highLimit[0].'元']);
                         }
+                    }else{
+                        $limitDown = round(($stockData[$data['stock']][1]-$stockData[$data['stock']][2])*0.9,2);//跌停的价格
+                        //购买的价格不能比今天的涨停价高
+                        if($stockData[$data['stock']][1] >= $data['price'] && $limitDown <= $data['price']){
+                            //买入没有成交的处理
+                            $result = $this->noBuyOrder($data,$stockData,$funds);
+                        }else{
+                            $result = json(['status'=>'failed','data'=>"购买的价格只能在{$limitDown}和{$stockData[$data['stock']][1]}元"]);
+                        }
                     }
-                }else{
-                    $result = json(['status'=>'failed','data'=>'涨停不能买入']);
                 }
             }else if($data['type'] == 2){
                 //卖出
-                if($lowLimit = $this->isLimitMove($stockData[$data['stock']],$data['type'])){
-                    //市价卖出
-                    if($data['isMarket'] == 1){
+                //市价卖出
+                if($data['isMarket'] == 1){
+                    if($lowLimit = $this->isLimitMove($stockData[$data['stock']],$data['type'])){
                         $result = $this->sellProcess($data,$stockData,$funds);
                     }else{
+                        $result = json(['status'=>'failed','data'=>'跌停不能市价卖出']);
+                    }
+                }else{
+                    if($lowLimit = $this->isLimitMove($stockData[$data['stock']],$data['type'])){
                         //卖出的价格不能比今天的跌停价低
                         if($lowLimit[1] < $data['price']){
                             if($lowLimit[0] >= $data['price']){
@@ -265,9 +278,16 @@ class Index extends Base
                         }else{
                              $result = json(['status'=>'failed','data'=>'卖出的价格不能低于今天的跌停的价格'.$lowLimit[1].'元']);
                         }
+                    }else{
+                        $limitUp = round(($stockData[1]-$stockData[2])*1.1,2);//涨停的价格
+                        //卖出的价格不能比今天的跌停价低
+                        if($stockData[$data['stock']][1] <= $data['price']){
+                            //卖出没有成交的处理
+                            $result = $this->noSellOrder($data,$stockData,$funds);
+                        }else{
+                            $result = json(['status'=>'failed','data'=>"购买的价格只能在{$stockData[$data['stock']][1]}和{$limitUp}元"]);
+                        }
                     }
-                }else{
-                    $result = json(['status'=>'failed','data'=>'跌停不能买卖']);
                 }
             }
         }else{
@@ -281,7 +301,7 @@ class Index extends Base
      * [isLimitMove 是否涨跌停能否买入]
      * @return boolean [可以买入为true  不能买入为false]
      */
-    protected function isLimitMove($stockData,$type){
+    public function isLimitMove($stockData,$type){
         $limitUp = round(($stockData[1]-$stockData[2])*1.1,2);//涨停的价格
         $limitDown = round(($stockData[1]-$stockData[2])*0.9,2);//跌停的价格
         if($type == 1){
