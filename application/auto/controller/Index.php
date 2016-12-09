@@ -45,12 +45,22 @@ class Index extends Controller
 
             $orderIndex = new OrderIndex;
             foreach ($buy as $key => $value) {
-                if($stockInfo[$value['stock']][1] <= $value['price']){
-                    $funds = UserFunds::where(['uid'=>$value['uid']])->find();
-                    $orderIndex->buyProcess($value,$stockInfo,$funds,true);
-                    $redis->rm($key);
-                    $this->handle($value['stock_name']."买入成功;成交价:".$stockInfo[$value['stock']][1],1);
+                if($orderIndex->isLimitMove($stockInfo[$value['stock']],1)){
+                    if($stockInfo[$value['stock']][1] <= $value['price']){
+                        $funds = UserFunds::where(['uid'=>$value['uid']])->find();
+                        $orderIndex->buyProcess($value,$stockInfo,$funds,true);
+                        $redis->rm($key);
+                        $this->handle($value['stock_name']."买入成功;成交价:".$stockInfo[$value['stock']][1],1);
+                    }
+                }else{
+                    if($stockInfo[$value['stock']][1] < $value['price']){
+                        $funds = UserFunds::where(['uid'=>$value['uid']])->find();
+                        $orderIndex->buyProcess($value,$stockInfo,$funds,true);
+                        $redis->rm($key);
+                        $this->handle($value['stock_name']."买入成功;成交价:".$stockInfo[$value['stock']][1],1);
+                    }
                 }
+                
             }
         }
         //卖出操作
@@ -63,11 +73,20 @@ class Index extends Controller
             $stockInfo = getStock($stockSell,"s_");
             $orderIndex = new OrderIndex;
             foreach ($sell as $key => $value) {
-                if($stockInfo[$value['stock']][1] >= $value['price']){
-                    $funds = UserFunds::where(['uid'=>$value['uid']])->find();
-                    $orderIndex->sellProcess($value,$stockInfo,$funds,true);
-                    $redis->rm($key);
-                    $this->handle($value['stock_name']."卖出成功;成交价:".$stockInfo[$value['stock']][1],1);
+                if($orderIndex->isLimitMove($stockInfo[$value['stock']],2)){
+                    if($stockInfo[$value['stock']][1] >= $value['price']){
+                        $funds = UserFunds::where(['uid'=>$value['uid']])->find();
+                        $orderIndex->sellProcess($value,$stockInfo,$funds,true);
+                        $redis->rm($key);
+                        $this->handle($value['stock_name']."卖出成功;成交价:".$stockInfo[$value['stock']][1],1);
+                    }
+                }else{
+                    if($stockInfo[$value['stock']][1] > $value['price']){
+                        $funds = UserFunds::where(['uid'=>$value['uid']])->find();
+                        $orderIndex->sellProcess($value,$stockInfo,$funds,true);
+                        $redis->rm($key);
+                        $this->handle($value['stock_name']."卖出成功;成交价:".$stockInfo[$value['stock']][1],1);
+                    }
                 }
             }
         }
@@ -579,12 +598,5 @@ class Index extends Controller
             Db::rollback();
             return json("失败");
         }
-        
-            
-        
-        
-        //统计结算对应操作的资金
-        
-        //更新所有的数据
     }
 }
