@@ -91,7 +91,7 @@ class Match extends Base
                 'end_date' => ['>=', date('Y-m-d')]
             ];
         } else {
-            $where = ['id'=> intval($data['id'])];
+            $where = ['m.id'=> intval($data['id'])];
         }
 
         $page = isset($data['np']) && (int)$data['np'] > 0 ? $data['np'] : 1;
