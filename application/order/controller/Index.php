@@ -99,7 +99,7 @@ class Index extends Base
         if (true !== $result) {
             return json(['status'=>'failed','data'=>$result]);
         }
-        $date['etime'] = date("Y-m-d H:i:s",strtotime($data['etime'])+86399);
+        $data['etime'] = date("Y-m-d H:i:s",strtotime($data['etime'])+86399);
         $result = $this->getAccessType($data,$id);
         if($result['data'] && $result['totalPage']){
             //添加成交状态的名字
@@ -173,7 +173,6 @@ class Index extends Base
         //设置显示的数量
         $limit = $this->_base->_limit;
         $data['p'] = isset($data['p']) ? (int)$data['p'] > 0 ? $data['p'] : 1 : 1 ;
-        date(strtotime($data['etime']));exit;
         switch ($data['type']) {
             case 'trans':
                 # 获取历史成交所有数据
