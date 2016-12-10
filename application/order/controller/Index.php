@@ -26,8 +26,7 @@ class Index extends Base
      * @return [json] [用户的数据]
      */
     public function index(){
-        $expert = Db::table('sjq_transaction t')->join('sjq_users u','t.uid=u.uid')->join('sjq_users_funds uf','u.uid=uf.uid')->join('sjq_users_position up','u.uid=up.uid AND t.stock=up.stock')->Field('t.id,t.uid,t.stock,t.stock_name,u.username,t.price,t.time,t.type,uf.total_rate,up.ratio')->order('t.id desc')->limit(30)->select();
-        
+        $expert = Db::table('sjq_transaction t')->join('sjq_users u','t.uid=u.uid')->join('sjq_users_funds uf','u.uid=uf.uid')->join('sjq_users_position up','u.uid=up.uid AND t.stock=up.stock')->where('status',1)->Field('t.id,t.uid,t.stock,t.stock_name,u.username,t.price,t.time,t.type,uf.total_rate,up.ratio')->order('t.id desc')->limit(30)->select();
         if($expert){
             $result = json(['status'=>'success','data'=>$expert]);
         }else{
@@ -100,7 +99,7 @@ class Index extends Base
         if (true !== $result) {
             return json(['status'=>'failed','data'=>$result]);
         }
-
+        $date['etime'] = date("Y-m-d H:i:s",strtotime($data['etime'])+86399);
         $result = $this->getAccessType($data,$id);
         if($result['data'] && $result['totalPage']){
             //添加成交状态的名字
@@ -174,7 +173,7 @@ class Index extends Base
         //设置显示的数量
         $limit = $this->_base->_limit;
         $data['p'] = isset($data['p']) ? (int)$data['p'] > 0 ? $data['p'] : 1 : 1 ;
-        
+        date(strtotime($data['etime']));exit;
         switch ($data['type']) {
             case 'trans':
                 # 获取历史成交所有数据
