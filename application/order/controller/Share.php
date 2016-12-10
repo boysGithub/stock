@@ -26,6 +26,7 @@ class Share extends Base
         if (true !== $res) {
             return json(['status'=>'failed','data'=>$res]);
         }
+        $data['etime'] = date("Y-m-d H:i:s",strtotime($data['etime'])+86399);
         if($shareInfo = Transaction::where(['uid'=>$data['uid'],'stock'=>$data['stock']])->whereTime('time','between',[$data['stime'],$data['etime']])->order('id desc')->select()){
         	$result = json(['status'=>'success','data'=>$shareInfo]);
         }else{
@@ -43,10 +44,10 @@ class Share extends Base
         if (true !== $res) {
             return json(['status'=>'failed','data'=>$res]);
         }
-        $chart = DaysRatio::where(['uid'=>$data['uid']])->Field('uid,endFunds,time')->select();
+        $chart = DaysRatio::where(['uid'=>$data['uid']])->Field("uid,round((endFunds-{$this->_base->_stockFunds})/{$this->_base->_stockFunds}*100,2) as endFunds,time")->select();
         if($chart){
             $time = UserFunds::where(['uid'=>$data['uid']])->value('time');
-            array_unshift($chart,['uid'=>$data['uid'],'endFunds'=>$this->_base->_stockFunds,'time'=>date('Y-m-d',strtotime($time))]);
+            array_unshift($chart,['uid'=>$data['uid'],'endFunds'=>0,'time'=>date('Y-m-d',strtotime($time))]);
             $result = json(['status'=>'success','data'=>$chart]);
         }else{
             $result = json(['status'=>'failed','data'=>'还没有数据']);

@@ -16,8 +16,11 @@ class Transaction extends Model
     
     protected function getUsernameAttr($username){
     	return $this->user->username;
-    }
+    }    
 
+    protected function getTimeAttr($time){
+        return date("Y-m-d H:s",strtotime($time));
+    }
 
     protected function getStatusNameAttr($value,$data){
     	$status = [0=>'待交易',1=>'交易成功',2=>'撤单成功'];
