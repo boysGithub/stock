@@ -8,15 +8,15 @@ var personal = new Vue({
     methods: {
         info(){
             var _this = this;
-            $.getJSON(api_host + '/users/11643',{},function(data){
+            $.getJSON(api_host + '/users/'+uid,{},function(data){
                 if(data.status == 'success'){
                     var ret = data.data;
                     var info = {
                         user_name: ret.username, 
                         position: ret.position + '%',
                         win_rate: ret.win_rate + '%', 
-                        time: ret.time, 
-                        operationTime: ret.operationTime, 
+                        time: ret.time.substring(0,10), 
+                        operationTime: ret.operationTime.substring(0,10), 
                         funds: ret.funds, 
                         available_funds: ret.available_funds, 
                         total_rate: ret.total_rate + '%',
@@ -29,7 +29,7 @@ var personal = new Vue({
         },
         positions(){
             var _this = this;
-            $.getJSON(api_host + '/users',{uid: 11643},function(data){
+            $.getJSON(api_host + '/users',{uid: uid},function(data){
                 if(data.status == 'success'){
                     var positions = [];
                     for (var i = 0; i < data.data.length; i++) {

@@ -138,7 +138,7 @@ var index = new Vue({
                                 state: state,
                                 state_class: state_class,
                                 price: ret[i].price,
-                                url: '#'+ret[i].uid
+                                uid: ret[i].uid
                             });
                         }
 
@@ -168,7 +168,7 @@ var index = new Vue({
                                     ranking_icon: (ret[i].ranking < 4) ? ' tr-icon' : '',
                                     total_rate: ret[i].total_rate + '%',
                                     total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                    url: '#'+ret[i].uid
+                                    uid: ret[i].uid
                                 });
                             }
 
@@ -199,7 +199,7 @@ var index = new Vue({
                                     ranking_icon: (ret[i].ranking < 4) ? ' tr-icon' : '',
                                     total_rate: ret[i].total_rate + '%',
                                     total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                    url: '#'+ret[i].uid
+                                    uid: ret[i].uid
                                 });
                             }
 
@@ -230,10 +230,10 @@ var index = new Vue({
                             if(i < 5){
                                 total_rate_5.push({
                                     user_name: ret[i].username,
-                                    portrait: '/static/img/portrait.gif',
+                                    portrait: getAvatar(ret[i].uid),
                                     total_rate: ret[i].total_rate+'%',
                                     total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                    url: '#'+ret[i].uid
+                                    uid: ret[i].uid
                                 });
                             }
                             total_rate_10.push({
@@ -246,7 +246,7 @@ var index = new Vue({
                                 avg_position_day: ret[i].avg_position_day,
                                 week_avg_profit_rate: ret[i].week_avg_profit_rate+'%',
                                 week_avg_profit_rate_class: (ret[i].week_avg_profit_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                url: '#'+ret[i].uid
+                                uid: ret[i].uid
                             });
                         }
 
@@ -276,10 +276,10 @@ var index = new Vue({
                         for (var i = 0; i < length; i++) {
                             success_rate.push({
                                 user_name: ret[i].username,
-                                portrait: '/static/img/portrait.gif',
+                                portrait: getAvatar(ret[i].uid),
                                 success_rate: ret[i].success_rate+'%',
                                 success_rate_class: (ret[i].success_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                url: '#'+ret[i].uid
+                                uid: ret[i].uid
                             });
                         }
 
@@ -304,10 +304,10 @@ var index = new Vue({
                         for (var i = 0; i < length; i++) {
                             week_avg_profit_rate.push({
                                 user_name: ret[i].username,
-                                portrait: '/static/img/portrait.gif',
+                                portrait: getAvatar(ret[i].uid),
                                 week_avg_profit_rate: ret[i].week_avg_profit_rate+'%',
                                 week_avg_profit_rate_class: (ret[i].week_avg_profit_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                url: '#'+ret[i].uid
+                                uid: ret[i].uid
                             });
                         }
 

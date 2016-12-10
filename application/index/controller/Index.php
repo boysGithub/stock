@@ -68,6 +68,9 @@ class Index extends Controller
 	 * @return [type] [description]
 	 */
 	public function personal(){
+		$uid = input('get.uid');
+
+		$this->assign('uid', $uid);
 		return $this->fetch('member/personal');
 	}
 
