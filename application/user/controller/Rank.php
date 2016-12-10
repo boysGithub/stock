@@ -41,7 +41,7 @@ class Rank extends Base
 		if($rankList){
 			$result = json(['status'=>'success','data'=>$rankList]);
 		}else{
-			$result = json(['status'=>'failed','data'=>'获取数据失败，请确认你的获取条件是否正确']);
+			$result = json(['status'=>'failed','data'=>'数据数据不存在']);
 		}
 		return $result;
 	}	

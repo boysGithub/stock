@@ -99,7 +99,6 @@ class Index extends Base
         if (true !== $result) {
             return json(['status'=>'failed','data'=>$result]);
         }
-        $data['etime'] = date("Y-m-d H:i:s",strtotime($data['etime'])+86399);
         $result = $this->getAccessType($data,$id);
         if($result['data'] && $result['totalPage']){
             //添加成交状态的名字
@@ -175,6 +174,7 @@ class Index extends Base
         $data['p'] = isset($data['p']) ? (int)$data['p'] > 0 ? $data['p'] : 1 : 1 ;
         switch ($data['type']) {
             case 'trans':
+                $data['etime'] = date("Y-m-d H:i:s",strtotime($data['etime'])+86399);
                 # 获取历史成交所有数据
                 $result['totalPage'] = ceil(Trans::where(['uid'=>$uid,'status'=>1])->whereTime('time','between',[$data['stime'],$data['etime']])->count()/$limit);
                 $result['data'] = Trans::where(['uid'=>$uid,'status'=>1])->whereTime('time','between',[$data['stime'],$data['etime']])->limit(($data['p']-1)*$limit,$limit)->order('id desc')->select();
@@ -193,6 +193,7 @@ class Index extends Base
                 return $result;
                 break;
             case 'historical':
+                $data['etime'] = date("Y-m-d H:i:s",strtotime($data['etime'])+86399);
                 # 获取历史委托数据
                 $result['totalPage'] = ceil(Trans::where(['uid'=>$uid])->whereTime('time','between',[$data['stime'],$data['etime']])->count()/$limit);  //获取总页数
                 $result['data'] = Trans::where(['uid'=>$uid])->whereTime('time','between',[$data['stime'],$data['etime']])->limit(($data['p']-1)*$limit,$limit)->order('id desc')->select();
