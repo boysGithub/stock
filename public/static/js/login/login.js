@@ -3,19 +3,26 @@ var vue = new Vue({
     data: {
         username: '',
         password: '',
-        remember: 0,
-        url: "http://cc.sjqcj.com/index.php?app=public&mod=Passport&act=doLogin"
+        remember: 0, 
+        url: "http://www.sjqcj.com/index.php?app=public&mod=Passport&act=doLogin"
     },
     methods: {
         doLogin: function() {
-            $.getJSON(
+            $.post(
                 this.url, {
                     login_email:this.username,
                     login_password:this.password,
                     login_remember:this.remember
                 },
                 function(msg) {
-                    console.log(msg);
+                    if(msg.status == 1){
+                        alert(msg.info);
+                        setTimeout(function(){
+                            location.href = "/index";
+                        },1000);
+                    }else{
+                        alert(msg.info);
+                    }
                 }
             )
         }
