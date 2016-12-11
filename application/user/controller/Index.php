@@ -112,7 +112,7 @@ class Index extends Base
             if(!empty($optional['id'])){
                 $result = json(['status'=>'success','data'=>$optional['id'],'available'=>$available_number]);
             }else{
-                $result = json(['status'=>'failed','data'=>'不是自选股']);
+                $result = json(['status'=>'failed','data'=>'不是自选股','available'=>$available_number]);
             }
         }else{
             $result = json(['status'=>'failed','data'=>'用户不存在']);
@@ -181,6 +181,14 @@ class Index extends Base
      */
     public function read($id)
     {   
+        $redis = new Redis;
+        if($redis->get('create_'.$id) !== true){
+            if(!UserFunds::where(['uid'=>$id])->value('id')){
+                $this->createStock($id);
+            }else{
+                $redis->set('create_'.$id,true);
+            }
+        }
         $stockFunds = $this->_base->_stockFunds;
         $fund = UserFunds::where(['uid'=>$id])->Field('id,uid,funds,time,operationTime,available_funds,sorts,total_rate,avg_position_day,total_profit_rank,week_avg_profit_rate,win_rate,success_rate')->find();
         //获取用户资产信息

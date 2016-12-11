@@ -7,6 +7,7 @@ use think\Request;
 use think\Db;
 use think\Config;
 use think\cache\driver\Redis;
+use app\common\model\User;
 use app\common\model\UserPosition;
 use app\common\model\UserFunds;
 use app\common\model\Rank;
@@ -172,113 +173,52 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoCalcGrossProfitRate(){
+        $fund = $this->_stockFunds;
         // 启动事务
         Db::startTrans();
         try {
             //计算买入待成交的资产
-            
+            $pendBuy = Transaction::where(['type'=>1,'status'=>'0'])->group('uid')->Field('uid,sum(price * number + fee) as total')->select();
             //计算卖出待成交的资产
+            $pendSell = Transaction::where(['type'=>2,'status'=>'0'])->Field('pid,uid,number,stock')->select();
+            //获取所有的持仓
+            $position = userPosition::where(['is_position'=>1])->Field('id,uid,(available_number + freeze_number) as number,stock')->select();
+            $market = array_merge($pendSell,$position);
+            foreach ($market as $key => $value) {
+                $stock[] = $value['stock'];
+                $tmp[$value['uid']][$value['stock']][] = $value['number'];
+            }
+            $stock = array_values(array_unique($stock));
+            $stockData = getStock($stock,'s_');
+            foreach ($tmp as $key => $value) {
+               foreach ($value as $k => $val) {
+                    $num = array_sum($val);
+                    $user[$key][] = $stockData[$k][1] * $num;
+               }
+            }
+            if($pendBuy){
+                foreach ($pendBuy as $key => $value) {
+                    $user[$value['uid']][] = $value['total'];
+                }
+            }
             
+            $userInfo = UserFunds::field('id,uid,funds,available_funds')->select();
+            foreach ($userInfo as $key => $value) {
+                if(isset($user[$value['uid']])){
+                    $value['funds'] = array_sum($user[$value['uid']])+$value['available_funds'];
+                }
+                $value['total_rate'] = round(($value['funds'] - $fund)/$fund*100,3);
+                unset($value['available_funds']);
+                $userInfo[$key] = $value->toArray();
+            }
+            $userFunds = new UserFunds;
+            $userFunds->saveAll($userInfo);
+            Db::commit();
+            $this->handle("更新总盈利率和总资产成功",1);
         } catch (\Exception $e) {
-            
+            Db::rollback();
+            $this->handle("更新总盈利率和总资产失败",0);
         }
-        // 启动事务
-        // Db::startTrans();
-        // try {
-        //     UserPosition::where(['is_position'=>1])->group('uid')->Field('id,uid')->chunk(500,function($list){
-        //         $userPosition = new UserPosition;
-        //         $userGather = '';
-        //         foreach ($list as $key => $value) {
-        //             $userGather .= $value['uid'].',';
-        //         }
-        //         $userGather = substr($userGather,0,-1);
-        //         //获取股票集合
-        //         $stock = $userPosition->where(['is_position'=>1,'uid'=>['in',$userGather]])->Field('stock')->group('stock')->select();
-                
-        //         foreach ($stock as $key => $value) {
-        //             $stockGather[] = $value['stock'];
-        //         }
-        //         $stockTmp = getStock($stockGather,'s_');
-        //         //获取持仓的集合
-        //         $userInfo = $userPosition->where(['is_position'=>1,'uid'=>['in',$userGather]])->Field('id,uid,stock,(available_number + freeze_number) as number,cost_price')->select();
-        //         $buyNumber = Transaction::where(['type'=>1,'status'=>0,'uid'=>['in',$userGather]])->Field('uid,price,stock,number,fee')->select();
-        //         $sellFreezeNumber = Transaction::where(['type'=>2,'status'=>0,'uid'=>['in',$userGather]])->Field('uid,stock,number')->select();
-        //         $tmp = '';
-        //         $tmp1 = '';
-        //         $tmp2 = '';
-        //         $buyTmp = '';
-        //         $buyTmp1 = '';
-        //         $buyTmp2 = '';
-        //         foreach ($buyNumber as $key => $value) {
-        //             $buyTmp[$value['uid']][$value['stock']][] = $value['number'] * $value['price'] + $value['fee'];
-        //             $buyTmp1[] = $value['uid'];
-        //             $buyTmp2[] = $value['stock'];
-        //         }
-        //         foreach ($sellFreezeNumber as $key => $value) {
-        //             $tmp[$value['uid']][$value['stock']][] = $value['number'];
-        //             $tmp1[] = $value['uid'];
-        //             $tmp2[] = $value['stock'];
-        //         }
-                
-        //         //计算市值
-        //         foreach ($userInfo as $key => $value) {
-        //             if(is_array($buyTmp1)){
-        //                 $buyTmp1 = array_unique($buyTmp1);
-        //                 $buyTmp2 = array_unique($buyTmp2);
-        //                 if(in_array($value['uid'],$buyTmp1)){
-        //                     for ($i=0; $i < count($buyTmp2); $i++) { 
-        //                        $userTotal[$value['uid']] = $buyTmp[$value['uid']][$buyTmp2[$i]];
-        //                     }
-        //                 }else{
-        //                     $userTotal[$value['uid']][] = $value['number'] * $stockTmp[$value['stock']][1];
-        //                 }
-        //             }else{
-        //                 $userTotal[$value['uid']][] = $value['number'] * $stockTmp[$value['stock']][1];
-        //             }
-        //             //把某一个用户的市值统计出来
-        //             if(is_array($tmp1) && is_array($tmp2)){
-        //                 $tmp1 = array_unique($tmp1);
-        //                 $tmp2 = array_unique($tmp2);
-        //                 if(in_array($value['uid'],$tmp1) && in_array($value['stock'],$tmp2)){
-        //                     for ($i=0; $i < count($tmp[$value['uid']][$value['stock']]); $i++) { 
-        //                         $userTotal[$value['uid']][] = ($tmp[$value['uid']][$value['stock']][$i] + $value['number']) * $stockTmp[$value['stock']][1];
-        //                     }
-        //                 }else{
-        //                     $userTotal[$value['uid']][] = $value['number'] * $stockTmp[$value['stock']][1];
-        //                 }
-        //             }else{
-        //                 $userTotal[$value['uid']][] = $value['number'] * $stockTmp[$value['stock']][1];
-        //             }
-        //             $userInfo[$key]['assets'] = $value['number'] * $stockTmp[$value['stock']][1];
-        //             $userInfo[$key]['ratio'] = round(($stockTmp[$value['stock']][1] - $value['cost_price'])/$value['cost_price'] * 100,8);
-        //             $userInfo[$key] = $value->toArray();  
-        //         }
-        //         dump($userTotal);
-        //         //更新现在的持仓比例,最新资产
-        //         $userPosition->saveAll($userInfo);
-        //         //计算总资产,总盈利率
-        //         $userFunds = new userFunds;
-        //         $funds = $userFunds->where(['uid'=>['in',$userGather]])->Field('id,uid,available_funds,funds')->select();
-        //         foreach ($funds as $key => $value) {
-        //             $tmp = 0;
-        //             $value['funds'] = 0;
-        //             for ($i=0; $i < count($userTotal[$value['uid']]); $i++) {
-        //                 $tmp += $userTotal[$value['uid']][$i];
-        //             }
-        //             $value['funds'] = $value['available_funds'] +$tmp;
-        //             $funds[$key]['total_rate'] = round(($funds[$key]['funds'] - $this->_stockFunds)/$this->_stockFunds * 100,8);
-        //             $funds[$key] = $value->toArray();
-        //         }       
-        //         dump($funds);exit;
-        //         //更新总资产，总盈利率
-        //         $userFunds->saveAll($funds);
-        //         Db::commit();
-        //         $this->handle("自动更新总资产和盈利率成功",1);
-        //     });
-        // } catch (\Exception $e) {
-        //     Db::rollback();
-        //     $this->handle("自动更新总资产和盈利率失败",0);
-        // }
     }
 
     /**
@@ -637,5 +577,18 @@ class Index extends Controller
             Db::rollback();
             return json("失败");
         }
+    }
+
+    /**
+     * [autoUpdateUser 自动更新用户]
+     * @return [type] [description]
+     */
+    public function autoUpdateUser(){
+        $uid = User::order('uid desc')->value('uid');
+        $userInfo = Db::connect('sjq1')->name('user')->where('uid','>',$uid)->Field('uid,uname as username')->chunk(2000,function($list){
+            foreach ($list as $key => $value) {
+                User::create($value);
+            }
+        });
     }
 }
