@@ -110,9 +110,18 @@ class Index extends Base
             $optional = OptionalStock::where(['uid'=>$data['uid'],'stock'=>$data['stock']])->find();
             $available_number = UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'is_position'=>1])->value('available_number');
             if(!empty($optional['id'])){
-                $result = json(['status'=>'success','data'=>$optional['id'],'available'=>$available_number]);
+                if($available_number){
+                    $result = json(['status'=>'success','data'=>$optional['id'],'available'=>$available_number]);
+                }else{
+                    $result = json(['status'=>'success','data'=>$optional['id'],'available'=>'');
+                }
+                
             }else{
-                $result = json(['status'=>'failed','data'=>'不是自选股','available'=>$available_number]);
+                if($available_number){
+                    $result = json(['status'=>'failed','data'=>'不是自选股','available'=>$available_number]);
+                }else{
+                    $result = json(['status'=>'failed','data'=>'不是自选股','available'=>'');
+                }
             }
         }else{
             $result = json(['status'=>'failed','data'=>'用户不存在']);
