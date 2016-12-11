@@ -113,14 +113,13 @@ class Index extends Base
                 if($available_number){
                     $result = json(['status'=>'success','data'=>$optional['id'],'available'=>$available_number]);
                 }else{
-                    $result = json(['status'=>'success','data'=>$optional['id'],'available'=>'');
+                    $result = json(['status'=>'success','data'=>$optional['id'],'available'=>'']);
                 }
-                
             }else{
                 if($available_number){
                     $result = json(['status'=>'failed','data'=>'不是自选股','available'=>$available_number]);
                 }else{
-                    $result = json(['status'=>'failed','data'=>'不是自选股','available'=>'');
+                    $result = json(['status'=>'failed','data'=>'不是自选股','available'=>'']);
                 }
             }
         }else{
