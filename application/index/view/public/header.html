@@ -8,13 +8,13 @@
 				<div class="am-topbar-right am-fr">
 					<template v-if="logined">
 						您好，
-						<a href="{:url('stocks/member/index')}" title="个人中心" class="topbar-login">username</a>
-						<a href="{:url('stocks/member/loginout')}" title="退出" class="topbar-out">退出</a>
+						<a href="{:url('index/index/personal')}" title="个人中心" class="topbar-login">{{user.username}}</a>
+						<a href="{:url('index/member/loginout')}" title="退出" class="topbar-out">退出</a>
 					</template>	
 					<template v-else>
 						<a href="{:url('index/index/login')}" title="登录" class="topbar-login">登录</a>
 						&nbsp;|&nbsp;
-						<a href="{:url('stocks/member/register')}" title="注册" class="topbar-register">注册</a>
+						<a href="{:url('index/member/register')}" title="注册" class="topbar-register">注册</a>
 					</template>
 				</div>
 			</div>

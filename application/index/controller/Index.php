@@ -2,11 +2,14 @@
 namespace app\index\controller;
 
 use think\Controller;
+use think\Request;
+use think\Db;
+use app\index\controller\Base;
 /**
 * 首页的控制器
 */
 class Index extends Controller
-{
+{	
 	public function index(){
 		return $this->fetch();
 	}
@@ -60,7 +63,17 @@ class Index extends Controller
 	 * @return [type] [description]
 	 */
 	public function tradeCenter(){
-		return $this->fetch('trade/tradeCenter');
+		if(@$_COOKIE['PHPSESSID']){
+			$uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->find();
+			if($uid){
+				$_SESSION['uid'] = $uid['uid'];
+				return $this->fetch('trade/tradeCenter');
+			}else{
+				return $this->fetch('login/login');
+			}
+		}else{
+			return $this->fetch('login/login');
+		}
 	}
 
 	/**
@@ -68,11 +81,37 @@ class Index extends Controller
 	 * @return [type] [description]
 	 */
 	public function personal(){
-		return $this->fetch('member/personal');
+		if(@$_COOKIE['PHPSESSID']){
+			$uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->find();
+			if($uid){
+				$_SESSION['uid'] = $uid['uid'];
+				return $this->fetch('member/personal');
+			}else{
+				return $this->fetch('login/login');
+			}
+		}else{
+			return $this->fetch('login/login');
+		}
+	}
+
+	public function doLogin(){
+        if($_COOKIE['PHPSESSID']){
+            $uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->value('uid');
+            if($uid){
+            	$token = Db::connect('sjq1')->name('user')->where(['uid'=>$uid])->value('stock_token');
+            	$userInfo = Db::name('users')->where(['uid'=>$uid])->find();
+            	$userInfo['token'] = $token;
+                return json(['status'=>'success','data'=>$userInfo]);
+            }else{
+            	return json(['status'=>'failed','data'=>'已经退出,请重新登录']);
+            }
+        }else{
+        	return json(['status'=>'failed','data'=>'获取不到cookie']);
+        }
 	}
 
 	public function login(){
-		return $this->fetch('login/login');
+		return $this->redirect("http://www.sjqcj.com",0);
 	}
 }
 ?>

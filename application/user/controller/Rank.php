@@ -7,6 +7,9 @@ use app\common\model\UserPosition;
 use app\common\model\User;
 use think\Db;
 use app\common\model\Rank as RankModel;
+use app\common\model\DaysRatio;
+use app\common\model\WeeklyRatio;
+use app\common\model\MonthRatio;
 /**
 * 排行榜控制器
 */
@@ -44,6 +47,90 @@ class Rank extends Base
 			$result = json(['status'=>'failed','data'=>'数据数据不存在']);
 		}
 		return $result;
+	}
+
+	/**
+	 * [dayRateRank 日盈利率排名]
+	 * @return [type] [description]
+	 */
+	public function dayRateRank(){
+		$limit = $this->_base->_limit;
+		$data = input('get.');
+		$data['p'] = isset($data['p']) ? $data['p'] > 0 ? $data['p'] : 1 : 1 ;
+		$w = date('w');
+		if($w == 6 || $w == 0){
+			$dtime = date('Y-m-d H:i:s',strtotime("last Friday"));
+		}else{
+			$dtime = date('Y-m-d 00:00:00');
+		}
+		if($w == 0){
+			$wtime = date('Y-m-d 00:00:00',strtotime('+'. 1-7-$w .' days' ));
+		}else{
+			$wtime = date('Y-m-d 00:00:00',strtotime('+'. 1-$w .' days' ));
+		}
+		$mtime = date('Y-m-1 00:00:00');
+		switch ($data['type']) {
+			case 'days':
+				$order = "d.proportion";
+				$uid = "d.uid";
+				
+				break;
+			case 'week':
+				$order = "w.proportion";
+				$uid = "w.uid";
+				
+				$totalPage = ceil(WeeklyRatio::whereTime('time','week')->count()/$limit);
+				break;
+			case 'month':
+				$order = "m.proportion";
+				$uid = "m.uid";
+				$totalPage = ceil(MonthRatio::whereTime('time','month')->count()/$limit);
+				break;
+		}
+		
+		
+		// $tmp = Db::table('sjq_days_ratio d')->join('sjq_weekly_ratio w','d.uid=w.uid')->join('sjq_month_ratio m','d.uid=m.uid')->join('sjq_users u','u.uid='.$uid)->join('sjq_users_funds f',$uid.'=f.uid')->Field("d.uid,d.proportion as day,w.proportion as week,m.proportion as month,u.username,f.total_rate,f.success_rate")->order("{$order} desc")->whereTime('m.time','>',$time)->group("{$uid}")->select();
+		dump($t);
+		echo Db::getLastSql();exit;
+
+		
+		// $weekInfo = WeeklyRatio::whereTime('time','week')->order('proportion desc')->Field("uid,round(endFunds-{$fund}/$fund*100,2) as endFunds")->limit(($data['p']-1)*$limit,$limit)->select();
+		// $monthInfo = MonthRatio::whereTime('time','month')->order('proportion desc')->Field("uid,round(endFunds-{$fund}/$fund*100,2) as endFunds")->limit(($data['p']-1)*$limit,$limit)->select();
+		return json(['status'=>'success','data'=>$tmp,'totalPage'=>$totalPage]);
+	}
+
+	/**
+	 * [weekRateRank 周盈利率排名]
+	 * @return [type] [description]
+	 */
+	public function weekRateRank(){
+		$limit = $this->_base->_limit;
+		$data = input('get.');
+		$data['p'] = isset($data['p']) ? $data['p'] > 0 ? $data['p'] : 1 : 1 ;
+		$totalPage = ceil(WeeklyRatio::whereTime('time','week')->count()/$limit);
+		
+		if($weekInfo){
+			return json(['status'=>'success','data'=>$weekInfo,'totalPage'=>$totalPage]);
+		}else{
+			return json(['status'=>'failed','data'=>'获取数据失败']);
+		}
+	}
+
+	/**
+	 * [monthRateRank 月盈利率排名]
+	 * @return [type] [description]
+	 */
+	public function monthRateRank(){
+		$limit = $this->_base->_limit;
+		$data = input('get.');
+		$data['p'] = isset($data['p']) ? $data['p'] > 0 ? $data['p'] : 1 : 1 ;
+		$totalPage = ceil(MonthRatio::whereTime('time','month')->count()/$limit);
+		$monthInfo = MonthRatio::whereTime('time','month')->order('proportion desc')->limit(($data['p']-1)*$limit,$limit)->select();
+		if($monthInfo){
+			return json(['status'=>'success','data'=>$monthInfo,'totalPage'=>$totalPage]);
+		}else{
+			return json(['status'=>'failed','data'=>'获取数据失败']);
+		}
 	}	
 }
 ?>
