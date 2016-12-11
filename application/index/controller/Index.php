@@ -76,6 +76,23 @@ class Index extends Controller
 		}
 	}
 
+	//卖出
+	public function sale(){
+		$this->assign('uid', 49125);
+		return $this->fetch('trade/sale');
+		if(@$_COOKIE['PHPSESSID']){
+			$uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->find();
+			if($uid){
+				$_SESSION['uid'] = $uid['uid'];
+				return $this->fetch('trade/sale');
+			}else{
+				return $this->fetch('login/login');
+			}
+		}else{
+			return $this->fetch('login/login');
+		}
+	}
+
 	/**
 	 * [personal 个人中心页面]
 	 * @return [type] [description]
