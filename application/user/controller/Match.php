@@ -114,7 +114,7 @@ class Match extends Base
 (SELECT count(id) FROM sjq_match_user WHERE total_rate < ( end_capital - initial_capital) / initial_capital AND match_id=1)+1 ranking')->select();
 
         $res = [
-            'match'=>['id'=>$match['id'],'name'=>$match['name'],'joined'=>empty($match['muid']) ? 0 : 1,'total_rate'=>empty($match['muid']) ? 0 : $match['total_rate'],'ranking'=>empty($match['muid']) ? 0 : $match['ranking']],
+            'match'=>['id'=>$match['id'],'name'=>$match['name'],'joined'=>empty($match['muid']) ? 0 : 1,'total_rate'=>empty($match['muid']) ? 0 : round($match['total_rate'], 2),'ranking'=>empty($match['muid']) ? 0 : $match['ranking']],
             'rankList' => $rankList
         ];
 

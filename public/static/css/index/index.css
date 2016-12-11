@@ -2,7 +2,7 @@
 .am-panel-hd{padding: 0 0 .6rem;background: none; border-bottom: none;}
 .am-panel-title{font-size: 18px; font-weight: normal;}
 
-.am-slider-default.tr-slider-ad{box-shadow: none;margin: 30px 0;}
+.am-slider-default.tr-slider-ad{box-shadow: none;margin: 15px 0 30px;}
 .am-slider-default.tr-slider-ad .am-control-nav{bottom: 10px;}
 .am-slider-default.tr-slider-ad .am-control-nav li a{width: 13px; height: 13px;background-color:#fff;}
 .am-slider-default.tr-slider-ad .am-control-nav li a.am-active{background-color:#0e90d2;}

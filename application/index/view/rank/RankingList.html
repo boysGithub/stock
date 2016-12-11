@@ -2,7 +2,7 @@
 {block name="head"}
 <meta name="description" content="">
 <meta name="keywords" content="">
-<title>列表</title>
+<title>牛人排行榜</title>
 {/block}
 {block name="css"}
 {css file="/static/css/public/pagination.css"}
@@ -18,32 +18,34 @@
         <div class="am-tabs tr-tabs" id="tr-tabs-1">
             <input type="hidden" name="order" id="order" value="{$order}">
             <ul class="am-tabs-nav am-nav am-nav-tabs">
-                <li{eq name="order" value="total_rate"} class="am-active"{/eq}><a href="{:url('index/rankingList')}">总盈利率排名</a></li>
-                <li{eq name="order" value="success_rate"} class="am-active"{/eq}><a href="{:url('index/rankingList')}">选股成功率排名</a></li>
-                <li{eq name="order" value="week_avg_profit_rate"} class="am-active"{/eq}><a href="{:url('index/rankingList')}">常胜牛人排名</a></li>
+                <li{eq name="order" value="total_rate"} class="am-active"{/eq}><a href="{:url('index/rankingList', ['order'=>'total_rate'])}">总盈利率排名</a></li>
+                <li{eq name="order" value="success_rate"} class="am-active"{/eq}><a href="{:url('index/rankingList', ['order'=>'success_rate'])}">选股成功率排名</a></li>
+                <li{eq name="order" value="week_avg_profit_rate"} class="am-active"{/eq}><a href="{:url('index/rankingList', ['order'=>'week_avg_profit_rate'])}">常胜牛人排名</a></li>
             </ul>
             
             <div class="am-tabs-bd">
                 <div class="am-tab-panel am-active">
-                    <table class="am-table am-table-centered">
+                    <table class="am-table am-table-centered tr-table-ranking">
                         <thead>
                             <tr>
                                 <th>排名</th>
                                 <th>用户名</th>
-                                <th>股票名称</th>
-                                <th>状态</th>
-                                <th>价格(&yen;)</th>
+                                <th{eq name="order" value="total_rate"} class="tr-order"{/eq}>总收益率</th>
+                                <th{eq name="order" value="success_rate"} class="tr-order"{/eq}>选股成功率</th>
+                                <th>平均交易天数</th>
+                                <th{eq name="order" value="week_avg_profit_rate"} class="tr-order"{/eq}>周平均率</th>
                                 <th>今日动态</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><span class="tr-rank tr-icon tr-icon-1th"></span></td>
-                                <td><a href="" title="">寻梦6188</a></td>
-                                <td><span class="tr-shares-name">兔宝宝(002572)</span></td>
-                                <td><span class="tr-color-sale">卖出</span></td>
-                                <td><span class="tr-price">7.52</span></td>
-                                <td><a href="" title="">追踪可看</a></td>
+                            <tr v-for="item in rankingList">
+                                <td><span :class="'tr-rank' + item.ranking_class">{{ item.ranking }}</span></td>
+                                <td><a :href="'{:url('index/personal')}?uid=' + item.uid" :title="item.username">{{ item.username }}</a></td>
+                                <td><span :class="item.total_rate_class">{{ item.total_rate }}</span></td>
+                                <td><span>{{ item.success_rate }}</span></td>
+                                <td><span>{{ item.avg_position_day }}</span></td>
+                                <td><span>{{ item.week_avg_profit_rate }}</span></td>
+                                <td><a :href="'{:url('index/personal')}?uid=' + item.uid" class="am-btn am-btn-primary am-btn-xs am-radius">追踪可看</a></td>
                             </tr>
                         </tbody>
                     </table>

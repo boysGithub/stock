@@ -1,0 +1,21 @@
+.tr-buy .am-form-group{margin: .5rem 0; line-height: 28px;}
+.tr-buy .am-form-group .am-form-label{font-size: 1.4rem; text-align: right; padding-right: 1rem;}
+.tr-buy .am-form-group .am-form-field{font-size: 1.2rem; width: 66%;}
+.tr-buy .tr-stock-btn{padding: 1rem 0 0 1.6rem;}
+.tr-stock-search{position: relative;}
+.tr-stock-table{width:66%; display: none;position: absolute; top: 27px; left: 0;z-index: 99;background: #fff;font-size: 12px;}
+.tr-stock-table .am-table{border-left: 1px solid #ddd;}
+.tr-stock-table .am-table>thead>tr>th{font-weight: normal; background: #f3f3f3;padding: 1px;border-bottom: none;}
+.tr-stock-table .am-table>tbody>tr>td{padding: 1px;border:none; cursor: pointer;}
+.tr-stock-table .am-table>tbody>tr:first-child td{background-color: #f1f5fC;}
+.tr-stock-table .am-table-hover>tbody>tr:hover>td{background-color: #87cefa;}
+
+.tr-stock-state .am-panel-hd{height: 45px; line-height: 30px;}
+.tr-stock-state .am-panel-hd .tr-stock-name{font-size: 1.6rem;color: #000;}
+.tr-stock-state .am-panel-hd .tr-stock-price{font-size: 2.2rem;color: red;}
+.tr-stock-state .am-panel-hd .tr-stock-increase{}
+.tr-stock-state .am-panel-hd .tr-stock-increase p{height: 15px; line-height: 15px;}
+.tr-stock-state .tr-stock-entrust{border-right: 1px solid #eee; font-size: 12px;}
+.tr-stock-state .am-table{margin: 0;}
+.tr-stock-state .am-table>tbody>tr>td{border: none; padding: .2rem .7rem;}
+.tr-stock-state .am-table>tbody>tr>td.price{color: red;}

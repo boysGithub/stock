@@ -5,29 +5,7 @@
 <title>交易中心</title>
 {/block}
 {block name="css"}
-    <style type="text/css">
-    .tr-buy .am-form-group{margin: .5rem 0; line-height: 28px;}
-    .tr-buy .am-form-group .am-form-label{font-size: 1.4rem; text-align: right; padding-right: 1rem;}
-    .tr-buy .am-form-group .am-form-field{font-size: 1.2rem; width: 66%;}
-    .tr-buy .tr-stock-btn{padding: 1rem 0 0 1.6rem;}
-    .tr-stock-search{position: relative;}
-    .tr-stock-table{width:66%; display: none;position: absolute; top: 27px; left: 0;z-index: 99;background: #fff;}
-    .tr-stock-table .am-table{border-left: 1px solid #ddd;}
-    .tr-stock-table .am-table>thead>tr>th{font-weight: normal; background: #f3f3f3;padding: 1px;border-bottom: none;}
-    .tr-stock-table .am-table>tbody>tr>td{padding: 1px;border:none; cursor: pointer;}
-    .tr-stock-table .am-table>tbody>tr:first-child td{background-color: #f1f5fC;}
-    .tr-stock-table .am-table-hover>tbody>tr:hover>td{background-color: #87cefa;}
-
-    .tr-stock-state .am-panel-hd{height: 45px; line-height: 30px;}
-    .tr-stock-state .am-panel-hd .tr-stock-name{font-size: 1.6rem;color: #000;}
-    .tr-stock-state .am-panel-hd .tr-stock-price{font-size: 2.2rem;color: red;}
-    .tr-stock-state .am-panel-hd .tr-stock-increase{}
-    .tr-stock-state .am-panel-hd .tr-stock-increase p{height: 15px; line-height: 15px;}
-    .tr-stock-state .tr-stock-entrust{border-right: 1px solid #eee;}
-    .tr-stock-state .am-table{margin: 0;}
-    .tr-stock-state .am-table>tbody>tr>td{border: none; padding: .2rem .7rem;}
-    .tr-stock-state .am-table>tbody>tr>td.price{color: red;}
-    </style>
+{css file="/static/css/trade/trade.css"}
 {/block}
 {block name="header"}{include file="public/header" /}{/block}
 {block name="main"}
@@ -39,7 +17,7 @@
             </div>
             <div class="am-u-md-10 am-padding-horizontal-sm" id="tr-stock">
                 <form action="#" method="post" class="am-form">
-                <div class="am-u-md-5 tr-buy">
+                <div class="am-u-md-6 tr-buy">
                     <div class="am-g am-form-group">
                         <label class="am-u-sm-3 am-form-label">证券代码：</label>
                         <div class="am-u-sm-9 tr-stock-search">
@@ -60,7 +38,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <input type="text" v-on:keyup="updateStockList" placeholder="请输入股票名称/代码/拼音" onfocus="if($(this).val() != ''){$('.tr-stock-table').show()}" onblur="$('.tr-stock-table').hide()" class="am-form-field">
+                            <input type="text" :value="buyInfo.code" v-on:keyup="updateStockList" placeholder="请输入股票名称/代码/拼音" onfocus="if($(this).val() != ''){$('.tr-stock-table').show()}" onblur="$('.tr-stock-table').hide()" class="am-form-field">
                         </div>
                     </div>
                     <div class="am-g am-form-group">
@@ -132,7 +110,7 @@
                         <input type="reset" class="am-btn am-btn-sm am-btn-danger am-margin-left-sm" value="清空重置">
                     </div>
                 </div>
-                <div class="am-u-md-7 am-padding-left-sm tr-stock-state">
+                <div class="am-u-md-6 am-padding-left-sm tr-stock-state">
                     <div class="am-panel am-panel-default">
                         <div class="am-panel-hd am-g">
                             <div class="am-u-sm-9 tr-stock-name">
@@ -147,7 +125,7 @@
                             </div>
                         </div>
                         <div class="am-panel-bd am-g">
-                            <div class="am-u-sm-8 am-padding-right tr-stock-entrust">
+                            <div class="am-u-sm-7 am-padding-right tr-stock-entrust">
                                 <table class="am-table">
                                     <tbody>
                                         <tr>
@@ -208,7 +186,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="am-u-sm-4">
+                            <div class="am-u-sm-5">
                                 <ul>
                                     <li><span>现&nbsp;&nbsp;&nbsp;价 : </span><span class="tr-color-win">{{ stock.price }}</span></li>
                                     <li><span>今&nbsp;&nbsp;&nbsp;开 : </span><span class="tr-color-lose">{{ stock.todayPrcie }}</span></li>
@@ -217,7 +195,7 @@
                                     <li><span>最&nbsp;&nbsp;&nbsp;低 : </span><span class="tr-color-lose">{{ stock.minPrice }}</span></li>
                                     <li><span>涨停价 : </span><span class="tr-color-win">{{ stock.highLimit }}</span></li>
                                     <li><span>跌停价 : </span><span class="tr-color-lose">{{ stock.lowerLimit }}</span></li>
-                                    <li><span>换手率 : </span><span class="menu-right-centent-tebale3-margin">{{ stock.turnoverRate }}</span></li>
+                                    <!-- <li><span>换手率 : </span><span class="menu-right-centent-tebale3-margin">{{ stock.turnoverRate }}</span></li> -->
                                     <li><span>成交量 : </span><span class="menu-right-centent-tebale3-margin">{{ buyInfo.turnoverNum }}</span></li>
                                 </ul>
                             </div>
@@ -232,120 +210,5 @@
 {/block}
 {block name="footer"}{include file="public/footer" /}{/block}
 {block name="js"}
-    <script type="text/javascript">
-        var trStock = new Vue({
-            el: '#tr-stock',
-            data: {
-                stockList: [],
-                buyInfo: {title: '----'},
-                stock : {sellPrice1: '--', sellNum1: '--', sellPrice2: '--', sellNum2: '--', sellPrice3: '--', sellNum3: '--', sellPrice4: '--',sellNum4: '--', sellPrice5: '--', sellNum5: '--', buyPrice1: '--', buyNum1: '--', buyPrice2: '--', buyNum2: '--', buyPrice3: '--', buyNum3: '--', buyPrice4: '--', buyNum4: '--', buyPrice5: '--', buyNum5: '--', price: '--', todayPrcie: '--', prec: '--', maxPrice: '--', minPrice: '--', highLimit: '--', lowerLimit: '--', turnoverRate: '--', turnover: '--'},
-                changeClass: ' tr-color-win'
-            },
-            methods: {
-                updateStockList: function(e){
-                    var value = e.currentTarget.value;
-                    var _this = this;
-
-                    $.getScript('http://suggest3.sinajs.cn/suggest/?type=111&key='+value+'&name=suggestdata',
-                        function(){
-                            if(suggestdata != ''){
-                                var data = suggestdata.split(";"); 
-                                var list = [];
-                                for (var i = 0; i < data.length; i++) {
-                                    if(data[i] == ''){
-                                        continue;
-                                    }
-                                    var val = data[i].split(',');
-                                    var type = 'A股';
-                                    switch(val['1']){
-                                        case '111':
-                                            type = 'A股';
-                                            break;
-                                    }
-                                    list.push({ id: data[i], option: val['0'], type: type, code: val['2'], name: val['4']});
-                                }
-
-                                _this.stockList = list;
-                                $(".tr-stock-table").show();
-                            } else {
-                                $(".tr-stock-table").hide();
-                            }
-                    });    
-                },
-                updateStockInfo: function(e){
-                    var id = e.currentTarget.id;
-                    var _this = this;
-                    var stock = id.split(',');
-                    
-                    $.ajax({
-                        url: 'http://hq.sinajs.cn?list='+stock['3']+',s_'+stock['3'],
-                        type: 'get',
-                        dataType: 'script',
-                        cache: true,
-                        success: function(){
-                            if(eval('hq_str_'+stock['3']) != '' || eval('hq_str_s_'+stock['3']) != ''){
-                                var brief = eval('hq_str_s_'+stock['3']).split(',');
-                                var detail = eval('hq_str_'+stock['3']).split(',');
-                                var usableFunds = {}; //可用资金
-                                var maxBuy = 10000;
-                                if(brief['2'] < 0){
-                                    _this.changeClass = ' tr-color-lose';
-                                } else {
-                                    _this.changeClass = ' tr-color-win';
-                                }
-
-                                var buyInfo = {
-                                    stockName: brief['0'], 
-                                    code: stock['2'], 
-                                    title: brief['0']+'('+stock['2']+')',
-                                    price: brief['1'], 
-                                    changePrice: brief['2'], 
-                                    changeRate: brief['3']+'%', 
-                                    usableFunds: {}, 
-                                    maxBuy: maxBuy, 
-                                    useFunds: brief['1'] * maxBuy,
-                                    turnoverNum:  brief['4'], 
-                                    turnoverMoney:  brief['5']
-                                };
-                                var stockInfo = {
-                                    sellPrice1: parseFloat(detail['21']),
-                                    sellNum1: detail['20'],
-                                    sellPrice2: parseFloat(detail['23']),
-                                    sellNum2: detail['22'],
-                                    sellPrice3: parseFloat(detail['25']),
-                                    sellNum3: detail['24'],
-                                    sellPrice4: parseFloat(detail['27']),
-                                    sellNum4: detail['26'],
-                                    sellPrice5: parseFloat(detail['29']),
-                                    sellNum5: detail['28'],
-                                    buyPrice1: parseFloat(detail['11']),
-                                    buyNum1: detail['10'],
-                                    buyPrice2: parseFloat(detail['13']),
-                                    buyNum2: detail['12'],
-                                    buyPrice3: parseFloat(detail['15']),
-                                    buyNum3: detail['14'],
-                                    buyPrice4: parseFloat(detail['17']),
-                                    buyNum4: detail['16'],
-                                    buyPrice5: parseFloat(detail['19']),
-                                    buyNum5: detail['18'],
-                                    price: parseFloat(detail['3']), 
-                                    todayPrcie: parseFloat(detail['1']), 
-                                    prec: parseFloat(detail['2']), 
-                                    maxPrice: parseFloat(detail['4']), 
-                                    minPrice: parseFloat(detail['5']), 
-                                    highLimit: parseFloat(detail['2'] * 1.1).toFixed(2),  
-                                    lowerLimit: parseFloat(detail['2'] * 0.9).toFixed(2), 
-                                    /*turnoverRate: detail[''], 
-                                    turnover: detail['']*/
-                                }
-
-                                _this.stock = stockInfo;
-                                _this.buyInfo = buyInfo;
-                            }
-                        }    
-                    });
-                }
-            }
-        });
-    </script>
+{js file="/static/js/trade/trade.js"}
 {/block}

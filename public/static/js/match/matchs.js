@@ -56,7 +56,7 @@ var matchs = new Vue({
             } 
         } 
     },
-    created(){
+    mounted: function(){
         this.updateMatchs();
     }
 });

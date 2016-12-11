@@ -202,5 +202,8 @@
 {block name="footer"}{include file="public/footer" /}{/block}
 {block name="js"}
     {js href="/static/js/widget/echarts.js" /}
+    <script type="text/javascript">
+        var uid = {$uid};
+    </script>
     {js href="/static/js/member/personal.js" /}
 {/block}

@@ -13,7 +13,12 @@ var match_details = new Vue({
             if(data == null || data.timestamp < timestamp){                
                 var _this = this;
                 var id = $("#match_id").val();
-                $.getJSON(api_host + '/match/detail',{id: id},function(data){
+                var r_data = {id: id};
+                var uid = $("#uid").val();
+                if(uid > 0){
+                    r_data.uid = uid;
+                }
+                $.getJSON(api_host + '/match/detail',r_data,function(data){
                     if(data.status == 'success'){
                         var ret = data.data.rankList;
                         var match = data.data.match;
@@ -40,7 +45,7 @@ var match_details = new Vue({
             } 
         } 
     },
-    created(){
+    mounted: function(){
         this.updateMatch();
     }
 });
