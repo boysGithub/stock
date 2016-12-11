@@ -584,9 +584,11 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoUpdateUser(){
-        $userInfo = Db::connect('sjq1')->name('user')->Field('uid,uname as username')->chunk(2000,function($list){
-            $user = new User;
-            $user->saveAll($list);
+        $uid = User::order('uid desc')->value('uid');
+        $userInfo = Db::connect('sjq1')->name('user')->where('uid','>',$uid)->Field('uid,uname as username')->chunk(2000,function($list){
+            foreach ($list as $key => $value) {
+                User::create($value);
+            }
         });
     }
 }
