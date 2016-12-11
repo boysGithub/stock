@@ -59,11 +59,5 @@ class Index extends Controller
 	public function login(){
 		return $this->fetch('login/login');
 	}
-
-	public function saveSession(Request $request){
-		$data = $request->param();
-		$_SESSION = $data;
-		dump($_SESSION);
-	}
 }
 ?>
