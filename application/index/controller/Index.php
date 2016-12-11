@@ -62,7 +62,7 @@ class Index extends Controller
 
 	public function saveSession(Request $request){
 		$data = $request->param();
-		dump($data);exit;
+		$_SESSION = $data;
 	}
 }
 ?>
