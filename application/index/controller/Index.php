@@ -3,6 +3,7 @@ namespace app\index\controller;
 
 use think\Controller;
 use think\Request;
+use think\Db;
 /**
 * 首页的控制器
 */
@@ -45,7 +46,21 @@ class Index extends Controller
 	 * @return [type] [description]
 	 */
 	public function tradeCenter(){
-		return $this->fetch('trade/tradeCenter');
+		if(!@$_SESSION['uid']){
+			if(@$_COOKIE['PHPSESSID']){
+				$uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->find();
+				if($uid){
+					$_SESSION['uid'] = $uid['uid'];
+					return $this->fetch('trade/tradeCenter');
+				}else{
+					return $this->fetch('login/login');
+				}
+			}else{
+				return $this->fetch('login/login');
+			}
+		}else{
+			return $this->fetch('trade/tradeCenter');
+		}
 	}
 
 	/**
@@ -53,7 +68,21 @@ class Index extends Controller
 	 * @return [type] [description]
 	 */
 	public function personal(){
-		return $this->fetch('member/personal');
+		if(!@$_SESSION['uid']){
+			if(@$_COOKIE['PHPSESSID']){
+				$uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->find();
+				if($uid){
+					$_SESSION['uid'] = $uid['uid'];
+					return $this->fetch('member/personal');
+				}else{
+					return $this->fetch('login/login');
+				}
+			}else{
+				return $this->fetch('login/login');
+			}
+		}else{
+			return $this->fetch('member/personal');
+		}
 	}
 
 	public function login(){
