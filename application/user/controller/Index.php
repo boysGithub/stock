@@ -112,7 +112,7 @@ class Index extends Base
             if(!empty($optional['id'])){
                 $result = json(['status'=>'success','data'=>$optional['id'],'available'=>$available_number]);
             }else{
-                $result = json(['status'=>'failed','data'=>'不是自选股']);
+                $result = json(['status'=>'failed','data'=>'不是自选股','available'=>$available_number]);
             }
         }else{
             $result = json(['status'=>'failed','data'=>'用户不存在']);
