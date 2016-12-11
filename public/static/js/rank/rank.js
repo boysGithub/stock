@@ -31,7 +31,7 @@ var ranking = new Vue({
             });
 		}
 	},
-	created(){
+	mounted: function(){
 		this.updateRanking();
 	}
 });

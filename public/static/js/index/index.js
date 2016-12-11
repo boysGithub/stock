@@ -349,7 +349,7 @@ var index = new Vue({
             } 
         } 
     },
-    created(){
+    mounted: function(){
         this.ad_slider();
         this.updateProclamation();
         this.recommend();

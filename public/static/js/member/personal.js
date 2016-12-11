@@ -68,7 +68,7 @@ var personal = new Vue({
             });
         }
     },
-    created(){
+    mounted: function(){
         this.info();
         this.positions();
     }
