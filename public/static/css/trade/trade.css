@@ -1,3 +1,5 @@
+.tr-entrust{margin: 2rem auto;}
+
 .tr-buy .am-form-group{margin: .5rem 0; line-height: 28px;}
 .tr-buy .am-form-group .am-form-label{font-size: 1.4rem; text-align: right; padding-right: 1rem;}
 .tr-buy .am-form-group .am-form-field{font-size: 1.2rem; width: 66%;}
@@ -19,3 +21,25 @@
 .tr-stock-state .am-table{margin: 0;}
 .tr-stock-state .am-table>tbody>tr>td{border: none; padding: .2rem .7rem;}
 .tr-stock-state .am-table>tbody>tr>td.price{color: red;}
+
+.tr-tabs .am-tabs-nav li a{font-size: 16px;}
+.tr-tabs .am-nav>li>a:focus, .tr-tabs .am-nav>li>a:hover{background-color: #39f; color: #fff; border-color: #39f;}
+.tr-tabs .am-nav-tabs>li.am-active>a, .tr-tabs .am-nav-tabs>li.am-active>a:focus, .tr-tabs .am-nav-tabs>li.am-active>a:hover{background-color: #39f; color: #fff; border-color: #39f;}
+.tr-tabs .am-tabs-bd,.tr-tabs .am-nav-tabs{border-color: #39f;}
+
+@media only screen and (min-width: 641px) {
+    .am-offcanvas {display: block;position: static;background: none;}
+    .am-offcanvas-bar {position: static;width: auto;background: none;-webkit-transform: translate3d(0, 0, 0);-ms-transform: translate3d(0, 0, 0);transform: translate3d(0, 0, 0);border-right: 1px solid #eee;}
+    .am-offcanvas-bar:after {content: none;}
+    .am-offcanvas-bar .am-nav>li>a {font-size: 1.6rem;}
+    .am-offcanvas-bar .am-nav>li.am-active>a {background: #f8f8f8;color: #1E6BC5;}
+}
+
+@media only screen and (max-width: 640px) {
+    .am-offcanvas-bar .am-nav>li>a {color:#ccc;border-radius: 0;border-top: 1px solid rgba(0,0,0,.3);box-shadow: inset 0 1px 0 rgba(255,255,255,.05)}
+    .am-offcanvas-bar .am-nav>li>a:hover {background: #1a1a1a;color: #fff}
+    .am-offcanvas-bar .am-nav>li.am-nav-header {color: #777;background: #404040;box-shadow: inset 0 1px 0 rgba(255,255,255,.05);text-shadow: 0 1px 0 rgba(0,0,0,.5);border-top: 1px solid rgba(0,0,0,.3);font-weight: 400;font-size: 75%}
+    .am-offcanvas-bar .am-nav>li.am-active>a {background: #1a1a1a;color: #fff;box-shadow: inset 0 1px 3px rgba(0,0,0,.3)}
+    .am-offcanvas-bar .am-nav>li+li {margin-top: 0;}
+    .tr-left-sidebar{position: fixed; right: 1rem; bottom: 1rem; z-index: 999;}
+}

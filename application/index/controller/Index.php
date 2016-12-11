@@ -19,9 +19,6 @@ class Index extends Controller
 	 * @return [type] [description]
 	 */
 	public function matchList(){
-		$uid = 49125;//$_SESSION['uid'];
-
-		$this->assign('uid', $uid);
 		return $this->fetch('match/matchpage');
 	}
 
@@ -30,10 +27,6 @@ class Index extends Controller
 		if(empty($id)){
 			$this->error('错误', 'index/matchList');
 		}
-
-		$uid = 49125;//$_SESSION['uid'];
-
-		$this->assign('uid', $uid);
 		$this->assign('id', $id);
 
 		return $this->fetch('match/matchDetails');
@@ -78,13 +71,26 @@ class Index extends Controller
 
 	//卖出
 	public function sale(){
-		$this->assign('uid', 49125);
-		return $this->fetch('trade/sale');
 		if(@$_COOKIE['PHPSESSID']){
 			$uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->find();
 			if($uid){
 				$_SESSION['uid'] = $uid['uid'];
 				return $this->fetch('trade/sale');
+			}else{
+				return $this->fetch('login/login');
+			}
+		}else{
+			return $this->fetch('login/login');
+		}
+	}
+
+	//交易记录
+	public function entrust(){
+		if(@$_COOKIE['PHPSESSID']){
+			$uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->find();
+			if($uid){
+				$_SESSION['uid'] = $uid['uid'];
+				return $this->fetch('trade/entrust');
 			}else{
 				return $this->fetch('login/login');
 			}

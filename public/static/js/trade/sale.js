@@ -1,17 +1,19 @@
 var sale = new Vue({
     el: '#sale',
     data: {
-        uid: 11643,//header.user.uid,
+        uid: header.user.uid,
+        stock_code: '',//卖出价格
         sale_price: '',//卖出价格
         sale_num: '',//卖出数量
+        max_num: 0,
         stock_list: [],
         sale_info: {title: '----', changeClass: ''},
         stock: {sellPrice1: '--', sellNum1: '--', sellPrice2: '--', sellNum2: '--', sellPrice3: '--', sellNum3: '--', sellPrice4: '--',sellNum4: '--', sellPrice5: '--', sellNum5: '--', buyPrice1: '--', buyNum1: '--', buyPrice2: '--', buyNum2: '--', buyPrice3: '--', buyNum3: '--', buyPrice4: '--', buyNum4: '--', buyPrice5: '--', buyNum5: '--', price: '--', todayPrcie: '--', prec: '--', maxPrice: '--', minPrice: '--', highLimit: '--', lowerLimit: '--', turnoverRate: '--', turnover: '--'},
     },
     computed: {
         saleFunds: function(){
-            var buy_funds = this.buy_price * this.buy_num;
-            return buy_funds ? buy_funds : '';
+            var sale_funds = (this.sale_price * this.sale_num).toFixed(2);
+            return sale_funds != 0.00 ? sale_funds : '';
         }
     },
     methods: {
@@ -95,31 +97,32 @@ var sale = new Vue({
 
                         $.getJSON(api_host + '/user/isOptional', {uid: _this.uid, stock: code}, function(data){//股票账户信息
                             sale_info['available'] = (data.available != null && data.available != '') ? data.available : 0;
+                            _this.sale_num = _this.max_num = sale_info.available;
                             _this.sale_info = sale_info;
                         });
 
-                        _this.sale_price = sale_info.sale_price;
+                        _this.sale_price = price;
+                        _this.stock_code = code;
                         _this.stock = stockInfo;
                     }
                 }    
             });
-
         },
-        order: function(){
+        order: function(){//卖出
             var _this = this;
-            if(parseInt(_this.buy_num / 100) != _this.buy_num / 100){
-                alert('购买数量必须为100的倍数');
-                return;
-            }/*
+            if(_this.sale_num > _this.max_num){
+                alert('卖出数量不能大于最大可卖');
+            }
+            
             $.post(api_host + '/orders', {
-                uid:$("#uid").val(),
+                uid: _this.uid,
                 stock: _this.stock_code,
-                price: _this.buy_price,
-                number: _this.buy_num,
-                type: 1,
+                price: _this.sale_price,
+                number: _this.sale_num,
+                type: 2,
                 sorts: 1,
                 isMarket: 2,
-                token: header.user.token,
+                token: header.user.token
             }, function(data){
                 if(data.status == 'success'){
                     alert('委托成功');
@@ -127,7 +130,7 @@ var sale = new Vue({
                 } else {
                     alert(data.data);
                 }
-            });*/
+            });
         }
     },
     mounted: function(){
