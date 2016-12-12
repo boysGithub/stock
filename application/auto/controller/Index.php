@@ -7,6 +7,7 @@ use think\Request;
 use think\Db;
 use think\Config;
 use think\cache\driver\Redis;
+use app\common\model\User;
 use app\common\model\UserPosition;
 use app\common\model\UserFunds;
 use app\common\model\Rank;
@@ -576,5 +577,16 @@ class Index extends Controller
             Db::rollback();
             return json("失败");
         }
+    }
+
+    /**
+     * [autoUpdateUser 自动更新用户]
+     * @return [type] [description]
+     */
+    public function autoUpdateUser(){
+        $userInfo = Db::connect('sjq1')->name('user')->Field('uid,uname as username')->chunk(2000,function($list){
+            $user = new User;
+            $user->saveAll($list);
+        });
     }
 }
