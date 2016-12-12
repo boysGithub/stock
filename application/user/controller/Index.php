@@ -192,10 +192,12 @@ class Index extends Base
         if(is_numeric($id)){
            $redis = new Redis;
             if($redis->get('create_'.$id) !== true){
-                if(!UserFunds::where(['uid'=>$id])->value('id')){
-                    $this->createStock($id);
-                }else{
-                    $redis->set('create_'.$id,true);
+                if(User::where(['uid'=>$id])->value('uid')){
+                    if(!UserFunds::where(['uid'=>$id])->value('id')){
+                        $this->createStock($id);
+                    }else{
+                        $redis->set('create_'.$id,true);
+                    }
                 }
             } 
         }
