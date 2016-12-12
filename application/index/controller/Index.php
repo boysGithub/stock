@@ -92,8 +92,12 @@ class Index extends Controller
         if(@$_COOKIE['PHPSESSID']){
             $uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->value('uid');
             if($uid){
+            	$token = Db::connect('sjq1')->name('user')->where(['uid'=>$uid])->value('stock_token');
             	$userInfo = Db::name('users')->where(['uid'=>$uid])->find();
+            	$userInfo['token'] = $token;
                 return json(['status'=>'success','data'=>$userInfo]);
+            }else{
+            	return json(['status'=>'failed','data'=>'已经退出,请重新登录']);
             }
         }
 	}
