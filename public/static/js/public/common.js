@@ -10,7 +10,7 @@ var header = new Vue({
     methods: {
         checkLogin: function() {
             var _this = this;
-            $.getJSON("http://moni.local.com/index/index/doLogin", function(msg) {
+            $.getJSON(api_host+"/index/index/doLogin", function(msg) {
                 if (msg.status == "success") {
                     _this.logined = true;
                     
