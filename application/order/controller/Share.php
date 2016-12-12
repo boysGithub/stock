@@ -27,7 +27,7 @@ class Share extends Base
             return json(['status'=>'failed','data'=>$res]);
         }
         $data['etime'] = date("Y-m-d H:i:s",strtotime($data['etime'])+86399);
-        if($shareInfo = Transaction::where(['uid'=>$data['uid'],'stock'=>$data['stock']])->whereTime('time','between',[$data['stime'],$data['etime']])->order('id desc')->select()){
+        if($shareInfo = Transaction::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'status'=>1])->whereTime('time','between',[$data['stime'],$data['etime']])->order('id desc')->select()){
         	$result = json(['status'=>'success','data'=>$shareInfo]);
         }else{
         	$result = json(['status'=>'failed','data'=>'获取数据失败']);
