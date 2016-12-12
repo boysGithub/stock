@@ -8,7 +8,7 @@
 				<div class="am-topbar-right am-fr">
 					<template v-if="logined">
 						您好，
-						<a href="{:url('index/member/index')}" title="个人中心" class="topbar-login">{{user.username}}</a>
+						<a href="{:url('index/index/personal')}" title="个人中心" class="topbar-login">{{user.username}}</a>
 						<a href="{:url('index/member/loginout')}" title="退出" class="topbar-out">退出</a>
 					</template>	
 					<template v-else>

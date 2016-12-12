@@ -11,8 +11,6 @@ use app\index\controller\Base;
 class Index extends Controller
 {	
 	public function index(){
-		$this->doLogin();
-		$this->assign($_SESSION);
 		return $this->fetch();
 	}
 
@@ -49,20 +47,16 @@ class Index extends Controller
 	 * @return [type] [description]
 	 */
 	public function tradeCenter(){
-		if(!@$_SESSION['uid']){
-			if(@$_COOKIE['PHPSESSID']){
-				$uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->find();
-				if($uid){
-					$_SESSION['uid'] = $uid['uid'];
-					return $this->fetch('trade/tradeCenter');
-				}else{
-					return $this->fetch('login/login');
-				}
+		if(@$_COOKIE['PHPSESSID']){
+			$uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->find();
+			if($uid){
+				$_SESSION['uid'] = $uid['uid'];
+				return $this->fetch('trade/tradeCenter');
 			}else{
 				return $this->fetch('login/login');
 			}
 		}else{
-			return $this->fetch('trade/tradeCenter');
+			return $this->fetch('login/login');
 		}
 	}
 
@@ -71,25 +65,21 @@ class Index extends Controller
 	 * @return [type] [description]
 	 */
 	public function personal(){
-		if(!@$_SESSION['uid']){
-			if(@$_COOKIE['PHPSESSID']){
-				$uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->find();
-				if($uid){
-					$_SESSION['uid'] = $uid['uid'];
-					return $this->fetch('member/personal');
-				}else{
-					return $this->fetch('login/login');
-				}
+		if(@$_COOKIE['PHPSESSID']){
+			$uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->find();
+			if($uid){
+				$_SESSION['uid'] = $uid['uid'];
+				return $this->fetch('member/personal');
 			}else{
 				return $this->fetch('login/login');
 			}
 		}else{
-			return $this->fetch('member/personal');
+			return $this->fetch('login/login');
 		}
 	}
 
 	public function doLogin(){
-        if(@$_COOKIE['PHPSESSID']){
+        if($_COOKIE['PHPSESSID']){
             $uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->value('uid');
             if($uid){
             	$token = Db::connect('sjq1')->name('user')->where(['uid'=>$uid])->value('stock_token');
@@ -99,6 +89,8 @@ class Index extends Controller
             }else{
             	return json(['status'=>'failed','data'=>'已经退出,请重新登录']);
             }
+        }else{
+        	return json(['status'=>'failed','data'=>'获取不到cookie']);
         }
 	}
 

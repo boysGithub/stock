@@ -2,21 +2,27 @@ var api_host = 'https://moni.sjqcj.com';
 var header = new Vue({
     el: "#header",
     data: {
-        logined: false
+        logined: false,
         user: {
 
         }
     },
     methods: {
         checkLogin: function() {
-            $.getJSON("/index/index/doLogin", function(msg) {
+            var _this = this;
+            $.getJSON("http://moni.local.com/index/index/doLogin", function(msg) {
                 if (msg.status == "success") {
-                	user = msg.data;
+                    _this.logined = true;
+                    
+                	_this.user = msg.data;
+                    
+                }else{
+                    _this.logined = false;
                 }
             });
         }
     },
-    ready: function() {
-        $this.checkLogin();
+    mounted: function() {
+       this.checkLogin();
     }
 });
