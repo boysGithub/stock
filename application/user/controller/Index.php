@@ -242,7 +242,7 @@ class Index extends Base
      * @return [json]       [description]
      */
     protected function getUserPosition($data){
-        $result['data'] = UserPosition::where(['uid'=>$data['uid'],'is_position'=>1])->select();
+        $result['data'] = UserPosition::where(['uid'=>$data['uid'],'is_position'=>1])->order('time desc')->select();
         return $result;
     }
 

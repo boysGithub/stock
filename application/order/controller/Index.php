@@ -460,7 +460,7 @@ class Index extends Base
                     $Trans->allowField(true)->save($data);
                 }
                 Db::commit();
-                $result = json(['status'=>'success','data'=>'买入提交成功']);
+                $result = json(['status'=>'success','data'=>'委托成功']);
             }else{
                 //添加成交的订单到持仓表
                 $da['fee'] = $data['fee'];
@@ -485,7 +485,7 @@ class Index extends Base
                     $Trans->allowField(true)->save($data);
                 }
                 Db::commit();
-                $result = json(['status'=>'success','data'=>'买入提交成功']);;
+                $result = json(['status'=>'success','data'=>'委托成功']);;
             }
         } catch (\Exception $e){
             Db::rollback();
@@ -573,7 +573,7 @@ class Index extends Base
                     $Trans->allowField(true)->save($data);
                 }
                 Db::commit();
-                $result = json(['status'=>'success','data'=>'卖出提交成功']);
+                $result = json(['status'=>'success','data'=>'委托成功']);
             }else{
                 //更新用户信息
                 if($auto){
@@ -600,7 +600,7 @@ class Index extends Base
                     $Trans->allowField(true)->save($data);
                 }
                 Db::commit();
-                $result = json(['status'=>'success','data'=>'卖出提交成功']);
+                $result = json(['status'=>'success','data'=>'委托成功']);
             }
         } catch (\Exception $e){
             Db::rollback();
@@ -638,7 +638,7 @@ class Index extends Base
             $redis = new Redis();
             $redis->set("noBuyOrder_".$Trans->id."_".$data['uid'],$da);
             Db::commit();
-            $result = json(['status'=>'success','data'=>'买入委托成功']);
+            $result = json(['status'=>'success','data'=>'委托成功']);
         } catch (\Exception $e) {
             Db::rollback();
             $result = json(['status'=>'failed','data'=>'下单失败']);
@@ -678,7 +678,7 @@ class Index extends Base
             $redis = new Redis();
             $redis->set("noSellOrder_".$Trans->id."_".$data['uid'],$da);
             Db::commit();
-            $result = json(['status'=>'success','data'=>'卖出委托成功']);
+            $result = json(['status'=>'success','data'=>'委托成功']);
         } catch (\Exception $e) {
             Db::rollback();
             $result = json(['status'=>'failed','data'=>'下单失败']);
