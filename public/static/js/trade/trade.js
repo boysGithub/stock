@@ -2,7 +2,6 @@ var trStock = new Vue({
     el: '#tr-stock',
     data: {
         usableFunds: 1000000, //可用资金
-        uid: header.user.uid,
         usable_funds: '', //可用资金
         funds: 1000000, //总资金
         stock_code: '',//股票代码
@@ -37,7 +36,7 @@ var trStock = new Vue({
         getUserInfo(){
             var _this = this;
 
-            $.getJSON(api_host + '/users/'+_this.uid,{}, function(data){
+            $.getJSON(api_host + '/users/'+header.user.uid,{}, function(data){
                 if(data.status == 'success'){
                     _this.usableFunds = data.data.available_funds;
                     _this.funds = data.data.funds;
@@ -149,7 +148,7 @@ var trStock = new Vue({
                 return;
             }
             $.post(api_host + '/orders', {
-                uid:_this.uid,
+                uid: header.user.uid,
                 stock: _this.stock_code,
                 price: _this.buy_price,
                 number: _this.buy_num,

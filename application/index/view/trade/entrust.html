@@ -48,7 +48,7 @@
                                             <td>{{ item.number }}</td>
                                             <td>{{ item.time }}</td>
                                             <td><span>{{ item.status_name }}</span></td>
-                                            <td><template v-if="item.status == 0"><a href="javascript:;" class="am-btn am-btn-link" title="">撤销</a></template></td>
+                                            <td><template v-if="item.status == 0"><a href="javascript:;" class="am-btn am-btn-link" :id="item.id" v-on:click="revoke" title="">撤销</a></template></td>
                                         </tr>
                                     </template>
                                     <template v-else>

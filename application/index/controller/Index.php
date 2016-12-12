@@ -56,46 +56,28 @@ class Index extends Controller
 	 * @return [type] [description]
 	 */
 	public function tradeCenter(){
-		if(@$_COOKIE['PHPSESSID']){
-			$uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->find();
-			if($uid){
-				$_SESSION['uid'] = $uid['uid'];
-				return $this->fetch('trade/tradeCenter');
-			}else{
-				return $this->fetch('login/login');
-			}
+		if($this->checkLogin()){
+			return $this->fetch('trade/tradeCenter');
 		}else{
-			return $this->fetch('login/login');
+			return $this->redirect('index/login');
 		}
 	}
 
 	//卖出
 	public function sale(){
-		if(@$_COOKIE['PHPSESSID']){
-			$uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->find();
-			if($uid){
-				$_SESSION['uid'] = $uid['uid'];
-				return $this->fetch('trade/sale');
-			}else{
-				return $this->fetch('login/login');
-			}
+		if($this->checkLogin()){
+			return $this->fetch('trade/sale');
 		}else{
-			return $this->fetch('login/login');
+			return $this->redirect('index/login');
 		}
 	}
 
 	//交易记录
 	public function entrust(){
-		if(@$_COOKIE['PHPSESSID']){
-			$uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->find();
-			if($uid){
-				$_SESSION['uid'] = $uid['uid'];
-				return $this->fetch('trade/entrust');
-			}else{
-				return $this->fetch('login/login');
-			}
+		if($this->checkLogin()){
+			return $this->fetch('trade/entrust');
 		}else{
-			return $this->fetch('login/login');
+			return $this->redirect('index/login');
 		}
 	}
 
@@ -104,17 +86,15 @@ class Index extends Controller
 	 * @return [type] [description]
 	 */
 	public function personal(){
-		if(@$_COOKIE['PHPSESSID']){
-			$uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->find();
-			if($uid){
-				$_SESSION['uid'] = $uid['uid'];
-				return $this->fetch('member/personal');
-			}else{
-				return $this->fetch('login/login');
+		$uid = input('param.uid', 0);
+		if(empty($uid)){
+			if(!$this->checkLogin()){
+				return $this->redirect('index/login');
 			}
-		}else{
-			return $this->fetch('login/login');
 		}
+
+		$this->assign('uid', $uid);
+		return $this->fetch('member/personal');
 	}
 
 	public function doLogin(){
@@ -135,6 +115,24 @@ class Index extends Controller
 
 	public function login(){
 		return $this->redirect("http://www.sjqcj.com",0);
+	}
+
+	public function register(){
+		return $this->redirect("http://www.sjqcj.com/register",0);
+	}
+
+	//登录验证
+	private function checkLogin(){
+		$logined = false;
+		if(@$_COOKIE['PHPSESSID']){
+			$uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->find();
+			if($uid){
+				$_SESSION['uid'] = $uid['uid'];
+				$logined = true;
+			}
+		}
+
+		return $logined;
 	}
 }
 ?>
