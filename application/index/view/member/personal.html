@@ -13,12 +13,13 @@
     <div class="am-container am-margin-top tr-personal">
         <div class="am-u-md-3 am-padding-right-sm">
             <section class="am-panel am-panel-default">
+                <input type="hidden" name="uid" id="uid" value="{$uid}">
               <div class="am-panel-bd am-text-center">
                 <p class="tr-portrait am-padding-horizontal-lg"><img src="/static/img/portrait.gif" class="am-img-thumbnail am-circle" />
                 </p>
                 <p class="am-margin-top-sm">{{ info.user_name }}</p>
                 <hr data-am-widget="divider" style="" class="am-divider am-divider-dotted" />
-                <p><a href="" class="am-btn am-btn-primary am-btn-xs am-radius am-margin-right">去他的微博</a><a href="{:url('stocks/trading/tradingCenter')}" class="am-btn am-btn-primary am-btn-xs am-radius">进入交易区</a></p>
+                <p><a href="http://www.sjqcj.com/space/{$uid}" target="_blank" class="am-btn am-btn-primary am-btn-xs am-radius am-margin-right">去他的微博</a><a href="{:url('index/tradeCenter')}" class="am-btn am-btn-primary am-btn-xs am-radius">进入交易区</a></p>
               </div>
             </section>
             <section class="am-panel am-panel-default">
@@ -80,7 +81,7 @@
                             <div class="am-u-sm-2"><span class="tr-color-price">{{ info.funds }}</span>元</div>
                             <div class="am-u-sm-4"><span class="tr-color-price">1000000</span>元</div>
                             <div class="am-u-sm-4"><span class="tr-color-price">{{ info.available_funds }}</span>元</div>
-                            <div class="am-u-sm-2"><span class="tr-color-price">10</span>元</div>
+                            <div class="am-u-sm-2"><span class="tr-color-price">{{ market_value }}</span>元</div>
                         </div>
                     </div>    
                 </section>
@@ -99,7 +100,7 @@
                                     <th>股票名称</th>
                                     <th>股票代码</th>
                                     <th>持仓数量</th>
-                                    <th>买入价格</th>
+                                    <th>买入成本</th>
                                     <th>成本金额</th>
                                     <th>最新资产</th>
                                     <th>盈亏比例</th>

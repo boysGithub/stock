@@ -1,7 +1,6 @@
 var sale = new Vue({
     el: '#sale',
     data: {
-        uid: header.user.uid,
         stock_code: '',//卖出价格
         sale_price: '',//卖出价格
         sale_num: '',//卖出数量
@@ -20,7 +19,7 @@ var sale = new Vue({
         getStocks(){
             var _this = this;
 
-            $.getJSON(api_host + '/users',{uid: _this.uid}, function(data){
+            $.getJSON(api_host + '/users',{uid: header.user.uid}, function(data){
                 if(data.status == 'success'){
                     var ret = data.data; 
                     var stock_list = [];
@@ -110,12 +109,12 @@ var sale = new Vue({
         },
         order: function(){//卖出
             var _this = this;
-            if(_this.sale_num > _this.max_num){
-                alert('卖出数量不能大于最大可卖');
+            if(_this.sale_num > 0 && _this.sale_num > _this.max_num){
+                alert('请输入正确的卖出数量');
             }
             
             $.post(api_host + '/orders', {
-                uid: _this.uid,
+                uid: header.user.uid,
                 stock: _this.stock_code,
                 price: _this.sale_price,
                 number: _this.sale_num,

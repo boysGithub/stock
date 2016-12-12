@@ -1,7 +1,6 @@
 var entrust = new Vue({
     el: '#entrust',
     data: {
-        uid: header.user.uid,
         today_entrust: [],//今日委托
         today_turnover: [],//今日成交
         history_entrust: [],//历史委托
@@ -18,7 +17,7 @@ var entrust = new Vue({
                 r_data['etime'] = '2017-12-01';
             }    
 
-            $.getJSON(api_host + '/orders/'+_this.uid, r_data, function(data){
+            $.getJSON(api_host + '/orders/'+header.user.uid, r_data, function(data){
                 if(data.status == 'success'){
                     var ret = data.data; 
                     var orders = [];
@@ -54,6 +53,29 @@ var entrust = new Vue({
                     }
                 }
             });    
+        },
+        revoke: function(e){
+            if(confirm('确定撤单？')){
+                var id = e.currentTarget.id;
+                var _this = this;
+
+                $.ajax({
+                    url: api_host + '/orders/'+ id,
+                    type: 'PUT',
+                    dataType: 'json',
+                    data: {id: id,uid: header.user.uid,status: 2,token: header.user.token,},
+                    success: function(data){
+                        if(data.status == 'success'){
+                            alert('撤单成功');
+                            window.location.reload(true);
+                        } else {
+                            alert(data.data);
+                        }
+                    }
+                });
+            }else{
+
+            }
         }
     },
     mounted: function(){
