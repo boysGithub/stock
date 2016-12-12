@@ -103,6 +103,14 @@ class Index extends Controller
         }
 	}
 
+	/**
+	 * [clearSession 清楚session]
+	 * @return [type] [description]
+	 */
+	public function clearSession(){
+		session_unset('uid');
+	}
+
 	public function login(){
 		return $this->redirect("http://www.sjqcj.com",0);
 	}
