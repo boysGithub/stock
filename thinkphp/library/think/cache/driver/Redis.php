@@ -173,4 +173,7 @@ class Redis extends Driver
         return $this->handler->flushDB();
     }
 
+    public function keys($name){
+        return $this->handler->keys($name);
+    }
 }
