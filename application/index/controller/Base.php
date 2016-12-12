@@ -25,11 +25,23 @@ class Base extends Controller
      * @return [type] [description]
      */
     protected function createStock($uid){
+        $num = rand(0,99999);
+        if($num < 10000){
+            if(10000 - $num > 9000){
+                $num = "00".(string)$num;
+            }else{
+                $num = "0".(string)$num;
+            }
+        }else{
+            $num = (string)$num;
+        }
         $data['uid'] = $uid;
         $data['sorts'] = $this->_sorts;
         $data['funds'] = $this->_stockFunds;
         $data['time'] = date("Y-m-d H:i:s",time());
         $data['available_funds'] = $data['funds'];
+        $data['account'] = "m00".date("YmdHis",time()).$num;
+        $this->checkAccount($uid,$data['account']);
         //开启事务
         Db::startTrans();
         try {
@@ -109,5 +121,16 @@ class Base extends Controller
         $avatar .= '/original_200_200.jpg';
 
         return $avatar;
+    }
+
+    /**
+     * [checkAccout 检查账户是否重复]
+     * @return [type] [description]
+     */
+    public function checkAccount($uid,$str){
+        $account = UserFunds::where(['uid'=>$uid])->value('account');
+        if($account == $str){
+            $this->createStock($uid);
+        }
     }
 }
