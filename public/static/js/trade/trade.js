@@ -1,6 +1,23 @@
 var i = 0;
 var close = setTimeout(getStock, 100);
 
+            $.getScript(api_host + '/index/index/search/stock/' + value,
+                function(){
+                    if(suggestdata != ''){
+                        var data = suggestdata.split(";"); 
+                        var list = [];
+                        for (var i = 0; i < data.length; i++) {
+                            if(data[i] == ''){
+                                continue;
+                            }
+                            var val = data[i].split(',');
+                            var type = 'A股';
+                            switch(val['1']){
+                                case '111':
+                                    type = 'A股';
+                                    break;
+                            }
+                            list.push({ id: data[i], option: val['0'], type: type, code: val['2'], name: val['4']});
 function getStock(){
     if(header.user.uid > 0){
         var trStock = new Vue({
@@ -28,7 +45,29 @@ function getStock(){
                     } else {
                         max_buy = '';
                     }
-
+            });    
+        },
+        updateStockInfo: function(e){
+            var id = e.currentTarget.id;
+            var _this = this;
+            var stock = id.split(',');
+            
+            $.ajax({
+                url: api_host+'/index/index/quiet/stock/'+stock['3'],
+                type: 'get',
+                dataType: 'script',
+                cache: true,
+                success: function(){
+                    if(eval('hq_str_'+stock['3']) != '' || eval('hq_str_s_'+stock['3']) != ''){
+                        var brief = eval('hq_str_s_'+stock['3']).split(',');
+                        var detail = eval('hq_str_'+stock['3']).split(',');
+                        var usableFunds = {}; //可用资金
+                        var maxBuy = 10000;
+                        if(brief['2'] < 0){
+                            _this.changeClass = ' tr-color-lose';
+                        } else {
+                            _this.changeClass = ' tr-color-win';
+                        }
                     this.buy_num = max_buy;
                     return max_buy;  
                 },
