@@ -26,7 +26,7 @@ class Ad extends Base
         }
         foreach ($ads as $key => $val) {
             $res[] = [
-                'image'=>empty($val['image']) ? '' :  . $val['image'],
+                'image'=>empty($val['image']) ? '' :  $imgAttr. $val['image'],
                 'title' => $val['title'],
                 'url' => $val['url']
             ];
