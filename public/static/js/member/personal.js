@@ -1,6 +1,9 @@
+
 var personal = new Vue({
     el: "#personal",
     data: {
+        count: 0,
+        close: '',
         info: {},//用户信息
         market_value: '',//市值
         positions: [],//用户持仓
@@ -104,11 +107,23 @@ var personal = new Vue({
                     _this.entrust = entrust;
                 }    
             });
+        },
+        getPersonal(){
+            if(this.uid > 0){
+                this.info();
+                this.positions();
+            } else {
+                if(this.i < 20){
+                    this.close = setTimeout(getPersonal, 300);
+                    this.i += 1;
+                } else {
+                    clearTimeout(this.close);
+                }
+            }
         }
     },
     mounted: function(){
-        this.info();
-        this.positions();
+        setTimeout(getPersonal, 100);
     }
 })
 
