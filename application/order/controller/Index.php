@@ -435,7 +435,10 @@ class Index extends Base
             }
             $data['available_funds'] = $funds['available_funds'] - $data['price']*$data['number'] - $data['fee'];
             //更新用户资金
-            UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->update(['available_funds'=>$data['available_funds']]);
+            $d['available_funds'] = $data['available_funds'];
+            $d['funds'] = $funds['funds'] - $data['fee'];
+            $d['total_rate'] = round(($d['funds'] - $this->_base->_stockFunds)/$this->_base->_stockFunds * 100,3);
+            UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->update($d);
             //查看是否持有这只股票
             $userInfo = UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'is_position'=>1,'sorts'=>$data['sorts']])->find();
             if($userInfo){
@@ -519,7 +522,10 @@ class Index extends Base
             $data['fee'] = $data['price'] * $data['number'] * 0.001 + $data['fee'];
             //为用户增加卖出金额
             $data['available_funds'] = $funds['available_funds'] + $data['price']*$data['number'] - $data['fee'];
-            UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->update(['available_funds'=>$data['available_funds']]);
+            $d['available_funds'] = $data['available_funds'];
+            $d['funds'] = $funds['funds'] - $data['fee'];
+            $d['total_rate'] = round(($d['funds'] - $this->_base->_stockFunds)/$this->_base->_stockFunds * 100,3);
+            UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->update($d);
             //获取用户持有股票的信息
             $userInfo = UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'is_position'=>1,'sorts'=>$data['sorts']])->find();
             
