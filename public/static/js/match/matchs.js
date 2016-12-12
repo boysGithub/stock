@@ -1,16 +1,15 @@
-
-var uid = $("#uid").val();
 var matchs = new Vue({
     el: "#matchs",
     data: {
         cache_t: 600000,//毫秒
+        uid: header.user.uid,
         matchList: []//赛场
     },
     methods: {
         join_match: function(e){
             var id = e.currentTarget.id;
             var url = e.currentTarget.attributes["href-url"].nodeValue;
-            $.post(api_host + '/match/join',{id: id, uid: uid},function(data){
+            $.post(api_host + '/match/join',{id: id, uid: this.uid},function(data){
                 if(data.status == 'success'){
                     window.location.href = url;
                     localStorage.removeItem('matchList');
@@ -26,8 +25,8 @@ var matchs = new Vue({
             if(data == null || data.timestamp < timestamp){                
                 var _this = this;
                 var r_data = {};
-                if(uid > 0){
-                    r_data = {uid: uid};
+                if(_this.uid > 0){
+                    r_data = {uid: _this.uid};
                 }
                 $.getJSON(api_host + '/match/index',r_data,function(data){
                     if(data.status == 'success'){

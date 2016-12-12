@@ -189,13 +189,15 @@ class Index extends Base
      */
     public function read($id)
     {   
-        $redis = new Redis;
-        if($redis->get('create_'.$id) !== true){
-            if(!UserFunds::where(['uid'=>$id])->value('id')){
-                $this->createStock($id);
-            }else{
-                $redis->set('create_'.$id,true);
-            }
+        if(is_numeric($id)){
+           $redis = new Redis;
+            if($redis->get('create_'.$id) !== true){
+                if(!UserFunds::where(['uid'=>$id])->value('id')){
+                    $this->createStock($id);
+                }else{
+                    $redis->set('create_'.$id,true);
+                }
+            } 
         }
         $stockFunds = $this->_base->_stockFunds;
         $fund = UserFunds::where(['uid'=>$id])->Field('id,uid,funds,time,operationTime,available_funds,sorts,total_rate,avg_position_day,total_profit_rank,week_avg_profit_rate,win_rate,success_rate')->find();
@@ -219,8 +221,8 @@ class Index extends Base
      */
     public function getRecommend()
     {
-        $users = User::where(['u.recommend'=> 1])->alias('u')->field('u.*, (w.endFunds - w.initialCapital) / w.initialCapital week_rate,
-(SELECT count(id) FROM `sjq_weekly_ratio` WHERE week_rate> (endFunds - initialCapital) / initialCapital)+1 ranking')
+        $users = User::where(['u.recommend'=> 1, 'w.uid'=> ['not null', '']])->alias('u')->field('u.*, (w.endFunds - w.initialCapital) / w.initialCapital week_rate,
+(SELECT count(id) FROM `sjq_weekly_ratio` WHERE week_rate < (endFunds - initialCapital) / initialCapital)+1 ranking')
                     ->join('sjq_weekly_ratio w', 'u.uid=w.uid', 'LEFT')
                     ->select();
         

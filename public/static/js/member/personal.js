@@ -1,14 +1,24 @@
+
 var personal = new Vue({
     el: "#personal",
     data: {
+        count: 0,
+        close: '',
         info: {},//用户信息
+        market_value: '',//市值
         positions: [],//用户持仓
         entrust: []//用户委托
+    },
+    computed: {
+        uid: function(){
+            var uid = $("#uid").val();
+            return (uid > 0) ? uid : header.user.uid;
+        }
     },
     methods: {
         info(){
             var _this = this;
-            $.getJSON(api_host + '/users/'+uid,{},function(data){
+            $.getJSON(api_host + '/users/'+_this.uid,{},function(data){
                 if(data.status == 'success'){
                     var ret = data.data;
                     var info = {
@@ -29,24 +39,55 @@ var personal = new Vue({
         },
         positions(){
             var _this = this;
-            $.getJSON(api_host + '/users',{uid: uid},function(data){
+            $.getJSON(api_host + '/users',{uid: _this.uid},function(data){
                 if(data.status == 'success'){
-                    var positions = [];
+                    var stock_num = [];//各股持仓
+                    var positions = [];//持仓信息
+                    var stock_key = [];//查询关键字
+
                     for (var i = 0; i < data.data.length; i++) {
                         var stock = data.data[i];
+                        var num = parseInt(stock.available_number) + parseInt(stock.freeze_number)
                         positions.push({
                             stock: stock.stock,
                             stock_name: stock.stock_name,
                             ratio: stock.ratio + '%',
                             ratio_class: (stock.ratio < 0) ? 'tr-color-lose' : 'tr-color-win',
-                            available_number: stock.available_number,
+                            available_number: num,
                             cost_price: stock.cost_price,
                             assets: stock.assets,
                             cost: stock.cost,
                         });
+
+                        var key = 's_sz' + stock.stock;
+                        if(parseInt(stock.stock.substring(0,1)) == 6){
+                            key = 's_sh' + stock.stock;
+                        }
+                        stock_key.push(key);
+                        stock_num.push({code: key, num: num});
                     }
 
-                    var entrust = [];
+                    var market_value = 0;//市值
+                    $.ajax({//股票交易信息
+                        url: 'http://hq.sinajs.cn?list='+stock_key.join(','),
+                        type: 'get',
+                        dataType: 'script',
+                        cache: true,
+                        success: function(){
+                            for (var i = 0; i < stock_num.length; i++) {
+                                if(stock_num[i] != '' && eval('hq_str_'+stock_num[i].code) != ''){
+                                    var brief = eval('hq_str_'+stock_num[i].code).split(',');
+                                    var price = parseFloat(brief['1']);//现价
+                                    market_value += price * stock_num[i].num;
+                                }
+                            }
+
+                            //market_value.toFixed(2);
+                            _this.market_value = market_value;
+                        }    
+                    });
+
+                    var entrust = [];//委托信息
                     for (var i = 0; i < data.nData.length; i++) {
                         var et = data.nData[i];
                         entrust.push({
@@ -66,11 +107,23 @@ var personal = new Vue({
                     _this.entrust = entrust;
                 }    
             });
+        },
+        getPersonal(){
+            if(this.uid > 0){
+                this.info();
+                this.positions();
+            } else {
+                if(this.i < 20){
+                    this.close = setTimeout(getPersonal, 300);
+                    this.i += 1;
+                } else {
+                    clearTimeout(this.close);
+                }
+            }
         }
     },
     mounted: function(){
-        this.info();
-        this.positions();
+        setTimeout(getPersonal, 100);
     }
 })
 

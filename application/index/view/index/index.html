@@ -75,11 +75,11 @@
                         <tbody>
                             <template v-if="talent_dynamic.length > 0">
                                 <tr v-for="item in talent_dynamic">
-                                    <td><a :href="item.url" :title="item.user_name">{{ item.user_name }}</a></td>
+                                    <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name">{{ item.user_name }}</a></td>
                                     <td><span class="tr-shares-name">{{ item.stock }}</span></td>
                                     <td><span :class="item.state_class">{{ item.state }}</span></td>
                                     <td><span class="tr-color-price">{{ item.price }}</span></td>
-                                    <td><a :href="item.url" class="am-btn am-btn-primary am-btn-xs am-radius">追踪可看</a></td>
+                                    <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" class="am-btn am-btn-primary am-btn-xs am-radius">追踪可看</a></td>
                                 </tr>
                             </template>
                             <template v-else>
@@ -104,9 +104,9 @@
                             <template v-if="week_rate.length > 0">
                             <tr v-for="item in week_rate">
                                 <td><span :class="'tr-rank'+ item.ranking_icon">{{ item.ranking }}</span></td>
-                                <td><a :href="item.url" :title="item.user_name">{{ item.user_name }}</a></td>
+                                <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name">{{ item.user_name }}</a></td>
                                 <td><span :class="item.total_rate_class">{{ item.total_rate }}</span></td>
-                                <td><a :href="item.url" class="am-btn am-btn-primary am-btn-xs am-radius">追踪可看</a></td>
+                                <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" class="am-btn am-btn-primary am-btn-xs am-radius">追踪可看</a></td>
                             </tr>
                             </template>
                             <template v-else>
@@ -129,9 +129,9 @@
                             <template v-if="month_rate.length > 0">
                             <tr v-for="item in month_rate">
                                 <td><span :class="'tr-rank'+ item.ranking_icon">{{ item.ranking }}</span></td>
-                                <td><a :href="item.url" :title="item.user_name">{{ item.user_name }}</a></td>
+                                <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name">{{ item.user_name }}</a></td>
                                 <td><span :class="item.total_rate_class">{{ item.total_rate }}</span></td>
-                                <td><a :href="item.url" class="am-btn am-btn-primary am-btn-xs am-radius">追踪可看</a></td>
+                                <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" class="am-btn am-btn-primary am-btn-xs am-radius">追踪可看</a></td>
                             </tr>
                             </template>
                             <template v-else>
@@ -157,12 +157,12 @@
                             <template v-if="total_rate_10.length > 0">
                                 <tr v-for="item in total_rate_10">
                                     <td><span :class="'tr-rank'+item.rownum_class">{{ item.rownum }}</span></td>
-                                    <td><a :href="item.url" :title="item.user_name">{{ item.user_name }}</a></td>
+                                    <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name">{{ item.user_name }}</a></td>
                                     <td><span :class="item.total_rate_class">{{ item.total_rate }}</span></td>
                                     <td><span class="">{{ item.success_rate }}</span></td>
                                     <td><span>{{ item.avg_position_day }}</span></td>
                                     <td><span :class="item.week_avg_profit_rate_class">{{ item.week_avg_profit_rate }}</span></td>
-                                    <td><a :href="item.url" class="am-btn am-btn-primary am-btn-xs am-radius">追踪可看</a></td>
+                                    <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" class="am-btn am-btn-primary am-btn-xs am-radius">追踪可看</a></td>
                                 </tr>
                             </template>
                             <template v-else>
@@ -196,7 +196,7 @@
                             <tbody>
                                 <tr v-for="item in total_rate_5">
                                     <td class="tr-ranking-portrait"><img :src="item.portrait" class="am-circle" width="30" alt=""></td>
-                                    <td><a :href="item.url" :title="item.user_name">{{ item.user_name }}</a></td>
+                                    <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name">{{ item.user_name }}</a></td>
                                     <td><span :class="item.total_rate_class">{{ item.total_rate }}</span></td>
                                 </tr>
                             </tbody>
@@ -223,7 +223,7 @@
                             <tbody>
                                 <tr v-for="item in success_rate">
                                     <td class="tr-ranking-portrait"><img :src="item.portrait" class="am-circle" width="30" alt=""></td>
-                                    <td><a :href="item.url" :title="item.user_name">{{ item.user_name }}</a></td>
+                                    <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name">{{ item.user_name }}</a></td>
                                     <td><span :class="item.success_rate_class">{{ item.success_rate }}</span></td>
                                 </tr>
                             </tbody>
@@ -255,7 +255,7 @@
                             <tbody>
                                 <tr v-for="item in week_avg_profit_rate">
                                     <td class="tr-ranking-portrait"><img :src="item.portrait" class="am-circle" width="30" alt=""></td>
-                                    <td><a :href="item.url" :title="item.user_name">{{ item.user_name }}</a></td>
+                                    <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name">{{ item.user_name }}</a></td>
                                     <td><span :class="item.week_avg_profit_rate_class">{{ item.week_avg_profit_rate }}</span></td>
                                 </tr>
                             </tbody>
