@@ -588,8 +588,19 @@ class Index extends Controller
         if(!$uid) $uid = 0;
         $userInfo = Db::connect('sjq1')->name('user')->where('uid','>',$uid)->Field('uid,uname as username')->chunk(2000,function($list){
             foreach ($list as $key => $value) {
-                User::create($value);
+                $id = User::create($value)->$id;
+                $this->handle('添加用户'.$id,1);
+            }else{
+                $this->handle('添加用户失败',0);
             }
         });
+    }
+
+    /**
+     * [autoUpdateMatch 自动更新周赛]
+     * @return [type] []
+     */
+    public function autoUpdateWeekMatch(){
+
     }
 }
