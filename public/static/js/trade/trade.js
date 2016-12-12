@@ -11,7 +11,7 @@ var trStock = new Vue({
             var value = e.currentTarget.value;
             var _this = this;
 
-            $.getScript('http://suggest3.sinajs.cn/suggest/?type=111&key='+value+'&name=suggestdata',
+            $.getScript(api_host + '/index/index/search/stock/' + value,
                 function(){
                     if(suggestdata != ''){
                         var data = suggestdata.split(";"); 
@@ -43,7 +43,7 @@ var trStock = new Vue({
             var stock = id.split(',');
             
             $.ajax({
-                url: 'http://hq.sinajs.cn?list='+stock['3']+',s_'+stock['3'],
+                url: api_host+'/index/index/quiet/stock/'+stock['3'],
                 type: 'get',
                 dataType: 'script',
                 cache: true,

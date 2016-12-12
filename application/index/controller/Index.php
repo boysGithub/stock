@@ -113,5 +113,29 @@ class Index extends Controller
 	public function login(){
 		return $this->redirect("http://www.sjqcj.com",0);
 	}
+
+	/**
+	 * [search 搜索方法]
+	 * @return [type] [description]
+	 */
+	public function search(Request $request){
+		$stock = $request->param('stock');
+		$ch = curl_init("http://suggest3.sinajs.cn/suggest/?type=111&key={$stock}&name=suggestdata") ;  
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true) ; // 获取数据返回  
+		curl_setopt($ch, CURLOPT_BINARYTRANSFER, true) ; // 在启用 CURLOPT_RETURNTRANSFER 时候将获取数据返回  
+		$output = curl_exec($ch) ;
+		$output = iconv('GBK', 'UTF-8', $output);
+		echo $output;
+	}
+
+	public function quiet(Request $request){
+		$stock = $request->param('stock');
+		$ch = curl_init("http://hq.sinajs.cn?list=".$stock.",s_".$stock) ;  
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true) ; // 获取数据返回  
+		curl_setopt($ch, CURLOPT_BINARYTRANSFER, true) ; // 在启用 CURLOPT_RETURNTRANSFER 时候将获取数据返回  
+		$output = curl_exec($ch) ;
+		$output = iconv('GBK', 'UTF-8', $output);
+		echo $output;
+	}
 }
 ?>
