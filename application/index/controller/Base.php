@@ -20,7 +20,6 @@ class Base extends Controller
 	public $_stockFunds = 1000000; //股票账户初始金额
 	public $_scale = 0.0003; //股票手续费
     public $_sorts = 1;
-    
     /**
      * [createStock 股票账户的创建]
      * @return [type] [description]

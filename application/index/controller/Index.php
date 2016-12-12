@@ -4,12 +4,15 @@ namespace app\index\controller;
 use think\Controller;
 use think\Request;
 use think\Db;
+use app\index\controller\Base;
 /**
 * 首页的控制器
 */
 class Index extends Controller
-{
+{	
 	public function index(){
+		$this->doLogin();
+		$this->assign($_SESSION);
 		return $this->fetch();
 	}
 
@@ -85,8 +88,23 @@ class Index extends Controller
 		}
 	}
 
+	public function doLogin(){
+		if(!@$_SESSION['uid']){
+            if(@$_COOKIE['PHPSESSID']){
+                $uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->value('uid');
+                if($uid){
+                	$userInfo = Db::name('users')->where(['uid'=>$uid])->find();
+                    $_SESSION = $userInfo;
+                    return json(['status'=>'success','data'=>$_SESSION]);
+                }
+            }
+        }else{
+        	return json(['status'=>'success','data'=>$_SESSION]);
+        }
+	}
+
 	public function login(){
-		return $this->fetch('login/login');
+		return $this->redirect("http://www.sjqcj.com",0);
 	}
 }
 ?>

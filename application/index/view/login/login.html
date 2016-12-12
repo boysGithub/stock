@@ -28,24 +28,21 @@
                 <div class="tpl-login-logo">
                 </div>
                 <h1 class="h1">登录</h1>
-                <form class="am-form tpl-form-line-form" action="http://www.sjqcj.com/index.php" method="get">
+                <form class="am-form tpl-form-line-form" >
                     <div class="am-form-group">
-                        <input type="hidden" name="app" value="public">
-                        <input type="hidden" name="mod" value="Passport">
-                        <input type="hidden" name="act" value="doLogin">
-                        <input type="text" class="tpl-form-input" name="login_email" placeholder="请输入账号">
+                        <input type="text" class="tpl-form-input" v-model="username"  placeholder="请输入账号">
                     </div>
                     <div class="am-form-group">
-                        <input type="password" class="tpl-form-input" name="login_password" placeholder="请输入密码">
+                        <input type="password" class="tpl-form-input" v-model="password"  placeholder="请输入密码">
                     </div>
                     <div class="am-form-group tpl-login-remember-me">
-                        <input id="remember-me" type="checkbox" name="login_remember" value="1">
+                        <input id="remember-me" type="checkbox" v-model="remember" value="1">
                         <label for="remember-me">
                             记住密码
                         </label>
                     </div>
                     <div class="am-form-group">
-                        <button type="submit" class="am-btn am-btn-primary  am-btn-block tpl-btn-bg-color-success  tpl-login-btn">提交</button>
+                        <button type="button" v-on:click="doLogin" class="am-btn am-btn-primary  am-btn-block tpl-btn-bg-color-success  tpl-login-btn">提交</button>
                     </div>
                 </form>
             </div>
