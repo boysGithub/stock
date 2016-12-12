@@ -139,22 +139,7 @@ class Index extends Controller
 		$output = curl_exec($ch) ;
 		$output = iconv('GBK', 'UTF-8', $output);
 		echo $output;
-	}
+	}	
 	
-	public function register(){
-		return $this->redirect("http://www.sjqcj.com/register",0);
-	}
-
-	//登录验证
-	private function checkLogin(){
-		$logined = false;
-		if(@$_COOKIE['PHPSESSID']){
-			$uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->find();
-			if($uid){
-				$logined = true;
-			}
-		}
-		return $logined;
-	}
 }
 ?>

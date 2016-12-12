@@ -91,7 +91,7 @@ function getStock(){
                     var value = e.currentTarget.value;
                     var _this = this;
 
-                    $.getScript(api_host+'/index/index/search/stock/'+value,
+                    $.getScript('http://suggest3.sinajs.cn/suggest/?type=111&key='+value+'&name=suggestdata',
                         function(){
                             if(suggestdata != ''){
                                 var data = suggestdata.split(";"); 
@@ -123,7 +123,7 @@ function getStock(){
                     var stock = id.split(',');
                     
                     $.ajax({
-                        url: api_host+'/index/index/quiet/stock/'+stock['3'],
+                        url: 'http://hq.sinajs.cn?list='+stock['3']+',s_'+stock['3'],
                         type: 'get',
                         dataType: 'script',
                         cache: true,
