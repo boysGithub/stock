@@ -181,7 +181,14 @@ class Index extends Base
      */
     public function read($id)
     {   
-        $this->_base->checkToken();
+        $redis = new Redis;
+        if($redis->get('create_'.$id) !== true){
+            if(!UserFunds::where(['uid'=>$id])->value('id')){
+                $this->createStock($id);
+            }else{
+                $redis->set('create_'.$id,true);
+            }
+        }
         $stockFunds = $this->_base->_stockFunds;
         $fund = UserFunds::where(['uid'=>$id])->Field('id,uid,funds,time,operationTime,available_funds,sorts,total_rate,avg_position_day,total_profit_rank,week_avg_profit_rate,win_rate,success_rate')->find();
         //获取用户资产信息
