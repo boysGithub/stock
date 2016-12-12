@@ -200,7 +200,7 @@ class Index extends Base
             } 
         }
         $stockFunds = $this->_base->_stockFunds;
-        $fund = UserFunds::where(['uid'=>$id])->Field('id,uid,funds,time,operationTime,available_funds,sorts,total_rate,avg_position_day,total_profit_rank,week_avg_profit_rate,win_rate,success_rate')->find();
+        $fund = UserFunds::where(['uid'=>$id])->Field('id,uid,funds,time,operationTime,available_funds,sorts,total_rate,avg_position_day,total_profit_rank,week_avg_profit_rate,win_rate,success_rate,account')->find();
         //获取用户资产信息
         if($fund){
             $fund->append(['username']);
