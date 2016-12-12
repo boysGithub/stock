@@ -2,6 +2,7 @@ var match_details = new Vue({
     el: "#match_details",
     data: {
         cache_t: 600000,//毫秒
+        uid: header.user.uid,
         match: [],//比赛
         ranking: []//比赛排行
     },
@@ -14,9 +15,8 @@ var match_details = new Vue({
                 var _this = this;
                 var id = $("#match_id").val();
                 var r_data = {id: id};
-                var uid = $("#uid").val();
-                if(uid > 0){
-                    r_data.uid = uid;
+                if(_this.uid > 0){
+                    r_data.uid = _this.uid;
                 }
                 $.getJSON(api_host + '/match/detail',r_data,function(data){
                     if(data.status == 'success'){

@@ -1,6 +1,7 @@
 var personal = new Vue({
     el: "#personal",
     data: {
+        uid: header.user.uid,
         info: {},//用户信息
         positions: [],//用户持仓
         entrust: []//用户委托
@@ -8,7 +9,7 @@ var personal = new Vue({
     methods: {
         info(){
             var _this = this;
-            $.getJSON(api_host + '/users/'+uid,{},function(data){
+            $.getJSON(api_host + '/users/'+_this.uid,{},function(data){
                 if(data.status == 'success'){
                     var ret = data.data;
                     var info = {
@@ -29,7 +30,7 @@ var personal = new Vue({
         },
         positions(){
             var _this = this;
-            $.getJSON(api_host + '/users',{uid: uid},function(data){
+            $.getJSON(api_host + '/users',{uid: _this.uid},function(data){
                 if(data.status == 'success'){
                     var positions = [];
                     for (var i = 0; i < data.data.length; i++) {

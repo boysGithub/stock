@@ -16,7 +16,7 @@
                 {include file="trade/trade-left" /}
             </div>
             <div class="am-u-md-10 am-padding-horizontal-sm" id="tr-stock">
-                <form action="#" method="post" class="am-form">
+                <form class="am-form">
                 <div class="am-u-md-6 tr-buy">
                     <div class="am-g am-form-group">
                         <label class="am-u-sm-3 am-form-label">证券代码：</label>
@@ -38,44 +38,44 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <input type="text" :value="buyInfo.code" v-on:keyup="updateStockList" placeholder="请输入股票名称/代码/拼音" onfocus="if($(this).val() != ''){$('.tr-stock-table').show()}" onblur="$('.tr-stock-table').hide()" class="am-form-field">
+                            <input type="text" v-model="stock_code" id="stock_code" v-on:keyup="updateStockList" placeholder="请输入股票名称/代码/拼音" onfocus="if($(this).val() != ''){$('.tr-stock-table').show()}" onblur="$('.tr-stock-table').hide()" class="am-form-field">
                         </div>
                     </div>
                     <div class="am-g am-form-group">
-                        <label class="am-u-sm-3 am-form-label">证券名称：</label>
+                        <label class="am-u-sm-3 am-form-label">股票名称：</label>
                         <div class="am-u-sm-9">
-                            <span class="" id="">{{ buyInfo.stockName }}</span>
+                            <span>{{ buyInfo.stockName }}</span>
                         </div>
                     </div>
                     <div class="am-g am-form-group">
                         <label class="am-u-sm-3 am-form-label">当前价格：</label>
                         <div class="am-u-sm-9">
-                            <span class="" id="">{{ buyInfo.price }}</span>
+                            <span>{{ buyInfo.price }}</span>
                         </div>
                     </div>
                     <div class="am-g am-form-group">
                         <label class="am-u-sm-3 am-form-label">买入价格：</label>
                         <div class="am-u-sm-9">
-                            <input type="text" class="am-form-field" v-bind:value=" buyInfo.price">
+                            <input type="text" v-model="buy_price" class="am-form-field">
                         </div>
                     </div>
                     <div class="am-g am-form-group">
                         <label class="am-u-sm-3 am-form-label">可用资金：</label>
                         <div class="am-u-sm-9">
-                            <span class="" id="">{{ buyInfo.usableFunds }}</span>
+                            <span>{{ usable_funds }}</span>
                         </div>
                     </div>
                     <div class="am-g am-form-group">
                         <label class="am-u-sm-3 am-form-label">最大可买：</label>
                         <div class="am-u-sm-9">
-                            <span class="" id="">{{ buyInfo.maxBuy }}</span>
+                            <span>{{ maxBuy }}</span>
                         </div>
                     </div>
                     <div class="am-g am-form-group">
                         <label class="am-u-sm-3 am-form-label">买入数量：</label>
                         <div class="am-u-sm-9">
-                            <input type="text" class="am-form-field" v-bind:value="buyInfo.maxBuy">
-                            <p class="">
+                            <input type="text" placeholder="必须为100的倍数" class="am-form-field" v-model="buy_num">
+                            <!-- <p class="">
                                 <label>
                                     <input type="radio" name="p01_form_percount" value="1" checked="checked">
                                     全部可买
@@ -96,20 +96,21 @@
                                     <input type="radio" name="p01_form_percount" value="5">
                                     1/5
                                 </label>
-                            </p>
+                            </p> -->
                         </div>
                     </div>
                     <div class="am-g am-form-group">
-                        <label class="am-u-sm-3 am-form-label">购买金额：</label>
+                        <label class="am-u-sm-3 am-form-label">买入金额：</label>
                         <div class="am-u-sm-9">
-                            <span class="" id="">{{ buyInfo.useFunds }}</span>
+                            <span>{{ buyFunds }}</span>
                         </div>
                     </div>
                     <div class="am-g am-form-group tr-stock-btn">
-                        <input type="button" class="am-btn am-btn-sm am-btn-success" value="下单确认">
+                        <input type="button" class="am-btn am-btn-sm am-btn-success" v-on:click="order" value="买入下单">
                         <input type="reset" class="am-btn am-btn-sm am-btn-danger am-margin-left-sm" value="清空重置">
                     </div>
                 </div>
+                </form>
                 <div class="am-u-md-6 am-padding-left-sm tr-stock-state">
                     <div class="am-panel am-panel-default">
                         <div class="am-panel-hd am-g">
@@ -119,7 +120,7 @@
                             <div class="am-u-sm-2 am-text-right am-padding-right-sm tr-stock-price ">
                                 <span>{{ buyInfo.price }}</span><span class="am-icon-"></span>
                             </div>
-                            <div v-bind:class="'am-u-sm-1 tr-stock-increase' + changeClass">
+                            <div v-bind:class="'am-u-sm-1 tr-stock-increase' + buyInfo.changeClass">
                                 <p>{{ buyInfo.changePrice }}</p>
                                 <p>{{ buyInfo.changeRate }}</p>
                             </div>
