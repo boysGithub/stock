@@ -127,11 +127,9 @@ class Index extends Controller
 		if(@$_COOKIE['PHPSESSID']){
 			$uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->find();
 			if($uid){
-				$_SESSION['uid'] = $uid['uid'];
 				$logined = true;
 			}
 		}
-
 		return $logined;
 	}
 }
