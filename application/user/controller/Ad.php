@@ -19,9 +19,14 @@ class Ad extends Base
         $ads = AdModel::where(['type'=>$type, 'enabled'=>1])->field('image,title,url')->select();
 
         $res = [];
+        if(is_https()){
+            $imgAttr = Config('use_url.img_url');
+        }else{
+            $imgAttr = Config('use_url.img_url_http');
+        }
         foreach ($ads as $key => $val) {
             $res[] = [
-                'image'=>empty($val['image']) ? '' : Config('use_url.img_url') . $val['image'],
+                'image'=>empty($val['image']) ? '' :  . $val['image'],
                 'title' => $val['title'],
                 'url' => $val['url']
             ];
