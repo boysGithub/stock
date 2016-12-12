@@ -89,26 +89,13 @@ class Index extends Controller
 	}
 
 	public function doLogin(){
-		if(!@$_SESSION['uid']){
-            if(@$_COOKIE['PHPSESSID']){
-                $uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->value('uid');
-                if($uid){
-                	$userInfo = Db::name('users')->where(['uid'=>$uid])->find();
-                    $_SESSION = $userInfo;
-                    return json(['status'=>'success','data'=>$_SESSION]);
-                }
+        if(@$_COOKIE['PHPSESSID']){
+            $uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->value('uid');
+            if($uid){
+            	$userInfo = Db::name('users')->where(['uid'=>$uid])->find();
+                return json(['status'=>'success','data'=>$userInfo]);
             }
-        }else{
-        	return json(['status'=>'success','data'=>$_SESSION]);
         }
-	}
-
-	/**
-	 * [clearSession 清楚session]
-	 * @return [type] [description]
-	 */
-	public function clearSession(){
-		session_unset('uid');
 	}
 
 	public function login(){
