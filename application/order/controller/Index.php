@@ -398,7 +398,7 @@ class Index extends Base
     protected function isToSell($data){
         $position = UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'sorts'=>$data['sorts'],'is_position'=>1])->find();
         if($position){
-            if($position['available_number'] - $data['number'] >= 0 ){
+            if($position['available_number'] - $data['number'] > 0 ){
                 $bool = $position;
             }else{
                 $bool = false;
