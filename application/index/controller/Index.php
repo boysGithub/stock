@@ -143,6 +143,7 @@ class Index extends Controller
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true) ; // 获取数据返回  
 		curl_setopt($ch, CURLOPT_BINARYTRANSFER, true) ; // 在启用 CURLOPT_RETURNTRANSFER 时候将获取数据返回  
 		$output = curl_exec($ch) ;
+		curl_close($ch);
 		$output = iconv('GBK', 'UTF-8', $output);
 		echo $output;
 	}
@@ -157,7 +158,25 @@ class Index extends Controller
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true) ; // 获取数据返回  
 		curl_setopt($ch, CURLOPT_BINARYTRANSFER, true) ; // 在启用 CURLOPT_RETURNTRANSFER 时候将获取数据返回  
 		$output = curl_exec($ch) ;
+		curl_close($ch);
 		$output = iconv('GBK', 'UTF-8', $output);
+		echo $output;
+	}
+
+	/**
+	 * [quiet 获取多支股票简要数据]
+	 * @param  Request $request [description]
+	 * @return [type]           [description]
+	 */
+	public function getStocks(Request $request){
+		$stock = $request->param('stock');
+		$ch = curl_init("http://hq.sinajs.cn?list=".$stock) ;  
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true) ; // 获取数据返回  
+		curl_setopt($ch, CURLOPT_BINARYTRANSFER, true) ; // 在启用 CURLOPT_RETURNTRANSFER 时候将获取数据返回  
+		$output = curl_exec($ch) ;
+		$output = iconv('GBK', 'UTF-8', $output);
+		curl_close($ch);
+
 		echo $output;
 	}
 
