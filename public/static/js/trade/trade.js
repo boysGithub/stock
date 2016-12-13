@@ -2,7 +2,7 @@ var i = 0;
 var close = setTimeout(getStock, 100);
 
 function getStock() {
-    if (header.user.uid > 0) {
+    if (header.logined) {
         var trStock = new Vue({
             el: '#tr-stock',
             data: {
@@ -12,6 +12,7 @@ function getStock() {
                 stock_code: '', //股票代码
                 buy_price: '', //买入价格
                 buy_num: '', //购买数量
+                isSelect: true, //
                 stockList: [],
                 buyInfo: { title: '----' },
                 stock: { sellPrice1: '--', sellNum1: '--', sellPrice2: '--', sellNum2: '--', sellPrice3: '--', sellNum3: '--', sellPrice4: '--', sellNum4: '--', sellPrice5: '--', sellNum5: '--', buyPrice1: '--', buyNum1: '--', buyPrice2: '--', buyNum2: '--', buyPrice3: '--', buyNum3: '--', buyPrice4: '--', buyNum4: '--', buyPrice5: '--', buyNum5: '--', price: '--', todayPrcie: '--', prec: '--', maxPrice: '--', minPrice: '--', highLimit: '--', lowerLimit: '--', turnoverRate: '--', turnover: '--' },
@@ -29,12 +30,11 @@ function getStock() {
                         max_buy = '';
                     }
 
-                    this.buy_num = max_buy;
                     return max_buy;
                 },
                 buyFunds: function() {
                     var buy_funds = this.buy_price * this.buy_num;
-                    return buy_funds ? buy_funds : '';
+                    return buy_funds ? buy_funds.toFixed(2) : '';
                 },
             },
             methods: {
@@ -78,34 +78,40 @@ function getStock() {
                             }
                         });
                 },
-                updateStockInfo: function(e) {
+                selectStock: function(e){
                     var id = e.currentTarget.id;
-                    var _this = this;
                     var stock = id.split(',');
+                    this.stock_key = stock['3'];
+                    this.stock_code = stock['2'];
+                    this.isSelect = true;
+                    this.updateStockInfo();
+                },
+                updateStockInfo: function() {
+                    var _this = this;
 
                     $.ajax({
-                        url: api_host + '/index/index/quiet/stock/' + stock['3'],
+                        url: api_host + '/index/index/quiet/stock/' + _this.stock_key,
                         type: 'get',
                         dataType: 'script',
                         cache: true,
                         success: function() {
-                            if (eval('hq_str_' + stock['3']) != '' || eval('hq_str_s_' + stock['3']) != '') {
-                                var brief = eval('hq_str_s_' + stock['3']).split(',');
-                                var detail = eval('hq_str_' + stock['3']).split(',');
+                            if (eval('hq_str_' + _this.stock_key) != '' || eval('hq_str_s_' + _this.stock_key) != '') {
+                                var brief = eval('hq_str_s_' + _this.stock_key).split(',');
+                                var detail = eval('hq_str_' + _this.stock_key).split(',');
                                 var price = brief['1']; //现价
 
                                 var buyInfo = {
                                     stockName: brief['0'], //名称 
-                                    code: stock['2'], //代码
-                                    title: brief['0'] + '(' + stock['2'] + ')', //title
+                                    code: _this.stock_code, //代码
                                     price: price,
+                                };
+                                var stockInfo = {
+                                    title: brief['0'] + '(' + _this.stock_code + ')', //title
+                                    turnoverNum: brief['4'], //
+                                    turnoverMoney: brief['5'], //
                                     changePrice: brief['2'], //涨幅
                                     changeRate: brief['3'] + '%', //涨幅
                                     changeClass: (brief['2'] < 0) ? ' tr-color-lose' : ' tr-color-win',
-                                    turnoverNum: brief['4'], //
-                                    turnoverMoney: brief['5'] //
-                                };
-                                var stockInfo = {
                                     sellPrice1: parseFloat(detail['21']),
                                     sellNum1: detail['20'],
                                     sellPrice2: parseFloat(detail['23']),
@@ -133,23 +139,32 @@ function getStock() {
                                     minPrice: parseFloat(detail['5']),
                                     highLimit: parseFloat(detail['2'] * 1.1).toFixed(2),
                                     lowerLimit: parseFloat(detail['2'] * 0.9).toFixed(2),
-                                    /*turnoverRate: detail[''], 
-                                    turnover: detail['']*/
                                 }
 
-                                _this.stock_code = buyInfo.code;
-                                _this.buy_price = buyInfo.price;
-                                _this.usable_funds = _this.usableFunds;
+                                if(_this.isSelect){
+                                    _this.buy_price = buyInfo.price;
+                                    _this.usable_funds = _this.usableFunds;
+                                    _this.buyInfo = buyInfo;
+                                }
                                 _this.stock = stockInfo;
-                                _this.buyInfo = buyInfo;
+
+                                _this.isSelect = false;
+                                setTimeout(_this.updateStockInfo, 10000);
                             }
                         }
                     });
                 },
+                updateBuyNum: function(e){
+                    var rate = e.currentTarget.value;
+                    if(rate > 0){
+                        var buy_num = Math.floor(this.maxBuy / rate / 100) * 100;
+                        this.buy_num = buy_num;
+                    }
+                },
                 order: function() {
                     var _this = this;
-                    if (parseInt(_this.buy_num / 100) != _this.buy_num / 100) {
-                        alert('购买数量必须为100的倍数');
+                    if (parseInt(_this.buy_num / 100) != _this.buy_num / 100 || _this.buy_num > _this.maxBuy) {
+                        alert('请输入正确的购买股数');
                         return;
                     }
                     $.post(api_host + '/orders', {

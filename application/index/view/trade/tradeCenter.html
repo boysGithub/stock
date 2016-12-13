@@ -29,7 +29,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-on:mousedown="updateStockInfo" v-for="item in stockList" v-bind:id="item.id">
+                                        <tr v-on:mousedown="selectStock" v-for="item in stockList" v-bind:id="item.id">
                                             <td>{{ item.option }}</td>
                                             <td>{{ item.type }}</td>
                                             <td>{{ item.code }}</td>
@@ -75,28 +75,28 @@
                         <label class="am-u-sm-3 am-form-label">买入数量：</label>
                         <div class="am-u-sm-9">
                             <input type="text" placeholder="必须为100的倍数" class="am-form-field" v-model="buy_num">
-                            <!-- <p class="">
+                            <p class="tr-select-part">
                                 <label>
-                                    <input type="radio" name="p01_form_percount" value="1" checked="checked">
-                                    全部可买
+                                    <input type="radio" v-on:change="updateBuyNum" name="buy_num" value="1">
+                                    全部
                                 </label>
                                 <label>
-                                    <input type="radio" name="p01_form_percount" value="2">
+                                    <input type="radio" v-on:change="updateBuyNum" name="buy_num" value="2">
                                     1/2
                                 </label>
                                 <label>
-                                    <input type="radio" name="p01_form_percount" value="3">
+                                    <input type="radio" v-on:change="updateBuyNum" name="buy_num" value="3">
                                     1/3
                                 </label>
                                 <label>
-                                    <input type="radio" name="p01_form_percount" value="4">
+                                    <input type="radio" v-on:change="updateBuyNum" name="buy_num" value="4">
                                     1/4
                                 </label>
                                 <label>
-                                    <input type="radio" name="p01_form_percount" value="5">
+                                    <input type="radio" v-on:change="updateBuyNum" name="buy_num" value="5">
                                     1/5
                                 </label>
-                            </p> -->
+                            </p>
                         </div>
                     </div>
                     <div class="am-g am-form-group">
@@ -115,14 +115,14 @@
                     <div class="am-panel am-panel-default">
                         <div class="am-panel-hd am-g">
                             <div class="am-u-sm-9 tr-stock-name">
-                                <span>{{ buyInfo.title }}</span>
+                                <span>{{ stock.title }}</span>
                             </div>
                             <div class="am-u-sm-2 am-text-right am-padding-right-sm tr-stock-price ">
-                                <span>{{ buyInfo.price }}</span><span class="am-icon-"></span>
+                                <span>{{ stock.price }}</span><span class="am-icon-"></span>
                             </div>
-                            <div v-bind:class="'am-u-sm-1 tr-stock-increase' + buyInfo.changeClass">
-                                <p>{{ buyInfo.changePrice }}</p>
-                                <p>{{ buyInfo.changeRate }}</p>
+                            <div v-bind:class="'am-u-sm-1 tr-stock-increase' + stock.changeClass">
+                                <p>{{ stock.changePrice }}</p>
+                                <p>{{ stock.changeRate }}</p>
                             </div>
                         </div>
                         <div class="am-panel-bd am-g">
@@ -197,7 +197,7 @@
                                     <li><span>涨停价 : </span><span class="tr-color-win">{{ stock.highLimit }}</span></li>
                                     <li><span>跌停价 : </span><span class="tr-color-lose">{{ stock.lowerLimit }}</span></li>
                                     <!-- <li><span>换手率 : </span><span class="menu-right-centent-tebale3-margin">{{ stock.turnoverRate }}</span></li> -->
-                                    <li><span>成交量 : </span><span class="menu-right-centent-tebale3-margin">{{ buyInfo.turnoverNum }}</span></li>
+                                    <li><span>成交量 : </span><span class="menu-right-centent-tebale3-margin">{{ stock.turnoverNum }}</span></li>
                                 </ul>
                             </div>
                         </div>

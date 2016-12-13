@@ -30,14 +30,14 @@ class Match extends Base
         $matchs = MatchModel::where($where)->alias('m')->limit(($page-1)*$limit, $limit)->order('start_date desc');
         $field = '';
         if(isset($data['uid']) && $data['uid'] > 0){//登录后获取参加状态和排名
-            $field .= ",u.id muid,(SELECT count(id) FROM sjq_match_user WHERE (u.end_capital - u.initial_capital) / u.initial_capital < ( end_capital - initial_capital) / initial_capital AND match_id=m.id)+1 ranking";
+            $field .= ",u.id muid";
             if(isset($data['joined']) && $data['joined'] == 1){
                 $where['u.id'] = ['not null',''];
             }
             $matchs->join('sjq_match_user u',"u.match_id=m.id AND u.uid={$data['uid']}", 'LEFT');
         }
 
-        $matchs = $matchs->where($where)->field('m.id,name,image,type,start_date,end_date'.$field)->select();
+        $matchs = MatchModel::where($where)->field('m.id,name,image,type,start_date,end_date'.$field)->select();
         $res = [];
         foreach ($matchs as $key => $val) {
         	if(time() >= strtotime($val['start_date']) && time() < strtotime($val['end_date']) + 24 * 3600){
@@ -58,19 +58,31 @@ class Match extends Base
                 'status' => $status,
                 'status_name' => $status_name,
             ];
-            if(isset($data['uid']) && $data['uid'] > 0){
-                $match['ranking'] = $val['ranking'];
-                if(empty($val['muid'])){
-                    $match['ranking'] = 0;
-                    $match['joined'] = 0;
-                } else{
-                    $match['joined'] = 1;
+            if(isset($val['muid']) && empty($val['muid'])){
+                $match['ranking'] = 0;
+                $match['joined'] = 0;
+            } elseif (isset($val['muid'])) {    
+                $ranking = 0;
+                if($val['type'] == 1){//周赛
+                    $user = MatchUser::where(['u.uid'=>$data['uid'], 'u.match_id'=>$val['id']])->alias('u')
+                    ->field("(r.endFunds - r.initialCapital) / r.initialCapital total_rate,(SELECT count(uc.id) FROM sjq_match_user uc LEFT JOIN sjq_weekly_ratio rc ON uc.uid=rc.uid AND YEAR(rc.time)=YEAR(uc.join_time) AND MONTH(rc.time)=MONTH(uc.join_time) WHERE uc.match_id={$val['id']} AND (rc.endFunds - rc.initialCapital) / rc.initialCapital > total_rate)+1 ranking")
+                    ->join("sjq_weekly_ratio r", "u.uid=r.uid AND YEAR(r.time)=YEAR(u.join_time) AND WEEK(r.time)=WEEK(u.join_time)", "left")
+                    ->find();
+                    $ranking = $user['ranking'];
+                } elseif ($val['type'] == 2){//月赛
+                    $user = MatchUser::where(['u.uid'=>$data['uid'], 'u.match_id'=>$val['id']])->alias('u')
+                    ->field("(r.endFunds - r.initialCapital) / r.initialCapital total_rate,(SELECT count(uc.id) FROM sjq_match_user uc LEFT JOIN sjq_month_ratio rc ON uc.uid=rc.uid AND YEAR(rc.time)=YEAR(uc.join_time) AND MONTH(rc.time)=MONTH(uc.join_time) WHERE uc.match_id={$val['id']} AND (rc.endFunds - rc.initialCapital) / rc.initialCapital > total_rate)+1 ranking")
+                    ->join("sjq_month_ratio r", "u.uid=r.uid AND YEAR(r.time)=YEAR(u.join_time) AND MONTH(r.time)=MONTH(u.join_time)", "left")
+                    ->find();
+                    $ranking = $user['ranking'];
                 }
+
+                $match['joined'] = 1;
+                $match['ranking'] = $ranking;
             }
 
             $res[] = $match;
         }
-
 
         return json(['status'=>'success','data'=>$res]);
     }
@@ -97,26 +109,52 @@ class Match extends Base
         $page = isset($data['np']) && (int)$data['np'] > 0 ? $data['np'] : 1;
         $limit = isset($data['limit']) && (int)$data['limit'] > 0 ? $data['limit'] : 100;
 
-        $match = MatchModel::where($where)->alias('m');
-        $field = '';
-        if(isset($data['uid']) && !empty($data['uid'])){//登录后获取总收益和排名
-            $field .= ",u.id muid,FORMAT((u.end_capital - u.initial_capital) / u.initial_capital,2) total_rate,(SELECT count(*) FROM sjq_match_user WHERE total_rate < ( end_capital - initial_capital) / initial_capital AND match_id=m.id)+1 ranking";
-            $match->join('sjq_match_user u',"u.match_id=m.id AND u.uid={$data['uid']}", 'LEFT');
-        }
-
-        $match = $match->field('m.id,name,type,start_date,end_date'.$field)->find();
+        $match = MatchModel::where($where)->alias('m')->field('m.id,name,type,start_date,end_date')->find();
         if (empty($match)) {
             return json(['status'=>'failed','data'=>'比赛不存在']);
         }
-        
+
         //比赛排行
-        $rankList = MatchUser::where(['match_id'=>$match['id']])->limit(($page-1)*$limit, $limit)->order('total_rate desc')->field('id,uid,user_name,ROUND((end_capital - initial_capital) / initial_capital,2) total_rate,
-(SELECT count(id) FROM sjq_match_user WHERE total_rate < ( end_capital - initial_capital) / initial_capital AND match_id=1)+1 ranking')->select();
+        $rankList = MatchUser::where(['match_id'=>$match['id']])->alias('u')
+            ->limit(($page-1)*$limit, $limit)->order('total_rate desc');
+        if($match['type'] == 1){//周赛
+            $rankList->field("u.id,u.uid,u.user_name,(r.endFunds - r.initialCapital) / r.initialCapital total_rate,(SELECT count(uc.id) FROM sjq_match_user uc LEFT JOIN sjq_weekly_ratio rc ON uc.uid=rc.uid AND YEAR(rc.time)=YEAR(uc.join_time) AND MONTH(rc.time)=MONTH(uc.join_time) WHERE uc.match_id={$match['id']} AND (rc.endFunds - rc.initialCapital) / rc.initialCapital > total_rate)+1 ranking")
+            ->join("sjq_weekly_ratio r", "u.uid=r.uid AND YEAR(r.time)=YEAR(u.join_time) AND WEEK(r.time)=WEEK(u.join_time)", "left");
+        } elseif ($match['type'] == 2){//月赛
+            $rankList->field("u.id,u.uid,u.user_name,(r.endFunds - r.initialCapital) / r.initialCapital total_rate,(SELECT count(uc.id) FROM sjq_match_user uc LEFT JOIN sjq_month_ratio rc ON uc.uid=rc.uid AND YEAR(rc.time)=YEAR(uc.join_time) AND MONTH(rc.time)=MONTH(uc.join_time) WHERE uc.match_id={$match['id']} AND (rc.endFunds - rc.initialCapital) / rc.initialCapital > total_rate)+1 ranking")
+            ->join("sjq_month_ratio r", "u.uid=r.uid AND YEAR(r.time)=YEAR(u.join_time) AND MONTH(r.time)=MONTH(u.join_time)", "left");
+        }
+        $rankList = $rankList->select();
+        
+        foreach ($rankList as $key => $val) {
+            $rankList[$key]->total_rate = round($val->total_rate * 100, 2);
+        }
 
         $res = [
-            'match'=>['id'=>$match['id'],'name'=>$match['name'],'joined'=>empty($match['muid']) ? 0 : 1,'total_rate'=>empty($match['muid']) ? 0 : round($match['total_rate'], 2),'ranking'=>empty($match['muid']) ? 0 : $match['ranking']],
+            'match'=>['id'=>$match['id'],'name'=>$match['name'],'joined'=>0,'total_rate'=>0,'ranking'=> 0],
             'rankList' => $rankList
         ];
+
+        if(isset($data['uid']) && $data['uid'] > 0){//登录后获取参加状态和排名
+            $user = [];
+            if($match['type'] == 1){//周赛
+                $user = MatchUser::where(['u.uid'=>$data['uid'], 'u.match_id'=>$match['id']])->alias('u')
+                ->field("(r.endFunds - r.initialCapital) / r.initialCapital total_rate,(SELECT count(uc.id) FROM sjq_match_user uc LEFT JOIN sjq_weekly_ratio rc ON uc.uid=rc.uid AND YEAR(rc.time)=YEAR(uc.join_time) AND MONTH(rc.time)=MONTH(uc.join_time) WHERE uc.match_id={$match['id']} AND (rc.endFunds - rc.initialCapital) / rc.initialCapital > total_rate)+1 ranking")
+                ->join("sjq_weekly_ratio r", "u.uid=r.uid AND YEAR(r.time)=YEAR(u.join_time) AND WEEK(r.time)=WEEK(u.join_time)", "left")
+                ->find();
+            } elseif ($match['type'] == 2){//月赛
+                $user = MatchUser::where(['u.uid'=>$data['uid'], 'u.match_id'=>$match['id']])->alias('u')
+                ->field("(r.endFunds - r.initialCapital) / r.initialCapital total_rate,(SELECT count(uc.id) FROM sjq_match_user uc LEFT JOIN sjq_month_ratio rc ON uc.uid=rc.uid AND YEAR(rc.time)=YEAR(uc.join_time) AND MONTH(rc.time)=MONTH(uc.join_time) WHERE uc.match_id={$match['id']} AND (rc.endFunds - rc.initialCapital) / rc.initialCapital > total_rate)+1 ranking")
+                ->join("sjq_month_ratio r", "u.uid=r.uid AND YEAR(r.time)=YEAR(u.join_time) AND MONTH(r.time)=MONTH(u.join_time)", "left")
+                ->find();
+            }
+
+            if(!empty($user)){
+                $res['match']['joined'] = 1;
+                $res['match']['total_rate'] = round($user['total_rate'] * 100, 2);
+                $res['match']['ranking'] = $user['ranking'];
+            }
+        }
 
         return json(['status'=>'success','data'=>$res]);
     }
@@ -145,18 +183,15 @@ class Match extends Base
             return json(['status'=>'failed','data'=>'不可参加']);
         }
         
-        $user = User::where(['u.uid'=>$data['uid']])->alias('u')->join('sjq_users_funds uf', 'u.uid=uf.uid')->field('username,funds')->find();
+        $user = User::where(['uid'=>$data['uid']])->alias('u')->field('uid,username')->find();
         if(empty($user)){
             return json(['status'=>'failed','data'=>'无效的用户']);
         }
 
         $match_user = MatchUser::create([
-            'match_id'=>$data['id'], 
-            'uid'=> $data['uid'],
+            'match_id'=>$match['id'], 
+            'uid'=> $user['uid'],
             'user_name'=> $user['username'],
-            'initial_capital' => $user['funds'],
-            'balance' => 0,
-            'end_capital' => $user['funds']
             ]);
         
         if(empty($match_user->id)){

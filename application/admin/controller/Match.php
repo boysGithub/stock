@@ -42,8 +42,8 @@ class Match extends Base
 			'name' => trim($data['name']),
 			'type' => $data['type'],
 			'periods' => intval($data['periods']),
-			'start_date' => $data['start_date'],
-			'end_date' => $data['end_date']
+			'start_date' => date("Y-m-d 00:00:01", strtotime($data['start_date'])) ,
+			'end_date' => date("Y-m-d 23:59:59", strtotime($data['end_date']))
 		];
 
 		if($file = request()->file('image')){

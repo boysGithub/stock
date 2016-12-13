@@ -45,7 +45,7 @@ var index = new Vue({
                     directionNav: false,
                     slideshowSpeed:3000
                 });
-            }, 100);
+            }, 300);
         },
         updateProclamation(){
             var timestamp = new Date().getTime();
@@ -112,43 +112,35 @@ var index = new Vue({
             }, 200);
         },
         updateTalentDynamic(){
-            var timestamp = new Date().getTime();
-            var data = localStorage.getItem('talent_dynamic');
-            data = JSON.parse(data);
-            if(data == null || data.timestamp < timestamp){
-                var _this = this;
-                $.getJSON(api_host + '/orders',{},function(data){
-                    if(data.status == 'success'){
-                        var ret = data.data;
-                        var talent_dynamic = [];
-                        var length = (ret.length > 10) ? 10 : ret.length;
-                        for (var i = 0; i < length; i++) {
-                            var state = '';
-                            var state_class = '';
-                            if(ret[i].type == 1){
-                                state = '买入';
-                                state_class = 'tr-color-buy';
-                            } else {
-                                state = '卖出';
-                                state_class = 'tr-color-sale';
-                            }
-                            talent_dynamic.push({
-                                user_name: ret[i].username,
-                                stock: ret[i].stock_name+'('+ret[i].stock+')',
-                                state: state,
-                                state_class: state_class,
-                                price: ret[i].price,
-                                uid: ret[i].uid
-                            });
+            var _this = this;
+            $.getJSON(api_host + '/orders',{},function(data){
+                if(data.status == 'success'){
+                    var ret = data.data;
+                    var talent_dynamic = [];
+                    var length = (ret.length > 10) ? 10 : ret.length;
+                    for (var i = 0; i < length; i++) {
+                        var state = '';
+                        var state_class = '';
+                        if(ret[i].type == 1){
+                            state = '买入';
+                            state_class = 'tr-color-buy';
+                        } else {
+                            state = '卖出';
+                            state_class = 'tr-color-sale';
                         }
-
-                        localStorage.setItem('talent_dynamic',JSON.stringify({timestamp: timestamp + _this.cache_t, data: talent_dynamic}));
-                        _this.talent_dynamic = talent_dynamic;
+                        talent_dynamic.push({
+                            user_name: ret[i].username,
+                            stock: ret[i].stock_name+'('+ret[i].stock+')',
+                            state: state,
+                            state_class: state_class,
+                            price: ret[i].price,
+                            uid: ret[i].uid
+                        });
                     }
-                });
-            } else {
-                this.talent_dynamic = data.data;
-            }    
+
+                    _this.talent_dynamic = talent_dynamic;
+                }
+            });    
         },
         week_rate(){
             var timestamp = new Date().getTime();
@@ -258,7 +250,6 @@ var index = new Vue({
                 });
             } else {
                 this.total_rate_5 = data.data;
-                var lg = data_10.data;
                 this.total_rate_10 = data_10.data;
             }    
         },
@@ -319,34 +310,26 @@ var index = new Vue({
                 this.week_avg_profit_rate = data.data;
             }    
         },
-        updateMatchs(){
-            var timestamp = new Date().getTime();
-            var data = localStorage.getItem('matchs');
-            data = JSON.parse(data);
-            if(data == null || data.timestamp < timestamp){                
-                var _this = this;
-                $.getJSON(api_host + '/match/index',{limit:4},function(data){
-                    if(data.status == 'success'){
-                        var ret = data.data;
-                        var matchs = [];
-                        for (var i = 0; i < ret.length; i++) {
-                            matchs.push({
-                                name: ret[i].name,
-                                image: ret[i].image,
-                                id: ret[i].id,
-                                start_date: ret[i].start_date,
-                                end_date: ret[i].end_date,
-                                status_name: ret[i].status_name
-                            });
-                        }
+        updateMatchs(){               
+            var _this = this;
+            $.getJSON(api_host + '/match/index',{limit:4},function(data){
+                if(data.status == 'success'){
+                    var ret = data.data;
+                    var matchs = [];
+                    for (var i = 0; i < ret.length; i++) {
+                        matchs.push({
+                            name: ret[i].name,
+                            image: ret[i].image,
+                            id: ret[i].id,
+                            start_date: ret[i].start_date,
+                            end_date: ret[i].end_date,
+                            status_name: ret[i].status_name
+                        });
+                    }
 
-                        localStorage.setItem('matchs',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: matchs}));
-                        _this.matchs = matchs;
-                    }    
-                });
-            } else {
-                this.matchs = data.data;
-            } 
+                    _this.matchs = matchs;
+                }    
+            });
         } 
     },
     mounted: function(){

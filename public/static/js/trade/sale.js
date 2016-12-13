@@ -1,14 +1,15 @@
 var i = 0;
-var close = setTimeout(getStock, 100);
+var close = setTimeout(getSale, 100);
 
 function getSale(){
-    if(header.user.uid > 0){
+    if(header.logined){
         var sale = new Vue({
             el: '#sale',
             data: {
                 stock_code: '',//卖出价格
                 sale_price: '',//卖出价格
                 sale_num: '',//卖出数量
+                isSelect: true, //
                 max_num: 0,
                 stock_list: [],
                 sale_info: {title: '----', changeClass: ''},
@@ -36,20 +37,27 @@ function getSale(){
                         }
                     });    
                 },
-                updateStockInfo: function(e){
+                selectStock: function(e){
                     var code = e.currentTarget.value;
+                    if(code != '0'){
+                        this.stock_code = code;
+                        this.isSelect = true;
+                        this.updateStockInfo();
+                    }
+                },
+                updateStockInfo: function(){
                     var _this = this;
                     var s_code = '';
-                    if(parseInt(code.substring(0,1)) != 6){
-                        s_code = 'sz' + code;
+                    if(parseInt(_this.stock_code.substring(0,1)) != 6){
+                        s_code = 'sz' + _this.stock_code;
                     } else {
-                        s_code = 'sh' + code;
+                        s_code = 'sh' + _this.stock_code;
                     }
 
                     var sale_info = {};
 
                     $.ajax({//股票交易信息
-                        url: 'http://hq.sinajs.cn?list='+s_code+',s_'+s_code,
+                        url: api_host + '/index/index/quiet/stock/'+s_code,
                         type: 'get',
                         dataType: 'script',
                         cache: true,
@@ -61,15 +69,15 @@ function getSale(){
                             
                                 sale_info = {
                                     stockName: brief['0'],//名称 
-                                    title: brief['0']+'('+code+')',//title
                                     price: price, 
+                                };
+                                var stockInfo = {
+                                    title: brief['0']+'('+_this.stock_code+')',//title
                                     changePrice: brief['2'], //涨幅
                                     changeRate: brief['3']+'%', //涨幅
                                     changeClass: (brief['2'] < 0) ? ' tr-color-lose' : ' tr-color-win',
                                     turnoverNum:  brief['4'], //交易笔数
-                                    turnoverMoney:  brief['5']//交易额
-                                };
-                                var stockInfo = {
+                                    turnoverMoney:  brief['5'],//交易额
                                     sellPrice1: parseFloat(detail['21']),
                                     sellNum1: detail['20'],
                                     sellPrice2: parseFloat(detail['23']),
@@ -99,23 +107,35 @@ function getSale(){
                                     lowerLimit: parseFloat(detail['2'] * 0.9).toFixed(2), 
                                 }
 
-                                $.getJSON(api_host + '/user/isOptional', {uid: _this.uid, stock: code}, function(data){//股票账户信息
-                                    sale_info['available'] = (data.available != null && data.available != '') ? data.available : 0;
-                                    _this.sale_num = _this.max_num = sale_info.available;
-                                    _this.sale_info = sale_info;
-                                });
+                                if(_this.isSelect){
+                                    $.getJSON(api_host + '/user/isOptional', {uid: header.user.uid, stock: _this.stock_code}, function(data){//股票账户信息
+                                        sale_info['available'] = (data.available != null && data.available != '') ? data.available : 0;
+                                        _this.max_num = sale_info.available;
+                                        _this.sale_info = sale_info;
+                                    });
+                                    _this.sale_price = price;
+                                }
 
-                                _this.sale_price = price;
-                                _this.stock_code = code;
                                 _this.stock = stockInfo;
+
+                                _this.isSelect = false;
+                                setTimeout(_this.updateStockInfo, 10000);
                             }
                         }    
                     });
                 },
+                updateSaleNum: function(e){
+                    var rate = e.currentTarget.value;
+                    if(rate > 0){
+                        var sale_num = Math.floor(this.max_num / rate / 100) * 100;
+                        this.sale_num = sale_num;
+                    }
+                },
                 order: function(){//卖出
                     var _this = this;
-                    if(_this.sale_num > 0 && _this.sale_num > _this.max_num){
+                    if(!(_this.sale_num > 0 && _this.sale_num < _this.max_num)){
                         alert('请输入正确的卖出数量');
+                        return;
                     }
                     
                     $.post(api_host + '/orders', {
@@ -143,7 +163,7 @@ function getSale(){
         });
    } else {
         if(i < 20){
-            close = setTimeout(getStock, 200);
+            close = setTimeout(getSale, 200);
             i++;
         } else {
             clearTimeout(close);
