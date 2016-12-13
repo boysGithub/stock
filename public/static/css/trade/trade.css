@@ -4,6 +4,7 @@
 .tr-buy .am-form-group .am-form-label{font-size: 1.4rem; text-align: right; padding-right: 1rem;}
 .tr-buy .am-form-group .am-form-field{font-size: 1.2rem; width: 66%;}
 .tr-buy .tr-stock-btn{padding: 1rem 0 0 1.6rem;}
+.tr-buy .tr-select-part label{font-weight: normal; line-height: 32px; margin: 0;}
 .tr-stock-search{position: relative;}
 .tr-stock-table{width:66%; display: none;position: absolute; top: 27px; left: 0;z-index: 99;background: #fff;font-size: 12px;}
 .tr-stock-table .am-table{border-left: 1px solid #ddd;}

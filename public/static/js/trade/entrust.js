@@ -1,8 +1,8 @@
 var i = 0;
-var close = setTimeout(getStock, 100);
+var close = setTimeout(getEntrust, 100);
 
 function getEntrust(){
-    if(header.user.uid > 0){
+    if(header.logined){
         var entrust = new Vue({
             el: '#entrust',
             data: {
@@ -65,7 +65,7 @@ function getEntrust(){
                         var _this = this;
 
                         $.ajax({
-                            url: api_host + '/orders/'+ id,
+                            url: api_host + '/orders',
                             type: 'PUT',
                             dataType: 'json',
                             data: {id: id,uid: header.user.uid,status: 2,token: header.user.token,},
@@ -92,7 +92,7 @@ function getEntrust(){
         });
    } else {
         if(i < 20){
-            close = setTimeout(getStock, 200);
+            close = setTimeout(getEntrust, 200);
             i++;
         } else {
             clearTimeout(close);

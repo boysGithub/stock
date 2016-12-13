@@ -31,7 +31,7 @@
                                     </div>
                                     <div class="am-g">
                                         <div class="am-u-md-7">
-                                            <label>比赛时间：</label><span>{{ item.start_date }} - {{ item.end_date }}</span>
+                                            <label>比赛时间：</label><span>{{ item.start_date }} ~ {{ item.end_date }}</span>
                                         </div>
                                         <div class="am-u-md-5">
                                             <template v-if="item.joined == 1">
@@ -47,7 +47,12 @@
                                     <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-warning am-btn-lg">查看</a>
                                     </template>
                                     <template v-if="item.status == 1 && item.joined == 0">
-                                    <a href="javascript:;" :href-url="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-lg" :id="item.id" v-on:click="join_match">参加比赛</a>
+                                        <template v-if="logined">
+                                            <a href="javascript:;" :href-url="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-lg" :id="item.id" v-on:click="join_match">参加比赛</a>
+                                        </template>
+                                        <template v-else>
+                                            <a href="{:url('index/login')}" class="am-btn am-btn-danger am-btn-lg" target="_blank">参加比赛</a>
+                                        </template>
                                     </template>
                                     <template v-if="item.status == 1 && item.joined == 1">
                                     <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-warning am-btn-lg">进入比赛</a>
@@ -73,5 +78,5 @@
 
 {block name="footer"}{include file="public/footer" /}{/block}
 {block name="js"}
-{js file="/static/js/match/matchs.js"}
+{js href="/static/js/match/matchs.js" /}
 {/block}
