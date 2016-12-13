@@ -398,8 +398,12 @@ class Index extends Base
     protected function isToSell($data){
         $position = UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'sorts'=>$data['sorts'],'is_position'=>1])->find();
         if($position){
-            if($position['available_number'] - $data['number'] > 0 ){
-                $bool = $position;
+            if($data['number'] > 0 ){
+                if($position['available_number'] - $data['number'] >= 0 ){
+                    $bool = $position;
+                }else{
+                    $bool = false;
+                }
             }else{
                 $bool = false;
             }
@@ -534,8 +538,9 @@ class Index extends Base
                 //更新用户信息
                 $da['available_number'] = 0;
                 $da['is_position'] = 2;
-                $buyInfo = Transaction::where(['pid'=>$value['id'],'type'=>1,'status'=>1])->select();
-                $sellInfo = Transaction::where(['pid'=>$value['id'],'type'=>2,'status'=>1])->select();
+                $buyInfo = Trans::where(['pid'=>$userInfo['id'],'type'=>1,'status'=>1])->select();
+                $sellInfo = Trans::where(['pid'=>$userInfo['id'],'type'=>2,'status'=>1])->select();
+
                 if(count($buyInfo) == 1){
                     $costTotal = $buyInfo[0]['price'] * $buyInfo[0]['number'] + $buyInfo[0]['fee'];
                     $totalNum = $buyInfo[0]['number'];
@@ -562,7 +567,6 @@ class Index extends Base
                 $da['cost_price'] = round($da['cost'] / $totalNum,8);
                 $da['ratio'] = round(($da['assets'] - $da['cost'])/$da['cost']*100,8);
                 $da['delete_time'] = time();
-
                 //添加订单到数据库
                 UserPosition::where(['id'=>$userInfo['id']])->update($da);
                 $data['pid'] = $userInfo['id'];
@@ -604,6 +608,7 @@ class Index extends Base
             }
         } catch (\Exception $e){
             Db::rollback();
+            echo $e;exit;
             $result = json(['status'=>'failed','data'=>'下单失败，多次失败请联系管理员']);
         }
         return $result;

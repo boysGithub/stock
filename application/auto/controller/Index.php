@@ -53,14 +53,14 @@ class Index extends Controller
                         $funds = UserFunds::where(['uid'=>$value['uid']])->find();
                         $orderIndex->buyProcess($value,$stockInfo,$funds,true);
                         $redis->rm($key);
-                        $this->handle($value['stock_name']."买入成功;成交价:".$stockInfo[$value['stock']][1],1);
+                        $this->handle($value['stock_name']."买入成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
                     }
                 }else{
                     if($stockInfo[$value['stock']][1] < $value['price']){
                         $funds = UserFunds::where(['uid'=>$value['uid']])->find();
                         $orderIndex->buyProcess($value,$stockInfo,$funds,true);
                         $redis->rm($key);
-                        $this->handle($value['stock_name']."买入成功;成交价:".$stockInfo[$value['stock']][1],1);
+                        $this->handle($value['stock_name']."买入成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
                     }
                 }
                 
@@ -81,14 +81,14 @@ class Index extends Controller
                         $funds = UserFunds::where(['uid'=>$value['uid']])->find();
                         $orderIndex->sellProcess($value,$stockInfo,$funds,true);
                         $redis->rm($key);
-                        $this->handle($value['stock_name']."卖出成功;成交价:".$stockInfo[$value['stock']][1],1);
+                        $this->handle($value['stock_name']."卖出成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
                     }
                 }else{
                     if($stockInfo[$value['stock']][1] > $value['price']){
                         $funds = UserFunds::where(['uid'=>$value['uid']])->find();
                         $orderIndex->sellProcess($value,$stockInfo,$funds,true);
                         $redis->rm($key);
-                        $this->handle($value['stock_name']."卖出成功;成交价:".$stockInfo[$value['stock']][1],1);
+                        $this->handle($value['stock_name']."卖出成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
                     }
                 }
             }
