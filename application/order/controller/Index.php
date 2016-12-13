@@ -538,8 +538,8 @@ class Index extends Base
                 //更新用户信息
                 $da['available_number'] = 0;
                 $da['is_position'] = 2;
-                $buyInfo = Transaction::where(['pid'=>$value['id'],'type'=>1,'status'=>1])->select();
-                $sellInfo = Transaction::where(['pid'=>$value['id'],'type'=>2,'status'=>1])->select();
+                $buyInfo = Trans::where(['pid'=>$value['id'],'type'=>1,'status'=>1])->select();
+                $sellInfo = Trans::where(['pid'=>$value['id'],'type'=>2,'status'=>1])->select();
                 if(count($buyInfo) == 1){
                     $costTotal = $buyInfo[0]['price'] * $buyInfo[0]['number'] + $buyInfo[0]['fee'];
                     $totalNum = $buyInfo[0]['number'];
