@@ -18,6 +18,7 @@ use app\common\model\Transaction;
 use app\common\model\DaysRatio;
 use app\common\model\MonthRatio;
 use app\common\model\MatchUser;
+use app\common\model\Match;
 
 class Index extends Controller
 {
@@ -600,6 +601,26 @@ class Index extends Controller
      * @return [type] []
      */
     public function autoUpdateWeekMatch(){
-        return json(MatchUser::whereTime('join_time','week')->select());
+        $id = Match::whereTime('start_date','week')->where(['type'=>1])->value('id');
+        $info = MatchUser::where('match_id',$id)->select();
+        foreach ($info as $key => $value) {
+            $funds = UserFunds::where(['uid'=>$value['uid']])->value('funds');
+            MatchUser::update(['end_capital'=>$funds],['id'=>$value['id']]);
+            $this->handle('更新用户周赛'.$value['uid'],1);
+        }
+    }
+
+    /**
+     * [autoUpdateMonthMatch 自动更新月赛]
+     * @return [type] []
+     */
+    public function autoUpdateMonthMatch(){
+        $id = Match::whereTime('start_date','month')->where(['type'=>2])->value('id');
+        $info = MatchUser::where('match_id',$id)->select();
+        foreach ($info as $key => $value) {
+            $funds = UserFunds::where(['uid'=>$value['uid']])->value('funds');
+            MatchUser::update(['end_capital'=>$funds],['id'=>$value['id']]);
+            $this->handle('更新用户月赛'.$value['uid'],1);
+        }
     }
 }
