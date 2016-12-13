@@ -146,6 +146,11 @@ class Index extends Controller
 		$output = iconv('GBK', 'UTF-8', $output);
 		echo $output;
 	}
+	/**
+	 * [quiet 获取股票数据]
+	 * @param  Request $request [description]
+	 * @return [type]           [description]
+	 */
 	public function quiet(Request $request){
 		$stock = $request->param('stock');
 		$ch = curl_init("http://hq.sinajs.cn?list=".$stock.",s_".$stock) ;  
@@ -154,6 +159,15 @@ class Index extends Controller
 		$output = curl_exec($ch) ;
 		$output = iconv('GBK', 'UTF-8', $output);
 		echo $output;
+	}
+
+	/**
+	 * [getAvatar 得到用户的头像]
+	 * @return [type] [description]
+	 */
+	public function getAvatar(Request $request){
+		$uid = $request->param('uid');
+		
 	}
 }
 ?>
