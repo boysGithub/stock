@@ -1,29 +1,8 @@
 <header class="am-topbar am-topbar-fixed-top" id="header">
-	<div class="am-g tr-login-topbar">
-		<div class="am-container">
-			<div class="am-u-sm-12">
-				<div class="am-nav am-nav-pills am-topbar-nav am-fl">
-					欢迎来到水晶球！
-				</div>
-				<div class="am-topbar-right am-fr">
-					<template v-if="logined">
-						您好，
-						<a href="{:url('index/index/personal')}" title="个人中心" class="topbar-login">{{user.username}}</a>
-						<!-- <a href="" title="退出" class="topbar-out">退出</a> -->
-					</template>	
-					<template v-else>
-						<a href="{:url('index/index/login')}" title="登录" class="topbar-login">登录</a>
-						&nbsp;|&nbsp;
-						<a href="{:url('index/index/register')}" title="注册" class="topbar-register">注册</a>
-					</template>
-				</div>
-			</div>
-		</div>
-	</div>
 	<div class="am-g tr-menu-topbar">
 		<div class="am-container">
 			<h1 class="am-topbar-brand">
-				<a href="/" title="logo"><img src="/static/img/logo1.png" alt="logo" /></a>
+				<a href="http://www.sjqcj.com" title="logo"><img src="/static/img/logo1.png" alt="logo" /></a>
 			</h1>
 			<button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-secondary am-show-sm-only am-collapsed" data-am-collapse="{target: '#tr-header-nav'}"><span class="am-sr-only">导航切换</span> <span class="am-icon-bars"></span></button>
 			<div class="am-collapse am-topbar-collapse tr-menu-nav" id="tr-header-nav">
@@ -34,6 +13,9 @@
 				    <li class="{if condition="$Request.controller eq 'Index' and $Request.action eq 'rankinglist'"} am-active{/if}"><a href="{:url('index/index/rankingList')}">牛人排行榜</a></li>
 				    <li class="{if condition="$Request.controller eq 'Index' and $Request.action eq 'tradecenter'"} am-active{/if}"><a href="{:url('index/index/tradeCenter')}">交易中心</a></li>
 				    <li><a href="http://www.sjqcj.com/info/10" target="_blank">交易规则</a></li>
+					<template v-if="logined">
+						<li class="tr-personal"><a href="{:url('index/index/personal')}" title="个人中心">{{ user.username }}</a></li>
+					</template>
 				</ul>
 				</div>
 			</div>
