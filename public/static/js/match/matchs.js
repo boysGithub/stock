@@ -54,9 +54,9 @@ var matchs = new Vue({
             if(this.logined){
                 this.updateMatchs();
             } else {
-                if(this.i < 10){
+                if(this.count < 10){
                     this.close = setTimeout(getMatchs, 300);
-                    this.i += 1;
+                    this.count += 1;
                 } else {
                     clearTimeout(this.close);
                 }
