@@ -71,7 +71,7 @@ var index = new Vue({
             } else {
                 this.proclamation = data.data;
             }    
-            setTimeout(proclamationSlider, 300);
+            setTimeout(proclamationSlider, 200);
         },
         recommend(){
             var timestamp = new Date().getTime();
@@ -109,7 +109,7 @@ var index = new Vue({
                      slideshow: false, 
                      controlNav: false
                 });
-            }, 200);
+            }, 250);
         },
         updateTalentDynamic(){
             var _this = this;
@@ -323,7 +323,8 @@ var index = new Vue({
                             id: ret[i].id,
                             start_date: ret[i].start_date,
                             end_date: ret[i].end_date,
-                            status_name: ret[i].status_name
+                            status_name: ret[i].status_name,
+                            end: (i == ret.length - 1) ? ' am-u-end':''
                         });
                     }
 

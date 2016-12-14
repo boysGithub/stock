@@ -65,7 +65,7 @@ function getEntrust(){
                         var _this = this;
 
                         $.ajax({
-                            url: api_host + '/orders',
+                            url: api_host + '/orders/'+id.,
                             type: 'PUT',
                             dataType: 'json',
                             data: {id: id,uid: header.user.uid,status: 2,token: header.user.token,},

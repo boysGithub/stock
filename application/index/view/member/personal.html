@@ -15,7 +15,7 @@
             <section class="am-panel am-panel-default">
                 <input type="hidden" name="uid" id="uid" value="{$uid}">
               <div class="am-panel-bd am-text-center">
-                <p class="tr-portrait am-padding-horizontal-lg"><img src="/static/img/portrait.gif" class="am-img-thumbnail am-circle" />
+                <p class="tr-portrait am-padding-horizontal-lg"><img :src="info.avatar" class="am-img-thumbnail am-circle" />
                 </p>
                 <p class="am-margin-top-sm">{{ info.user_name }}</p>
                 <hr data-am-widget="divider" style="" class="am-divider am-divider-dotted" />
@@ -28,7 +28,7 @@
                     <tbody>
                         <tr>
                             <td>资金账号</td>
-                            <td>无</td>
+                            <td>{{ info.user_name }}</td>
                         </tr>
                         <tr>
                             <td>仓位</td>
@@ -36,12 +36,12 @@
                         </tr>
                         <tr>
                             <td>选股成功率</td>
-                            <td>60%</td>
-                        </tr>
+                            <td>{{ info.success_rate }}</td>
+                        </tr><!-- 
                         <tr>
                             <td>操作总数</td>
                             <td>200</td>
-                        </tr>
+                        </tr> -->
                         <tr>
                             <td>加入时间</td>
                             <td>{{ info.time }}</td>
@@ -64,13 +64,13 @@
                     <div class="am-panel-bd am-text-center">
                         <div class="am-g tr-asset-content">
                             <div class="am-u-sm-2">总盈利率</div>
-                            <div class="am-u-sm-4">总盈亏</div>
-                            <div class="am-u-sm-4">浮动盈亏</div>
-                            <div class="am-u-sm-2">实现盈亏</div>
+                            <div class="am-u-sm-4">总盈利排名</div>
+                            <div class="am-u-sm-4">比赛胜率</div>
+                            <div class="am-u-sm-2">当日盈亏</div>
                             <div class="am-u-sm-2"><span :class="info.total_rate_class">{{ info.total_rate }}</span></div>
-                            <div class="am-u-sm-4"><span class="tr-color-win">35%</span></div>
-                            <div class="am-u-sm-4"><span class="tr-color-win">35%</span></div>
-                            <div class="am-u-sm-2"><span class="tr-color-lose">35%</span></div>
+                            <div class="am-u-sm-4"><span class="tr-color-win">{{ info.total_profit_rank }}</span></div>
+                            <div class="am-u-sm-4"><span class="tr-color-win">{{ info.win_rate }}</span></div>
+                            <div class="am-u-sm-2"><span class="tr-color-lose">{{ info.shares }}</span></div>
                         </div>
                         <hr class="am-margin-vertical-sm">
                         <div class="am-g tr-asset-content">
@@ -129,7 +129,7 @@
                                     <th>股票名称</th>
                                     <th>股票代码</th>
                                     <th>方式</th>
-                                    <th>最新价格</th>
+                                    <th>成交价格</th>
                                     <th>数量</th>
                                     <th>时间</th>
                                 </tr>
@@ -138,7 +138,7 @@
                                 <tr v-for="item in entrust">
                                     <td>{{ item.stock_name }}</td>
                                     <td>{{ item.stock }}</td>
-                                    <td>{{ item.type }}</td>
+                                    <td><span :class="item.type_class">{{ item.type_label }}</td>
                                     <td>{{ item.price }}</td>
                                     <td>{{ item.number }}</td>
                                     <td>{{ item.time }}</td>
@@ -147,7 +147,7 @@
                         </table>
                     </main>
                 </section>
-                <section class="am-panel am-panel-default tr-comments">
+                <!-- <section class="am-panel am-panel-default tr-comments">
                     <div class="am-panel-hd"><h2 class="am-panel-title"><span class="am-icon-commenting am-icon-sm am-icon"></span>留言板</h2></div>
                     <main class="am-panel-bd">
                         <ul class="am-comments-list tr-comments-list">
@@ -193,7 +193,7 @@
                             </form>    
                         </div>
                     </main>
-                </section>
+                </section> -->
             </div>
         </div>
     </div>
@@ -202,6 +202,7 @@
 
 {block name="footer"}{include file="public/footer" /}{/block}
 {block name="js"}
-    {js href="/static/js/widget/echarts.js" /}
-    {js href="/static/js/member/personal.js" /}
+{js href="/static/js/widget/echarts.js" /}
+{js file="/static/js/public/md5.js"}
+{js href="/static/js/member/personal.js" /}
 {/block}
