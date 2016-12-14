@@ -209,6 +209,7 @@ class Index extends Base
             $userInit = DaysRatio::where(['uid'=>$id])->whereTime('time','today')->value('initialCapital');
             $fund['shares'] = $userInit ? $fund['funds'] - $userInit : 0 ;  //今日盈亏
             $fund['position'] = round(($fund['funds'] - $fund['available_funds'])/$fund['funds']*100,2);
+            $fund->avatar = Config('use_url.img_url') . '/avatar/img/'.$fund->uid.'.png';
             $result = json(['status'=>'success','data'=>$fund]);
         }else{
             $result = json(['status'=>'failed','data'=>'没有这个用户']);
@@ -229,8 +230,8 @@ class Index extends Base
                     ->select();
         
         foreach ($users as $key => $val) {
-            $users[$key]['week_rate'] = empty($val['week_rate']) ? 0 : round($val['week_rate'] * 100, 2);
-            $users[$key]['avatar'] = $this->getAvatar($val['uid']);
+            $val->week_rate = empty($val->week_rate) ? 0 : round($val->week_rate * 100, 2);
+            $val->avatar = Config('use_url.img_url') . '/avatar/img/'.$val->uid.'.png';;
         }
         
         $result = json(['status'=>'success', 'data'=> $users]);
