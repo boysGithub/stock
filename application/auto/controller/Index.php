@@ -34,43 +34,49 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoTrans(){
-        $redis = new Redis();
-        $buyKeys = $redis->keys("*noBuyOrder*");
-        $sellKeys = $redis->keys("*noSellOrder*");
-        //卖出操作
-        if($buyKeys){
-            for ($i=0; $i < count($buyKeys); $i++) { 
-                $tmpBuy = $redis->get($buyKeys[$i]);
-                $buy[$buyKeys[$i]] = $tmpBuy;
-                $stockBuy[] = $tmpBuy['stock'];
-            }
-            $stockInfo = getStock($stockBuy,"s_");
-            $orderIndex = new Trans;
-            foreach ($buy as $key => $value) {
-                if($stockInfo[$value['stock']][1] <= $value['price']){
-                    $orderIndex->buyProcess($value,$stockInfo[$value['stock']],true);
-                    $redis->rm($key);
-                    $this->handle($value['stock_name']."买入成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
+        $t1 = strtotime(date("Y-m-d 9:30:00"));
+        $t2 = strtotime(date("Y-m-d 11:30:00"));
+        $t3 = strtotime(date("Y-m-d 13:00:00"));
+        $t4 = strtotime(date("Y-m-d 15:00:00"));
+        if(($t1 < time() && $t2 > time()) && ($t3 < time() && $t4 > time())){
+            $redis = new Redis();
+            $buyKeys = $redis->keys("*noBuyOrder*");
+            $sellKeys = $redis->keys("*noSellOrder*");
+            //卖出操作
+            if($buyKeys){
+                for ($i=0; $i < count($buyKeys); $i++) { 
+                    $tmpBuy = $redis->get($buyKeys[$i]);
+                    $buy[$buyKeys[$i]] = $tmpBuy;
+                    $stockBuy[] = $tmpBuy['stock'];
+                }
+                $stockInfo = getStock($stockBuy,"s_");
+                $orderIndex = new Trans;
+                foreach ($buy as $key => $value) {
+                    if($stockInfo[$value['stock']][1] <= $value['price']){
+                        $orderIndex->buyProcess($value,$stockInfo[$value['stock']],true);
+                        $redis->rm($key);
+                        $this->handle($value['stock_name']."买入成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
+                    }
                 }
             }
-        }
-        //卖出操作
-        if($sellKeys){
-            for ($i=0; $i < count($sellKeys); $i++) { 
-                $tmpSell = $redis->get($sellKeys[$i]);
-                $sell[$sellKeys[$i]] = $tmpSell;
-                $stockSell[] = $tmpSell['stock'];
-            }
-            $stockInfo = getStock($stockSell,"s_");
-            $orderIndex = new Trans;
-            foreach ($sell as $key => $value) {
-                if($stockInfo[$value['stock']][1] >= $value['price']){
-                    $orderIndex->sellProcess($value,$stockInfo[$value['stock']],true);
-                    $redis->rm($key);
-                    $this->handle($value['stock_name']."卖出成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
+            //卖出操作
+            if($sellKeys){
+                for ($i=0; $i < count($sellKeys); $i++) { 
+                    $tmpSell = $redis->get($sellKeys[$i]);
+                    $sell[$sellKeys[$i]] = $tmpSell;
+                    $stockSell[] = $tmpSell['stock'];
+                }
+                $stockInfo = getStock($stockSell,"s_");
+                $orderIndex = new Trans;
+                foreach ($sell as $key => $value) {
+                    if($stockInfo[$value['stock']][1] >= $value['price']){
+                        $orderIndex->sellProcess($value,$stockInfo[$value['stock']],true);
+                        $redis->rm($key);
+                        $this->handle($value['stock_name']."卖出成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
+                    }
                 }
             }
-        }
+        } 
     }
 
     /**
