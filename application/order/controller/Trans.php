@@ -52,8 +52,14 @@ class Trans extends Base
 				return json(['status'=>'failed','data'=>'集合竞价中']);
 			}
 		}
-        $limitUp = round(($stock[$data['stock']][1]-$stock[$data['stock']][2])*1.1,2);//涨停的价格
-		$limitDown = round(($stock[$data['stock']][1]-$stock[$data['stock']][2])*0.9,2);//跌停的价格
+		//判断是否是st
+		if(strpos($stock[$data['stock']][0],'ST')){
+			$limitUp = round(($stock[$data['stock']][1]-$stock[$data['stock']][2])*1.05,2);//涨停的价格
+			$limitDown = round(($stock[$data['stock']][1]-$stock[$data['stock']][2])*0.95,2);//跌停的价格
+		}else{
+			$limitUp = round(($stock[$data['stock']][1]-$stock[$data['stock']][2])*1.1,2);//涨停的价格
+			$limitDown = round(($stock[$data['stock']][1]-$stock[$data['stock']][2])*0.9,2);//跌停的价格
+		}
         //区分购买方式
         if($data['type'] == 1){
         	//验证买入数量必须大于等于100
@@ -202,8 +208,14 @@ class Trans extends Base
 	 * @return boolean [description]
 	 */
 	public function isLimit($stock,$type){
-		$limitUp = round(($stock[1]-$stock[2])*1.1,2);//涨停的价格
-        $limitDown = round(($stock[1]-$stock[2])*0.9,2);//跌停的价格
+		//判断是否是st
+		if(strpos($stock[0],'ST')){
+			$limitUp = round(($stock[1]-$stock[2])*1.05,2);//涨停的价格
+        	$limitDown = round(($stock[1]-$stock[2])*0.95,2);//跌停的价格
+		}else{
+			$limitUp = round(($stock[1]-$stock[2])*1.1,2);//涨停的价格
+        	$limitDown = round(($stock[1]-$stock[2])*0.9,2);//跌停的价格
+		}
 		if($type == 1){
 			//买入的情况
             if((float)$stock[1] < $limitUp && (float)$stock[1] >= $limitDown){
