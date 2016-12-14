@@ -318,7 +318,7 @@
                 </h2>
             </div>
             <div class="am-panel-bd am-container">
-                <div class="am-u-md-6 am-padding-sm" v-for="item in matchs">
+                <div v-for="item in matchs" :class="'am-u-md-6 am-padding-sm'+item.end">
                     <div class="am-u-sm-5">
                         <a :href="'{:url('index/macthUser')}?id=' + item.id"><img :src="item.image" :alt="item.name" width="100%" /></a>
                     </div>
