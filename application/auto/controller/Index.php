@@ -13,7 +13,7 @@ use app\common\model\UserFunds;
 use app\common\model\Rank;
 use app\common\model\AutoUpdate;
 use app\common\model\WeeklyRatio;
-use app\order\controller\Index as OrderIndex;
+use app\order\controller\Trans;
 use app\common\model\Transaction;
 use app\common\model\DaysRatio;
 use app\common\model\MonthRatio;
@@ -45,25 +45,13 @@ class Index extends Controller
                 $stockBuy[] = $tmpBuy['stock'];
             }
             $stockInfo = getStock($stockBuy,"s_");
-
-            $orderIndex = new OrderIndex;
+            $orderIndex = new Trans;
             foreach ($buy as $key => $value) {
-                if($orderIndex->isLimitMove($stockInfo[$value['stock']],1)){
-                    if($stockInfo[$value['stock']][1] <= $value['price']){
-                        $funds = UserFunds::where(['uid'=>$value['uid']])->find();
-                        $orderIndex->buyProcess($value,$stockInfo,$funds,true);
-                        $redis->rm($key);
-                        $this->handle($value['stock_name']."买入成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
-                    }
-                }else{
-                    if($stockInfo[$value['stock']][1] < $value['price']){
-                        $funds = UserFunds::where(['uid'=>$value['uid']])->find();
-                        $orderIndex->buyProcess($value,$stockInfo,$funds,true);
-                        $redis->rm($key);
-                        $this->handle($value['stock_name']."买入成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
-                    }
+                if($stockInfo[$value['stock']][1] <= $value['price']){
+                    $orderIndex->buyProcess($value,$stockInfo[$value['stock']],true);
+                    $redis->rm($key);
+                    $this->handle($value['stock_name']."买入成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
                 }
-                
             }
         }
         //卖出操作
@@ -74,22 +62,12 @@ class Index extends Controller
                 $stockSell[] = $tmpSell['stock'];
             }
             $stockInfo = getStock($stockSell,"s_");
-            $orderIndex = new OrderIndex;
+            $orderIndex = new Trans;
             foreach ($sell as $key => $value) {
-                if($orderIndex->isLimitMove($stockInfo[$value['stock']],2)){
-                    if($stockInfo[$value['stock']][1] >= $value['price']){
-                        $funds = UserFunds::where(['uid'=>$value['uid']])->find();
-                        $orderIndex->sellProcess($value,$stockInfo,$funds,true);
-                        $redis->rm($key);
-                        $this->handle($value['stock_name']."卖出成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
-                    }
-                }else{
-                    if($stockInfo[$value['stock']][1] > $value['price']){
-                        $funds = UserFunds::where(['uid'=>$value['uid']])->find();
-                        $orderIndex->sellProcess($value,$stockInfo,$funds,true);
-                        $redis->rm($key);
-                        $this->handle($value['stock_name']."卖出成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
-                    }
+                if($stockInfo[$value['stock']][1] >= $value['price']){
+                    $orderIndex->sellProcess($value,$stockInfo[$value['stock']],true);
+                    $redis->rm($key);
+                    $this->handle($value['stock_name']."卖出成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
                 }
             }
         }
@@ -561,6 +539,7 @@ class Index extends Controller
                 $buy = array_sum($tmpBuy);
                 $num = array_sum($numBuy);
                 $market = $stockData[$value['stock']][1] * ($num - $snum);
+                dump($value['stock']);
                 $data['funds'] = $market + $data['funds'];
                 $d['available_number'] = $num - $snum;
                 $d['freeze_number'] = 0;
@@ -568,10 +547,12 @@ class Index extends Controller
                 $d['cost'] = $buy;
                 $d['cost_price'] = round(($buy - $sell)/($num - $snum),8);
                 $d['ratio'] = round(($stockData[$value['stock']][1] - $d['cost_price']) / $value['cost_price'] * 100,8);
+                dump($market);
                 UserPosition::where(['id'=>$value['id']])->update($d);
             }
             $funds = UserFunds::where(['uid'=>$uid])->value('available_funds');
             $da['funds'] = $data['funds']+$funds;
+            dump($da);exit;
             UserFunds::where(['uid'=>$uid])->update($da);
             Db::commit();
             return json("成功");
