@@ -23,7 +23,7 @@ var personal = new Vue({
                 if(data.status == 'success'){
                     var ret = data.data;
                     var info = {
-                        avatar: getAvatar(ret.uid),
+                        avatar: ret.avatar,
                         user_name: ret.username, 
                         position: ret.position + '%',//持仓
                         win_rate: ret.win_rate + '%',//胜率

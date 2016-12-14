@@ -181,12 +181,47 @@ class Index extends Controller
 	}
 
 	/**
-	 * [getAvatar 得到用户的头像]
-	 * @return [type] [description]
+	 * [打印用户的头像]
 	 */
-	public function getAvatar(Request $request){
+	public function avatar(Request $request){
 		$uid = $request->param('uid');
-		
+
+		$img = 'https://moni.sjqcj.com/static/img/portrait.gif';
+		if(!empty($uid)){
+			$img = $this->getAvatar($uid);
+		}
+
+		$opts = array(
+			'http'=>array(
+				'timeout'=>3,
+			)
+		);
+		$context = stream_context_create($opts);
+		$resource = @file_get_contents($img, false, $context);
+
+		if($resource) {
+		} else {
+			$img = 'https://moni.sjqcj.com/static/img/portrait.gif';
+		}
+
+		header('content-type: image/png'); 
+		echo @file_get_contents($img);
 	}
+
+
+    /**
+     * [获取用户头像]
+     * @return [string] 
+     */
+    private function getAvatar($uid)
+    {
+        $avatar = 'http://www.sjqcj.com/data/upload/avatar/';
+
+        $str = md5($uid);
+        $avatar .= substr($str, 0, 2) . '/' . substr($str, 2, 2) . '/' . substr($str, 4, 2);
+        $avatar .= '/original_200_200.jpg';
+
+        return $avatar;
+    }
 }
 ?>

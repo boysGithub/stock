@@ -222,7 +222,7 @@ var index = new Vue({
                             if(i < 5){
                                 total_rate_5.push({
                                     user_name: ret[i].username,
-                                    portrait: getAvatar(ret[i].uid),
+                                    portrait: ret[i].avatar,
                                     total_rate: ret[i].total_rate+'%',
                                     total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
                                     uid: ret[i].uid
@@ -267,7 +267,7 @@ var index = new Vue({
                         for (var i = 0; i < length; i++) {
                             success_rate.push({
                                 user_name: ret[i].username,
-                                portrait: getAvatar(ret[i].uid),
+                                portrait: ret[i].avatar,
                                 success_rate: ret[i].success_rate+'%',
                                 success_rate_class: (ret[i].success_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
                                 uid: ret[i].uid
