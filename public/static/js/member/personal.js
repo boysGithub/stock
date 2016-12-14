@@ -73,7 +73,7 @@ var personal = new Vue({
                     }
 
                     $.getScript(//股票交易信息
-                        'http://www.tp5.com/index/index/getStocks.html?stock='+stock_key.join(','),
+                        api_host + '/index/index/getStocks.html?stock='+stock_key.join(','),
                         function(){
                             var market_value = 0;
                             for (var i = 0; i < stock_num.length; i++) {
@@ -147,9 +147,9 @@ var personal = new Vue({
                 this.getEntrust();
                 this.getTimeChart();
             } else {
-                if(this.i < 20){
+                if(this.count < 20){
                     this.close = setTimeout(this.getPersonal, 300);
-                    this.i += 1;
+                    this.count += 1;
                 } else {
                     clearTimeout(this.close);
                 }
