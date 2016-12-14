@@ -30,7 +30,7 @@ class Trans extends Base
 		if($this->isDeityTime($tell)){
 	        return $this->trans($data);
 		}else{
-			return json(['status'=>'failed','data'=>'现在时间不能交易']);
+			return json(['status'=>'failed','data'=>'开市时间才能挂单']);
 		}			
 	}
 
@@ -42,7 +42,7 @@ class Trans extends Base
 	public function trans($data){
 		$stock = getStock($data['stock'],'s_');//获取股票当前的信息
 		//判断股票现在是否处于集合竞价还是停牌中
-		$t = strtotime(date('Y-m-d 9:30:00'));
+		$t = strtotime(date("Y-m-d 9:30:00"));
 		if(time() > $t){
 			if($stock[$data['stock']][1] == 0){
 				return json(['status'=>'failed','data'=>'停牌']);
@@ -65,18 +65,22 @@ class Trans extends Base
         	//验证买入数量必须大于等于100
         	if($data['number']>=100){
         		if($data['isMarket'] == 1){
-	        		//验证股票今天是否涨停
-	        		if($stock[$data['stock']][1] != $limitUp){
-	        			//买入验证用户是否足够的资金
-	        			if($this->isCanBuy($data,$stock[$data['stock']])){
-	        				//成交准备入库
-	        				return $this->buyProcess($data,$stock);
-	        			}else{
-	        				return json(['status'=>'failed','data'=>'可用资金不足']);
-	        			}
-	        		}else{
-	        			return json(['status'=>'failed','data'=>'股票涨停了不能市价买入']);
-	        		}
+        			if($this->isTrans()){
+        				//验证股票今天是否涨停
+		        		if($stock[$data['stock']][1] != $limitUp){
+		        			//买入验证用户是否足够的资金
+		        			if($this->isCanBuy($data,$stock[$data['stock']])){
+		        				//成交准备入库
+		        				return $this->buyProcess($data,$stock);
+		        			}else{
+		        				return json(['status'=>'failed','data'=>'可用资金不足']);
+		        			}
+		        		}else{
+		        			return json(['status'=>'failed','data'=>'股票涨停了不能市价买入']);
+		        		}
+        			}else{
+        				return json(['status'=>'failed','data'=>'开市后才能市价交易']);
+        			}
 		        }else if($data['isMarket'] == 2){
 		        	//验证价格是否超过今天的区间
 		        	if( $data['price'] >= $limitDown && $data['price'] < $limitUp ){
@@ -85,7 +89,12 @@ class Trans extends Base
 			        		//比对价格进行成交
 			        		if($data['price'] >= $stock[$data['stock']][1]){
 			        			//成交准备入库
-			        			return $this->buyProcess($data,$stock);
+			        			if($this->isTrans()){
+			        				return $this->buyProcess($data,$stock);
+			        			}else{
+			        				//未成交进入挂单
+			        				return $this->noBuyOrder($data,$stock);
+			        			}	
 			        		}else{
 			        			//未成交进入挂单
 			        			return $this->noBuyOrder($data,$stock);
@@ -103,6 +112,9 @@ class Trans extends Base
         	}
         }else if($data['type'] == 2){
         	if($data['isMarket'] == 1){
+        		if(!$this->isTrans()){
+        			return json(['status'=>'failed','data'=>'开市后才能市价交易']);
+        		}
         		if($stock[$data['stock']][1] * $data['number'] < 5){
 	        		return json(['status'=>'failed','data'=>'你卖出的总价不能小于手续费']);
 	        	}
@@ -142,7 +154,11 @@ class Trans extends Base
 	        					//比对价格进行成交 
 	        					if($data['price'] <= $stock[$data['stock']][1]){
 	        						//成交入库
-	        						return $this->sellProcess($data,$stock);
+	        						if($this->isTrans()){
+	        							return $this->sellProcess($data,$stock);
+	        						}else{
+	        							return $this->noSellOrder($data,$stock);
+	        						}
 	        					}else{
 	        						//未成交进入挂单
 	        						return $this->noSellOrder($data,$stock);
@@ -617,5 +633,20 @@ class Trans extends Base
         }
     }
 
+    /**
+     * [isTrans 是否能交易]
+     * @return boolean [description]
+     */
+    public function isTrans(){
+    	$t1 = strtotime(date("Y-m-d 9:30:00"));
+        $t2 = strtotime(date("Y-m-d 11:30:00"));
+        $t3 = strtotime(date("Y-m-d 13:00:00"));
+        $t4 = strtotime(date("Y-m-d 15:00:00"));
+        if(($t1 <= time() && $t2 >= time()) && ($t3 <= time() && $t4 >= time())){
+        	return true;
+        }else{
+        	return false;
+        }
+    }
 }
 ?>

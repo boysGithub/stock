@@ -87,7 +87,10 @@ class Index extends Base
      * @return \think\Response
      */
     public function update(Request $request, $id)
-    {
+    {   
+        if(!$this->isTrans()){
+            return json(['status'=>'failed','data'=>'交易时间才能撤单']);
+        }
         $this->_base->checkToken();
         $data   = $request->param();
         $res = $this->validate($data,'UpdateOrder');
@@ -165,6 +168,22 @@ class Index extends Base
                 $result['data'] = Transaction::where(['uid'=>$uid])->whereTime('time','between',[$data['stime'],$data['etime']])->limit(($data['p']-1)*$limit,$limit)->order('id desc')->select();
                 return $result;
                 break;
+        }
+    }
+
+    /**
+     * [isTrans 是否能交易]
+     * @return boolean [description]
+     */
+    public function isTrans(){
+        $t1 = strtotime(date("Y-m-d 9:30:00"));
+        $t2 = strtotime(date("Y-m-d 11:30:00"));
+        $t3 = strtotime(date("Y-m-d 13:00:00"));
+        $t4 = strtotime(date("Y-m-d 15:00:00"));
+        if(($t1 <= time() && $t2 >= time()) && ($t3 <= time() && $t4 >= time())){
+            return true;
+        }else{
+            return false;
         }
     }
 
