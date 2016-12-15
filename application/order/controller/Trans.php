@@ -385,7 +385,7 @@ class Trans extends Base
 	        }
         }else{
         	//开启事务
-	        Db::startTrans();
+	        Db::startTrans(); 
 	       	try {
 	       		//订单参数
 	            $data['status'] = 1;
