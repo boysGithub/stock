@@ -642,7 +642,7 @@ class Trans extends Base
         $t2 = strtotime(date("Y-m-d 11:30:00"));
         $t3 = strtotime(date("Y-m-d 13:00:00"));
         $t4 = strtotime(date("Y-m-d 15:00:00"));
-        if(($t1 <= time() && $t2 >= time()) && ($t3 <= time() && $t4 >= time())){
+        if(($t1 <= time() && $t2 >= time()) || ($t3 <= time() && $t4 >= time())){
         	return true;
         }else{
         	return false;
