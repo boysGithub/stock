@@ -32,6 +32,7 @@ var matchs = new Vue({
                 if(data.status == 'success'){
                     var ret = data.data;
                     var matchList = [];
+                    var sc = {1: ' tr-status-underway', 3: ' tr-status-end'};
                     for (var i = 0; i < ret.length; i++) {
                         matchList.push({
                             name: ret[i].name,
@@ -42,7 +43,8 @@ var matchs = new Vue({
                             ranking: typeof(ret[i].ranking) == 'undefined' ? 0 : ret[i].ranking,
                             end_date: ret[i].end_date,
                             status: ret[i].status,
-                            status_name: ret[i].status_name
+                            status_name: ret[i].status_name,
+                            status_class: sc[ret[i].status]
                         });
                     }
 

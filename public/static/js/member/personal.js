@@ -28,6 +28,8 @@ var personal = new Vue({
                         position: ret.position + '%',//持仓
                         win_rate: ret.win_rate + '%',//胜率
                         shares: ret.shares,//当日盈亏
+                        shares_rate: "1%",//当日盈亏比例
+                        week_avg_profit_rate: ret.week_avg_profit_rate,//周平均率
                         success_rate: ret.success_rate + '%',//选股成功率
                         time: ret.time.substring(0,10), 
                         operationTime: ret.operationTime.substring(0,10), 
@@ -42,54 +44,53 @@ var personal = new Vue({
                 }    
             });
         },
-        positions(){
+        getPositions(){
             var _this = this;
             $.getJSON(api_host + '/users',{uid: _this.uid},function(data){
                 if(data.status == 'success'){
-                    var stock_num = [];//各股持仓
+                    var market_value = 0; //市值
                     var positions = [];//持仓信息
-                    var stock_key = [];//查询关键字
 
                     for (var i = 0; i < data.data.length; i++) {
                         var stock = data.data[i];
                         var num = parseInt(stock.available_number) + parseInt(stock.freeze_number)
-                        positions.push({
+                        var position = {
                             stock: stock.stock,
                             stock_name: stock.stock_name,
-                            ratio: stock.ratio + '%',
-                            ratio_class: (stock.ratio < 0) ? 'tr-color-lose' : 'tr-color-win',
-                            available_number: num,
-                            cost_price: stock.cost_price,
-                            assets: stock.assets,
-                            cost: stock.cost,
-                        });
+                            available_number: num,//持仓
+                            cost_price: parseFloat(stock.cost_price),//成本价
+                            time: stock.time.substring(0,10)
+                        };
 
-                        var key = 's_sz' + stock.stock;
+                        var key = 'sz' + stock.stock;
                         if(parseInt(stock.stock.substring(0,1)) == 6){
-                            key = 's_sh' + stock.stock;
+                            key = 'sh' + stock.stock;
                         }
-                        stock_key.push(key);
-                        stock_num.push({code: key, num: num});
-                    }
 
-                    $.getScript(//股票交易信息
-                        api_host + '/index/index/getStocks.html?stock='+stock_key.join(','),
-                        function(){
-                            var market_value = 0;
-                            for (var i = 0; i < stock_num.length; i++) {
-                                if(stock_num[i] != '' && eval('hq_str_'+stock_num[i].code) != ''){
-                                    var brief = eval('hq_str_'+stock_num[i].code).split(',');
-                                    var price = parseFloat(brief['1']);//现价
-                                    market_value += price * stock_num[i].num;
-                                }
+                        //股票交易信息
+                        $.getScript(api_host + '/index/index/quiet?stock='+key,function(){
+                            if(eval('hq_str_'+key)){
+                                var detail = eval('hq_str_'+key).split(',');
+                                var price = (detail['3'] > 0) ? detail['3'] : detail['2'];//现价
+                                
+                                position.assets = parseFloat(price * num);//市值
+                                position.price = parseFloat(price);
+                                position.profit = parseFloat((price * num - stock.cost).toFixed(2));//盈亏
+                                position.ratio = parseFloat(((price * num - stock.cost) / stock.cost * 100).toFixed(2)) + '%';
+                                position.ratio_class = ((price * num - stock.cost) < 0) ? 'tr-color-lose' : 'tr-color-win';
+                            } else {
+                                position.assets = parseFloat(stock.assets);
+                                position.profit = parseFloat(stock.assets - stock.cost);
+                                position.price = 0;
+                                position.ratio = parseFloat(stock.ratio.toFixed(2)) + '%';
+                                position.ratio_class = ((stock.assets - stock.cost) < 0) ? 'tr-color-lose' : 'tr-color-win';
                             }
 
-                            market_value.toFixed(2);
-                            _this.market_value = market_value;
-                        }
-                    );
-
-                    _this.positions = positions;
+                            _this.market_value += position.assets; 
+                            var  ss = _this.positions;
+                            _this.positions.push(position);
+                        });
+                    }
                 }    
             });
         },
@@ -140,21 +141,6 @@ var personal = new Vue({
                 }    
             });
         },
-        getPersonal(){
-            if(this.uid > 0){
-                this.info();
-                this.positions();
-                this.getEntrust();
-                this.getTimeChart();
-            } else {
-                if(this.count < 20){
-                    this.close = setTimeout(this.getPersonal, 300);
-                    this.count += 1;
-                } else {
-                    clearTimeout(this.close);
-                }
-            }
-        },
         drawing: function(){
             //k线图
             var myChart = echarts.init(document.getElementById('main')); 
@@ -194,6 +180,21 @@ var personal = new Vue({
 
             // 为echarts对象加载数据 
             myChart.setOption(option); 
+        },
+        getPersonal: function(){
+            if(this.uid > 0){
+                this.info();
+                this.getPositions();
+                this.getEntrust();
+                this.getTimeChart();
+            } else {
+                if(this.count < 20){
+                    this.close = setTimeout(this.getPersonal, 300);
+                    this.count += 1;
+                } else {
+                    clearTimeout(this.close);
+                }
+            }
         }
     },
     mounted: function(){

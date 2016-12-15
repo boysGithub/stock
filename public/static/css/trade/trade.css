@@ -3,8 +3,7 @@
 .tr-buy .am-form-group{margin: .5rem 0; line-height: 28px;}
 .tr-buy .am-form-group .am-form-label{font-size: 1.4rem; text-align: right; padding-right: 1rem;}
 .tr-buy .am-form-group .am-form-field{font-size: 1.2rem; width: 66%;}
-.tr-buy .tr-stock-btn{padding: 1rem 0 0 1.6rem;}
-.tr-buy .tr-select-part label{font-weight: normal; line-height: 32px; margin: 0;}
+.tr-buy .tr-select-part label{font-weight: normal; line-height: 32px; margin: 0 10px;}
 .tr-stock-search{position: relative;}
 .tr-stock-table{width:66%; display: none;position: absolute; top: 27px; left: 0;z-index: 99;background: #fff;font-size: 12px;}
 .tr-stock-table .am-table{border-left: 1px solid #ddd;}
@@ -16,12 +15,14 @@
 .tr-stock-state .am-panel-hd{height: 45px; line-height: 30px;}
 .tr-stock-state .am-panel-hd .tr-stock-name{font-size: 1.6rem;color: #000;}
 .tr-stock-state .am-panel-hd .tr-stock-price{font-size: 2.2rem;color: red;}
-.tr-stock-state .am-panel-hd .tr-stock-increase{}
-.tr-stock-state .am-panel-hd .tr-stock-increase p{height: 15px; line-height: 15px;}
-.tr-stock-state .tr-stock-entrust{border-right: 1px solid #eee; font-size: 12px;}
+.tr-stock-state .am-panel-hd .tr-stock-increase{display: inline-block; vertical-align: top;}
+.tr-stock-state .am-panel-hd .tr-stock-increase p{height: 15px; line-height: 15px;text-align: left;}
+.tr-stock-state .tr-stock-entrust{border-right: 1px solid #eee;}
+.tr-stock-state .tr-stock-entrust hr{margin: .6rem 0;}
 .tr-stock-state .am-table{margin: 0;}
-.tr-stock-state .am-table>tbody>tr>td{border: none; padding: .2rem .7rem;}
+.tr-stock-state .am-table>tbody>tr>td{border: none; padding: 0 .7rem;}
 .tr-stock-state .am-table>tbody>tr>td.price{color: red;}
+.tr-stock-state .tr-stock-trade li{line-height: 2rem;}
 
 .tr-tabs .am-tabs-nav li a{font-size: 16px;}
 .tr-tabs .am-nav>li>a:focus, .tr-tabs .am-nav>li>a:hover{background-color: #39f; color: #fff; border-color: #39f;}

@@ -27,6 +27,10 @@ class Match extends Base
         $limit = isset($data['limit']) && (int)$data['limit'] > 0 ? $data['limit'] : $this->_limit;
 
         $where = [];
+        if(isset($data['type']) && in_array($data['type'], ['1','2'])){
+            $where['type'] = intval($data['type']);
+        }
+
         $matchs = MatchModel::where($where)->alias('m')->limit(($page-1)*$limit, $limit)->order('start_date desc');
         $field = '';
         if(isset($data['uid']) && $data['uid'] > 0){//登录后获取参加状态和排名
@@ -40,6 +44,7 @@ class Match extends Base
         $matchs = MatchModel::where($where)->field('m.id,name,image,type,start_date,end_date'.$field)->select();
         $res = [];
         foreach ($matchs as $key => $val) {
+
         	if(time() >= strtotime($val['start_date']) && time() < strtotime($val['end_date']) + 24 * 3600){
         		$status = 1;
         		$status_name = '进行中';
@@ -53,8 +58,8 @@ class Match extends Base
                 'name' => $val['name'],
                 'image' => empty($val['image']) ? '' : Config('use_url.img_url').$val['image'],
                 'type' => $val['type'],
-                'start_date' => $val['start_date'],
-                'end_date' => $val['end_date'],
+                'start_date' => date('Y-m-d', strtotime($val['start_date'])),
+                'end_date' => date('Y-m-d', strtotime($val['end_date'])),
                 'status' => $status,
                 'status_name' => $status_name,
             ];

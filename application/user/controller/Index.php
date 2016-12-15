@@ -207,7 +207,10 @@ class Index extends Base
         if($fund){
             $fund->append(['username']);
             $userInit = DaysRatio::where(['uid'=>$id])->whereTime('time','today')->value('initialCapital');
-            $fund['shares'] = $userInit ? $fund['funds'] - $userInit : 0 ;  //今日盈亏
+            $fund['shares'] = $userInit ? round($fund['funds'] - $userInit,2) : 0 ;  //今日盈亏
+            $fund['funds'] = round($fund['funds'], 2);
+            $fund['available_funds'] = round($fund['available_funds'], 2);
+            $fund['position'] = round(($fund['funds'] - $fund['available_funds'])/$fund['funds']*100,2);
             $noBuy = Trans::where(['uid'=>$id,'status'=>0,'type'=>1])->select();
             $tmp = '';
             foreach ($noBuy as $key => $value) {
@@ -218,7 +221,6 @@ class Index extends Base
             }else{
                 $buyMoney = 0;
             }
-            $fund['position'] = round(($fund['funds'] - $fund['available_funds'] - $buyMoney)/$fund['funds']*100,2);
             $fund->avatar = Config('use_url.img_url') . '/avatar/img/'.$fund->uid.'.png';
             $result = json(['status'=>'success','data'=>$fund]);
         }else{
