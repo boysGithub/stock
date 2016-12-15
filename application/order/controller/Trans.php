@@ -326,14 +326,16 @@ class Trans extends Base
         	//开启事务
 	        Db::startTrans();
 	        try {
-	        	$funds = UserFunds::where(['uid'=>$data['uid']])->value('funds');
+	        	$funds = UserFunds::where(['uid'=>$data['uid']])->find();
 	        	//订单参数
 	            $data['status'] = 1;
+	            $tmp = $data * $data['number'];
 	            $data['price'] = $stockData[1];
 	            $data['fee'] = $data['price']*$data['number']*$scale >=5?$data['price']*$data['number']*$scale:5;
 	            //更改用户资金账户信息
-	            $d['funds'] = $funds - $data['fee'];
+	            $d['funds'] = $funds['funds'] - $data['fee'];
 	            $d['total_rate'] = round(($d['funds'] - $this->_base->_stockFunds)/$this->_base->_stockFunds * 100,3);
+	            $d['available_funds'] = $funds['available_funds'] + $tmp - $data['price'] * $data['number'];
 	            UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->update($d);
 	            //查看是否持有这只股票
             	$userInfo = UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'is_position'=>1,'sorts'=>$data['sorts']])->find();
