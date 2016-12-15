@@ -19,6 +19,7 @@ use app\common\model\DaysRatio;
 use app\common\model\MonthRatio;
 use app\common\model\MatchUser;
 use app\common\model\Match;
+use app\common\model\AllStock;
 
 class Index extends Controller
 {
@@ -216,6 +217,20 @@ class Index extends Controller
     }
 
     /**
+     * [autoStockRate 自动更新股票盈利率]
+     * @return [type] [description]
+     */
+    public function autoStockRate(){
+        // 启动事务
+        Db::startTrans();
+        try {
+            //UserPosition::group('stock')->Field('stock')->select();
+        } catch (\Exception $e) {
+            
+        }
+    }
+
+    /**
      * [autoSuccessRate 自动更新胜率]
      * @return [type] [description]
      */
@@ -223,16 +238,38 @@ class Index extends Controller
         // 启动事务
         Db::startTrans();
         try {
-            UserPosition::group('uid')->Field('id,uid')->chunk(500,function($list){
+            UserPosition::group('uid')->Field('id,uid,stock')->chunk(500,function($list){
                 $userPosition = new UserPosition;
                 $userGather = '';
                 foreach ($list as $key => $value) {
                     $userGather .= $value['uid'].',';
                 }
                 $userGather = substr($userGather,0,-1);
+                //获取股票集合
+                $stock = $userPosition->where(['is_position'=>1,'uid'=>['in',$userGather]])->Field('stock')->group('stock')->select();
+                
+                foreach ($stock as $key => $value) {
+                    $stockGather[] = $value['stock'];
+                }
+                $stockTmp = getStock($stockGather);
+                //dump($stockTmp);exit;
                 //获取持仓的集合
-                $userInfo = $userPosition->where(['uid'=>['in',$userGather]])->Field('id,uid,ratio')->select();
+                $userInfo = $userPosition->where(['uid'=>['in',$userGather]])->Field('id,uid,ratio,stock,(available_number + freeze_number) as number,cost_price')->select();
                 //计算选股成功率
+                foreach ($userInfo as $key => $value) {
+                    //把某一个用户的市值统计出来
+                    if($stockTmp[$value['stock']][3] != 0){
+                        $userInfo[$key]['assets'] = $value['number'] * $stockTmp[$value['stock']][3];
+                        $userInfo[$key]['ratio'] = round(($stockTmp[$value['stock']][3] - $value['cost_price'])/$value['cost_price'] * 100,3);
+
+                    }else{
+                        $userInfo[$key]['assets'] = $value['number'] * $stockTmp[$value['stock']][2];
+                        $userInfo[$key]['ratio'] = round(($stockTmp[$value['stock']][2] - $value['cost_price'])/$value['cost_price'] * 100,3);
+                    }
+                    $userInfo[$key] = $value->toArray();  
+                }
+                $userPosition->saveAll($userInfo);
+                $userInfo = $userPosition->where(['uid'=>['in',$userGather]])->Field('id,uid,ratio,stock,(available_number + freeze_number) as number,cost_price')->select();
                 foreach ($userInfo as $key => $value) {
                     $winRate[$value['uid']][] = $value['ratio'];
                 }
@@ -619,32 +656,47 @@ class Index extends Controller
         
     }
 
-    // /**
-    //  * [autoUpdateMatch 自动更新周赛]
-    //  * @return [type] []
-    //  */
-    // public function autoUpdateWeekMatch(){
-    //     $id = Match::whereTime('start_date','week')->where(['type'=>1])->value('id');
-    //     $info = MatchUser::where('match_id',$id)->select();
-    //     foreach ($info as $key => $value) {
-    //         $funds = UserFunds::where(['uid'=>$value['uid']])->value('funds');
-    //         MatchUser::update(['end_capital'=>$funds],['id'=>$value['id']]);
-    //         $this->handle('更新用户周赛'.$value['uid'],1);
-    //     }
-    // }
-
-    // /**
-    //  * [autoUpdateMonthMatch 自动更新月赛]
-    //  * @return [type] []
-    //  */
-    // public function autoUpdateMonthMatch(){
-    //     $id = Match::whereTime('start_date','month')->where(['type'=>2])->value('id');
-    //     $info = MatchUser::where('match_id',$id)->select();
-    //     foreach ($info as $key => $value) {
-    //         $funds = UserFunds::where(['uid'=>$value['uid']])->value('funds');
-    //         MatchUser::update(['end_capital'=>$funds],['id'=>$value['id']]);
-    //         $this->handle('更新用户月赛'.$value['uid'],1);
-    //     }
-    // }
+    /**
+     * [autoAddStock 自动添加股票]
+     * @return [type] [description]
+     */
+    public function autoAddStock(){
+        $flag = 1;
+        $tag1 = 'sh';
+        $tag2 = "sz";
+            
+            $host = "http://ali-stock.showapi.com";
+            $path = "/stocklist";
+            $method = "GET";
+            $appcode = "258d13c99a494969a8f12e9a123ae016";
+            $headers = array();
+            array_push($headers, "Authorization:APPCODE " . $appcode);
+            
+            $querys = "market={$tag2}&page=14";
+            $bodys = "";
+            $url = $host . $path . "?" . $querys;
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
+            curl_setopt($curl, CURLOPT_URL, $url);
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($curl, CURLOPT_FAILONERROR, false);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_HEADER, 0);
+            if (1 == strpos("$".$host, "https://"))
+            {
+                curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+            }
+            $res = curl_exec($curl);
+            $stock = json_decode($res,true);
+            foreach ($stock['showapi_res_body']['contentlist'] as $key => $value) {
+                $tmp[$key]['stock'] = $value['code'];
+                $tmp[$key]['stock_name'] = $value['name'];
+                $tmp[$key]['time'] = date('Y-m-d H:i:s');
+            }
+            $stock = new AllStock;
+            $stock->saveAll($tmp);
+             
+    }
     
 }
