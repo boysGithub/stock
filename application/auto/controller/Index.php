@@ -698,5 +698,35 @@ class Index extends Controller
             $stock->saveAll($tmp);
              
     }
+
+    /**
+     * [autoAvgHoldDay 平均持股天数]
+     * @return [type] [description]
+     */
+    public function autoAvgHoldDay(){
+        // 启动事务
+        Db::startTrans();
+        try {
+            $userInfo = UserFunds::field('uid')->select();
+            foreach ($userInfo as $key => $value) {
+                $position = UserPosition::where(['uid'=>$value['uid']])->select();
+                if($position){
+                    foreach ($position as $k => $v) {
+                        $tmp[] = ceil((time() - strtotime($v['time'])) / 86400);
+                    }
+                    $avg_position_day = array_sum($tmp)/count($tmp);
+                    UserFunds::update(['avg_position_day'=>$avg_position_day],['uid'=>$value['uid']]);
+                    Db::commit();
+                    $this->handle("更新平均持股天数成功_".$value['uid'],1);
+                }
+                
+            }
+
+        } catch (\Exception $e) {
+            Db::rollback();
+            $this->handle("更新持股天数失败",0);
+        }
+        
+    }
     
 }
