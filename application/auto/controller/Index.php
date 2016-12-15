@@ -34,6 +34,7 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoTrans(){
+        $this->handle("进入交易方法",1);
         $t1 = strtotime(date("Y-m-d 9:30:00"));
         $t2 = strtotime(date("Y-m-d 11:30:00"));
         $t3 = strtotime(date("Y-m-d 13:00:00"));
