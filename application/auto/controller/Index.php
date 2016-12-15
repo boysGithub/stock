@@ -746,6 +746,8 @@ class Index extends Controller
             UserFunds::update(['fans'=>$value['fans']],['uid'=>$value['uid']]);
             $this->handle("更新".$value['uid']."粉丝数成功",1);
         }
+        $redis = new Redis;
+        $redis->set("fans",$userGather);
     }
 
 }
