@@ -729,4 +729,22 @@ class Index extends Controller
         
     }
     
+    /**
+     * [autoUpdateFans 自动更新用户粉丝数]
+     * @return [type] [description]
+     */
+    public function autoUpdateFans(){
+        $userInfo = UserFunds::field('uid')->select();
+        foreach ($userInfo as $key => $value) {
+            $tmp[] = $value['uid'];
+        }
+        $userGather = join(',',$tmp);
+        $sjq = Db::connect('sjq1');
+        $sql = "SELECT fid as uid,count(uid) as fans from `ts_user_follow` where fid in ({$userGather}) group by fid";
+        $info = $sjq->query($sql);
+        foreach ($info as $key => $value) {
+            UserFunds::update(['fans'=>$value['fans']],['uid'=>$value['uid']]); 
+        }
+    }
+
 }

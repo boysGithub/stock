@@ -9,7 +9,7 @@ use think\Validate;
 class Rank extends Validate
 {
 	protected $rule = [
-		['condition','require|in:total_rate,success_rate,week_avg_profit_rate','排序字段不能为空|排序的值不在指定范围内'],
+		['condition','require|in:total_rate,success_rate,week_avg_profit_rate,fans','排序字段不能为空|排序的值不在指定范围内'],
 	];
 }
 ?>
