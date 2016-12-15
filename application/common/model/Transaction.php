@@ -19,7 +19,7 @@ class Transaction extends Model
     }    
 
     protected function getTimeAttr($time){
-        return date("Y-m-d H:s",strtotime($time));
+        return date("Y-m-d H:i",strtotime($time));
     }
 
     protected function getStatusNameAttr($value,$data){
