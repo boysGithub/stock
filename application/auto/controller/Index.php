@@ -589,7 +589,18 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoAverage(){
-         
+        // 启动事务
+        Db::startTrans();
+        try {
+            $sql = "UPDATE `sjq_users_funds` f,(select uid,avg(proportion) as week_avg from `sjq_weekly_ratio` GROUP BY uid) obj set f.week_avg_profit_rate = obj.week_avg where f.uid=obj.uid";
+            Db::query($sql);
+            Db::commit();
+            $this->handle("更新周平均率成功",1);
+        } catch (\Exception $e) {
+            Db::rollback();
+            $this->handle("更新周平均率失败",0);
+        }
+        
     }
 
     // /**
