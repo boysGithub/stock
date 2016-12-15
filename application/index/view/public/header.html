@@ -2,8 +2,8 @@
 	<div class="am-g tr-login-topbar">
 		<div class="am-container">
 			<div class="am-u-sm-12">
-				<div class="am-nav am-nav-pills am-topbar-nav am-fl">
-					欢迎来到水晶球！
+				<div class="am-nav am-nav-pills am-topbar-nav am-fl tr-header-top-nav">
+					<a href="http://www.sjqcj.com" title="水晶球首页" class="am-btn am-btn-link">水晶球首页</a>
 				</div>
 				<div class="am-topbar-right am-fr">
 					<template v-if="logined">
@@ -29,7 +29,7 @@
 			<div class="am-collapse am-topbar-collapse tr-menu-nav" id="tr-header-nav">
 				<div class="tr-menu-nav-item">
 				<ul class="am-nav am-nav-pills am-topbar-nav">
-				    <li class="home{if condition="$Request.controller eq 'Index' and $Request.action eq 'index'"} am-active{/if}"><a href="/" title="模拟炒股首页">首页</a></li>
+				    <li class="home{if condition="$Request.controller eq 'Index' and $Request.action eq 'index'"} am-active{/if}"><a href="/" title="模拟炒股首页">模拟炒股首页</a></li>
 				    <li class="{if condition="$Request.controller eq 'Index' and $Request.action eq 'matchlist'"} am-active{/if}"><a href="{:url('index/index/matchList')}">模拟赛场</a></li>
 				    <li class="{if condition="$Request.controller eq 'Index' and $Request.action eq 'rankinglist'"} am-active{/if}"><a href="{:url('index/index/rankingList')}">牛人排行榜</a></li>
 				    <li class="{if condition="$Request.controller eq 'Index' and $Request.action eq 'tradecenter'"} am-active{/if}"><a href="{:url('index/index/tradeCenter')}">交易中心</a></li>

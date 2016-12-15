@@ -9,156 +9,192 @@
 {/block}
 {block name="header"}{include file="public/header" /}{/block}
 {block name="main"}
-<div class="am-g tr-entrust" id="entrust">
-    <div class="am-container">
-        <div class="am-g">
-            <div class="am-u-md-2 am-padding-right">
-                {include file="trade/trade-left" /}
-            </div>
-            <div class="am-u-md-10 am-padding-horizontal-sm">
-                <div class="am-tabs tr-tabs" id="tr-tabs" data-am-tabs="{noSwipe: 1}">
-                    <ul class="am-tabs-nav am-nav am-nav-tabs">
-                        <li class="am-active"><a href="javascript:;">当日委托</a></li>
-                        <li><a href="javascript:;">当日成交</a></li>
-                        <li><a href="javascript:;">历史委托</a></li>
-                        <li><a href="javascript:;">历史成交</a></li>
-                    </ul>
-                    <div class="am-tabs-bd">
-                        <div class="am-tab-panel am-active">
-                            <table class="am-table am-table-centered">
-                                <thead>
-                                    <tr>
-                                        <th>序号</th>
-                                        <th>股票名称</th>
-                                        <th>买入/卖出</th>
-                                        <th>委托价格(&yen;)</th>
-                                        <th>委托数量</th>
-                                        <th>委托时间</th>
-                                        <th>成交状态</th>
-                                        <th>操作</th>
+<div class="am-container tr-entrust" id="entrust">
+    <div class="am-g">
+        <div class="am-u-md-2 am-padding-right">
+            {include file="trade/trade-left" /}
+        </div>
+        <div class="am-u-md-10 am-padding-horizontal-sm">
+            <div class="am-tabs tr-tabs" id="tr-tabs" data-am-tabs="{noSwipe: 1}">
+                <ul class="am-tabs-nav am-nav am-nav-tabs">
+                    <li class="am-active"><a href="javascript:;">当前持仓</a></li>
+                    <li><a href="javascript:;">当日委托</a></li>
+                    <li><a href="javascript:;">当日成交</a></li>
+                    <li><a href="javascript:;">历史委托</a></li>
+                    <li><a href="javascript:;">历史成交</a></li>
+                </ul>
+                <div class="am-tabs-bd">
+                    <div class="am-tab-panel am-active">
+                        <table class="am-table am-table-centered">
+                            <thead>
+                                <tr>
+                                    <th>股票名称</th>
+                                    <th>股票代码</th>
+                                    <th>持仓数量</th>
+                                    <th>买入成本</th>
+                                    <th>最新价</th>
+                                    <th>最新市值</th>
+                                    <th>浮动盈亏</th>
+                                    <th>盈亏比例</th>
+                                    <th>建仓时间</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template v-if="positions.length > 0">
+                                    <tr v-for="item in positions">
+                                        <td>{{ item.stock_name }}</td>
+                                        <td>{{ item.stock }}</td>
+                                        <td>{{ item.available_number }}</td>
+                                        <td><span class="tr-color-price">{{ item.cost_price }}</span></td>
+                                        <td><span class="tr-color-price">{{ item.price }}</span></td>
+                                        <td><span class="tr-color-price">{{ item.assets }}</span></td>
+                                        <td><span :class="item.ratio_class">{{ item.profit }}</span></td>
+                                        <td><span :class="item.ratio_class">{{ item.ratio }}</span></td>
+                                        <td><span>{{ item.time }}</span></td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    <template v-if="today_entrust.length > 0">
-                                        <tr v-for="item in today_entrust">
-                                            <td><span>{{ item.id }}</span></td>
-                                            <td><a href="javscript:;" :title="item.title">{{ item.title }}</a></td>
-                                            <td><span :class="item.type_class">{{ item.type_label }}</span></td>
-                                            <td><span class="tr-price">{{ item.price }}</span></td>
-                                            <td>{{ item.number }}</td>
-                                            <td>{{ item.time }}</td>
-                                            <td><span>{{ item.status_name }}</span></td>
-                                            <td><template v-if="item.status == 0"><a href="javascript:;" class="am-btn am-btn-link" :id="item.id" v-on:click="revoke" title="">撤销</a></template></td>
-                                        </tr>
-                                    </template>
-                                    <template v-else>
-                                        <tr>
-                                            <td colspan="8"><span>暂无数据</span></td>
-                                        </tr>
-                                    </template>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="am-tab-panel">
-                            <table class="am-table am-table-centered">
-                                <thead>
+                                </template>
+                                <template v-else>
                                     <tr>
-                                        <th>股票名称</th>
-                                        <th>买入/卖出</th>
-                                        <th>成交价格(&yen;)</th>
-                                        <th>成交数量</th>
-                                        <th>成交金额(&yen;)</th>
-                                        <th>成交时间</th>
+                                        <td colspan="8"><span>暂无数据</span></td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    <template v-if="today_turnover.length > 0">
-                                        <tr v-for="item in today_turnover">
-                                            <td><a href="javscript:;" :title="item.title">{{ item.title }}</a></td>
-                                            <td><span :class="item.type_class">{{ item.type_label }}</span></td>
-                                            <td><span class="tr-price">{{ item.price }}</span></td>
-                                            <td>{{ item.number }}</td>
-                                            <td><span class="tr-price">{{ item.turnover }}</span></td>
-                                            <td>{{ item.time }}</td>
-                                        </tr>
-                                    </template>
-                                    <template v-else>
-                                        <tr>
-                                            <td colspan="6"><span>暂无数据</span></td>
-                                        </tr>
-                                    </template>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="am-tab-panel">
-                            <table class="am-table am-table-centered">
-                                <thead>
-                                    <tr>
-                                        <th>序号</th>
-                                        <th>股票名称</th>
-                                        <th>买入/卖出</th>
-                                        <th>委托价格(&yen;)</th>
-                                        <th>委托数量</th>
-                                        <th>委托时间</th>
-                                        <th>成交状态</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <template v-if="history_entrust.length > 0">
-                                        <tr v-for="item in history_entrust">
-                                            <td><span>{{ item.id }}</span></td>
-                                            <td><a href="javscript:;" :title="item.title">{{ item.title }}</a></td>
-                                            <td><span :class="item.type_class">{{ item.type_label }}</span></td>
-                                            <td><span class="tr-price">{{ item.price }}</span></td>
-                                            <td>{{ item.number }}</td>
-                                            <td>{{ item.time }}</td>
-                                            <td><span>{{ item.status_name }}</span></td>
-                                        </tr>
-                                    </template>
-                                    <template v-else>
-                                        <tr>
-                                            <td colspan="7"><span>暂无数据</span></td>
-                                        </tr>
-                                    </template>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="am-tab-panel">
-                            <table class="am-table am-table-centered">
-                                <thead>
-                                    <tr>
-                                        <th>股票名称</th>
-                                        <th>买入/卖出</th>
-                                        <th>成交价格(&yen;)</th>
-                                        <th>成交数量</th>
-                                        <th>成交金额(&yen;)</th>
-                                        <th>成交时间</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <template v-if="history_turnover.length > 0">
-                                        <tr v-for="item in history_turnover">
-                                            <td><a href="javscript:;" :title="item.title">{{ item.title }}</a></td>
-                                            <td><span :class="item.type_class">{{ item.type_label }}</span></td>
-                                            <td><span class="tr-price">{{ item.price }}</span></td>
-                                            <td>{{ item.number }}</td>
-                                            <td><span class="tr-price">{{ item.turnover }}</span></td>
-                                            <td>{{ item.time }}</td>
-                                        </tr>
-                                    </template>
-                                    <template v-else>
-                                        <tr>
-                                            <td colspan="6"><span>暂无数据</span></td>
-                                        </tr>
-                                    </template>
-                                </tbody>
-                            </table>
-                        </div>
+                                </template>
+                            </tbody>
+                        </table>
                     </div>
-                </div>  
-            </div>      
-        </div>       
-    </div>   
+                    <div class="am-tab-panel am-active">
+                        <table class="am-table am-table-centered">
+                            <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>股票名称</th>
+                                    <th>买入/卖出</th>
+                                    <th>委托价格(&yen;)</th>
+                                    <th>委托数量</th>
+                                    <th>委托时间</th>
+                                    <th>成交状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template v-if="today_entrust.length > 0">
+                                    <tr v-for="item in today_entrust">
+                                        <td><span>{{ item.id }}</span></td>
+                                        <td><a href="javscript:;" :title="item.title">{{ item.title }}</a></td>
+                                        <td><span :class="item.type_class">{{ item.type_label }}</span></td>
+                                        <td><span class="tr-price">{{ item.price }}</span></td>
+                                        <td>{{ item.number }}</td>
+                                        <td>{{ item.time }}</td>
+                                        <td><span>{{ item.status_name }}</span></td>
+                                        <td><template v-if="item.status == 0"><a href="javascript:;" class="am-btn am-btn-link" :id="item.id" v-on:click="revoke" title="">撤销</a></template></td>
+                                    </tr>
+                                </template>
+                                <template v-else>
+                                    <tr>
+                                        <td colspan="8"><span>暂无数据</span></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="am-tab-panel">
+                        <table class="am-table am-table-centered">
+                            <thead>
+                                <tr>
+                                    <th>股票名称</th>
+                                    <th>买入/卖出</th>
+                                    <th>成交价格(&yen;)</th>
+                                    <th>成交数量</th>
+                                    <th>成交金额(&yen;)</th>
+                                    <th>成交时间</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template v-if="today_turnover.length > 0">
+                                    <tr v-for="item in today_turnover">
+                                        <td><a href="javscript:;" :title="item.title">{{ item.title }}</a></td>
+                                        <td><span :class="item.type_class">{{ item.type_label }}</span></td>
+                                        <td><span class="tr-price">{{ item.price }}</span></td>
+                                        <td>{{ item.number }}</td>
+                                        <td><span class="tr-price">{{ item.turnover }}</span></td>
+                                        <td>{{ item.time }}</td>
+                                    </tr>
+                                </template>
+                                <template v-else>
+                                    <tr>
+                                        <td colspan="6"><span>暂无数据</span></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="am-tab-panel">
+                        <table class="am-table am-table-centered">
+                            <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>股票名称</th>
+                                    <th>买入/卖出</th>
+                                    <th>委托价格(&yen;)</th>
+                                    <th>委托数量</th>
+                                    <th>委托时间</th>
+                                    <th>成交状态</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template v-if="history_entrust.length > 0">
+                                    <tr v-for="item in history_entrust">
+                                        <td><span>{{ item.id }}</span></td>
+                                        <td><a href="javscript:;" :title="item.title">{{ item.title }}</a></td>
+                                        <td><span :class="item.type_class">{{ item.type_label }}</span></td>
+                                        <td><span class="tr-price">{{ item.price }}</span></td>
+                                        <td>{{ item.number }}</td>
+                                        <td>{{ item.time }}</td>
+                                        <td><span>{{ item.status_name }}</span></td>
+                                    </tr>
+                                </template>
+                                <template v-else>
+                                    <tr>
+                                        <td colspan="7"><span>暂无数据</span></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="am-tab-panel">
+                        <table class="am-table am-table-centered">
+                            <thead>
+                                <tr>
+                                    <th>股票名称</th>
+                                    <th>买入/卖出</th>
+                                    <th>成交价格(&yen;)</th>
+                                    <th>成交数量</th>
+                                    <th>成交金额(&yen;)</th>
+                                    <th>成交时间</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template v-if="history_turnover.length > 0">
+                                    <tr v-for="item in history_turnover">
+                                        <td><a href="javscript:;" :title="item.title">{{ item.title }}</a></td>
+                                        <td><span :class="item.type_class">{{ item.type_label }}</span></td>
+                                        <td><span class="tr-price">{{ item.price }}</span></td>
+                                        <td>{{ item.number }}</td>
+                                        <td><span class="tr-price">{{ item.turnover }}</span></td>
+                                        <td>{{ item.time }}</td>
+                                    </tr>
+                                </template>
+                                <template v-else>
+                                    <tr>
+                                        <td colspan="6"><span>暂无数据</span></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>  
+        </div>      
+    </div>       
 </div>     
 {/block}
 {block name="footer"}{include file="public/footer" /}{/block}

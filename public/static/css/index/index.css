@@ -2,13 +2,13 @@
 .am-panel-hd{padding: 0 0 .6rem;background: none; border-bottom: none;}
 .am-panel-title{font-size: 18px; font-weight: normal;}
 
-.am-slider-default.tr-slider-ad{box-shadow: none;margin: 15px 0 30px;}
+.am-slider-default.tr-slider-ad{box-shadow: none;margin: 0 0 20px;}
 .am-slider-default.tr-slider-ad .am-control-nav{bottom: 10px;}
 .am-slider-default.tr-slider-ad .am-control-nav li a{width: 13px; height: 13px;background-color:#fff;}
 .am-slider-default.tr-slider-ad .am-control-nav li a.am-active{background-color:#0e90d2;}
 
-.tr-proclamation{padding: 12px 30px; font-size: 14px;background: #fff; height: 48px; overflow: hidden;}
-.tr-proclamation .tr-pro-t{color: #4a9ff6;text-align: center;}
+.tr-proclamation{padding: 12px 30px 12px 12px; font-size: 14px;background: #fff; height: 48px; overflow: hidden;}
+.tr-proclamation .tr-pro-t{color: #4a9ff6;}
 .tr-proclamation .tr-pro-t .am-icon-volume-up{vertical-align: middle;}
 .tr-proclamation .tr-pro-t .tr-pro-t-c{ vertical-align: middle; display: inline-block; padding-right: 20px;border-right: 1px solid #4a9ff6;}
 .tr-proclamation dl{background: none;}
@@ -16,7 +16,7 @@
 .tr-proclamation dd a{color: #666; font-size: 14px;}
 .tr-proclamation dd a:hover{color: #fb7471;}
 
-.tr-talent{margin: 30px 0;}
+.tr-talent{margin: 20px 0;}
 .tr-slider{box-shadow: none; background: none;}
 .tr-slider .am-viewport li{font-size: 14px;border-top: 2px solid #f76d63; background: #fff;}
 .tr-talent-info .tr-talent-name{font-size: 18px; color: #333;}
@@ -32,7 +32,7 @@
 .tr-slider:hover .am-direction-nav .am-prev{left: -5px;opacity: .7;}
 .tr-slider:hover .am-direction-nav .am-next{right: -5px;opacity: .7;}
 
-.tr-tabs{position: relative;border: 1px solid #e2e2e2; background: #fff; margin-bottom: 30px;}
+.tr-tabs{position: relative;border: 1px solid #e2e2e2; background: #fff; margin-bottom: 20px;}
 .tr-tabs .tr-more{position: absolute; top: 10px; right: 10px;}
 .tr-tabs .tr-more a:hover{color: gray;}
 .tr-tabs .am-tabs-nav li{border-bottom: 1px solid #ddd;}
@@ -48,7 +48,7 @@
 .tr-tabs .am-table .tr-icon{color: #fff;}
 .tr-tabs .am-table .am-btn-xs{font-size: 14px; padding: .5rem .5rem;}
 
-.tr-img-ad{margin: 30px 0;}
+.tr-img-ad{margin: 20px 0;}
 
 .tr-ranking-table .am-table{background: #fff;border: 1px solid #e2e2e2;}
 .tr-ranking-table .am-table>thead>tr>th{border:none; background: #faf9f9; font-weight: normal; color: #4a9ff6;}
@@ -56,6 +56,12 @@
 .tr-ranking-table .am-table>tbody>tr.first>td{border:none;}
 .tr-ranking-table .am-table>tbody>tr>td.tr-ranking-portrait{padding: .3rem;}
 
-.tr-match{margin: 30px 0;}
+.tr-match{margin: 20px 0;}
 .tr-match .am-panel-bd{color:#333; line-height: 26px; font-size: 14px;border: 1px solid #e2e2e2;background: #fff; padding: .5rem 1.6rem;}
-
+.tr-match .tr-match-item{}
+.tr-match .tr-simulation-name{font-size: 18px; font-weight: bold;}
+.tr-match .tr-status{display: inline-block; vertical-align: middle; width: 48px; height: 20px; line-height: 18px; text-align: center; font-size: 1rem; border-radius: 2px;}
+.tr-match .tr-status-underway{border: 1px solid #f54b00; color: #f54b00;}
+.tr-match .tr-status-end{border: 1px solid #787878; color: #787878;}
+.tr-match .tr-list-main{border-right: 1px solid #e8e8e8;}
+.tr-match .tr-list-button{ padding-top: 2rem;}

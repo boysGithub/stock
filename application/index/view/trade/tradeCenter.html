@@ -9,205 +9,199 @@
 {/block}
 {block name="header"}{include file="public/header" /}{/block}
 {block name="main"}
-<div class="am-g tr-main">
-    <div class="am-container">
-        <div class="am-g">
-            <div class="am-u-md-2 am-padding-right">
-                {include file="trade/trade-left" /}
-            </div>
-            <div class="am-u-md-10 am-padding-horizontal-sm" id="tr-stock">
-                <form class="am-form">
-                <div class="am-u-md-6 tr-buy">
-                    <div class="am-g am-form-group">
-                        <label class="am-u-sm-3 am-form-label">证券代码：</label>
-                        <div class="am-u-sm-9 tr-stock-search">
-                            <div class="tr-stock-table">
-                                <table class="am-table am-table-centered am-table-bordered am-table-hover" id="stockTable">
-                                    <thead>
-                                        <tr>
-                                            <th>选项</th><th>类型</th><th>代码</th><th>中文名称</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-on:mousedown="selectStock" v-for="item in stockList" v-bind:id="item.id">
-                                            <td>{{ item.option }}</td>
-                                            <td>{{ item.type }}</td>
-                                            <td>{{ item.code }}</td>
-                                            <td>{{ item.name }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <input type="text" v-model="stock_code" id="stock_code" v-on:keyup="updateStockList" placeholder="请输入股票名称/代码/拼音" onfocus="if($(this).val() != ''){$('.tr-stock-table').show()}" onblur="$('.tr-stock-table').hide()" class="am-form-field">
+<div class="am-container">
+    <div class="am-g">
+        <div class="am-u-md-2 am-padding-right">
+            {include file="trade/trade-left" /}
+        </div>
+        <div class="am-u-md-10 am-padding-horizontal-sm" id="tr-stock">
+            <form class="am-form">
+            <div class="am-u-md-6 tr-buy">
+                <div class="am-g am-form-group">
+                    <label class="am-u-sm-3 am-form-label">证券代码：</label>
+                    <div class="am-u-sm-9 tr-stock-search">
+                        <div class="tr-stock-table">
+                            <table class="am-table am-table-centered am-table-bordered am-table-hover" id="stockTable">
+                                <thead>
+                                    <tr>
+                                        <th>选项</th><th>类型</th><th>代码</th><th>中文名称</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-on:mousedown="selectStock" v-for="item in stockList" v-bind:id="item.id">
+                                        <td>{{ item.option }}</td>
+                                        <td>{{ item.type }}</td>
+                                        <td>{{ item.code }}</td>
+                                        <td>{{ item.name }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                    </div>
-                    <div class="am-g am-form-group">
-                        <label class="am-u-sm-3 am-form-label">股票名称：</label>
-                        <div class="am-u-sm-9">
-                            <span>{{ buyInfo.stockName }}</span>
-                        </div>
-                    </div>
-                    <div class="am-g am-form-group">
-                        <label class="am-u-sm-3 am-form-label">当前价格：</label>
-                        <div class="am-u-sm-9">
-                            <span>{{ buyInfo.price }}</span>
-                        </div>
-                    </div>
-                    <div class="am-g am-form-group">
-                        <label class="am-u-sm-3 am-form-label">买入价格：</label>
-                        <div class="am-u-sm-9">
-                            <input type="text" v-model="buy_price" class="am-form-field">
-                        </div>
-                    </div>
-                    <div class="am-g am-form-group">
-                        <label class="am-u-sm-3 am-form-label">可用资金：</label>
-                        <div class="am-u-sm-9">
-                            <span>{{ usable_funds }}</span>
-                        </div>
-                    </div>
-                    <div class="am-g am-form-group">
-                        <label class="am-u-sm-3 am-form-label">最大可买：</label>
-                        <div class="am-u-sm-9">
-                            <span>{{ maxBuy }}</span>
-                        </div>
-                    </div>
-                    <div class="am-g am-form-group">
-                        <label class="am-u-sm-3 am-form-label">买入数量：</label>
-                        <div class="am-u-sm-9">
-                            <input type="text" placeholder="必须为100的倍数" class="am-form-field" v-model="buy_num">
-                            <p class="tr-select-part">
-                                <label>
-                                    <input type="radio" v-on:change="updateBuyNum" name="buy_num" value="1">
-                                    全部
-                                </label>
-                                <label>
-                                    <input type="radio" v-on:change="updateBuyNum" name="buy_num" value="2">
-                                    1/2
-                                </label>
-                                <label>
-                                    <input type="radio" v-on:change="updateBuyNum" name="buy_num" value="3">
-                                    1/3
-                                </label>
-                                <label>
-                                    <input type="radio" v-on:change="updateBuyNum" name="buy_num" value="4">
-                                    1/4
-                                </label>
-                                <label>
-                                    <input type="radio" v-on:change="updateBuyNum" name="buy_num" value="5">
-                                    1/5
-                                </label>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="am-g am-form-group">
-                        <label class="am-u-sm-3 am-form-label">买入金额：</label>
-                        <div class="am-u-sm-9">
-                            <span>{{ buyFunds }}</span>
-                        </div>
-                    </div>
-                    <div class="am-g am-form-group tr-stock-btn">
-                        <input type="button" class="am-btn am-btn-sm am-btn-success" v-on:click="order" value="买入下单">
-                        <input type="reset" class="am-btn am-btn-sm am-btn-danger am-margin-left-sm" value="清空重置">
+                        <input type="text" v-model="stock_code" id="stock_code" v-on:keyup="updateStockList" placeholder="请输入股票名称/代码/拼音" onfocus="if($(this).val() != ''){$('.tr-stock-table').show()}" onblur="$('.tr-stock-table').hide()" class="am-form-field">
                     </div>
                 </div>
-                </form>
-                <div class="am-u-md-6 am-padding-left-sm tr-stock-state">
-                    <div class="am-panel am-panel-default">
-                        <div class="am-panel-hd am-g">
-                            <div class="am-u-sm-9 tr-stock-name">
-                                <span>{{ stock.title }}</span>
-                            </div>
-                            <div class="am-u-sm-2 am-text-right am-padding-right-sm tr-stock-price ">
-                                <span>{{ stock.price }}</span><span class="am-icon-"></span>
-                            </div>
-                            <div v-bind:class="'am-u-sm-1 tr-stock-increase' + stock.changeClass">
+                <div class="am-g am-form-group">
+                    <label class="am-u-sm-3 am-form-label">股票名称：</label>
+                    <div class="am-u-sm-9">
+                        <span>{{ buyInfo.stockName }}</span>
+                    </div>
+                </div>
+                <div class="am-g am-form-group">
+                    <label class="am-u-sm-3 am-form-label">当前价格：</label>
+                    <div class="am-u-sm-9">
+                        <span>{{ buyInfo.price }}</span>
+                    </div>
+                </div>
+                <div class="am-g am-form-group">
+                    <label class="am-u-sm-3 am-form-label">买入价格：</label>
+                    <div class="am-u-sm-9">
+                        <input type="text" v-model="buy_price" class="am-form-field">
+                    </div>
+                </div>
+                <div class="am-g am-form-group">
+                    <label class="am-u-sm-3 am-form-label">可用资金：</label>
+                    <div class="am-u-sm-9">
+                        <span>{{ usable_funds }}</span>
+                    </div>
+                </div>
+                <div class="am-g am-form-group">
+                    <label class="am-u-sm-3 am-form-label">最大可买：</label>
+                    <div class="am-u-sm-9">
+                        <span>{{ maxBuy }}</span>
+                    </div>
+                </div>
+                <div class="am-g am-form-group">
+                    <label class="am-u-sm-3 am-form-label">买入数量：</label>
+                    <div class="am-u-sm-9">
+                        <input type="text" placeholder="必须为100的倍数" class="am-form-field" v-model="buy_num">
+                        <p class="tr-select-part">
+                            <label>
+                                <input type="radio" v-on:change="updateBuyNum" name="buy_num" value="1">
+                                全部
+                            </label>
+                            <label>
+                                <input type="radio" v-on:change="updateBuyNum" name="buy_num" value="2">
+                                1/2
+                            </label>
+                            <label>
+                                <input type="radio" v-on:change="updateBuyNum" name="buy_num" value="4">
+                                1/4
+                            </label>
+                        </p>
+                    </div>
+                </div>
+                <div class="am-g am-form-group">
+                    <label class="am-u-sm-3 am-form-label">买入金额：</label>
+                    <div class="am-u-sm-9">
+                        <span>{{ buyFunds }}</span>
+                    </div>
+                </div>
+                <div class="am-g am-form-group am-padding-top-sm">
+                    <div class="am-u-sm-3"></div>
+                    <div class="am-u-sm-9">
+                        <input type="button" class="am-btn am-btn-sm am-btn-success" v-on:click="order(2)" value="买入下单">
+                        <input type="button" class="am-btn am-btn-sm am-btn-danger am-margin-left-sm" v-on:click="order(1)" value="市价买入">
+                    </div>
+                </div>
+            </div>
+            </form>
+            <div class="am-u-md-6 am-padding-left-sm tr-stock-state">
+                <div class="am-panel am-panel-default">
+                    <div class="am-panel-hd am-g">
+                        <div class="am-u-sm-8 tr-stock-name">
+                            <span>{{ stock.title }}</span>
+                        </div>
+                        <div class="am-u-sm-4 am-text-right">
+                            <span class="tr-stock-price">{{ stock.price }}</span>
+                            <span class="am-icon-"></span>
+                            <span v-bind:class="'tr-stock-increase' + stock.changeClass">
                                 <p>{{ stock.changePrice }}</p>
                                 <p>{{ stock.changeRate }}</p>
-                            </div>
+                            </span>
                         </div>
-                        <div class="am-panel-bd am-g">
-                            <div class="am-u-sm-7 am-padding-right tr-stock-entrust">
-                                <table class="am-table">
-                                    <tbody>
-                                        <tr>
-                                            <td>卖⑤(元/股)</td>
-                                            <td class="price">{{ stock.sellPrice5 }}</td>
-                                            <td>{{ stock.sellNum5 }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>卖④(元/股)</td>
-                                            <td class="price">{{ stock.sellPrice4 }}</td>
-                                            <td>{{ stock.sellNum4 }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>卖③(元/股)</td>
-                                            <td class="price">{{ stock.sellPrice3 }}</td>
-                                            <td>{{ stock.sellNum3 }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>卖②(元/股)</td>
-                                            <td class="price">{{ stock.sellPrice2 }}</td>
-                                            <td>{{ stock.sellNum2 }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>卖①(元/股)</td>
-                                            <td class="price">{{ stock.sellPrice1 }}</td>
-                                            <td>{{ stock.sellNum1 }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <hr>
-                                <table class="am-table">
-                                    <tbody>
-                                        <tr>
-                                            <td>买①(元/股)</td>
-                                            <td class="price">{{ stock.buyPrice1 }}</td>
-                                            <td>{{ stock.buyNum1 }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>买②(元/股)</td>
-                                            <td class="price">{{ stock.buyPrice2 }}</td>
-                                            <td>{{ stock.buyNum2 }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>买③(元/股)</td>
-                                            <td class="price">{{ stock.buyPrice3 }}</td>
-                                            <td>{{ stock.buyNum3 }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>买④(元/股)</td>
-                                            <td class="price">{{ stock.buyPrice4 }}</td>
-                                            <td>{{ stock.buyNum4 }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>买⑤(元/股)</td>
-                                            <td class="price">{{ stock.buyPrice5 }}</td>
-                                            <td>{{ stock.buyNum5 }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="am-u-sm-5">
-                                <ul>
-                                    <li><span>现&nbsp;&nbsp;&nbsp;价 : </span><span class="tr-color-win">{{ stock.price }}</span></li>
-                                    <li><span>今&nbsp;&nbsp;&nbsp;开 : </span><span class="tr-color-lose">{{ stock.todayPrcie }}</span></li>
-                                    <li><span>昨&nbsp;&nbsp;&nbsp;收 : </span><span>{{ stock.prec }}</span></li>
-                                    <li><span>最&nbsp;&nbsp;&nbsp;高 : </span><span class="tr-color-win">{{ stock.maxPrice }}</span></li>
-                                    <li><span>最&nbsp;&nbsp;&nbsp;低 : </span><span class="tr-color-lose">{{ stock.minPrice }}</span></li>
-                                    <li><span>涨停价 : </span><span class="tr-color-win">{{ stock.highLimit }}</span></li>
-                                    <li><span>跌停价 : </span><span class="tr-color-lose">{{ stock.lowerLimit }}</span></li>
-                                    <!-- <li><span>换手率 : </span><span class="menu-right-centent-tebale3-margin">{{ stock.turnoverRate }}</span></li> -->
-                                    <li><span>成交量 : </span><span class="menu-right-centent-tebale3-margin">{{ stock.turnoverNum }}</span></li>
-                                </ul>
-                            </div>
+                    </div>
+                    <div class="am-panel-bd am-g">
+                        <div class="am-u-sm-7 am-padding-right tr-stock-entrust">
+                            <table class="am-table">
+                                <tbody>
+                                    <tr>
+                                        <td>卖5</td>
+                                        <td class="price">{{ stock.sellPrice5 }}</td>
+                                        <td>{{ stock.sellNum5 }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>卖4</td>
+                                        <td class="price">{{ stock.sellPrice4 }}</td>
+                                        <td>{{ stock.sellNum4 }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>卖3</td>
+                                        <td class="price">{{ stock.sellPrice3 }}</td>
+                                        <td>{{ stock.sellNum3 }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>卖2</td>
+                                        <td class="price">{{ stock.sellPrice2 }}</td>
+                                        <td>{{ stock.sellNum2 }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>卖1</td>
+                                        <td class="price">{{ stock.sellPrice1 }}</td>
+                                        <td>{{ stock.sellNum1 }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <hr>
+                            <table class="am-table">
+                                <tbody>
+                                    <tr>
+                                        <td>买1</td>
+                                        <td class="price">{{ stock.buyPrice1 }}</td>
+                                        <td>{{ stock.buyNum1 }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>买2</td>
+                                        <td class="price">{{ stock.buyPrice2 }}</td>
+                                        <td>{{ stock.buyNum2 }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>买3</td>
+                                        <td class="price">{{ stock.buyPrice3 }}</td>
+                                        <td>{{ stock.buyNum3 }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>买4</td>
+                                        <td class="price">{{ stock.buyPrice4 }}</td>
+                                        <td>{{ stock.buyNum4 }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>买5</td>
+                                        <td class="price">{{ stock.buyPrice5 }}</td>
+                                        <td>{{ stock.buyNum5 }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="am-u-sm-5 tr-stock-trade">
+                            <ul>
+                                <li><span>现&nbsp;&nbsp;&nbsp;价 : </span><span class="tr-color-win">{{ stock.price }}</span></li>
+                                <li><span>今&nbsp;&nbsp;&nbsp;开 : </span><span class="tr-color-lose">{{ stock.todayPrcie }}</span></li>
+                                <li><span>昨&nbsp;&nbsp;&nbsp;收 : </span><span>{{ stock.prec }}</span></li>
+                                <li><span>最&nbsp;&nbsp;&nbsp;高 : </span><span class="tr-color-win">{{ stock.maxPrice }}</span></li>
+                                <li><span>最&nbsp;&nbsp;&nbsp;低 : </span><span class="tr-color-lose">{{ stock.minPrice }}</span></li>
+                                <li><span>涨停价 : </span><span class="tr-color-win">{{ stock.highLimit }}</span></li>
+                                <li><span>跌停价 : </span><span class="tr-color-lose">{{ stock.lowerLimit }}</span></li>
+                                <!-- <li><span>换手率 : </span><span>{{ stock.turnoverRate }}</span></li> -->
+                                <li><span>成交量 : </span><span>{{ stock.turnoverNum }}</span></li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-                </form>
             </div>
-        </div>    
-    </div>   
-</div>     
+            </form>
+        </div>
+    </div>    
+</div>  
 {/block}
 {block name="footer"}{include file="public/footer" /}{/block}
 {block name="js"}

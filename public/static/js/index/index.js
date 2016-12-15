@@ -6,13 +6,14 @@ var index = new Vue({
         proclamation: [],//公告
         recommend: [],//牛人推荐
         talent_dynamic: [],//牛人动态
-        week_rate: [],//周赛
-        month_rate: [],//月赛
+        week_rate: [],//周赛排名
+        month_rate: [],//月赛排名
         total_rate_5: [],//总收益榜
         total_rate_10: [],//总盈利率
         success_rate: [],//选股牛人
         week_avg_profit_rate: [],//常胜牛人
-        matchs: []//赛场
+        week_matchs: [],//周赛
+        month_matchs: []//月赛
     },
     methods: {
         ad_slider(){
@@ -295,7 +296,7 @@ var index = new Vue({
                         for (var i = 0; i < length; i++) {
                             week_avg_profit_rate.push({
                                 user_name: ret[i].username,
-                                portrait: getAvatar(ret[i].uid),
+                                portrait: ret[i].avatar,
                                 week_avg_profit_rate: ret[i].week_avg_profit_rate+'%',
                                 week_avg_profit_rate_class: (ret[i].week_avg_profit_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
                                 uid: ret[i].uid
@@ -310,28 +311,48 @@ var index = new Vue({
                 this.week_avg_profit_rate = data.data;
             }    
         },
-        updateMatchs(){               
+        updateMatchs: function(type){               
             var _this = this;
-            $.getJSON(api_host + '/match/index',{limit:4},function(data){
+            $.getJSON('http://www.tp5.com/match/index.html',{type: type, limit:2},function(data){
                 if(data.status == 'success'){
                     var ret = data.data;
                     var matchs = [];
+                    var sc = {1: ' tr-status-underway', 3: ' tr-status-end'};
                     for (var i = 0; i < ret.length; i++) {
                         matchs.push({
                             name: ret[i].name,
                             image: ret[i].image,
                             id: ret[i].id,
-                            start_date: ret[i].start_date,
-                            end_date: ret[i].end_date,
+                            start_date: ret[i].start_date.substring(0,10),
+                            end_date: ret[i].end_date.substring(0,10),
+                            status: ret[i].status,
                             status_name: ret[i].status_name,
-                            end: (i == ret.length - 1) ? ' am-u-end':''
+                            status_class: sc[ret[i].status]
                         });
                     }
 
-                    _this.matchs = matchs;
+                    switch(type){
+                        case '1':
+                            _this.week_matchs = matchs;
+                            break;
+                        case '2':
+                            _this.month_matchs = matchs;
+                            break;
+                    }
                 }    
             });
-        } 
+        },
+        join_match: function(e){
+            var id = e.currentTarget.id;
+            var url = e.currentTarget.attributes["href-url"].nodeValue;
+            if(header.logined){
+                $.post(api_host + '/match/join',{id: id, uid: header.user.uid, token: header.user.token},function(data){
+                    window.location.href = url;    
+                }, 'json');
+            }else{
+                window.location.href = url;
+            }
+        },
     },
     mounted: function(){
         this.ad_slider();
@@ -343,7 +364,8 @@ var index = new Vue({
         this.updateTotalRate();
         this.updateSuccessRate();
         this.week_avg_profit_rate();
-        this.updateMatchs();
+        this.updateMatchs('1');
+        this.updateMatchs('2');
     }
 });
 

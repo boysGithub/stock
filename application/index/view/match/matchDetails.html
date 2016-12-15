@@ -10,34 +10,32 @@
 {/block}
 {block name="header"}{include file="public/header" /}{/block}
 {block name="main"}
-<div class="am-g tr-main" id="match_details">
-    <div class="am-container">
-        <div class="am-g">
-            <div class="am-u-lg-12 am-text-center tr-match-name"><h2>{{ match.name }}</h2></div>
-            <input type="hidden" name="id" id="match_id" value="{$id}">
-        </div>
-        <table class="am-table am-table-centered tr-table-ranking">
-            <thead>
-                <tr>
-                    <th>排名</th>
-                    <th>昵称</th>
-                    <th>总收益率</th>
-                    <th>动态</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="item in ranking">
-                    <td><span :class="'tr-rank' + item.ranking_class">{{ item.ranking }}</span></td>
-                    <td><a :href="'{:url('index/personal')}?uid='+item.uid" title="">{{ item.user_name }}</a></td>
-                    <td><span :class="item.total_rate_class">{{ item.total_rate }}</span></td>
-                    <td><span class=""><a :href="'{:url('index/personal')}?uid='+item.uid" title="">追踪可看</a></span></td>
-                </tr>
-            </tbody>
-        </table>
-        <hr>
-        <div class="page am-text-center">
-            
-        </div>
+<div class="am-container" id="match_details">
+    <div class="am-g">
+        <div class="am-u-lg-12 am-text-center tr-match-name"><h2>{{ match.name }}</h2></div>
+        <input type="hidden" name="id" id="match_id" value="{$id}">
+    </div>
+    <table class="am-table am-table-centered tr-table-ranking">
+        <thead>
+            <tr>
+                <th>排名</th>
+                <th>昵称</th>
+                <th>总收益率</th>
+                <th>动态</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="item in ranking">
+                <td><span :class="'tr-rank' + item.ranking_class">{{ item.ranking }}</span></td>
+                <td><a :href="'{:url('index/personal')}?uid='+item.uid" title="">{{ item.user_name }}</a></td>
+                <td><span :class="item.total_rate_class">{{ item.total_rate }}</span></td>
+                <td><span class=""><a :href="'{:url('index/personal')}?uid='+item.uid" title="">追踪可看</a></span></td>
+            </tr>
+        </tbody>
+    </table>
+    <hr>
+    <div class="page am-text-center">
+        
     </div>
 </div>
 {/block}

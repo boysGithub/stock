@@ -2,7 +2,11 @@
 .tr-list .tr-list-li,.tr-list .tr-list-li a{font-size: 14px;}
 .tr-list .tr-list-li{border:1px solid #e8e8e8;margin-top: 1rem; padding: 1rem;}
 .tr-list .tr-list-li .tr-list-main{border-right: 1px solid #e8e8e8;}
+.tr-list .tr-list-li .tr-simulation-name{font-size: 18px; font-weight: bold;}
 .tr-list .tr-list-li .tr-list-button{ padding-top: 2rem;}
+.tr-list .tr-list-li .tr-status{margin-left: 3rem; display: inline-block; vertical-align: middle; width: 48px; height: 20px; line-height: 18px; text-align: center; font-size: 1rem; border-radius: 2px;}
+.tr-list .tr-list-li .tr-status-underway{border: 1px solid #f54b00; color: #f54b00;}
+.tr-list .tr-list-li .tr-status-end{border: 1px solid #787878; color: #787878;}
 
 
 @media only screen and (max-width: 1024px){  

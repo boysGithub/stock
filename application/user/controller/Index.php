@@ -207,7 +207,9 @@ class Index extends Base
         if($fund){
             $fund->append(['username']);
             $userInit = DaysRatio::where(['uid'=>$id])->whereTime('time','today')->value('initialCapital');
-            $fund['shares'] = $userInit ? $fund['funds'] - $userInit : 0 ;  //今日盈亏
+            $fund['shares'] = $userInit ? round($fund['funds'] - $userInit,2) : 0 ;  //今日盈亏
+            $fund['funds'] = round($fund['funds'], 2);
+            $fund['available_funds'] = round($fund['available_funds'], 2);
             $fund['position'] = round(($fund['funds'] - $fund['available_funds'])/$fund['funds']*100,2);
             $fund->avatar = Config('use_url.img_url') . '/avatar/img/'.$fund->uid.'.png';
             $result = json(['status'=>'success','data'=>$fund]);
