@@ -743,7 +743,8 @@ class Index extends Controller
         $sql = "SELECT fid as uid,count(uid) as fans from `ts_user_follow` where fid in ({$userGather}) group by fid";
         $info = $sjq->query($sql);
         foreach ($info as $key => $value) {
-            UserFunds::update(['fans'=>$value['fans']],['uid'=>$value['uid']]); 
+            UserFunds::update(['fans'=>$value['fans']],['uid'=>$value['uid']]);
+            $this->handle("更新".$value['uid']."粉丝数成功",1);
         }
     }
 
