@@ -13,12 +13,13 @@ use app\common\model\UserFunds;
 use app\common\model\Rank;
 use app\common\model\AutoUpdate;
 use app\common\model\WeeklyRatio;
-use app\order\controller\Index as OrderIndex;
+use app\order\controller\Trans;
 use app\common\model\Transaction;
 use app\common\model\DaysRatio;
 use app\common\model\MonthRatio;
 use app\common\model\MatchUser;
 use app\common\model\Match;
+use app\common\model\AllStock;
 
 class Index extends Controller
 {
@@ -34,65 +35,50 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoTrans(){
-        $redis = new Redis();
-        $buyKeys = $redis->keys("*noBuyOrder*");
-        $sellKeys = $redis->keys("*noSellOrder*");
-        //卖出操作
-        if($buyKeys){
-            for ($i=0; $i < count($buyKeys); $i++) { 
-                $tmpBuy = $redis->get($buyKeys[$i]);
-                $buy[$buyKeys[$i]] = $tmpBuy;
-                $stockBuy[] = $tmpBuy['stock'];
-            }
-            $stockInfo = getStock($stockBuy,"s_");
-
-            $orderIndex = new OrderIndex;
-            foreach ($buy as $key => $value) {
-                if($orderIndex->isLimitMove($stockInfo[$value['stock']],1)){
+        $this->handle("进入交易方法",1);
+        $t1 = strtotime(date("Y-m-d 9:30:00"));
+        $t2 = strtotime(date("Y-m-d 11:30:00"));
+        $t3 = strtotime(date("Y-m-d 13:00:00"));
+        $t4 = strtotime(date("Y-m-d 15:00:00"));
+        if(($t1 <= time() && $t2 >= time()) || ($t3 <= time() && $t4 >= time())){
+            $redis = new Redis();
+            $buyKeys = $redis->keys("*noBuyOrder*");
+            $sellKeys = $redis->keys("*noSellOrder*");
+            //卖出操作
+            if($buyKeys){
+                for ($i=0; $i < count($buyKeys); $i++) { 
+                    $tmpBuy = $redis->get($buyKeys[$i]);
+                    $buy[$buyKeys[$i]] = $tmpBuy;
+                    $stockBuy[] = $tmpBuy['stock'];
+                }
+                $stockInfo = getStock($stockBuy,"s_");
+                $orderIndex = new Trans;
+                foreach ($buy as $key => $value) {
                     if($stockInfo[$value['stock']][1] <= $value['price']){
-                        $funds = UserFunds::where(['uid'=>$value['uid']])->find();
-                        $orderIndex->buyProcess($value,$stockInfo,$funds,true);
-                        $redis->rm($key);
-                        $this->handle($value['stock_name']."买入成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
-                    }
-                }else{
-                    if($stockInfo[$value['stock']][1] < $value['price']){
-                        $funds = UserFunds::where(['uid'=>$value['uid']])->find();
-                        $orderIndex->buyProcess($value,$stockInfo,$funds,true);
+                        $orderIndex->buyProcess($value,$stockInfo[$value['stock']],true);
                         $redis->rm($key);
                         $this->handle($value['stock_name']."买入成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
                     }
                 }
-                
             }
-        }
-        //卖出操作
-        if($sellKeys){
-            for ($i=0; $i < count($sellKeys); $i++) { 
-                $tmpSell = $redis->get($sellKeys[$i]);
-                $sell[$sellKeys[$i]] = $tmpSell;
-                $stockSell[] = $tmpSell['stock'];
-            }
-            $stockInfo = getStock($stockSell,"s_");
-            $orderIndex = new OrderIndex;
-            foreach ($sell as $key => $value) {
-                if($orderIndex->isLimitMove($stockInfo[$value['stock']],2)){
+            //卖出操作
+            if($sellKeys){
+                for ($i=0; $i < count($sellKeys); $i++) { 
+                    $tmpSell = $redis->get($sellKeys[$i]);
+                    $sell[$sellKeys[$i]] = $tmpSell;
+                    $stockSell[] = $tmpSell['stock'];
+                }
+                $stockInfo = getStock($stockSell,"s_");
+                $orderIndex = new Trans;
+                foreach ($sell as $key => $value) {
                     if($stockInfo[$value['stock']][1] >= $value['price']){
-                        $funds = UserFunds::where(['uid'=>$value['uid']])->find();
-                        $orderIndex->sellProcess($value,$stockInfo,$funds,true);
-                        $redis->rm($key);
-                        $this->handle($value['stock_name']."卖出成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
-                    }
-                }else{
-                    if($stockInfo[$value['stock']][1] > $value['price']){
-                        $funds = UserFunds::where(['uid'=>$value['uid']])->find();
-                        $orderIndex->sellProcess($value,$stockInfo,$funds,true);
+                        $orderIndex->sellProcess($value,$stockInfo[$value['stock']],true);
                         $redis->rm($key);
                         $this->handle($value['stock_name']."卖出成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
                     }
                 }
             }
-        }
+        } 
     }
 
     /**
@@ -217,9 +203,30 @@ class Index extends Controller
             $userFunds->saveAll($userInfo);
             Db::commit();
             $this->handle("更新总盈利率和总资产成功",1);
+            $userInfo = UserFunds::field('uid')->select();
+            foreach ($userInfo as $key => $value) {
+                $tmp[] = $value['uid'];
+            }
+            $t = join(',',$tmp);
+            $redis = new Redis;
+            $redis->set("total_rate",$t);
         } catch (\Exception $e) {
             Db::rollback();
             $this->handle("更新总盈利率和总资产失败",0);
+        }
+    }
+
+    /**
+     * [autoStockRate 自动更新股票盈利率]
+     * @return [type] [description]
+     */
+    public function autoStockRate(){
+        // 启动事务
+        Db::startTrans();
+        try {
+            //UserPosition::group('stock')->Field('stock')->select();
+        } catch (\Exception $e) {
+            
         }
     }
 
@@ -231,16 +238,38 @@ class Index extends Controller
         // 启动事务
         Db::startTrans();
         try {
-            UserPosition::group('uid')->Field('id,uid')->chunk(500,function($list){
+            UserPosition::group('uid')->Field('id,uid,stock')->chunk(500,function($list){
                 $userPosition = new UserPosition;
                 $userGather = '';
                 foreach ($list as $key => $value) {
                     $userGather .= $value['uid'].',';
                 }
                 $userGather = substr($userGather,0,-1);
+                //获取股票集合
+                $stock = $userPosition->where(['is_position'=>1,'uid'=>['in',$userGather]])->Field('stock')->group('stock')->select();
+                
+                foreach ($stock as $key => $value) {
+                    $stockGather[] = $value['stock'];
+                }
+                $stockTmp = getStock($stockGather);
+                //dump($stockTmp);exit;
                 //获取持仓的集合
-                $userInfo = $userPosition->where(['uid'=>['in',$userGather]])->Field('id,uid,ratio')->select();
+                $userInfo = $userPosition->where(['uid'=>['in',$userGather]])->Field('id,uid,ratio,stock,(available_number + freeze_number) as number,cost_price')->select();
                 //计算选股成功率
+                foreach ($userInfo as $key => $value) {
+                    //把某一个用户的市值统计出来
+                    if($stockTmp[$value['stock']][3] != 0){
+                        $userInfo[$key]['assets'] = $value['number'] * $stockTmp[$value['stock']][3];
+                        $userInfo[$key]['ratio'] = round(($stockTmp[$value['stock']][3] - $value['cost_price'])/$value['cost_price'] * 100,3);
+
+                    }else{
+                        $userInfo[$key]['assets'] = $value['number'] * $stockTmp[$value['stock']][2];
+                        $userInfo[$key]['ratio'] = round(($stockTmp[$value['stock']][2] - $value['cost_price'])/$value['cost_price'] * 100,3);
+                    }
+                    $userInfo[$key] = $value->toArray();  
+                }
+                $userPosition->saveAll($userInfo);
+                $userInfo = $userPosition->where(['uid'=>['in',$userGather]])->Field('id,uid,ratio,stock,(available_number + freeze_number) as number,cost_price')->select();
                 foreach ($userInfo as $key => $value) {
                     $winRate[$value['uid']][] = $value['ratio'];
                 }
@@ -260,6 +289,8 @@ class Index extends Controller
                 $userFunds->saveAll($funds);
                 Db::commit();
                 $this->handle("自动更新胜率成功",1);
+                $redis = new Redis;
+                $redis->set("success_rate",$userGather);
             });
         } catch (\Exception $e) {
             Db::rollback();
@@ -561,6 +592,7 @@ class Index extends Controller
                 $buy = array_sum($tmpBuy);
                 $num = array_sum($numBuy);
                 $market = $stockData[$value['stock']][1] * ($num - $snum);
+                dump($value['stock']);
                 $data['funds'] = $market + $data['funds'];
                 $d['available_number'] = $num - $snum;
                 $d['freeze_number'] = 0;
@@ -568,10 +600,12 @@ class Index extends Controller
                 $d['cost'] = $buy;
                 $d['cost_price'] = round(($buy - $sell)/($num - $snum),8);
                 $d['ratio'] = round(($stockData[$value['stock']][1] - $d['cost_price']) / $value['cost_price'] * 100,8);
+                dump($market);
                 UserPosition::where(['id'=>$value['id']])->update($d);
             }
             $funds = UserFunds::where(['uid'=>$uid])->value('available_funds');
             $da['funds'] = $data['funds']+$funds;
+            dump($da);exit;
             UserFunds::where(['uid'=>$uid])->update($da);
             Db::commit();
             return json("成功");
@@ -597,30 +631,102 @@ class Index extends Controller
     }
 
     /**
-     * [autoUpdateMatch 自动更新周赛]
-     * @return [type] []
+     * [autoAverage 自动更新周平均率]
+     * @return [type] [description]
      */
-    public function autoUpdateWeekMatch(){
-        $id = Match::whereTime('start_date','week')->where(['type'=>1])->value('id');
-        $info = MatchUser::where('match_id',$id)->select();
-        foreach ($info as $key => $value) {
-            $funds = UserFunds::where(['uid'=>$value['uid']])->value('funds');
-            MatchUser::update(['end_capital'=>$funds],['id'=>$value['id']]);
-            $this->handle('更新用户周赛'.$value['uid'],1);
+    public function autoAverage(){
+        // 启动事务
+        Db::startTrans();
+        try {
+            $sql = "UPDATE `sjq_users_funds` f,(select uid,avg(proportion) as week_avg from `sjq_weekly_ratio` GROUP BY uid) obj set f.week_avg_profit_rate = obj.week_avg where f.uid=obj.uid";
+            Db::query($sql);
+            Db::commit();
+            $this->handle("更新周平均率成功",1);
+            $weekUser = WeeklyRatio::field('uid')->group('uid')->select();
+            foreach ($weekUser as $key => $value) {
+                $tmp[] = $value['uid'];
+            }
+            $t = join(',',$tmp);
+            $redis = new Redis;
+            $redis->set("week_avg_profit_rate",$t);
+        } catch (\Exception $e) {
+            Db::rollback();
+            $this->handle("更新周平均率失败",0);
         }
+        
     }
 
     /**
-     * [autoUpdateMonthMatch 自动更新月赛]
-     * @return [type] []
+     * [autoAddStock 自动添加股票]
+     * @return [type] [description]
      */
-    public function autoUpdateMonthMatch(){
-        $id = Match::whereTime('start_date','month')->where(['type'=>2])->value('id');
-        $info = MatchUser::where('match_id',$id)->select();
-        foreach ($info as $key => $value) {
-            $funds = UserFunds::where(['uid'=>$value['uid']])->value('funds');
-            MatchUser::update(['end_capital'=>$funds],['id'=>$value['id']]);
-            $this->handle('更新用户月赛'.$value['uid'],1);
-        }
+    public function autoAddStock(){
+        $flag = 1;
+        $tag1 = 'sh';
+        $tag2 = "sz";
+            
+            $host = "http://ali-stock.showapi.com";
+            $path = "/stocklist";
+            $method = "GET";
+            $appcode = "258d13c99a494969a8f12e9a123ae016";
+            $headers = array();
+            array_push($headers, "Authorization:APPCODE " . $appcode);
+            
+            $querys = "market={$tag2}&page=14";
+            $bodys = "";
+            $url = $host . $path . "?" . $querys;
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
+            curl_setopt($curl, CURLOPT_URL, $url);
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($curl, CURLOPT_FAILONERROR, false);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_HEADER, 0);
+            if (1 == strpos("$".$host, "https://"))
+            {
+                curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+            }
+            $res = curl_exec($curl);
+            $stock = json_decode($res,true);
+            foreach ($stock['showapi_res_body']['contentlist'] as $key => $value) {
+                $tmp[$key]['stock'] = $value['code'];
+                $tmp[$key]['stock_name'] = $value['name'];
+                $tmp[$key]['time'] = date('Y-m-d H:i:s');
+            }
+            $stock = new AllStock;
+            $stock->saveAll($tmp);
+             
     }
+
+    /**
+     * [autoAvgHoldDay 平均持股天数]
+     * @return [type] [description]
+     */
+    public function autoAvgHoldDay(){
+        // 启动事务
+        Db::startTrans();
+        try {
+            $userInfo = UserFunds::field('uid')->select();
+            foreach ($userInfo as $key => $value) {
+                $position = UserPosition::where(['uid'=>$value['uid']])->select();
+                if($position){
+                    foreach ($position as $k => $v) {
+                        $tmp[] = ceil((time() - strtotime($v['time'])) / 86400);
+                    }
+                    $avg_position_day = array_sum($tmp)/count($tmp);
+                    UserFunds::update(['avg_position_day'=>$avg_position_day],['uid'=>$value['uid']]);
+                    Db::commit();
+                    $this->handle("更新平均持股天数成功_".$value['uid'],1);
+                }
+                
+            }
+
+        } catch (\Exception $e) {
+            Db::rollback();
+            $this->handle("更新持股天数失败",0);
+        }
+        
+    }
+    
 }

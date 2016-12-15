@@ -10,6 +10,7 @@ use app\common\model\Rank as RankModel;
 use app\common\model\DaysRatio;
 use app\common\model\WeeklyRatio;
 use app\common\model\MonthRatio;
+use think\cache\driver\Redis;
 /**
 * 排行榜控制器
 */
@@ -37,7 +38,13 @@ class Rank extends Base
 			'success_rate' => 'success_rank',
 			'week_avg_profit_rate' => 'week_avg_rank'
 		];
-		$rankList = Userfunds::order("{$tmp[$data['condition']]} asc")->limit(($data['p']-1)*$limit,$limit)->Field("uid,total_rate,success_rate,avg_position_day,week_avg_profit_rate,round((funds-available_funds)/funds*100,2) as position,{$tmp[$data['condition']]} as rownum")->select();
+		$redis = new Redis;
+		$uid = $redis->get($data['condition']);
+		if($uid){
+			$rankList = Userfunds::where(['uid'=>['in',$uid]])->order("{$tmp[$data['condition']]} asc")->limit(($data['p']-1)*$limit,$limit)->Field("uid,total_rate,success_rate,avg_position_day,week_avg_profit_rate,round((funds-available_funds)/funds*100,2) as position,{$tmp[$data['condition']]} as rownum")->select();
+		}else{
+			$rankList = Userfunds::order("{$tmp[$data['condition']]} asc")->limit(($data['p']-1)*$limit,$limit)->Field("uid,total_rate,success_rate,avg_position_day,week_avg_profit_rate,round((funds-available_funds)/funds*100,2) as position,{$tmp[$data['condition']]} as rownum")->select();
+		}
 		foreach ($rankList as $key => $value) {
 			$value->append(['username']);
 			$value->avatar = Config('use_url.img_url') . '/avatar/img/'.$value->uid.'.png';

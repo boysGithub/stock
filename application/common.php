@@ -28,12 +28,19 @@ function getStock($key,$prefix='',$suffix=''){
 	$tmp = sendGetCurl($url);
 	$tmpArr = explode(';',$tmp);
 	array_pop($tmpArr);
+	
 	for ($i=0; $i < count($tmpArr); $i++) { 
 		$tArr = explode('=',$tmpArr[$i]);
 		if($tArr[1] == ""){
 			exit(JN(['status'=>'failed','data'=>'股票不存在，或者网络错误']));
 		}
-		$keys[] = mb_substr($tArr[0],14);
+
+		if($prefix == ''){
+			$keys[] = mb_substr($tArr[0],12);
+		}else{
+			$keys[] = mb_substr($tArr[0],14);
+		}
+		
 		$values[] = explode(',',$tArr[1]);
 	}
 

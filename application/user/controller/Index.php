@@ -211,6 +211,16 @@ class Index extends Base
             $fund['funds'] = round($fund['funds'], 2);
             $fund['available_funds'] = round($fund['available_funds'], 2);
             $fund['position'] = round(($fund['funds'] - $fund['available_funds'])/$fund['funds']*100,2);
+            $noBuy = Trans::where(['uid'=>$id,'status'=>0,'type'=>1])->select();
+            $tmp = '';
+            foreach ($noBuy as $key => $value) {
+                $tmp[] = $value['price'] * $value['number'] + $value['fee'];
+            }
+            if($tmp){
+                $buyMoney = array_sum($tmp);
+            }else{
+                $buyMoney = 0;
+            }
             $fund->avatar = Config('use_url.img_url') . '/avatar/img/'.$fund->uid.'.png';
             $result = json(['status'=>'success','data'=>$fund]);
         }else{
@@ -247,7 +257,7 @@ class Index extends Base
      * @return [json]       [description]
      */
     protected function getUserPosition($data){
-        $result['data'] = UserPosition::where(['uid'=>$data['uid'],'is_position'=>1])->order('time desc')->select();
+        $result['data'] = UserPosition::where(['uid'=>$data['uid'],'is_position'=>1])->order('update_time desc')->select();
         return $result;
     }
 
@@ -257,7 +267,7 @@ class Index extends Base
      * @return [json]       [返回订单详情]
      */
     protected function getUserNoOrder($data){
-        $result['data'] = Trans::where(['uid'=>$data['uid'],'status'=>0])->whereTime('time','today')->order('time desc')->select();
+        $result['data'] = Trans::where(['uid'=>$data['uid'],'status'=>0])->order('time desc')->select();
         return $result;
     }
 }
