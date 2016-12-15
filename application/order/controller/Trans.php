@@ -330,7 +330,7 @@ class Trans extends Base
 	        	$funds = UserFunds::where(['uid'=>$data['uid']])->find();
 	        	//订单参数
 	            $data['status'] = 1;
-	            $tmp = $data * $data['number'];
+	            $tmp = $data['price'] * $data['number'];
 	            $data['price'] = $stockData[1];
 	            $data['time'] = date("Y-m-d H:i:s");
 	            $data['fee'] = $data['price']*$data['number']*$scale >=5?$data['price']*$data['number']*$scale:5;
