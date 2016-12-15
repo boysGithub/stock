@@ -585,30 +585,39 @@ class Index extends Controller
     }
 
     /**
-     * [autoUpdateMatch 自动更新周赛]
-     * @return [type] []
+     * [autoAverage 自动更新周平均率]
+     * @return [type] [description]
      */
-    public function autoUpdateWeekMatch(){
-        $id = Match::whereTime('start_date','week')->where(['type'=>1])->value('id');
-        $info = MatchUser::where('match_id',$id)->select();
-        foreach ($info as $key => $value) {
-            $funds = UserFunds::where(['uid'=>$value['uid']])->value('funds');
-            MatchUser::update(['end_capital'=>$funds],['id'=>$value['id']]);
-            $this->handle('更新用户周赛'.$value['uid'],1);
-        }
+    public function autoAverage(){
+         
     }
 
-    /**
-     * [autoUpdateMonthMatch 自动更新月赛]
-     * @return [type] []
-     */
-    public function autoUpdateMonthMatch(){
-        $id = Match::whereTime('start_date','month')->where(['type'=>2])->value('id');
-        $info = MatchUser::where('match_id',$id)->select();
-        foreach ($info as $key => $value) {
-            $funds = UserFunds::where(['uid'=>$value['uid']])->value('funds');
-            MatchUser::update(['end_capital'=>$funds],['id'=>$value['id']]);
-            $this->handle('更新用户月赛'.$value['uid'],1);
-        }
-    }
+    // /**
+    //  * [autoUpdateMatch 自动更新周赛]
+    //  * @return [type] []
+    //  */
+    // public function autoUpdateWeekMatch(){
+    //     $id = Match::whereTime('start_date','week')->where(['type'=>1])->value('id');
+    //     $info = MatchUser::where('match_id',$id)->select();
+    //     foreach ($info as $key => $value) {
+    //         $funds = UserFunds::where(['uid'=>$value['uid']])->value('funds');
+    //         MatchUser::update(['end_capital'=>$funds],['id'=>$value['id']]);
+    //         $this->handle('更新用户周赛'.$value['uid'],1);
+    //     }
+    // }
+
+    // /**
+    //  * [autoUpdateMonthMatch 自动更新月赛]
+    //  * @return [type] []
+    //  */
+    // public function autoUpdateMonthMatch(){
+    //     $id = Match::whereTime('start_date','month')->where(['type'=>2])->value('id');
+    //     $info = MatchUser::where('match_id',$id)->select();
+    //     foreach ($info as $key => $value) {
+    //         $funds = UserFunds::where(['uid'=>$value['uid']])->value('funds');
+    //         MatchUser::update(['end_capital'=>$funds],['id'=>$value['id']]);
+    //         $this->handle('更新用户月赛'.$value['uid'],1);
+    //     }
+    // }
+    
 }

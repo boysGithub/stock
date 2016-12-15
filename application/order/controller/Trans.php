@@ -84,6 +84,10 @@ class Trans extends Base
 		        }else if($data['isMarket'] == 2){
 		        	//验证价格是否超过今天的区间
 		        	if( $data['price'] >= $limitDown && $data['price'] < $limitUp ){
+		        		//买入验证用户是否足够的资金
+		        		if(!$this->isCanBuy($data,$stock[$data['stock']])){
+		        			return json(['status'=>'failed','data'=>'可用资金不足']);
+		        		}
 		        		//验证股票是否涨停
 		        		if($this->isLimit($stock[$data['stock']],$data['type'])){
 			        		//比对价格进行成交
