@@ -137,8 +137,8 @@ function getStock() {
                                     prec: parseFloat(detail['2']),
                                     maxPrice: parseFloat(detail['4']),
                                     minPrice: parseFloat(detail['5']),
-                                    highLimit: (brief['0'].indexOf('ST') != -1) ? parseFloat((detail['2'] * 1.05).toFixed(2)) : parseFloat(detail['2'] * 1.1).toFixed(2),
-                                    lowerLimit: (brief['0'].indexOf('ST') != -1) ? parseFloat((detail['2'] * 0.95).toFixed(2)) : parseFloat(detail['2'] * 0.9).toFixed(2),
+                                    highLimit: parseFloat(detail['2'] * 1.1).toFixed(2),
+                                    lowerLimit: parseFloat(detail['2'] * 0.9).toFixed(2),
                                 }
 
                                 if(_this.isSelect){
@@ -178,7 +178,7 @@ function getStock() {
                         token: header.user.token,
                     }, function(data) {
                         if (data.status == 'success') {
-                            alert('委托提交成功');
+                            alert('委托成功');
                             window.location.reload(true);
                         } else {
                             alert(data.data);

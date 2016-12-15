@@ -57,7 +57,16 @@ header .tr-login-topbar a:hover{text-decoration: underline;}
 header .am-topbar-nav,header .am-topbar-right{line-height: 32px;}
 .tr-login-topbar a.topbar-out{margin-left: 10px;}
 .topbar-login:hover,.topbar-register:hover{color: #ef9e15;text-decoration: none;}
-header .tr-menu-topbar{background: #0d7cc4; line-height: 50px;}
+header .tr-menu-topbar{background: #0d7cc4; height: 100px; line-height: 100px;}
+.tr-menu-topbar .am-topbar-brand{line-height: inherit;}
+.tr-menu-nav a{font-size: 16px;}
+.tr-menu-nav .am-nav{line-height: inherit;}
+.tr-menu-nav .am-nav>li{padding: 0 1rem;}
+.tr-menu-nav .am-nav>li>a{display: inline; padding: 0 0 10px;}
+.tr-menu-nav .am-nav>li>a:focus, .tr-menu-nav .am-nav>li>a:hover{background: none; border-bottom: 2px solid #4a9ff6;}
+.tr-menu-nav .am-topbar-nav>li>a:hover:after,.tr-menu-nav .am-topbar-nav>li>a:focus:after{opacity:0;}
+.tr-menu-nav .am-topbar-nav>li.am-active>a,.tr-menu-nav .am-topbar-nav>li.am-active>a:focus,.tr-menu-nav .am-topbar-nav>li.am-active>a:hover{background: none; border-bottom: 2px solid #4a9ff6;}
+.tr-menu-nav .am-topbar-nav>li.am-active>a:after{opacity: 0;}
 
 /*footer*/
 footer{background: #555; color: #fff;}
@@ -65,19 +74,7 @@ footer{background: #555; color: #fff;}
 
 @media only screen and (max-width: 640px){	
 	header .tr-menu-topbar{background-size: initial; height: auto;}
-	.tr-menu-nav.tr-personal{display: block;}
-
 }
 @media only screen and (min-width: 641px){	
-	.tr-menu-topbar .am-topbar-brand{line-height: inherit;}
-	.tr-menu-nav{margin-left: 200px;}
-	.tr-menu-nav a{font-size: 16px;}
-	.tr-menu-nav .am-nav{line-height: inherit;float: none;}
-	.tr-menu-nav .am-nav>li{padding: 0 1rem;}
-	.tr-menu-nav .am-nav>li>a{display: inline; padding: 0 0 10px;}
-	.tr-menu-nav .am-nav>li>a:focus, .tr-menu-nav .am-nav>li>a:hover{background: none; border-bottom: 2px solid #4a9ff6;}
-	.tr-menu-nav .am-topbar-nav>li>a:hover:after,.tr-menu-nav .am-topbar-nav>li>a:focus:after{opacity:0;}
-	.tr-menu-nav .am-topbar-nav>li.am-active>a,.tr-menu-nav .am-topbar-nav>li.am-active>a:focus,.tr-menu-nav .am-topbar-nav>li.am-active>a:hover{background: none; border-bottom: 2px solid #4a9ff6;}
-	.tr-menu-nav .am-topbar-nav>li.am-active>a:after{opacity: 0;}
-	.tr-menu-nav .am-nav>li.tr-personal{float: right;}
+	.tr-menu-nav .tr-menu-nav-item{float: right;}
 }
