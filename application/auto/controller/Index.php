@@ -202,6 +202,13 @@ class Index extends Controller
             $userFunds->saveAll($userInfo);
             Db::commit();
             $this->handle("更新总盈利率和总资产成功",1);
+            $userInfo = UserFunds::field('uid')->select();
+            foreach ($userInfo as $key => $value) {
+                $tmp[] = $value['uid'];
+            }
+            $t = join(',',$tmp);
+            $redis = new Redis;
+            $redis->set("total_rate",$t);
         } catch (\Exception $e) {
             Db::rollback();
             $this->handle("更新总盈利率和总资产失败",0);
@@ -245,6 +252,8 @@ class Index extends Controller
                 $userFunds->saveAll($funds);
                 Db::commit();
                 $this->handle("自动更新胜率成功",1);
+                $redis = new Redis;
+                $redis->set("success_rate",$userGather);
             });
         } catch (\Exception $e) {
             Db::rollback();
@@ -596,6 +605,13 @@ class Index extends Controller
             Db::query($sql);
             Db::commit();
             $this->handle("更新周平均率成功",1);
+            $weekUser = WeeklyRatio::field('uid')->group('uid')->select();
+            foreach ($weekUser as $key => $value) {
+                $tmp[] = $value['uid'];
+            }
+            $t = join(',',$tmp);
+            $redis = new Redis;
+            $redis->set("week_avg_profit_rate",$t);
         } catch (\Exception $e) {
             Db::rollback();
             $this->handle("更新周平均率失败",0);
