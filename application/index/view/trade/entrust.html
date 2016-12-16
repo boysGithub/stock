@@ -197,7 +197,11 @@
     </div>       
 </div>     
 {/block}
-{block name="footer"}{include file="public/footer" /}{/block}
+{block name="footer"}
+    {include file="public/footer" /}
+    {include file="public/modal" /}
+{/block}
 {block name="js"}
-{js file="/static/js/trade/entrust.js"}
+    {js file="/static/js/public/modal.js"}
+    {js file="/static/js/trade/entrust.js"}
 {/block}

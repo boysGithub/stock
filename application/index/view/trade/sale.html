@@ -9,12 +9,12 @@
 {/block}
 {block name="header"}{include file="public/header" /}{/block}
 {block name="main"}
-<div class="am-container">
+<div class="am-container" id="sale">
     <div class="am-g">
         <div class="am-u-md-2 am-padding-right">
             {include file="trade/trade-left" /}
         </div>
-        <div class="am-u-md-10 am-padding-horizontal-sm" id="sale">
+        <div class="am-u-md-10 am-padding-horizontal-sm">
             <form class="am-form">
             <div class="am-u-md-6 tr-buy">
                 <div class="am-g am-form-group">
@@ -79,8 +79,8 @@
                 <div class="am-g am-form-group am-padding-top-sm">
                     <div class="am-u-sm-3"></div>
                     <div class="am-u-sm-9">
-                        <input type="button" class="am-btn am-btn-sm am-btn-success" v-on:click="order(2)" value="买入下单">
-                        <input type="button" class="am-btn am-btn-sm am-btn-danger am-margin-left-sm" v-on:click="order(1)" value="市价买入">
+                        <input type="button" class="am-btn am-btn-sm am-btn-success" v-on:click="order(2)" value="卖出下单">
+                        <input type="button" class="am-btn am-btn-sm am-btn-danger am-margin-left-sm" v-on:click="order(1)" value="市价卖出">
                     </div>
                 </div>
             </div>
@@ -180,10 +180,14 @@
             </div>
             </form>
         </div>
-    </div>    
+    </div>  
 </div>   
 {/block}
-{block name="footer"}{include file="public/footer" /}{/block}
+{block name="footer"}
+    {include file="public/footer" /}
+    {include file="public/modal" /}
+{/block}
 {block name="js"}
-{js file="/static/js/trade/sale.js"}
+    {js file="/static/js/public/modal.js"}
+    {js file="/static/js/trade/sale.js"}
 {/block}

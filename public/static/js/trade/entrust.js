@@ -57,30 +57,7 @@ var entrust = new Vue({
                 }
             });    
         },
-        revoke: function(e){
-            if(confirm('确定撤单？')){
-                var id = e.currentTarget.id;
-                var _this = this;
-
-                $.ajax({
-                    url: api_host + '/orders/'+id,
-                    type: 'PUT',
-                    dataType: 'json',
-                    data: {id: id,uid: header.user.uid,status: 2,token: header.user.token,},
-                    success: function(data){
-                        if(data.status == 'success'){
-                            alert('撤单成功');
-                            window.location.reload(true);
-                        } else {
-                            alert(data.data);
-                        }
-                    }
-                });
-            }else{
-
-            }
-        },
-        positions(){
+        getPositions: function(){
             var _this = this;
             $.getJSON(api_host + '/users',{uid: header.user.uid},function(data){
                 if(data.status == 'success'){
@@ -121,17 +98,36 @@ var entrust = new Vue({
                                 position.ratio_class = ((stock.assets - stock.cost) < 0) ? 'tr-color-lose' : 'tr-color-win';
                             }
 
-                            positions.push(position);
+                            _this.positions.push(position);
                         });
                     };
-
-                    _this.positions = positions;
                 }    
             });
         },
+        order: function(id){
+            var _this = this;
+
+            $.ajax({
+                url: api_host + '/orders/'+id,
+                type: 'PUT',
+                dataType: 'json',
+                data: {id: id,uid: header.user.uid,status: 2,token: header.user.token,},
+                success: function(data){
+                    if(data.status == 'success'){
+                        modal.imitateAlart('撤单成功', true);
+                    } else {
+                        modal.imitateAlart(data.data);
+                    }
+                }
+            });
+        },
+        revoke: function(e){
+            var id = e.currentTarget.id;
+            modal.imitateConfirm('您确定撤单吗？', 'entrust.order("'+id+'")', '');
+        },
         getEntrust: function(){
             if(header.logined){
-                this.positions();
+                this.getPositions();
                 this.updateOrder('entrust');
                 this.updateOrder('deal');
                 this.updateOrder('historical');

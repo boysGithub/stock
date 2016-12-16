@@ -12,11 +12,12 @@ var index = new Vue({
         total_rate_10: [],//总盈利率
         success_rate: [],//选股牛人
         week_avg_profit_rate: [],//常胜牛人
+        fans: [],//常胜牛人
         week_matchs: [],//周赛
         month_matchs: []//月赛
     },
     methods: {
-        ad_slider(){
+        updateAdSlider(){
             var timestamp = new Date().getTime();
             var data = localStorage.getItem('ad_slider');
             data = JSON.parse(data);
@@ -74,7 +75,7 @@ var index = new Vue({
             }    
             setTimeout(proclamationSlider, 200);
         },
-        recommend(){
+        updateRecommend(){
             var timestamp = new Date().getTime();
             var data = localStorage.getItem('recommend');
             data = JSON.parse(data);
@@ -143,7 +144,7 @@ var index = new Vue({
                 }
             });    
         },
-        week_rate(){
+        updateWeekRank(){
             var timestamp = new Date().getTime();
             var data = localStorage.getItem('week_rate');
             data = JSON.parse(data);
@@ -174,7 +175,7 @@ var index = new Vue({
                 this.week_rate = data.data;
             } 
         },
-        month_rate(){
+        updateMonthRank(){
             var timestamp = new Date().getTime();
             var data = localStorage.getItem('month_rate');
             data = JSON.parse(data);
@@ -283,7 +284,7 @@ var index = new Vue({
                 this.success_rate = data.data;
             }    
         },
-        week_avg_profit_rate(){
+        updateweekAvgRate(){
             var timestamp = new Date().getTime();
             var data = localStorage.getItem('week_avg_profit_rate');
             data = JSON.parse(data);
@@ -311,9 +312,37 @@ var index = new Vue({
                 this.week_avg_profit_rate = data.data;
             }    
         },
+        updateFans(){
+            var timestamp = new Date().getTime();
+            var data = localStorage.getItem('fans');
+            data = JSON.parse(data);
+            if(data == null || data.timestamp < timestamp){                
+                var _this = this;
+                $.getJSON(api_host + '/rank/getRankList',{condition:'fans'},function(data){
+                    if(data.status == 'success'){
+                        var ret = data.data;
+                        var fans = [];
+                        var length = (ret.length > 5) ? 5 : ret.length;
+                        for (var i = 0; i < length; i++) {
+                            fans.push({
+                                user_name: ret[i].username,
+                                portrait: ret[i].avatar,
+                                fans: ret[i].fans,
+                                uid: ret[i].uid
+                            });
+                        }
+
+                        localStorage.setItem('fans',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: fans}));
+                        _this.fans = fans;
+                    }    
+                });
+            } else {
+                this.fans = data.data;
+            }    
+        },
         updateMatchs: function(type){               
             var _this = this;
-            $.getJSON('http://www.tp5.com/match/index.html',{type: type, limit:2},function(data){
+            $.getJSON(api_host+'/match/index',{type: type, limit:2},function(data){
                 if(data.status == 'success'){
                     var ret = data.data;
                     var matchs = [];
@@ -355,15 +384,16 @@ var index = new Vue({
         },
     },
     mounted: function(){
-        this.ad_slider();
+        this.updateAdSlider();
         this.updateProclamation();
-        this.recommend();
+        this.updateRecommend();
         this.updateTalentDynamic();
-        this.week_rate();
-        this.month_rate();
+        this.updateWeekRank();
+        this.updateMonthRank();
         this.updateTotalRate();
         this.updateSuccessRate();
-        this.week_avg_profit_rate();
+        this.updateweekAvgRate();
+        this.updateFans();
         this.updateMatchs('1');
         this.updateMatchs('2');
     }

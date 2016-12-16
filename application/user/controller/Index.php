@@ -267,7 +267,7 @@ class Index extends Base
      * @return [json]       [返回订单详情]
      */
     protected function getUserNoOrder($data){
-        $result['data'] = Trans::where(['uid'=>$data['uid'],'status'=>0])->order('time desc')->select();
+        $result['data'] = Trans::where(['uid'=>$data['uid'],'status'=>0])->order('update_time desc')->select();
         return $result;
     }
 }
