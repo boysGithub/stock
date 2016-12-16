@@ -25,6 +25,7 @@ var personal = new Vue({
                     var info = {
                         avatar: ret.avatar,
                         user_name: ret.username, 
+                        account: ret.account, 
                         position: ret.position + '%',//持仓
                         win_rate: ret.win_rate + '%',//胜率
                         shares: ret.shares,//当日盈亏
