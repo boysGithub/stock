@@ -6,6 +6,7 @@ use app\common\model\Match as MatchModel;
 use app\common\model\MatchUser;
 use app\common\model\DaysRatio;
 use app\common\model\WeeklyRatio;
+use app\common\model\MonthRatio;
 use app\common\model\UserFunds;
 use app\common\model\User;
 /**
@@ -121,36 +122,35 @@ class Match extends Base
             return json(['status'=>'failed','data'=>'比赛不存在']);
         }
 
-        $where = "";
-        $field = "mu.id,mu.uid,u.username,uf.success_rate,uf.week_avg_profit_rate,uf.avg_position_day,uf.total_rate,(dr.endFunds - dr.initialCapital) / dr.initialCapital * 100 days_rate,(wr.endFunds - wr.initialCapital) / wr.initialCapital * 100 week_rate,(mr.endFunds - mr.initialCapital) / mr.initialCapital * 100 month_rate";
+        $where = "1=1";
+        $field = "";
         $order = "";
         //比赛排行
         if($match->type == 1){//周赛
-            $where = " AND DATE_FORMAT(mrc.time,'%Y-%u')='" . date('Y-W', strtotime($match->start_date)) . "'";
-            $field .= ",(SELECT count(muc.id) FROM sjq_match_user muc LEFT JOIN sjq_weekly_ratio wr ON muc.uid=wr.uid{$where} WHERE muc.match_id={$match['id']} AND (wr.endFunds - wr.initialCapital) / wr.initialCapital * 100 > week_rate)+1 ranking";
+            $where = "DATE_FORMAT(time,'%Y-%u')='" . date('Y-W', strtotime($match->start_date)) . "'";
+            $field .= ",(SELECT count(muc.id) FROM sjq_match_user muc LEFT JOIN sjq_weekly_ratio wr ON muc.uid=wr.uid AND {$where} WHERE muc.match_id={$match['id']} AND (wr.endFunds - wr.initialCapital) / wr.initialCapital * 100 > week_rate)+1 ranking";
             $order = "week_rate DESC";
         } elseif ($match->type == 2){//月赛
-            $where = " AND DATE_FORMAT(mr.time,'%Y-%m')='" . date('Y-m', strtotime($match->start_date)) . "'";
-            $field .= ",(SELECT count(muc.id) FROM sjq_match_user muc LEFT JOIN sjq_month_ratio mr ON muc.uid=mr.uid{$where} WHERE muc.match_id={$match['id']} AND (mr.endFunds - mr.initialCapital) / mr.initialCapital * 100 > month_rate)+1 ranking";
+            $where = "DATE_FORMAT(time,'%Y-%m')='" . date('Y-m', strtotime($match->start_date)) . "'";
+            $field .= ",(SELECT count(muc.id) FROM sjq_match_user muc LEFT JOIN sjq_month_ratio mr ON muc.uid=mr.uid AND {$where} WHERE muc.match_id={$match['id']} AND (mr.endFunds - mr.initialCapital) / mr.initialCapital * 100 > month_rate)+1 ranking";
             $order = "month_rate DESC";
         }
-        $days_sql = DaysRatio::where("DATE_FORMAT(time,'%Y-%m')='" . date('Y-m', strtotime($match->start_date)) . "'")->field("uid,endFunds,initialCapital")->order('time DESC')->limit(1)->buildSql();
-        $weekly_sql = WeeklyRatio::where("DATE_FORMAT(time,'%Y-%m')='" . date('Y-m', strtotime($match->start_date)) . "'")->field("uid,endFunds,initialCapital")->order('time DESC')->limit(1)->buildSql();
+        $days_sql = DaysRatio::where($where.' AND uid=mu.uid')->field("(endFunds - initialCapital) / initialCapital * 100")->order('time DESC')->limit(1)->buildSql();
+        $weekly_sql = WeeklyRatio::where($where.' AND uid=mu.uid')->field("(endFunds - initialCapital) / initialCapital * 100")->order('time DESC')->limit(1)->buildSql();
+        $month_sql = MonthRatio::where("DATE_FORMAT(time,'%Y-%m')='" . date('Y-m', strtotime($match->start_date)) . "' AND uid=mu.uid")->field("(endFunds - initialCapital) / initialCapital * 100")->order('time DESC')->limit(1)->buildSql();
         $join = [
             ["sjq_users u", "mu.uid=u.uid", 'LEFT'],
-            ["sjq_users_funds uf", "mu.uid=u.uid", 'LEFT'],
-            [[$days_sql => "dr"], "mu.uid=dr.uid", 'LEFT'],
-            [[$weekly_sql => "wr"], "mu.uid=wr.uid", 'LEFT'],
-            ["sjq_month_ratio mr", "mu.uid=mr.uid AND DATE_FORMAT(mr.time,'%Y-%m')='" . date('Y-m', strtotime($match->start_date)) . "'", 'LEFT']
+            ["sjq_users_funds uf", "mu.uid=uf.uid", 'LEFT'],
         ];
+        $field = "mu.id,mu.uid,u.username,uf.success_rate,uf.week_avg_profit_rate,uf.avg_position_day,uf.total_rate,{$days_sql} days_rate, {$weekly_sql} week_rate, {$month_sql} month_rate{$field}";
+        
         $rankList = MatchUser::where(['match_id'=>$match->id])->alias('mu')
             ->field($field)
             ->join($join)
             ->limit(($page-1)*$limit, $limit)
             ->order($order)
-            ->fetchSql(true)
             ->select();
-        echo $rankList;die;
+           
         $res = [
             'match'=>['id'=>$match->id,'name'=>$match->name,'joined'=>0,'total_rate'=>0,'ranking'=> 0],
         ];
@@ -159,16 +159,16 @@ class Match extends Base
 
             if(isset($data['uid']) && $data['uid'] > 0 && $val->uid == $data['uid']){//登录后获取参加状态和排名
                 $res['match']['joined'] = 1;
-                $res['match']['total_rate'] = $match->type == 1 ? $val->week_rate : $val->month_rate;
+                $res['match']['total_rate'] = $match->type == 1 ? round($val->week_rate,2) : round($val->month_rate, 2);
                 $res['match']['ranking'] = $val->ranking;
             }
 
-            $val->days_rate = round($val->days_rate * 100, 2);
-            $val->week_rate = round($val->week_rate * 100, 2);
-            $val->month_rate = round($val->month_rate * 100, 2);
-            $val->total_rate = round($val->total_rate * 100, 2);
-            $val->success_rate = round($val->success_rate * 100, 2);
-            $val->week_avg_profit_rate = round($val->week_avg_profit_rate * 100, 2);
+            $val->days_rate = round($val->days_rate, 2);
+            $val->week_rate = round($val->week_rate, 2);
+            $val->month_rate = round($val->month_rate, 2);
+            $val->total_rate = round($val->total_rate, 2);
+            $val->success_rate = round($val->success_rate, 2);
+            $val->week_avg_profit_rate = round($val->week_avg_profit_rate, 2);
         }
 
         $res['rankList'] = $rankList;
