@@ -41,7 +41,7 @@ var match_details = new Vue({
                             });
                         }
 
-                        localStorage.setItem('matchRanking',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, ranking: ranking, match: match}));
+                        localStorage.setItem('matchRanking',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, ranking: ranking, match: data.data.match}));
                         _this.match = data.data.match;
                         _this.ranking = ranking;
                     }    

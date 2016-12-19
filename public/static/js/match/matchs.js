@@ -57,7 +57,7 @@ var matchs = new Vue({
                 this.updateMatchs();
             } else {
                 if(this.count < 10){
-                    this.close = setTimeout(getMatchs, 300);
+                    this.close = setTimeout(this.getMatchs, 300);
                     this.count += 1;
                 } else {
                     clearTimeout(this.close);
@@ -67,6 +67,6 @@ var matchs = new Vue({
     },
     mounted: function(){
         this.updateMatchs();
-        setTimeout(getMatchs, 100);
+        setTimeout(this.getMatchs, 100);
     }
 });

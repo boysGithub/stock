@@ -35,9 +35,11 @@
             <tr v-for="item in ranking">
                 <td><span :class="'tr-rank'+ item.ranking_icon">{{ item.ranking }}</span></td>
                 <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name">{{ item.user_name }}</a></td>
-                <td><span :class="item.week_rate_class">{{ item.week_rate }}</span></td>
+                <td v-if="match.type == 1"><span class="tr-color-order">{{ item.week_rate }}</span></td>
+                <td v-else><span :class="item.week_rate_class">{{ item.week_rate }}</span></td>
                 <td><span :class="item.days_rate_class">{{ item.days_rate }}</span></td>
-                <td><span class="tr-color-order">{{ item.month_rate }}</span></td>
+                <td v-if="match.type == 2"><span class="tr-color-order">{{ item.month_rate }}</span></td>
+                <td v-else><span :class="item.month_rate_class">{{ item.month_rate }}</span></td>
                 <td><span :class="item.total_rate_class">{{ item.total_rate }}</span></td>
                 <td><span>{{ item.success_rate }}</span></td>
                 <td><span>{{ item.avg_position_day }}</span></td>

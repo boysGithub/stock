@@ -104,7 +104,7 @@ var personal = new Vue({
                     for (var i = 0; i < data.data.length; i++) {
                         var stock = data.data[i];
                        
-                        positions.push{
+                        positions.push({
                             stock: stock.stock,
                             stock_name: stock.stock_name,
                             time: stock.time.substring(0,10),
@@ -112,11 +112,11 @@ var personal = new Vue({
                             profit: parseFloat((stock.assets * stock.ratio).toFixed(2)),//盈亏
                             ratio: stock.ratio + '%',
                             ratio_class: (stock.ratio < 0) ? 'tr-color-lose' : 'tr-color-win'
-                        };
+                        });
  
                     }
                     
-                    _this.positions = positions;
+                    _this.history_positions = positions;
                 }    
             });
         },
