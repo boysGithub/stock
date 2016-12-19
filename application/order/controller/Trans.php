@@ -517,8 +517,8 @@ class Trans extends Base
         		$data['time'] = date("Y-m-d H:i:s");
         		//手续费最低为5元
             	$data['fee'] = $data['price']*$data['number']*$scale >=5?$data['price']*$data['number']*$scale:5;
-        		$data['available_funds'] = $funds['available_funds'] + $data['price']*$data['number'] - $data['fee'];
         		$funds = UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->find();
+        		$data['available_funds'] = $funds['available_funds'] + $data['price']*$data['number'] - $data['fee'];
         		//为用户增加卖出金额
         		$d['funds'] = $funds['funds'] - $data['fee'];
         		$d['available_funds'] = $data['available_funds'];
@@ -565,7 +565,7 @@ class Trans extends Base
             	}else{
             		//组装持仓信息
             		$da['assets'] = $data['price'] * ($userInfo['available_number'] + $userInfo['freeze_number'] + $number);
-            		$da['position_number'] = $da['position_number'] - $data['number'];
+            		$da['position_number'] = $userInfo['available_number'] + $userInfo['freeze_number'] + $number - $data['number'];
             		$da['fee'] = $userInfo['fee'] + $data['fee'];
             		$da['cost'] = $userInfo['cost'] - $data['price'] * $data['number'] + $data['fee'];
             		$da['cost_price'] = round($da['cost'] / ($userInfo['freeze_number']+$userInfo['available_number']+$number),3);
@@ -641,6 +641,7 @@ class Trans extends Base
             	}else{
             		//组装持仓信息
             		$da['available_number'] = $userInfo['available_number'] - $data['number'];
+            		$da['position_number'] = $da['available_number'] + $userInfo['freeze_number'] + $number - $data['number'];
             		$da['assets'] = $stockData[$data['stock']][1] * ($da['available_number'] + $userInfo['freeze_number'] + $number);
             		$da['fee'] = $userInfo['fee'] + $data['fee'];
             		$da['cost'] = $userInfo['cost'] - $stockData[$data['stock']][1] * $data['number'] + $data['fee'];

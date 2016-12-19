@@ -40,7 +40,7 @@ class Index extends Controller
         $t2 = strtotime(date("Y-m-d 11:30:00"));
         $t3 = strtotime(date("Y-m-d 13:00:00"));
         $t4 = strtotime(date("Y-m-d 15:00:00"));
-        if(($t1 <= time() && $t2 >= time()) || ($t3 <= time() && $t4 >= time())){
+        //if(($t1 <= time() && $t2 >= time()) || ($t3 <= time() && $t4 >= time())){
             $redis = new Redis();
             $buyKeys = $redis->keys("*noBuyOrder*");
             $sellKeys = $redis->keys("*noSellOrder*");
@@ -56,6 +56,7 @@ class Index extends Controller
                 foreach ($buy as $key => $value) {
                     if($stockInfo[$value['stock']][1] <= $value['price']){
                         $orderIndex->buyProcess($value,$stockInfo[$value['stock']],true);
+                        exit();
                         $redis->rm($key);
                         $this->handle($value['stock_name']."买入成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
                     }
@@ -69,8 +70,10 @@ class Index extends Controller
                     $stockSell[] = $tmpSell['stock'];
                 }
                 $stockInfo = getStock($stockSell,"s_");
+
                 $orderIndex = new Trans;
                 foreach ($sell as $key => $value) {
+                    
                     if($stockInfo[$value['stock']][1] >= $value['price']){
                         $orderIndex->sellProcess($value,$stockInfo[$value['stock']],true);
                         $redis->rm($key);
@@ -78,7 +81,7 @@ class Index extends Controller
                     }
                 }
             }
-        } 
+        //} 
     }
 
     /**
