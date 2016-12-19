@@ -79,7 +79,7 @@ class Share extends Base
         if($historical){
             return json(['status'=>'success','data'=>$historical,'pageTotal'=>$count]);
         }else{
-            return json(['status'=>'failed','data'=>'还没有历史持仓','pageTotal'=>0]);
+            return json(['status'=>'failed','data'=>'还没有历史持仓','pageTotal'=>$count]);
         }
     }
 }	
