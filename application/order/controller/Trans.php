@@ -108,7 +108,7 @@ class Trans extends Base
 			        		return $this->noBuyOrder($data,$stock);
 		        		}
 		        	}else{
-	        			return json(['status'=>'failed','data'=>'价格不能超过'.$limitDown.'元和'.$limitUp.'元']);
+	        			return json(['status'=>'failed','data'=>'价格不能以跌停和涨停价买入']);
 	        		}
 		        }
         	}else{
@@ -189,7 +189,7 @@ class Trans extends Base
 	        			}
 	        		}
 	        	}else{
-        			return json(['status'=>'failed','data'=>'价格不能超过'.$limitDown.'元和'.$limitUp.'元']);
+        			return json(['status'=>'failed','data'=>'价格不能以跌停和涨停价买入']);
         		}
 	        }
         }
