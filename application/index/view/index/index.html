@@ -327,13 +327,15 @@
                     <div class="am-u-md-3 am-padding-horizontal-sm">
                         <a :href="'{:url('index/macthUser')}?id=' + item.id"><img :src="item.image" :alt="item.name" width="100%" /></a>
                     </div>
-                    <div class="am-u-md-9 am-padding-left am-margin-top">
+                    <div class="am-u-md-7 am-padding-left am-margin-top">
                         <div>
                             <a :href="'{:url('index/macthUser')}?id=' + item.id" :title="item.name" class="am-margin-right tr-simulation-name">{{ item.name }}</a>
-                            <span :class="'tr-status'+item.status_class">{{ item.status_name }}</span>
                         </div>
                         <p class="am-margin-vertical">比赛时间：{{ item.start_date }} 到 {{ item.end_date }}
                         </p>
+                    </div>
+                    <div class="am-u-md-2 am-padding-left tr-status-div">
+                        <span :class="'tr-status'+item.status_class">{{ item.status_name }}</span>
                     </div>
                 </div>    
                 <div class="am-u-lg-2 am-list-main am-text-center tr-list-button">
@@ -350,16 +352,19 @@
                     <div class="am-u-md-3 am-padding-horizontal-sm">
                         <a :href="'{:url('index/macthUser')}?id=' + item.id"><img :src="item.image" :alt="item.name" class="am-img-responsive" /></a>
                     </div>
-                    <div class="am-u-md-9 am-padding-left am-margin-top">
+                    <div class="am-u-md-7 am-padding-left am-margin-top">
                         <div>
                             <a :href="'{:url('index/macthUser')}?id=' + item.id" :title="item.name" class="am-margin-right tr-simulation-name">{{ item.name }}</a>
-                            <span :class="'tr-status'+item.status_class">{{ item.status_name }}</span>
                         </div>
                         <p class="am-margin-vertical">比赛时间：{{ item.start_date }} 到 {{ item.end_date }}
                         </p>
                     </div>
+                    <div class="am-u-md-2 am-padding-left tr-status-div">
+                        <span :class="'tr-status'+item.status_class">{{ item.status_name }}</span>
+                    </div>
                 </div>    
-                <div class="am-u-lg-2 am-list-main am-text-center tr-list-button">    <a href="javascript:;" :href-url="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-sm" :id="item.id" v-on:click="join_match">参加比赛</a>
+                <div class="am-u-lg-2 am-list-main am-text-center tr-list-button">    
+                    <a href="javascript:;" :href-url="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-sm" :id="item.id" v-on:click="join_match">参加比赛</a>
                 </div>    
             </div>
         </div>
