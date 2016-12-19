@@ -152,11 +152,10 @@ class Match extends Base
             ->select();
            
         $res = [
-            'match'=>['id'=>$match->id,'name'=>$match->name,'joined'=>0,'total_rate'=>0,'ranking'=> 0],
+            'match'=>['id'=>$match->id,'name'=>$match->name,'type'=> $match->type, 'joined'=>0,'total_rate'=>0,'ranking'=> 0],
         ];
 
         foreach ($rankList as $key => $val) {
-
             if(isset($data['uid']) && $data['uid'] > 0 && $val->uid == $data['uid']){//登录后获取参加状态和排名
                 $res['match']['joined'] = 1;
                 $res['match']['total_rate'] = $match->type == 1 ? round($val->week_rate,2) : round($val->month_rate, 2);

@@ -21,21 +21,28 @@ var match_details = new Vue({
                 $.getJSON(api_host + '/match/detail',r_data,function(data){
                     if(data.status == 'success'){
                         var ret = data.data.rankList;
-                        var match = data.data.match;
                         var ranking = [];
                         for (var i = 0; i < ret.length; i++) {
                             ranking.push({
-                                uid: ret[i].uid,
-                                user_name: ret[i].user_name,
-                                total_rate: ret[i].total_rate + '%',
+                                user_name: ret[i].username,
+                                week_rate: ret[i].week_rate + '%',
+                                week_rate_class: (ret[i].week_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                days_rate: ret[i].days_rate + '%',
+                                days_rate_class: (ret[i].days_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                month_rate: ret[i].month_rate + '%',
+                                month_rate_class: (ret[i].month_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                total_rate: ret[i].total_rate+'%',
                                 total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                ranking: ret[i].ranking,
-                                ranking_class: (ret[i].ranking < 4) ? ' tr-icon' : ''
+                                success_rate: ret[i].success_rate+'%',
+                                avg_position_day: ret[i].avg_position_day,
+                                week_avg_profit_rate: ret[i].week_avg_profit_rate+'%',
+                                week_avg_profit_rate_class: (ret[i].week_avg_profit_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                uid: ret[i].uid
                             });
                         }
 
                         localStorage.setItem('matchRanking',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, ranking: ranking, match: match}));
-                        _this.match = match;
+                        _this.match = data.data.match;
                         _this.ranking = ranking;
                     }    
                 });
