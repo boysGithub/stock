@@ -28,6 +28,16 @@ class Advertisement extends Base
 		return $this->fetch();
 	}
 
+	//广告
+	public function banner()
+	{
+		$advertisement = AdModel::where(['type'=>['<>', 2],'type'=>['<>', 1]])->select();
+
+		$this->assign('ads', $advertisement);
+
+		return $this->fetch();
+	}
+
 	public function save_add()
 	{
 		$data = [

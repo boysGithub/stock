@@ -208,7 +208,7 @@ var index = new Vue({
             var data_10 = localStorage.getItem('total_rate_10');
             data = JSON.parse(data);
             data_10 = JSON.parse(data_10);
-            if(data == null || data.timestamp < timestamp || ){
+            if(data == null || data.timestamp < timestamp || data.data.length < 1){
                 var _this = this;
                 $.getJSON(api_host+'/rank/getRankList',{condition:'total_rate'},function(data){
                     if(data.status == 'success'){
