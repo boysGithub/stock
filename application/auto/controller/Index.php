@@ -710,19 +710,36 @@ class Index extends Controller
         try {
             $userInfo = UserFunds::field('uid')->select();
             foreach ($userInfo as $key => $value) {
-                $position = UserPosition::where(['uid'=>$value['uid']])->select();
+                $position = UserPosition::where(['uid'=>$value['uid'],'is_position'=>1])->select();
                 if($position){
                     foreach ($position as $k => $v) {
                         $tmp[] = ceil((time() - strtotime($v['time'])) / 86400);
                     }
                     $avg_position_day = array_sum($tmp)/count($tmp);
-                    UserFunds::update(['avg_position_day'=>$avg_position_day],['uid'=>$value['uid']]);
-                    Db::commit();
-                    $this->handle("更新平均持股天数成功_".$value['uid'],1);
+                }  
+                $position2 = UserPosition::where(['uid'=>$value['uid'],'is_position'=>2])->select();
+                if($position2){
+                    foreach ($position2 as $k => $v) {
+                        $tmp2[] = ceil((strtotime($v['last_time']) - strtotime($v['time'])) / 86400);
+                    }
+                    $avg_position_day2 = array_sum($tmp2)/count($tmp2);
                 }
-                
-            }
 
+                if($position && $position2){
+                    $avg_position_day = ($avg_position_day + $avg_position_day2)/2;
+                    UserFunds::update(['avg_position_day'=>$avg_position_day],['uid'=>$value['uid']]);
+                    $this->handle("更新平均持股天数成功_".$value['uid'],1);
+                    Db::commit(); 
+                }else if($position){
+                    UserFunds::update(['avg_position_day'=>$avg_position_day],['uid'=>$value['uid']]);
+                    $this->handle("更新平均持股天数成功_".$value['uid'],1);
+                    Db::commit(); 
+                }else if($position2){
+                    UserFunds::update(['avg_position_day'=>$avg_position_day2],['uid'=>$value['uid']]);
+                    $this->handle("更新平均持股天数成功_".$value['uid'],1);
+                    Db::commit(); 
+                }
+            }
         } catch (\Exception $e) {
             Db::rollback();
             $this->handle("更新持股天数失败",0);
