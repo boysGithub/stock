@@ -354,6 +354,7 @@ class Trans extends Base
 	                $da['assets'] = $data['price'] * ($da['freeze_number']+$userInfo['available_number']);
 	                $da['ratio'] = round(($data['price'] - $da['cost_price']) / $da['cost_price']*100,3);
 	                $da['last_time'] = date("Y-m-d H:i:s");
+	                $da['position_number'] = $da['freeze_number'] + $userInfo['available_number'];
 	                $UserPosition = new UserPosition;
 	               	$UserPosition->allowField(true)->where(['id'=>$userInfo['id']])->update($da);
 	               	$data['pid'] = $userInfo['id'];
@@ -376,6 +377,7 @@ class Trans extends Base
 	                $da['sorts'] = $data['sorts'];
 	                $da['ratio'] = round(($data['price'] - $da['cost_price'])/$da['cost_price']*100,3);
 	                $da['last_time'] = date("Y-m-d H:i:s");
+	                $da['position_number'] = $da['freeze_number'];
 	                $UserPosition = new UserPosition;
                 	$UserPosition->allowField(true)->save($da);
                 	$data['pid'] = $UserPosition->id;
@@ -419,6 +421,7 @@ class Trans extends Base
 	                $da['assets'] = $data['price'] * ($da['freeze_number']+$userInfo['available_number']);
 	                $da['ratio'] = round(($data['price'] - $da['cost_price']) / abs($da['cost_price'])*100,3);
 	                $da['last_time'] = date("Y-m-d H:i:s");
+	                $da['position_number'] = $da['freeze_number'] + $userInfo['available_number'];
 	                $UserPosition = new UserPosition;
 	               	$UserPosition->allowField(true)->where(['id'=>$userInfo['id']])->update($da);
 	               	$data['pid'] = $userInfo['id'];
@@ -439,6 +442,7 @@ class Trans extends Base
 	                $da['uid'] = $data['uid'];
 	                $da['time'] = date("Y-m-d H:i:s",time());
 	                $da['sorts'] = $data['sorts'];
+	                $da['position_number'] = $da['freeze_number'];
 	                $da['ratio'] = round(($data['price'] - $da['cost_price'])/abs($da['cost_price'])*100,3);
 	                $da['last_time'] = date("Y-m-d H:i:s");
 	                $UserPosition = new UserPosition;
@@ -547,6 +551,7 @@ class Trans extends Base
                     }
                     //组装持仓信息
             		$da['available_number'] = 0;
+            		$da['position_number'] = 0;
             		$da['is_position'] = 2;
             		$da['assets'] = $profits + $stockData[$data['stock']][1] * $number;
             		$da['fee'] = $userInfo['fee'] + $data['fee'];
@@ -560,6 +565,7 @@ class Trans extends Base
             	}else{
             		//组装持仓信息
             		$da['assets'] = $data['price'] * ($userInfo['available_number'] + $userInfo['freeze_number'] + $number);
+            		$da['position_number'] = $da['position_number'] - $data['number'];
             		$da['fee'] = $userInfo['fee'] + $data['fee'];
             		$da['cost'] = $userInfo['cost'] - $data['price'] * $data['number'] + $data['fee'];
             		$da['cost_price'] = round($da['cost'] / ($userInfo['freeze_number']+$userInfo['available_number']+$number),3);
