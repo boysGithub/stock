@@ -205,9 +205,9 @@ class Index extends Controller
             $this->handle("更新总盈利率和总资产成功",1);
             $userInfo = UserFunds::field('uid')->select();
             foreach ($userInfo as $key => $value) {
-                $tmp[] = $value['uid'];
+                $tmp1[] = $value['uid'];
             }
-            $t = join(',',$tmp);
+            $t = join(',',$tmp1);
             $redis = new Redis;
             $redis->set("total_rate",$t);
         } catch (\Exception $e) {
