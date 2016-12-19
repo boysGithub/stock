@@ -257,7 +257,7 @@ class Index extends Base
      * @return [json]       [description]
      */
     protected function getUserPosition($data){
-        $result['data'] = UserPosition::where(['uid'=>$data['uid'],'is_position'=>1])->order('update_time desc')->select();
+        $result['data'] = UserPosition::where(['uid'=>$data['uid'],'is_position'=>1])->order('last_time desc')->select();
         return $result;
     }
 
@@ -267,7 +267,7 @@ class Index extends Base
      * @return [json]       [返回订单详情]
      */
     protected function getUserNoOrder($data){
-        $result['data'] = Trans::where(['uid'=>$data['uid'],'status'=>0])->order('update_time desc')->select();
+        $result['data'] = Trans::where(['uid'=>$data['uid'],'status'=>0])->order('id desc')->select();
         return $result;
     }
 }

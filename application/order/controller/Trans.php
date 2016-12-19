@@ -353,6 +353,7 @@ class Trans extends Base
 	                $da['cost_price'] = round($da['cost'] / ($da['freeze_number']+$userInfo['available_number']),3);
 	                $da['assets'] = $data['price'] * ($da['freeze_number']+$userInfo['available_number']);
 	                $da['ratio'] = round(($data['price'] - $da['cost_price']) / $da['cost_price']*100,3);
+	                $da['last_time'] = date("Y-m-d H:i:s");
 	                $UserPosition = new UserPosition;
 	               	$UserPosition->allowField(true)->where(['id'=>$userInfo['id']])->update($da);
 	               	$data['pid'] = $userInfo['id'];
@@ -374,6 +375,7 @@ class Trans extends Base
 	                $da['time'] = date("Y-m-d H:i:s",time());
 	                $da['sorts'] = $data['sorts'];
 	                $da['ratio'] = round(($data['price'] - $da['cost_price'])/$da['cost_price']*100,3);
+	                $da['last_time'] = date("Y-m-d H:i:s");
 	                $UserPosition = new UserPosition;
                 	$UserPosition->allowField(true)->save($da);
                 	$data['pid'] = $UserPosition->id;
@@ -416,6 +418,7 @@ class Trans extends Base
 	                $da['cost_price'] = round($da['cost'] / ($da['freeze_number']+$userInfo['available_number']),3);
 	                $da['assets'] = $data['price'] * ($da['freeze_number']+$userInfo['available_number']);
 	                $da['ratio'] = round(($data['price'] - $da['cost_price']) / abs($da['cost_price'])*100,3);
+	                $da['last_time'] = date("Y-m-d H:i:s");
 	                $UserPosition = new UserPosition;
 	               	$UserPosition->allowField(true)->where(['id'=>$userInfo['id']])->update($da);
 	               	$data['pid'] = $userInfo['id'];
@@ -437,6 +440,7 @@ class Trans extends Base
 	                $da['time'] = date("Y-m-d H:i:s",time());
 	                $da['sorts'] = $data['sorts'];
 	                $da['ratio'] = round(($data['price'] - $da['cost_price'])/abs($da['cost_price'])*100,3);
+	                $da['last_time'] = date("Y-m-d H:i:s");
 	                $UserPosition = new UserPosition;
                 	$UserPosition->allowField(true)->save($da);
                 	$data['pid'] = $UserPosition->id;
@@ -549,6 +553,7 @@ class Trans extends Base
             		$da['cost'] = $total;
             		$da['cost_price'] = round($da['cost'] / $num,3);
             		$da['ratio'] = round(($da['assets'] - $da['cost'])/$da['cost']*100,3);
+            		$da['last_time'] = date("Y-m-d H:i:s");
                 	//更改持仓信息到数据库
                  	UserPosition::where(['id'=>$userInfo['id']])->update($da);
                 	Db::commit();
@@ -559,6 +564,7 @@ class Trans extends Base
             		$da['cost'] = $userInfo['cost'] - $data['price'] * $data['number'] + $data['fee'];
             		$da['cost_price'] = round($da['cost'] / ($userInfo['freeze_number']+$userInfo['available_number']+$number),3);
             		$da['ratio'] = round(($data['price'] - $da['cost_price'])/abs($da['cost_price'])*100,3);
+            		$da['last_time'] = date("Y-m-d H:i:s");
             		//更改持仓信息到数据库
                  	UserPosition::where(['id'=>$userInfo['id']])->update($da);
                 	Db::commit();
@@ -621,6 +627,7 @@ class Trans extends Base
             		$da['cost'] = $total;
             		$da['cost_price'] = round($da['cost'] / $num,3);
             		$da['ratio'] = round(($da['assets'] - $da['cost'])/$da['cost']*100,3);
+            		$da['last_time'] = date("Y-m-d H:i:s");
                 	//更改持仓信息到数据库
                  	UserPosition::where(['id'=>$userInfo['id']])->update($da);
                 	Db::commit();
@@ -633,6 +640,7 @@ class Trans extends Base
             		$da['cost'] = $userInfo['cost'] - $stockData[$data['stock']][1] * $data['number'] + $data['fee'];
                     $da['cost_price'] = round($da['cost'] / ($userInfo['freeze_number']+$da['available_number']+$number),3);
                     $da['ratio'] = round(($stockData[$data['stock']][1] - $da['cost_price'])/abs($da['cost_price'])*100,3);
+                    $da['last_time'] = date("Y-m-d H:i:s");
                     UserPosition::where(['id'=>$userInfo['id']])->update($da);
                     Db::commit();
                  	return json(['status'=>'success','data'=>'委托成功']);
