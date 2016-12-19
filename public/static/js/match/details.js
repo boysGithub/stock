@@ -37,6 +37,8 @@ var match_details = new Vue({
                                 avg_position_day: ret[i].avg_position_day,
                                 week_avg_profit_rate: ret[i].week_avg_profit_rate+'%',
                                 week_avg_profit_rate_class: (ret[i].week_avg_profit_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                ranking: ret[i].ranking,
+                                ranking_icon: (ret[i].ranking < 4) ? ' tr-icon' : '', 
                                 uid: ret[i].uid
                             });
                         }

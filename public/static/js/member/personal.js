@@ -31,7 +31,7 @@ var personal = new Vue({
                         win_rate: ret.win_rate + '%',//胜率
                         shares: ret.shares,//当日盈亏
                         shares_rate: "1%",//当日盈亏比例
-                        week_avg_profit_rate: ret.week_avg_profit_rate,//周平均率
+                        week_avg_profit_rate: ret.week_avg_profit_rate + '%', //周平均率
                         success_rate: ret.success_rate + '%',//选股成功率
                         time: ret.time.substring(0,10), 
                         operationTime: ret.operationTime.substring(0,10), 
@@ -109,7 +109,7 @@ var personal = new Vue({
                             stock_name: stock.stock_name,
                             time: stock.time.substring(0,10),
                             update_time: stock.update_time.substring(0,10),
-                            profit: parseFloat((stock.assets * stock.ratio).toFixed(2)),//盈亏
+                            profit: parseFloat((stock.cost * stock.ratio).toFixed(2)),//盈亏
                             ratio: stock.ratio + '%',
                             ratio_class: (stock.ratio < 0) ? 'tr-color-lose' : 'tr-color-win'
                         });
