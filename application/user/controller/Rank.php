@@ -39,8 +39,8 @@ class Rank extends Base
 			'week_avg_profit_rate' => 'week_avg_rank',
 			'fans' => 'fans_rank'
 		];
-		//$redis = new Redis;
-		$uid = 0;//$redis->get($data['condition']);
+		$redis = new Redis;
+		$redis->get($data['condition']);
 		$days_sql = DaysRatio::where('uid=uf.uid')->field("(endFunds - initialCapital) / initialCapital * 100")->order('time DESC')->limit(1)->buildSql();
         $weekly_sql = WeeklyRatio::where('uid=uf.uid')->field("(endFunds - initialCapital) / initialCapital * 100")->order('time DESC')->limit(1)->buildSql();
         $month_sql = MonthRatio::where("uid=uf.uid")->field("(endFunds - initialCapital) / initialCapital * 100")->order('time DESC')->limit(1)->buildSql();
