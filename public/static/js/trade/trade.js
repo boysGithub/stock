@@ -142,6 +142,7 @@ var trStock = new Vue({
                             _this.buy_price = buyInfo.price;
                             _this.usable_funds = _this.usableFunds;
                             _this.buyInfo = buyInfo;
+                            _this.buy_num = 0;
                         }
                         _this.stock = stockInfo;
 
@@ -160,12 +161,12 @@ var trStock = new Vue({
         },
         order: function(market) {
             var _this = this;
-            if (parseInt(_this.buy_num / 100) != _this.buy_num / 100 || _this.buy_num > _this.maxBuy) {
-                alert('请输入正确的购买股数');
+            if (_this.buy_num == '' || _this.buy_num == 0 || parseInt(_this.buy_num / 100) != _this.buy_num / 100 || _this.buy_num > _this.maxBuy) {
+                modal.imitateAlert('请输入正确的购买数量');
                 return;
             }
             if(market == 2 && (_this.buy_price == '' || _this.buy_price == 0)){
-                alert('请输入正确的委托价格');
+                modal.imitateAlert('请输入正确的委托价格');
                 return;  
             }
             $.post(api_host + '/orders', {
@@ -179,10 +180,19 @@ var trStock = new Vue({
                 token: header.user.token,
             }, function(data) {
                 if (data.status == 'success') {
-                    alert('委托提交成功');
-                    window.location.reload(true);
+                    modal.imitateAlert('委托提交成功', true);
                 } else {
-                    alert(data.data);
+                    modal.imitateAlert(data.data);
+                }
+            });
+        },
+        imitateAlert: function(msg){
+            var refresh = arguments[1] || false;
+            this.modal.msg = msg;
+            $('#my-alert').modal({});
+            $('#my-alert').on('closed.modal.amui', function(){
+                if(refresh){
+                    window.location.reload(true);
                 }
             });
         },

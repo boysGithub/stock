@@ -39,15 +39,24 @@ class Rank extends Base
 			'week_avg_profit_rate' => 'week_avg_rank',
 			'fans' => 'fans_rank'
 		];
-		$redis = new Redis;
-		$uid = $redis->get($data['condition']);
+		//$redis = new Redis;
+		$uid = 0;//$redis->get($data['condition']);
+		$days_sql = DaysRatio::where('uid=uf.uid')->field("(endFunds - initialCapital) / initialCapital * 100")->order('time DESC')->limit(1)->buildSql();
+        $weekly_sql = WeeklyRatio::where('uid=uf.uid')->field("(endFunds - initialCapital) / initialCapital * 100")->order('time DESC')->limit(1)->buildSql();
+        $month_sql = MonthRatio::where("uid=uf.uid")->field("(endFunds - initialCapital) / initialCapital * 100")->order('time DESC')->limit(1)->buildSql();
 		if($uid){
-			$rankList = Userfunds::where(['uid'=>['in',$uid]])->order("{$tmp[$data['condition']]} asc")->limit(($data['p']-1)*$limit,$limit)->Field("uid,total_rate,success_rate,avg_position_day,week_avg_profit_rate,round((funds-available_funds)/funds*100,2) as position,{$tmp[$data['condition']]} as rownum,fans,account")->select();
+			$rankList = Userfunds::where(['uf.uid'=>['in',$uid]])->alias('uf')->order("{$tmp[$data['condition']]} asc")->limit(($data['p']-1)*$limit,$limit)->Field("uf.uid,total_rate,{$days_sql} days_rate, {$weekly_sql} week_rate, {$month_sql} month_rate,success_rate,avg_position_day,week_avg_profit_rate,round((funds-available_funds)/funds*100,2) as position,{$tmp[$data['condition']]} as rownum,fans,account")->select();
 		}else{
-			$rankList = Userfunds::order("{$tmp[$data['condition']]} asc")->limit(($data['p']-1)*$limit,$limit)->Field("uid,total_rate,success_rate,avg_position_day,week_avg_profit_rate,round((funds-available_funds)/funds*100,2) as position,{$tmp[$data['condition']]} as rownum,fans,account")->select();
+			$rankList = Userfunds::order("{$tmp[$data['condition']]} asc")->alias('uf')->limit(($data['p']-1)*$limit,$limit)->Field("uf.uid,total_rate,{$days_sql} days_rate, {$weekly_sql} week_rate, {$month_sql} month_rate,success_rate,avg_position_day,week_avg_profit_rate,round((funds-available_funds)/funds*100,2) as position,{$tmp[$data['condition']]} as rownum,fans,account")->select();
 		}
 		foreach ($rankList as $key => $value) {
 			$value->append(['username']);
+            $value->days_rate = round($value->days_rate, 2);
+            $value->week_rate = round($value->week_rate, 2);
+            $value->month_rate = round($value->month_rate, 2);
+            $value->total_rate = round($value->total_rate, 2);
+            $value->success_rate = round($value->success_rate, 2);
+            $value->week_avg_profit_rate = round($value->week_avg_profit_rate, 2);
 			$value->avatar = Config('use_url.img_url') . '/avatar/img/'.$value->uid.'.png';
 		}
 		if($rankList){

@@ -108,6 +108,7 @@ var sale = new Vue({
                             $.getJSON(api_host + '/user/isOptional', {uid: header.user.uid, stock: _this.stock_code}, function(data){//股票账户信息
                                 sale_info['available'] = (data.available != null && data.available != '') ? data.available : 0;
                                 _this.max_num = sale_info.available;
+                                _this.sale_num = 0;
                                 _this.sale_info = sale_info;
                             });
                             _this.sale_price = price;
@@ -131,7 +132,7 @@ var sale = new Vue({
         order: function(market){//卖出
             var _this = this;
             if(!(_this.sale_num > 0 && _this.sale_num < _this.max_num)){
-                alert('请输入正确的卖出数量');
+                modal.imitateAlert('请输入正确的卖出数量');
                 return;
             }
             
@@ -146,10 +147,9 @@ var sale = new Vue({
                 token: header.user.token
             }, function(data){
                 if(data.status == 'success'){
-                    alert('委托提交成功');
-                    window.location.reload(true);
+                     modal.imitateAlert('委托提交成功',true);
                 } else {
-                    alert(data.data);
+                     modal.imitateAlert(data.data);
                 }
             });
         },

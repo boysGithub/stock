@@ -19,17 +19,29 @@
         <thead>
             <tr>
                 <th>排名</th>
-                <th>昵称</th>
-                <th>比赛盈利</th>
-                <th>动态</th>
+                <th>用户名</th>
+                <th v-if="match.type == 1"><span class="tr-color-order">周盈利率</span></th>
+                <th v-else><span>周盈利率</span></th>
+                <th>日盈利率</th>
+                <th v-if="match.type == 2"><span class="tr-color-order">月盈利率</span></th>
+                <th v-else><span>月盈利率</span></th>
+                <th>总盈利率</th>
+                <th>选股成功率</th>
+                <th>平均交易天数</th>
+                <th>周平均率</th>
             </tr>
         </thead>
         <tbody>
             <tr v-for="item in ranking">
-                <td><span :class="'tr-rank' + item.ranking_class">{{ item.ranking }}</span></td>
-                <td><a :href="'{:url('index/personal')}?uid='+item.uid" title="">{{ item.user_name }}</a></td>
+                <td><span :class="'tr-rank'+ item.ranking_icon">{{ item.ranking }}</span></td>
+                <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name">{{ item.user_name }}</a></td>
+                <td><span :class="item.week_rate_class">{{ item.week_rate }}</span></td>
+                <td><span :class="item.days_rate_class">{{ item.days_rate }}</span></td>
+                <td><span class="tr-color-order">{{ item.month_rate }}</span></td>
                 <td><span :class="item.total_rate_class">{{ item.total_rate }}</span></td>
-                <td><span class=""><a :href="'{:url('index/personal')}?uid='+item.uid" title="">追踪可看</a></span></td>
+                <td><span>{{ item.success_rate }}</span></td>
+                <td><span>{{ item.avg_position_day }}</span></td>
+                <td><span :class="item.week_avg_profit_rate_class">{{ item.week_avg_profit_rate }}</span></td>
             </tr>
         </tbody>
     </table>

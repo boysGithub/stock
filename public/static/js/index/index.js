@@ -12,11 +12,12 @@ var index = new Vue({
         total_rate_10: [],//总盈利率
         success_rate: [],//选股牛人
         week_avg_profit_rate: [],//常胜牛人
+        fans: [],//常胜牛人
         week_matchs: [],//周赛
         month_matchs: []//月赛
     },
     methods: {
-        ad_slider(){
+        updateAdSlider(){
             var timestamp = new Date().getTime();
             var data = localStorage.getItem('ad_slider');
             data = JSON.parse(data);
@@ -74,7 +75,7 @@ var index = new Vue({
             }    
             setTimeout(proclamationSlider, 200);
         },
-        recommend(){
+        updateRecommend(){
             var timestamp = new Date().getTime();
             var data = localStorage.getItem('recommend');
             data = JSON.parse(data);
@@ -143,67 +144,63 @@ var index = new Vue({
                 }
             });    
         },
-        week_rate(){
+        updateMatchRank(type){
             var timestamp = new Date().getTime();
             var data = localStorage.getItem('week_rate');
-            data = JSON.parse(data);
-            if(data == null || data.timestamp < timestamp){
-                var _this = this;
-                $.getJSON(api_host + '/match/detail',{type:1, np: 1, limit: 10},function(data){
-                    if(data.status == 'success'){
-                        var ret = data.data.rankList;
-                        var week_rate = [];
-                        if(ret.length > 0){
-                            for (var i = 0; i < ret.length; i++) {
-                                week_rate.push({
-                                    user_name: ret[i].user_name,
-                                    ranking: ret[i].ranking,
-                                    ranking_icon: (ret[i].ranking < 4) ? ' tr-icon' : '',
-                                    total_rate: ret[i].total_rate + '%',
-                                    total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                    uid: ret[i].uid
-                                });
-                            }
-
-                            localStorage.setItem('week_rate',JSON.stringify({timestamp: timestamp + _this.cache_t, data: week_rate}));
-                        }
-                        _this.week_rate = week_rate;
-                    }
-                });
-            } else {
-                this.week_rate = data.data;
-            } 
-        },
-        month_rate(){
-            var timestamp = new Date().getTime();
-            var data = localStorage.getItem('month_rate');
-            data = JSON.parse(data);
-            if(data == null || data.timestamp < timestamp){
-                var _this = this;
-                $.getJSON(api_host + '/match/detail',{type:2, np: 1, limit: 10},function(data){
-                    if(data.status == 'success'){
-                        var ret = data.data.rankList;
-                        var month_rate = [];
-                        if(ret.length > 0){
-                            for (var i = 0; i < ret.length; i++) {
-                                month_rate.push({
-                                    user_name: ret[i].user_name,
-                                    ranking: ret[i].ranking,
-                                    ranking_icon: (ret[i].ranking < 4) ? ' tr-icon' : '',
-                                    total_rate: ret[i].total_rate + '%',
-                                    total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                    uid: ret[i].uid
-                                });
-                            }
-
-                            localStorage.setItem('month_rate',JSON.stringify({timestamp: timestamp + _this.cache_t, data: month_rate}));
-                        }
-                        _this.month_rate = month_rate;
-                    }
-                });
-            } else {
-                this.month_rate = data.data;
+            if(type == 2){
+                data = localStorage.getItem('month_rate');
             }
+            data = JSON.parse(data);
+            if(data == null || data.timestamp < timestamp || data.data.length < 1){
+                var _this = this;
+                $.getJSON(api_host + '/match/detail',{type:type, np: 1, limit: 10},function(data){
+                    if(data.status == 'success'){
+                        var ret = data.data.rankList;
+                        var match_rate = [];
+                        if(ret.length > 0){
+                            for (var i = 0; i < ret.length; i++) {
+                                match_rate.push({
+                                    user_name: ret[i].username,
+                                    ranking: ret[i].ranking,
+                                    ranking_icon: (ret[i].ranking < 4) ? ' tr-icon' : '',
+                                    week_rate: ret[i].week_rate + '%',
+                                    week_rate_class: (ret[i].week_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                    days_rate: ret[i].days_rate + '%',
+                                    days_rate_class: (ret[i].days_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                    month_rate: ret[i].month_rate + '%',
+                                    month_rate_class: (ret[i].month_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                    total_rate: ret[i].total_rate + '%',
+                                    total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                    success_rate: ret[i].success_rate + '%',
+                                    avg_position_day: ret[i].avg_position_day,
+                                    week_avg_profit_rate: ret[i].week_avg_profit_rate + '%',
+                                    week_avg_profit_rate_class: (ret[i].week_avg_profit_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                    uid: ret[i].uid
+                                });
+                            }
+                        }    
+                        switch(type){
+                            case 1:
+                                localStorage.setItem('week_rate',JSON.stringify({timestamp: timestamp + _this.cache_t, data: match_rate}));
+                                _this.week_rate = match_rate;
+                            break;
+                            case 2:
+                                localStorage.setItem('month_rate',JSON.stringify({timestamp: timestamp + _this.cache_t, data: match_rate}));
+                                _this.month_rate = match_rate;
+                            break;
+                        }
+                    }
+                });
+            } else {    
+                switch(type){
+                    case 1:
+                        this.week_rate = data.data;
+                    break;
+                    case 2:
+                        this.month_rate = data.data;
+                    break;
+                }
+            } 
         },
         updateTotalRate(){
             var timestamp = new Date().getTime();
@@ -211,9 +208,9 @@ var index = new Vue({
             var data_10 = localStorage.getItem('total_rate_10');
             data = JSON.parse(data);
             data_10 = JSON.parse(data_10);
-            if(data == null || data.timestamp < timestamp){
+            if(data == null || data.timestamp < timestamp || ){
                 var _this = this;
-                $.getJSON(api_host + '/rank/getRankList',{condition:'total_rate'},function(data){
+                $.getJSON(api_host+'/rank/getRankList',{condition:'total_rate'},function(data){
                     if(data.status == 'success'){
                         var ret = data.data;
                         var total_rate_5 = [];
@@ -233,6 +230,12 @@ var index = new Vue({
                                 user_name: ret[i].username,
                                 rownum: ret[i].rownum,
                                 rownum_class: (ret[i].rownum > 3) ? '' : ' tr-icon',
+                                week_rate: ret[i].week_rate + '%',
+                                week_rate_class: (ret[i].week_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                days_rate: ret[i].days_rate + '%',
+                                days_rate_class: (ret[i].days_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                month_rate: ret[i].month_rate + '%',
+                                month_rate_class: (ret[i].month_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
                                 total_rate: ret[i].total_rate+'%',
                                 total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
                                 success_rate: ret[i].success_rate+'%',
@@ -283,7 +286,7 @@ var index = new Vue({
                 this.success_rate = data.data;
             }    
         },
-        week_avg_profit_rate(){
+        updateweekAvgRate(){
             var timestamp = new Date().getTime();
             var data = localStorage.getItem('week_avg_profit_rate');
             data = JSON.parse(data);
@@ -311,9 +314,37 @@ var index = new Vue({
                 this.week_avg_profit_rate = data.data;
             }    
         },
+        updateFans(){
+            var timestamp = new Date().getTime();
+            var data = localStorage.getItem('fans');
+            data = JSON.parse(data);
+            if(data == null || data.timestamp < timestamp){                
+                var _this = this;
+                $.getJSON(api_host + '/rank/getRankList',{condition:'fans'},function(data){
+                    if(data.status == 'success'){
+                        var ret = data.data;
+                        var fans = [];
+                        var length = (ret.length > 5) ? 5 : ret.length;
+                        for (var i = 0; i < length; i++) {
+                            fans.push({
+                                user_name: ret[i].username,
+                                portrait: ret[i].avatar,
+                                fans: ret[i].fans,
+                                uid: ret[i].uid
+                            });
+                        }
+
+                        localStorage.setItem('fans',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: fans}));
+                        _this.fans = fans;
+                    }    
+                });
+            } else {
+                this.fans = data.data;
+            }    
+        },
         updateMatchs: function(type){               
             var _this = this;
-            $.getJSON('http://www.tp5.com/match/index.html',{type: type, limit:2},function(data){
+            $.getJSON(api_host+'/match/index',{type: type, limit:2},function(data){
                 if(data.status == 'success'){
                     var ret = data.data;
                     var matchs = [];
@@ -355,15 +386,16 @@ var index = new Vue({
         },
     },
     mounted: function(){
-        this.ad_slider();
+        this.updateAdSlider();
         this.updateProclamation();
-        this.recommend();
+        this.updateRecommend();
         this.updateTalentDynamic();
-        this.week_rate();
-        this.month_rate();
+        this.updateMatchRank(1);
+        this.updateMatchRank(2);
         this.updateTotalRate();
         this.updateSuccessRate();
-        this.week_avg_profit_rate();
+        this.updateweekAvgRate();
+        this.updateFans();
         this.updateMatchs('1');
         this.updateMatchs('2');
     }

@@ -6,6 +6,7 @@ var personal = new Vue({
         info: {},//用户信息
         market_value: '',//市值
         positions: [],//用户持仓
+        history_positions: [],//历史持仓
         entrust: [],//用户委托
         chart_date: [],//分时图日期
         chart_rate: []//分时图盈亏
@@ -25,6 +26,7 @@ var personal = new Vue({
                     var info = {
                         avatar: ret.avatar,
                         user_name: ret.username, 
+                        account: ret.account, 
                         position: ret.position + '%',//持仓
                         win_rate: ret.win_rate + '%',//胜率
                         shares: ret.shares,//当日盈亏
@@ -87,10 +89,34 @@ var personal = new Vue({
                             }
 
                             _this.market_value += position.assets; 
-                            var  ss = _this.positions;
                             _this.positions.push(position);
                         });
                     }
+                }    
+            });
+        },
+        getHistoryPositions(){
+            var _this = this;
+            $.getJSON(api_host + '/share/historicalPosition',{uid: _this.uid},function(data){
+                if(data.status == 'success'){
+                    var positions = [];//持仓信息
+
+                    for (var i = 0; i < data.data.length; i++) {
+                        var stock = data.data[i];
+                       
+                        positions.push{
+                            stock: stock.stock,
+                            stock_name: stock.stock_name,
+                            time: stock.time.substring(0,10),
+                            update_time: stock.update_time.substring(0,10),
+                            profit: parseFloat((stock.assets * stock.ratio).toFixed(2)),//盈亏
+                            ratio: stock.ratio + '%',
+                            ratio_class: (stock.ratio < 0) ? 'tr-color-lose' : 'tr-color-win'
+                        };
+ 
+                    }
+                    
+                    _this.positions = positions;
                 }    
             });
         },
@@ -185,6 +211,7 @@ var personal = new Vue({
             if(this.uid > 0){
                 this.info();
                 this.getPositions();
+                this.getHistoryPositions();
                 this.getEntrust();
                 this.getTimeChart();
             } else {
