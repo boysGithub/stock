@@ -98,20 +98,18 @@
                     <div class="widget-body  widget-body-lg am-fr">
                     	<form action="{:url('advertisement/save_add')}" class="am-form tpl-form-border-form tpl-form-border-br" method="post" enctype="multipart/form-data">
                             <div class="am-form-group">
-                                <label class="am-u-sm-3 am-form-label">类型<span class="tpl-form-line-small-title"></span></label>
+                                <label class="am-u-sm-3 am-form-label">标题<span class="tpl-form-line-small-title"></span></label>
                                 <div class="am-u-sm-9">
-                                    <select data-am-selected="{}" name="enabled">
-                                    <option value="3"{eq name="$vo.type" value="3"} selected="" {/eq}>首页banner</option>
-                                    <option value="4"{eq name="$vo.type" value="4"} selected="" {/eq}>比赛列表页banner</option>
-                                    </select>
+                                    <input type="text" value="" name="url" class="am-form-field tpl-form-no-bg" placeholder="请输入标题">
+                                    <small></small>
                                 </div>
                             </div>
                             <div class="am-form-group">
-                                <label class="am-u-sm-3 am-form-label">状态<span class="tpl-form-line-small-title"></span></label>
+                                <label class="am-u-sm-3 am-form-label">类型<span class="tpl-form-line-small-title"></span></label>
                                 <div class="am-u-sm-9">
-                                    <select data-am-selected="{}" name="enabled">
-                                    <option value="3"{eq name="$vo.type" value="3"} selected="" {/eq}>首页banner</option>
-                                    <option value="4"{eq name="$vo.type" value="4"} selected="" {/eq}>比赛列表页banner</option>
+                                    <select name="type">
+                                    <option value="3" selected="">首页banner</option>
+                                    <option value="4">比赛列表页banner</option>
                                     </select>
                                 </div>
                             </div>
@@ -132,9 +130,9 @@
                             <div class="am-form-group">
                                 <label class="am-u-sm-3 am-form-label">状态<span class="tpl-form-line-small-title"></span></label>
                                 <div class="am-u-sm-9">
-                                    <select data-am-selected="{}" name="enabled">
-                                    <option value="1" selected="">启用</option>
-                                    <option value="0">停用</option>
+                                    <select name="enabled">
+                                        <option value="1" selected="">启用</option>
+                                        <option value="0">停用</option>
                                     </select>
                                 </div>
                             </div>

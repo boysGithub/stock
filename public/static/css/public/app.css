@@ -23,10 +23,10 @@ ul{list-style: none;}
 .tr-orange{color: orange;}
 .tr-red{color: red;}
 .tr-color-buy{color: gray;}/*买入*/
-.tr-color-win{color: #865501;}/*盈*/
+.tr-color-win{color: red;}/*盈*/
 .tr-color-sale{color: #d8110b;}/*卖出*/
-.tr-color-lose{color: #094;}/*亏*/
-.tr-color-price{color: #ff7000;}/*价格*/
+.tr-color-lose{color: green;}/*亏*/
+.tr-color-price{color: #666;}/*价格*/
 .tr-color-order{color: #39f;}
 
 .tr-icon{background: url('../../img/ranking-icon.png') 0 0 no-repeat; width: 30px; height:30px; display: inline-block;background-size: 100%;vertical-align: middle;}

@@ -257,7 +257,7 @@
         </div>
     </div>
     <p class="tr-img-ad">
-        <a href="#" title="" target="_blank"><img src="/static/img/ad-img-1.png" alt="" class="am-img-responsive" /></a>
+        <a :href="index_banner.url" :title="index_banner.title" target="_blank"><img :src="index_banner.image" :alt="index_banner.title" class="am-img-responsive" /></a>
     </p>
     <div class="am-g">
         <div class="am-u-md-6 am-padding-right-sm">
@@ -331,7 +331,7 @@
                         <div>
                             <a :href="'{:url('index/macthUser')}?id=' + item.id" :title="item.name" class="am-margin-right tr-simulation-name">{{ item.name }}</a>
                         </div>
-                        <p class="am-margin-vertical">比赛时间：{{ item.start_date }} 到 {{ item.end_date }}
+                        <p>比赛时间：{{ item.start_date }} 到 {{ item.end_date }}
                         </p>
                     </div>
                     <div class="am-u-md-2 am-padding-left tr-status-div">
@@ -340,7 +340,7 @@
                 </div>    
                 <div class="am-u-lg-2 am-list-main am-text-center tr-list-button">
                     <template v-if="item.status == 3"> 
-                        <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-warning am-btn-sm">查看</a> 
+                        <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-sm">查看比赛</a> 
                     </template>    
                     <template v-else> 
                         <a href="javascript:;" :href-url="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-sm" :id="item.id" v-on:click="join_match">参加比赛</a> 
@@ -356,16 +356,21 @@
                         <div>
                             <a :href="'{:url('index/macthUser')}?id=' + item.id" :title="item.name" class="am-margin-right tr-simulation-name">{{ item.name }}</a>
                         </div>
-                        <p class="am-margin-vertical">比赛时间：{{ item.start_date }} 到 {{ item.end_date }}
+                        <p>比赛时间：{{ item.start_date }} 到 {{ item.end_date }}
                         </p>
                     </div>
                     <div class="am-u-md-2 am-padding-left tr-status-div">
                         <span :class="'tr-status'+item.status_class">{{ item.status_name }}</span>
                     </div>
                 </div>    
-                <div class="am-u-lg-2 am-list-main am-text-center tr-list-button">    
-                    <a href="javascript:;" :href-url="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-sm" :id="item.id" v-on:click="join_match">参加比赛</a>
-                </div>    
+                <div class="am-u-lg-2 am-list-main am-text-center tr-list-button">
+                    <template v-if="item.status == 3"> 
+                        <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-sm">查看比赛</a> 
+                    </template>    
+                    <template v-else> 
+                        <a href="javascript:;" :href-url="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-sm" :id="item.id" v-on:click="join_match">参加比赛</a> 
+                    </template>  
+                </div>   
             </div>
         </div>
     </div>

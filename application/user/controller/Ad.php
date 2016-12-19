@@ -11,7 +11,7 @@ class Ad extends Base
 {
 	public function index($type = 1)
     {
-        $types = [1,2];
+        $types = [1,2,3,4];
         if (!in_array($type, $types)) {
             return json(['status'=>'failed','data'=>'参数错误']);
         }
