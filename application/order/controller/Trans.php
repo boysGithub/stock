@@ -207,18 +207,18 @@ class Trans extends Base
 			if($w == 0 || $w == 6){
 				return false;
 			}else{
-				$t1 = strtotime(date("Y-m-d 9:15:00"));
-				$t2 = strtotime(date("Y-m-d 15:00:00"));
-				if(time() > $t1 && time() < $t2){
-					$tmp = NoTrande::where(['day' => date('Y-m-d 00:00:00',time())])->find();
-					if($tmp){
-						return false;
-					}else{
+				// $t1 = strtotime(date("Y-m-d 9:15:00"));
+				// $t2 = strtotime(date("Y-m-d 15:00:00"));
+				// if(time() > $t1 && time() < $t2){
+				// 	$tmp = NoTrande::where(['day' => date('Y-m-d 00:00:00',time())])->find();
+				// 	if($tmp){
+				// 		return false;
+				// 	}else{
 						return true;
-					}
-				}else{
-					return false;
-				}
+				// 	}
+				// }else{
+				// 	return false;
+				// }
 			}
 		}
 	}
@@ -665,15 +665,15 @@ class Trans extends Base
      * @return boolean [description]
      */
     public function isTrans(){
-    	$t1 = strtotime(date("Y-m-d 9:30:00"));
-        $t2 = strtotime(date("Y-m-d 11:30:00"));
-        $t3 = strtotime(date("Y-m-d 13:00:00"));
-        $t4 = strtotime(date("Y-m-d 15:00:00"));
-        if(($t1 <= time() && $t2 >= time()) || ($t3 <= time() && $t4 >= time())){
+    	// $t1 = strtotime(date("Y-m-d 9:30:00"));
+     //    $t2 = strtotime(date("Y-m-d 11:30:00"));
+     //    $t3 = strtotime(date("Y-m-d 13:00:00"));
+     //    $t4 = strtotime(date("Y-m-d 15:00:00"));
+     //    if(($t1 <= time() && $t2 >= time()) || ($t3 <= time() && $t4 >= time())){
         	return true;
-        }else{
-        	return false;
-        }
+        // }else{
+        // 	return false;
+        // }
     }
 }
 ?>
