@@ -165,8 +165,8 @@ class Match extends Base
             $val->days_rate = round($val->days_rate, 2);
             $val->week_rate = round($val->week_rate, 2);
             $val->month_rate = round($val->month_rate, 2);
-            $val->total_rate = $match->type == 1 ? round($val->week_rate,2) : round($val->month_rate, 2)
             $val->total_profit_rate = round($val->total_rate, 2);
+            $val->total_rate = $match->type == 1 ? round($val->week_rate,2) : round($val->month_rate, 2);
             $val->success_rate = round($val->success_rate, 2);
             $val->week_avg_profit_rate = round($val->week_avg_profit_rate, 2);
         }
