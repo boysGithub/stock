@@ -252,7 +252,7 @@ class Index extends Controller
                     $stockGather[] = $value['stock'];
                 }
                 $stockTmp = getStock($stockGather);
-                //dump($stockTmp);exit;
+                dump($stockTmp);exit;
                 //获取持仓的集合
                 $userInfo = $userPosition->where(['uid'=>['in',$userGather]])->Field('id,uid,ratio,stock,(available_number + freeze_number) as number,cost_price')->select();
                 //计算选股成功率
@@ -287,12 +287,13 @@ class Index extends Controller
                 }
                 //更新选股成功率
                 $userFunds->saveAll($funds);
-                Db::commit();
                 $this->handle("自动更新胜率成功",1);
                 $redis = new Redis;
                 $redis->set("success_rate",$userGather);
+                Db::commit();
             });
         } catch (\Exception $e) {
+            echo $e;
             Db::rollback();
             $this->handle("自动更新胜率失败",0);
         }
