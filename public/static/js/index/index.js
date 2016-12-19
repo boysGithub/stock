@@ -11,6 +11,7 @@ var index = new Vue({
         total_rate_5: [],//总收益榜
         total_rate_10: [],//总盈利率
         success_rate: [],//选股牛人
+        index_banner: {},//banner
         week_avg_profit_rate: [],//常胜牛人
         fans: [],//常胜牛人
         week_matchs: [],//周赛
@@ -169,8 +170,8 @@ var index = new Vue({
                                     days_rate_class: (ret[i].days_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
                                     month_rate: ret[i].month_rate + '%',
                                     month_rate_class: (ret[i].month_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                    total_rate: ret[i].total_rate + '%',
-                                    total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                    total_rate: ret[i].total_profit_rate + '%',
+                                    total_rate_class: (ret[i].total_profit_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
                                     success_rate: ret[i].success_rate + '%',
                                     avg_position_day: ret[i].avg_position_day,
                                     week_avg_profit_rate: ret[i].week_avg_profit_rate + '%',
@@ -286,6 +287,16 @@ var index = new Vue({
                 this.success_rate = data.data;
             }    
         },
+        updateIndexBanner(){
+            var _this = this;
+            $.getJSON(api_host + '/ad',{type:3},function(data){
+                if(data.status == 'success'){
+                    var ret = data.data;
+                   
+                    _this.index_banner = {url:ret[0].url, title: ret[0].title, image: ret[0].image};
+                }
+            }); 
+        },
         updateweekAvgRate(){
             var timestamp = new Date().getTime();
             var data = localStorage.getItem('week_avg_profit_rate');
@@ -394,6 +405,7 @@ var index = new Vue({
         this.updateMatchRank(2);
         this.updateTotalRate();
         this.updateSuccessRate();
+        this.updateIndexBanner();
         this.updateweekAvgRate();
         this.updateFans();
         this.updateMatchs('1');

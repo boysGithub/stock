@@ -51,7 +51,7 @@
 .tr-img-ad{margin: 20px 0;}
 
 .tr-ranking-table .am-table{background: #fff;border: 1px solid #e2e2e2;}
-.tr-ranking-table .am-table>thead>tr>th{border:none; background: #faf9f9; font-weight: normal; color: #4a9ff6;}
+.tr-ranking-table .am-table>thead>tr>th{border:none; background: #faf9f9; font-weight: normal;}
 .tr-ranking-table .am-table>tbody>tr>td{border-top: 1px dashed #eaeaea}
 .tr-ranking-table .am-table>tbody>tr.first>td{border:none;}
 .tr-ranking-table .am-table>tbody>tr>td.tr-ranking-portrait{padding: .3rem;}

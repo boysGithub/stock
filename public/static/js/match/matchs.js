@@ -3,6 +3,7 @@ var matchs = new Vue({
     data: {
         count: 0,
         close: '',
+        match_banner: {},
         matchList: []//赛场
     },
     computed: {
@@ -52,9 +53,20 @@ var matchs = new Vue({
                 }    
             });
         },
+        updateMatchBanner(){
+            var _this = this;
+            $.getJSON(api_host + '/ad',{type:4},function(data){
+                if(data.status == 'success'){
+                    var ret = data.data;
+                   
+                    _this.match_banner = {url:ret[0].url, title: ret[0].title, image: ret[0].image};
+                }
+            }); 
+        },
         getMatchs(){
             if(this.logined){
                 this.updateMatchs();
+                this.updateMatchBanner();
             } else {
                 if(this.count < 10){
                     this.close = setTimeout(this.getMatchs, 300);

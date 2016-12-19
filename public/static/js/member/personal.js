@@ -4,8 +4,10 @@ var personal = new Vue({
         count: 0,
         close: '',
         info: {},//用户信息
-        market_value: '',//市值
+        market_value: 0,//市值
         positions: [],//用户持仓
+        positions_c: [],//用户持仓-计算前
+        pc_index: 0,//持仓递归计数
         history_positions: [],//历史持仓
         entrust: [],//用户委托
         chart_date: [],//分时图日期
@@ -56,42 +58,23 @@ var personal = new Vue({
                     for (var i = 0; i < data.data.length; i++) {
                         var stock = data.data[i];
                         var num = parseInt(stock.available_number) + parseInt(stock.freeze_number)
-                        var position = {
+                        positions.push({
                             stock: stock.stock,
                             stock_name: stock.stock_name,
                             available_number: num,//持仓
                             cost_price: parseFloat(stock.cost_price),//成本价
-                            time: stock.time.substring(0,10)
-                        };
-
-                        var key = 'sz' + stock.stock;
-                        if(parseInt(stock.stock.substring(0,1)) == 6){
-                            key = 'sh' + stock.stock;
-                        }
-
-                        //股票交易信息
-                        $.getScript(api_host + '/index/index/quiet?stock='+key,function(){
-                            if(eval('hq_str_'+key)){
-                                var detail = eval('hq_str_'+key).split(',');
-                                var price = (detail['3'] > 0) ? detail['3'] : detail['2'];//现价
-                                
-                                position.assets = parseFloat(price * num);//市值
-                                position.price = parseFloat(price);
-                                position.profit = parseFloat((price * num - stock.cost).toFixed(2));//盈亏
-                                position.ratio = parseFloat(((price * num - stock.cost) / stock.cost * 100).toFixed(2)) + '%';
-                                position.ratio_class = ((price * num - stock.cost) < 0) ? 'tr-color-lose' : 'tr-color-win';
-                            } else {
-                                position.assets = parseFloat(stock.assets);
-                                position.profit = parseFloat(stock.assets - stock.cost);
-                                position.price = 0;
-                                position.ratio = parseFloat(stock.ratio.toFixed(2)) + '%';
-                                position.ratio_class = ((stock.assets - stock.cost) < 0) ? 'tr-color-lose' : 'tr-color-win';
-                            }
-
-                            _this.market_value += position.assets; 
-                            _this.positions.push(position);
+                            cost: parseFloat(stock.cost),//成本价
+                            time: stock.time.substring(0,10),
+                            assets: parseFloat(stock.assets),
+                            profit: parseFloat(stock.assets - stock.cost),
+                            price: 0,
+                            ratio: parseFloat(stock.ratio.toFixed(2)) + '%',
+                            ratio_class: ((stock.assets - stock.cost) < 0) ? 'tr-color-lose' : 'tr-color-win'
                         });
                     }
+
+                    _this.positions_c = positions;
+                    _this.getMarketValue();
                 }    
             });
         },
@@ -109,7 +92,7 @@ var personal = new Vue({
                             stock_name: stock.stock_name,
                             time: stock.time.substring(0,10),
                             update_time: stock.update_time.substring(0,10),
-                            profit: parseFloat((stock.cost * stock.ratio).toFixed(2)),//盈亏
+                            profit: parseFloat((stock.cost * stock.ratio / 100).toFixed(2)),//盈亏
                             ratio: stock.ratio + '%',
                             ratio_class: (stock.ratio < 0) ? 'tr-color-lose' : 'tr-color-win'
                         });
@@ -165,6 +148,38 @@ var personal = new Vue({
                     _this.chart_rate = chart_rate;
                     _this.drawing();
                 }    
+            });
+        },
+        getMarketValue(){
+            var _this = this;
+            var index = _this.pc_index;
+            if(index >= _this.positions_c.length){   
+                return;  
+            } 
+            var stock = _this.positions_c[index];
+
+            var key = 'sz' + stock.stock;
+            if(parseInt(stock.stock.substring(0,1)) == 6){
+                key = 'sh' + stock.stock;
+            }
+
+            //股票交易信息
+            $.getScript(api_host + '/index/index/quiet?stock='+key,function(){
+                if(eval('hq_str_'+key)){
+                    var detail = eval('hq_str_'+key).split(',');
+                    var price = (detail['3'] > 0) ? detail['3'] : detail['2'];//现价
+                    
+                    stock.assets = parseFloat(price * stock.available_number);//市值
+                    stock.price = parseFloat(price);
+                    stock.profit = parseFloat((price * stock.available_number - stock.cost).toFixed(2));//盈亏
+                    stock.ratio = parseFloat(((price * stock.available_number - stock.cost) / stock.cost * 100).toFixed(2)) + '%';
+                    stock.ratio_class = ((price * stock.available_number - stock.cost) < 0) ? 'tr-color-lose' : 'tr-color-win';
+                }
+                
+                _this.market_value = parseFloat(_this.market_value) + stock.assets; 
+                _this.positions.push(stock);
+                _this.pc_index++;
+                _this.getMarketValue();
             });
         },
         drawing: function(){
