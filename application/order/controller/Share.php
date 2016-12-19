@@ -5,6 +5,7 @@ use app\index\controller\Base;
 use app\common\model\Transaction;
 use app\common\model\DaysRatio;
 use app\common\model\UserFunds;
+use app\common\model\UserPosition;
 /**
 * 股票信息控制
 */
@@ -53,6 +54,29 @@ class Share extends Base
             $result = json(['status'=>'failed','data'=>'还没有数据']);
         }
         return $result;
+    }
+
+    /**
+     * [historicalPosition 历史持仓]
+     * @return [type] [description]
+     */
+    public function historicalPosition(){
+        $data = input("get.");
+        $res = $this->validate($data,"GetTimeChart");
+        if (true !== $res) {
+            return json(['status'=>'failed','data'=>$res]);
+        }
+        if(isset($data['stock']) && $data['stock']){
+            $historical = UserPosition::where(['uid'=>$data['uid'],'is_position'=>2,'stock'=>$data['stock']])->select();
+        }else{
+            $historical = UserPosition::where(['uid'=>$data['uid'],'is_position'=>2])->select();
+        }
+        
+        if($historical){
+            return json(['status'=>'success','data'=>$historical]);
+        }else{
+            return json(['status'=>'failed','data'=>'还没有历史持仓']);
+        }
     }
 }	
 ?>
