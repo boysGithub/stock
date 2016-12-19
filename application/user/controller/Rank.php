@@ -40,7 +40,7 @@ class Rank extends Base
 			'fans' => 'fans_rank'
 		];
 		$redis = new Redis;
-		$redis->get($data['condition']);
+		$uid = $redis->get($data['condition']);
 		$days_sql = DaysRatio::where('uid=uf.uid')->field("(endFunds - initialCapital) / initialCapital * 100")->order('time DESC')->limit(1)->buildSql();
         $weekly_sql = WeeklyRatio::where('uid=uf.uid')->field("(endFunds - initialCapital) / initialCapital * 100")->order('time DESC')->limit(1)->buildSql();
         $month_sql = MonthRatio::where("uid=uf.uid")->field("(endFunds - initialCapital) / initialCapital * 100")->order('time DESC')->limit(1)->buildSql();
