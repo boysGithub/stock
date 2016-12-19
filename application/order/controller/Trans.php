@@ -553,7 +553,7 @@ class Trans extends Base
             		$da['available_number'] = 0;
             		$da['position_number'] = 0;
             		$da['is_position'] = 2;
-            		$da['assets'] = $profits + $stockData[$data['stock']][1] * $number;
+            		$da['assets'] = $profits + $data['price'] * $number;
             		$da['fee'] = $userInfo['fee'] + $data['fee'];
             		$da['cost'] = $total;
             		$da['cost_price'] = round($da['cost'] / $num,3);

@@ -40,7 +40,7 @@ class Index extends Controller
         $t2 = strtotime(date("Y-m-d 11:30:00"));
         $t3 = strtotime(date("Y-m-d 13:00:00"));
         $t4 = strtotime(date("Y-m-d 15:00:00"));
-        //if(($t1 <= time() && $t2 >= time()) || ($t3 <= time() && $t4 >= time())){
+        if(($t1 <= time() && $t2 >= time()) || ($t3 <= time() && $t4 >= time())){
             $redis = new Redis();
             $buyKeys = $redis->keys("*noBuyOrder*");
             $sellKeys = $redis->keys("*noSellOrder*");
@@ -70,7 +70,6 @@ class Index extends Controller
                     $stockSell[] = $tmpSell['stock'];
                 }
                 $stockInfo = getStock($stockSell,"s_");
-
                 $orderIndex = new Trans;
                 foreach ($sell as $key => $value) {
                     
@@ -81,7 +80,7 @@ class Index extends Controller
                     }
                 }
             }
-        //} 
+        } 
     }
 
     /**
