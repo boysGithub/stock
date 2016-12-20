@@ -62,14 +62,14 @@
         </div>
         <div class="am-tabs-bd">
             <div class="am-tab-panel am-active">
-                <table class="am-table am-table-centered">
+                <table class="am-table">
                     <thead>
                         <tr>
                             <th>用户名</th>
                             <th>股票名称</th>
-                            <th>状态</th>
-                            <th>价格(&yen;)</th>
-                            <th>今日动态</th>
+                            <th width="15%">状态</th>
+                            <th width="15%">价格(&yen;)</th>
+                            <th width="20%">今日动态</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -102,7 +102,7 @@
                             <th>总盈利率</th>
                             <th>选股成功率</th>
                             <th>平均交易天数</th>
-                            <th>周平均率</th>
+                            <th>周均收益率</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -110,7 +110,7 @@
                         <tr v-for="item in week_rate">
                             <td><span :class="'tr-rank'+ item.ranking_icon">{{ item.ranking }}</span></td>
                             <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name">{{ item.user_name }}</a></td>
-                            <td><span class="tr-color-order">{{ item.week_rate }}</span></td>
+                            <td><span :class="'tr-color-order '+item.week_rate_class">{{ item.week_rate }}</span></td>
                             <td><span :class="item.days_rate_class">{{ item.days_rate }}</span></td>
                             <td><span :class="item.month_rate_class">{{ item.month_rate }}</span></td>
                             <td><span :class="item.total_rate_class">{{ item.total_rate }}</span></td>
@@ -137,7 +137,7 @@
                             <th>总盈利率</th>
                             <th>选股成功率</th>
                             <th>平均交易天数</th>
-                            <th>周平均率</th>
+                            <th>周均收益率</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -147,7 +147,7 @@
                             <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name">{{ item.user_name }}</a></td>
                             <td><span :class="item.week_rate_class">{{ item.week_rate }}</span></td>
                             <td><span :class="item.days_rate_class">{{ item.days_rate }}</span></td>
-                            <td><span class="tr-color-order">{{ item.month_rate }}</span></td>
+                            <td><span :class="'tr-color-order '+item.month_rate_class">{{ item.month_rate }}</span></td>
                             <td><span :class="item.total_rate_class">{{ item.total_rate }}</span></td>
                             <td><span>{{ item.success_rate }}</span></td>
                             <td><span>{{ item.avg_position_day }}</span></td>
@@ -172,7 +172,7 @@
                             <th><span class="tr-color-order">总盈利率</span></th>
                             <th>选股成功率</th>
                             <th>平均交易天数</th>
-                            <th>周平均率</th>
+                            <th>周均收益率</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -183,7 +183,7 @@
                                 <td><span :class="item.week_rate_class">{{ item.week_rate }}</span></td>
                                 <td><span :class="item.days_rate_class">{{ item.days_rate }}</span></td>
                                 <td><span :class="item.month_rate_class">{{ item.month_rate }}</span></td>
-                                <td><span class="tr-color-order">{{ item.total_rate }}</span></td>
+                                <td><span :class="'tr-color-order '+item.total_rate_class">{{ item.total_rate }}</span></td>
                                 <td><span class="">{{ item.success_rate }}</span></td>
                                 <td><span>{{ item.avg_position_day }}</span></td>
                                 <td><span :class="item.week_avg_profit_rate_class">{{ item.week_avg_profit_rate }}</span></td>
@@ -378,7 +378,6 @@
 {/block} 
 {block name="footer"}{include file="public/footer" /}{/block} 
 {block name="js"} 
-{js file="/static/js/widget/carouFredSel.js"} 
-{js file="/static/js/public/md5.js"}
+{js file="/static/js/widget/carouFredSel.js"}
 {js file="/static/js/index/index.js"} 
 {/block}

@@ -25,16 +25,11 @@
         <section class="am-panel am-panel-default tr-personal-info">
           <div class="am-panel-bd">
             <div class="am-g">
-                <div class="am-u-sm-5">资金账号:</div>
-                <div class="am-u-sm-7"><div class="tr-account" :title="info.account">{{ info.account }}</div></div>
-                <div class="am-u-sm-5">选股成功率:</div>
-                <div class="am-u-sm-7">{{ info.success_rate }}</div>
-                <div class="am-u-sm-5">周平均率:</div>
-                <div class="am-u-sm-7">{{ info.week_avg_profit_rate }}</div>
-                <div class="am-u-sm-5">账户创建:</div>
-                <div class="am-u-sm-7">{{ info.time }}</div>
-                <div class="am-u-sm-5">最后操作:</div>
-                <div class="am-u-sm-7">{{ info.operationTime }}</div>
+                <div class="am-u-sm-12"><div class="tr-account" :title="info.account">资金账号:&nbsp;&nbsp;{{ info.account }}</div></div>
+                <div class="am-u-sm-12">选股成功率:&nbsp;&nbsp;{{ info.success_rate }}</div>
+                <div class="am-u-sm-12">周均收益率:&nbsp;&nbsp;{{ info.week_avg_profit_rate }}</div>
+                <div class="am-u-sm-12">账户创建:&nbsp;&nbsp;{{ info.time }}</div>
+                <div class="am-u-sm-12">最后操作:&nbsp;&nbsp;{{ info.operationTime }}</div>
             </div>
           </div>
         </section>
@@ -70,7 +65,7 @@
                 </div>    
             </section>
             <section class="am-panel am-panel-default">
-                <div class="am-panel-hd"><h2 class="am-panel-title"><span class="am-icon-line-chart am-icon-sm am-icon"></span>盈亏走势图</h2></div>
+                <div class="am-panel-hd"><h2 class="am-panel-title"><span class="am-icon-line-chart am-icon-sm am-icon"></span>账户盈亏走势图</h2></div>
                 <main class="am-panel-bd">
                     <div id="main" style="height: 400px;"></div>
                 </main>
@@ -81,7 +76,7 @@
                     <table class="am-table am-margin-bottom-0 am-table-centered am-table-hover">
                         <thead>
                             <tr>
-                                <th>股票名称</th>
+                                <th class="am-text-left">股票名称</th>
                                 <th>股票代码</th>
                                 <th>持仓数量</th>
                                 <th>买入成本</th>
@@ -95,7 +90,7 @@
                         <tbody>
                             <template v-if="positions.length > 0">
                                 <tr v-for="item in positions">
-                                    <td>{{ item.stock_name }}</td>
+                                    <td class="am-text-left">{{ item.stock_name }}</td>
                                     <td>{{ item.stock }}</td>
                                     <td>{{ item.available_number }}</td>
                                     <td><span class="tr-color-price">{{ item.cost_price }}</span></td>
@@ -116,43 +111,51 @@
                 </main>
             </section>
             <section class="am-panel am-panel-default">
-                <div class="am-panel-hd"><h2 class="am-panel-title"><span class="am-icon-file-text am-icon-sm am-icon"></span>交易记录</h2></div>
+                <div class="am-panel-hd">
+                    <h2 class="am-panel-title"><span class="am-icon-file-text am-icon-sm am-icon"></span>交易记录</h2>
+                </div>
                 <main class="am-panel-bd">
                     <table class="am-table am-margin-bottom-0 am-table-centered am-table-hover">
                         <thead>
                             <tr>
-                                <th>股票名称</th>
-                                <th>股票代码</th>
+                                <th class="am-text-left" width="18%">股票名称</th>
+                                <th width="18%">股票代码</th>
                                 <th>方式</th>
                                 <th>成交价格</th>
                                 <th>数量</th>
-                                <th>时间</th>
+                                <th width="18%">时间</th>
                             </tr>
                         </thead>
                         <tbody>
+                            <template v-if="entrust.length > 0">
                             <tr v-for="item in entrust">
-                                <td>{{ item.stock_name }}</td>
+                                <td class="am-text-left">{{ item.stock_name }}</td>
                                 <td>{{ item.stock }}</td>
                                 <td><span :class="item.type_class">{{ item.type_label }}</td>
                                 <td>{{ item.price }}</td>
                                 <td>{{ item.number }}</td>
                                 <td>{{ item.time }}</td>
                             </tr>
+                            </template>
+                            <template v-else>
+                                <tr>
+                                    <td colspan="6"><span>暂无数据</span></td>
+                                </tr>
+                            </template>
                         </tbody>
                     </table>
                 </main>
             </section>
-
             <section class="am-panel am-panel-default">
                 <div class="am-panel-hd"><h2 class="am-panel-title"><span class="am-icon-database am-icon-sm am-icon"></span>历史持仓</h2></div>
                 <main class="am-panel-bd">
                     <table class="am-table am-margin-bottom-0 am-table-centered am-table-hover">
                         <thead>
                             <tr>
-                                <th>买入时间</th>
-                                <th>卖出时间</th>
-                                <th>股票名称</th>
-                                <th>股票代码</th>
+                                <th class="am-text-left" width="18%">买入时间</th>
+                                <th width="18%">卖出时间</th>
+                                <th width="18%">股票名称</th>
+                                <th width="18%">股票代码</th>
                                 <th>收益率</th>
                                 <th>盈亏</th>
                             </tr>
@@ -160,7 +163,7 @@
                         <tbody>
                             <template v-if="history_positions.length > 0">
                                 <tr v-for="item in history_positions">
-                                    <td>{{ item.time }}</td>
+                                    <td class="am-text-left">{{ item.time }}</td>
                                     <td>{{ item.update_time }}</td>
                                     <td>{{ item.stock_name }}</td>
                                     <td>{{ item.stock }}</td>
@@ -176,6 +179,9 @@
                         </tbody>
                     </table>
                 </main>
+                <div class="am-panel-footer page" id="history">
+                    <vue-nav :cur.sync="history.page" :all.sync="history.page_total" v-on:btn-click="getHistoryPositions"></vue-nav>
+                </div>
             </section>
             <!-- <section class="am-panel am-panel-default tr-comments">
                 <div class="am-panel-hd"><h2 class="am-panel-title"><span class="am-icon-commenting am-icon-sm am-icon"></span>留言板</h2></div>
@@ -232,6 +238,7 @@
 {block name="footer"}{include file="public/footer" /}{/block}
 {block name="js"}
 {js href="/static/js/widget/echarts.js" /}
-{js file="/static/js/public/md5.js"}
+{css href="/static/css/public/pagination.css" /}
+{js href="/static/js/widget/page.js" /}
 {js href="/static/js/member/personal.js" /}
 {/block}

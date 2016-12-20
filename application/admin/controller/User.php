@@ -44,6 +44,7 @@ class User extends Base
 		if($recommend == 1){
 			$data = [
 				'recommend' => 1,
+				'sort' => input('get.sort', 0),
 				'reason' => trim(input('get.reason', ''))
 			];
 		} else {//撤销推荐

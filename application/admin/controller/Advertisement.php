@@ -31,10 +31,15 @@ class Advertisement extends Base
 	//广告
 	public function banner()
 	{
-		$advertisement = AdModel::where(['type'=>['<>', 2],'type'=>['<>', 1]])->select();
+		$advertisement = AdModel::where(['type'=>['not in', [1,2]]])->select();
 
 		$this->assign('ads', $advertisement);
 
+		return $this->fetch();
+	}
+
+	public function add()
+	{
 		return $this->fetch();
 	}
 
@@ -58,7 +63,7 @@ class Advertisement extends Base
 		if(AdModel::create($data) === false){
 			$this->error('添加失败');
 		} else {
-			$this->success('添加成功');
+			$this->success('添加成功', 'announcement');
 		}
 	}
 

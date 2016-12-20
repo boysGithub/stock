@@ -71,7 +71,7 @@
                                                     推荐
                                                 </a>
                                                 {else /}
-                                                <a uid="{$vo.uid}" reason="{$vo.reason}" recommend="{$vo.recommend}" onclick="recommend($(this))" href="javascript:;">
+                                                <a uid="{$vo.uid}" sort="{$vo.sort}" reason="{$vo.reason}" recommend="{$vo.recommend}" onclick="recommend($(this))" href="javascript:;">
                                                     <i class="am-icon-pencil"></i> 查看推荐
                                                  </a>   
                                                 {/if}
@@ -102,6 +102,10 @@
       <textarea class="am-u-sm-8 am-u-end" id="reason_text">
           
       </textarea>
+      <div class="am-u-sm-3 am-margin-vertical-xs am-text-right">排序：</div>
+      <div class="am-u-sm-8 am-margin-vertical-xs am-u-end am-text-left am-padding-0">
+            <input type="text" value="62255" id="sort" name="sort">
+      </div>
     </div>
     <div class="am-modal-footer am-g">
       <span class="am-modal-btn am-u-sm-7" id="confirm" data-am-modal-confirm>保存</span>
@@ -117,6 +121,7 @@
 function recommend(e)
 {
     $("#reason_text").val(e.attr('reason'));
+    $("#sort").val(e.attr('sort'));
     var recommend = e.attr('recommend');
     if(recommend == '1'){
         $("#cancel").html('撤销推荐');
@@ -127,7 +132,8 @@ function recommend(e)
         relatedTarget: this,
         onConfirm: function(options) {
             var reason = encodeURI($("#reason_text").val());
-            window.location.href = "{:url('user/recommend')}?uid="+e.attr('uid')+"&recommend=1&reason="+reason;
+            var sort = $("#sort").val();
+            window.location.href = "{:url('user/recommend')}?uid="+e.attr('uid')+"&recommend=1&reason="+reason+"&sort="+sort;
         },
         onCancel: function() {
             if(recommend == '1'){

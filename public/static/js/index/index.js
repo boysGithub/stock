@@ -292,8 +292,9 @@ var index = new Vue({
             $.getJSON(api_host + '/ad',{type:3},function(data){
                 if(data.status == 'success'){
                     var ret = data.data;
-                   
-                    _this.index_banner = {url:ret[0].url, title: ret[0].title, image: ret[0].image};
+                    if(ret.length > 0){
+                        _this.index_banner = {url:ret[0].url, title: ret[0].title, image: ret[0].image};
+                    }
                 }
             }); 
         },
