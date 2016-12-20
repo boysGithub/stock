@@ -71,7 +71,6 @@ class Index extends Controller
                 $stockInfo = getStock($stockSell,"s_");
                 $orderIndex = new Trans;
                 foreach ($sell as $key => $value) {
-                    
                     if($stockInfo[$value['stock']][1] >= $value['price']){
                         $orderIndex->sellProcess($value,$stockInfo[$value['stock']],true);
                         $redis->rm($key);
@@ -88,7 +87,7 @@ class Index extends Controller
      */
     public function autoClearOrder(){
         $redis = new Redis();
-        $orderInfo = Transaction::whereTime('time','today')->where('status',0)->select();
+        $orderInfo = Transaction::where('status',0)->select();
         foreach ($orderInfo as $key => $value) {
             Db::startTrans();
             try {
@@ -101,12 +100,13 @@ class Index extends Controller
                 }else if($value['type'] == 2){
                     $redis->rm("noSellOrder".$value['id']."_".$value['uid']);
                     $position = UserPosition::where(['uid'=>$value['uid'],'stock'=>$value['stock'],'is_position'=>1,'sorts'=>$value['sorts']])->Field('id,available_number')->find();
-                    $da['available_number'] = $position['available_number'] + $value['number'];
-                    UserPosition::where(['id'=>$position['id']])->update($da);
+                    $available_number = $position['available_number'] + $value['number'];
+                    UserPosition::where(['id'=>$position['id']])->update(['available_number'=>$available_number]);
                 }
                 Db::commit();
                 $this->handle("自动清空未成交订单成功".$value['id'],1);
             } catch (\Exception $e){
+                echo $e;
                 Db::rollback();
                 $this->handle("自动清空未成交订单失败".$value['id'],0);
             }
@@ -254,7 +254,7 @@ class Index extends Controller
                 }
                 $stockTmp = getStock($stockGather);
                 //获取持仓的集合
-                $userInfo = $userPosition->where(['uid'=>['in',$userGather]])->Field('id,uid,ratio,stock,(available_number + freeze_number) as number,cost_price')->select();
+                $userInfo = $userPosition->where(['uid'=>['in',$userGather],'is_position'=>1])->Field('id,uid,ratio,stock,(available_number + freeze_number) as number,cost_price')->select();
                 //计算选股成功率
                 foreach ($userInfo as $key => $value) {
                     //把某一个用户的市值统计出来
