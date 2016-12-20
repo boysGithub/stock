@@ -253,7 +253,6 @@ class Index extends Controller
                     $stockGather[] = $value['stock'];
                 }
                 $stockTmp = getStock($stockGather);
-                dump($stockTmp);exit;
                 //获取持仓的集合
                 $userInfo = $userPosition->where(['uid'=>['in',$userGather]])->Field('id,uid,ratio,stock,(available_number + freeze_number) as number,cost_price')->select();
                 //计算选股成功率
