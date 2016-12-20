@@ -514,7 +514,7 @@ class Trans extends Base
         		$d['total_rate'] = round(($d['funds'] - $this->_base->_stockFunds)/$this->_base->_stockFunds * 100,3);
         		UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->update($d);
         		//更改订单状态
-        		Transaction::update($data);
+        		Transaction::update($data->toArray());
         		//获取用户持有股票的信息
             	$userInfo = UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'is_position'=>1,'sorts'=>$data['sorts']])->find();
             	$number = Transaction::where(['pid'=>$userInfo['id'],'type'=>2,'status'=>0])->value('sum(number) as number');
@@ -560,11 +560,13 @@ class Trans extends Base
             		$da['cost_price'] = round($da['cost'] / ($userInfo['freeze_number']+$userInfo['available_number']+$number),3);
             		$da['ratio'] = round(($data['price'] - $da['cost_price'])/abs($da['cost_price'])*100,3);
             		$da['last_time'] = date("Y-m-d H:i:s");
+
             		//更改持仓信息到数据库
                  	UserPosition::where(['id'=>$userInfo['id']])->update($da);
                 	Db::commit();
             	}
         	} catch (\Exception $e) {
+        		echo $e;
         		Db::rollback();
         	}
         }else{

@@ -43,15 +43,14 @@ class Index extends Controller
         if(($t1 <= time() && $t2 >= time()) || ($t3 <= time() && $t4 >= time())){
             $buyKeys = Transaction::where(['status'=>0,'type'=>1])->select();
             $sellKeys = Transaction::where(['status'=>0,'type'=>2])->select();
+            $orderIndex = new Trans;
             //卖出操作
             if($buyKeys){
                 foreach ($buyKeys as $key => $value) {
                     $buy[] = $value;
                     $stockBuy[] = $value['stock'];
                 }
-                
                 $stockInfo = getStock($stockBuy,"s_");
-                $orderIndex = new Trans;
                 foreach ($buy as $key => $value) {
                     if($stockInfo[$value['stock']][1] <= $value['price']){
                         $orderIndex->buyProcess($value,$stockInfo[$value['stock']],true);
@@ -65,9 +64,7 @@ class Index extends Controller
                     $sell[] = $value;
                     $stockSell[] = $value['stock'];
                 }
-                
                 $stockInfo = getStock($stockSell,"s_");
-                $orderIndex = new Trans;
                 foreach ($sell as $key => $value) {
                     if($stockInfo[$value['stock']][1] >= $value['price']){
                         $orderIndex->sellProcess($value,$stockInfo[$value['stock']],true);
