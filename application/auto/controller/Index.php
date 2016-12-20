@@ -41,39 +41,35 @@ class Index extends Controller
         $t3 = strtotime(date("Y-m-d 13:00:00"));
         $t4 = strtotime(date("Y-m-d 15:00:00"));
         if(($t1 <= time() && $t2 >= time()) || ($t3 <= time() && $t4 >= time())){
-            $redis = new Redis();
-            $buyKeys = $redis->keys("*noBuyOrder*");
-            $sellKeys = $redis->keys("*noSellOrder*");
+            $buyKeys = Transaction::where(['status'=>0,'type'=>1])->select();
+            $sellKeys = Transaction::where(['status'=>0,'type'=>2])->select();
+            $orderIndex = new Trans;
             //卖出操作
             if($buyKeys){
-                for ($i=0; $i < count($buyKeys); $i++) { 
-                    $tmpBuy = $redis->get($buyKeys[$i]);
-                    $buy[$buyKeys[$i]] = $tmpBuy;
-                    $stockBuy[] = $tmpBuy['stock'];
+                foreach ($buyKeys as $key => $value) {
+                    $buy[] = $value;
+                    $stockBuy[] = $value['stock'];
                 }
                 $stockInfo = getStock($stockBuy,"s_");
-                $orderIndex = new Trans;
                 foreach ($buy as $key => $value) {
                     if($stockInfo[$value['stock']][1] <= $value['price']){
+                        $value = $value->toArray();
                         $orderIndex->buyProcess($value,$stockInfo[$value['stock']],true);
-                        $redis->rm($key);
                         $this->handle($value['stock_name']."买入成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
                     }
                 }
             }
             //卖出操作
             if($sellKeys){
-                for ($i=0; $i < count($sellKeys); $i++) { 
-                    $tmpSell = $redis->get($sellKeys[$i]);
-                    $sell[$sellKeys[$i]] = $tmpSell;
-                    $stockSell[] = $tmpSell['stock'];
+                foreach ($sellKeys as $key => $value) {
+                    $sell[] = $value;
+                    $stockSell[] = $value['stock'];
                 }
                 $stockInfo = getStock($stockSell,"s_");
-                $orderIndex = new Trans;
                 foreach ($sell as $key => $value) {
                     if($stockInfo[$value['stock']][1] >= $value['price']){
+                        $value = $value->toArray();
                         $orderIndex->sellProcess($value,$stockInfo[$value['stock']],true);
-                        $redis->rm($key);
                         $this->handle($value['stock_name']."卖出成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
                     }
                 }
@@ -87,7 +83,7 @@ class Index extends Controller
      */
     public function autoClearOrder(){
         $redis = new Redis();
-        $orderInfo = Transaction::whereTime('time','today')->where('status',0)->select();
+        $orderInfo = Transaction::where('status',0)->select();
         foreach ($orderInfo as $key => $value) {
             Db::startTrans();
             try {
@@ -100,12 +96,13 @@ class Index extends Controller
                 }else if($value['type'] == 2){
                     $redis->rm("noSellOrder".$value['id']."_".$value['uid']);
                     $position = UserPosition::where(['uid'=>$value['uid'],'stock'=>$value['stock'],'is_position'=>1,'sorts'=>$value['sorts']])->Field('id,available_number')->find();
-                    $da['available_number'] = $position['available_number'] + $value['number'];
-                    UserPosition::where(['id'=>$position['id']])->update($da);
+                    $available_number = $position['available_number'] + $value['number'];
+                    UserPosition::where(['id'=>$position['id']])->update(['available_number'=>$available_number]);
                 }
                 Db::commit();
                 $this->handle("自动清空未成交订单成功".$value['id'],1);
             } catch (\Exception $e){
+                echo $e;
                 Db::rollback();
                 $this->handle("自动清空未成交订单失败".$value['id'],0);
             }
@@ -201,7 +198,6 @@ class Index extends Controller
             }
             $userFunds = new UserFunds;
             $userFunds->saveAll($userInfo);
-            Db::commit();
             $this->handle("更新总盈利率和总资产成功",1);
             $userInfo = UserFunds::field('uid')->select();
             foreach ($userInfo as $key => $value) {
@@ -210,23 +206,10 @@ class Index extends Controller
             $t = join(',',$tmp1);
             $redis = new Redis;
             $redis->set("total_rate",$t);
+            Db::commit();
         } catch (\Exception $e) {
             Db::rollback();
             $this->handle("更新总盈利率和总资产失败",0);
-        }
-    }
-
-    /**
-     * [autoStockRate 自动更新股票盈利率]
-     * @return [type] [description]
-     */
-    public function autoStockRate(){
-        // 启动事务
-        Db::startTrans();
-        try {
-            //UserPosition::group('stock')->Field('stock')->select();
-        } catch (\Exception $e) {
-            
         }
     }
 
@@ -238,23 +221,21 @@ class Index extends Controller
         // 启动事务
         Db::startTrans();
         try {
-            UserPosition::group('uid')->Field('id,uid,stock')->chunk(500,function($list){
+                $list = UserPosition::group('uid')->Field('id,uid,stock')->select();
                 $userPosition = new UserPosition;
                 $userGather = '';
                 foreach ($list as $key => $value) {
-                    $userGather .= $value['uid'].',';
+                    $tp[] = $value['uid'];
                 }
-                $userGather = substr($userGather,0,-1);
+                $userGather = join(',',$tp);
                 //获取股票集合
                 $stock = $userPosition->where(['is_position'=>1,'uid'=>['in',$userGather]])->Field('stock')->group('stock')->select();
-                
                 foreach ($stock as $key => $value) {
                     $stockGather[] = $value['stock'];
                 }
                 $stockTmp = getStock($stockGather);
-                dump($stockTmp);exit;
                 //获取持仓的集合
-                $userInfo = $userPosition->where(['uid'=>['in',$userGather]])->Field('id,uid,ratio,stock,(available_number + freeze_number) as number,cost_price')->select();
+                $userInfo = $userPosition->where(['uid'=>['in',$userGather],'is_position'=>1])->Field('id,uid,ratio,stock,(available_number + freeze_number) as number,cost_price')->select();
                 //计算选股成功率
                 foreach ($userInfo as $key => $value) {
                     //把某一个用户的市值统计出来
@@ -266,7 +247,7 @@ class Index extends Controller
                         $userInfo[$key]['assets'] = $value['number'] * $stockTmp[$value['stock']][2];
                         $userInfo[$key]['ratio'] = round(($stockTmp[$value['stock']][2] - $value['cost_price'])/$value['cost_price'] * 100,3);
                     }
-                    $userInfo[$key] = $value->toArray();  
+                    $userInfo[$key] = $value->toArray();    
                 }
                 $userPosition->saveAll($userInfo);
                 $userInfo = $userPosition->where(['uid'=>['in',$userGather]])->Field('id,uid,ratio,stock,(available_number + freeze_number) as number,cost_price')->select();
@@ -291,9 +272,7 @@ class Index extends Controller
                 $redis = new Redis;
                 $redis->set("success_rate",$userGather);
                 Db::commit();
-            });
         } catch (\Exception $e) {
-            echo $e;
             Db::rollback();
             $this->handle("自动更新胜率失败",0);
         }

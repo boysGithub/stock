@@ -7,7 +7,6 @@ use app\common\model\NoTrande;
 use think\Config;
 use think\Request;
 use app\common\model\UserFunds;
-use think\cache\driver\Redis;
 use think\Db;
 use app\common\model\UserPosition;
 /**
@@ -108,7 +107,7 @@ class Trans extends Base
 			        		return $this->noBuyOrder($data,$stock);
 		        		}
 		        	}else{
-	        			return json(['status'=>'failed','data'=>'价格不能超过'.$limitDown.'元和'.$limitUp.'元']);
+	        			return json(['status'=>'failed','data'=>'价格不能以跌停和涨停价挂单']);
 	        		}
 		        }
         	}else{
@@ -189,7 +188,7 @@ class Trans extends Base
 	        			}
 	        		}
 	        	}else{
-        			return json(['status'=>'failed','data'=>'价格不能超过'.$limitDown.'元和'.$limitUp.'元']);
+        			return json(['status'=>'failed','data'=>'价格不能以跌停和涨停价挂单']);
         		}
 	        }
         }
@@ -300,17 +299,11 @@ class Trans extends Base
             $data['available_funds'] = $funds['available_funds'] - $data['fee'] - $data['price'] * $data['number'];
             $Trans = new Transaction();
             $Trans->allowField(true)->save($data);
-            
             UserFunds::where(['uid'=>$funds['uid']])->update(['available_funds'=>$data['available_funds']]);
-            //添加进入redis
-            $da = $Trans->where(['id'=>$Trans->id])->find();
-            $redis = new Redis();
-            $redis->set("noBuyOrder_".$Trans->id."_".$data['uid'],$da);
             Db::commit();
             $result = json(['status'=>'success','data'=>'委托成功']);
         } catch (\Exception $e) {
             Db::rollback();
-            echo $e;exit;
             $result = json(['status'=>'failed','data'=>'下单失败']);
         }
         return $result;
@@ -483,14 +476,10 @@ class Trans extends Base
             UserPosition::where(['id'=>$info['id']])->update(['available_number'=>$info['available_number']-$data['number']]);
             $data['pid'] = $info['id'];
             $Trans = new Transaction;
-            $Trans->allowField(true)->save($data);
-            $da = $Trans->where(['id'=>$Trans->id])->find();
-            $redis = new Redis();
-            $redis->set("noSellOrder_".$Trans->id."_".$data['uid'],$da);
+            $Trans->allowField(true)->save($data); 
             Db::commit();
             $result = json(['status'=>'success','data'=>'委托成功']);
         } catch (\Exception $e) {
-        	echo $e;
             Db::rollback();
             $result = json(['status'=>'failed','data'=>'下单失败']);
         }
@@ -517,8 +506,8 @@ class Trans extends Base
         		$data['time'] = date("Y-m-d H:i:s");
         		//手续费最低为5元
             	$data['fee'] = $data['price']*$data['number']*$scale >=5?$data['price']*$data['number']*$scale:5;
-        		$data['available_funds'] = $funds['available_funds'] + $data['price']*$data['number'] - $data['fee'];
         		$funds = UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->find();
+        		$data['available_funds'] = $funds['available_funds'] + $data['price']*$data['number'] - $data['fee'];
         		//为用户增加卖出金额
         		$d['funds'] = $funds['funds'] - $data['fee'];
         		$d['available_funds'] = $data['available_funds'];
@@ -529,7 +518,7 @@ class Trans extends Base
         		//获取用户持有股票的信息
             	$userInfo = UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'is_position'=>1,'sorts'=>$data['sorts']])->find();
             	$number = Transaction::where(['pid'=>$userInfo['id'],'type'=>2,'status'=>0])->value('sum(number) as number');
-            	if($userInfo['available_number'] == $data['number'] && $userInfo['freeze_number'] == 0 && is_null($number)){
+            	if($userInfo['available_number'] == 0 && $userInfo['freeze_number'] == 0 && is_null($number)){
             		//计算所有的买入订单
             		$buyInfo = Transaction::where(['pid'=>$userInfo['id'],'type'=>1,'status'=>1])->select();
             		foreach ($buyInfo as $key => $value) {
@@ -553,7 +542,7 @@ class Trans extends Base
             		$da['available_number'] = 0;
             		$da['position_number'] = 0;
             		$da['is_position'] = 2;
-            		$da['assets'] = $profits + $stockData[$data['stock']][1] * $number;
+            		$da['assets'] = $profits + $data['price'] * $number;
             		$da['fee'] = $userInfo['fee'] + $data['fee'];
             		$da['cost'] = $total;
             		$da['cost_price'] = round($da['cost'] / $num,3);
@@ -565,12 +554,13 @@ class Trans extends Base
             	}else{
             		//组装持仓信息
             		$da['assets'] = $data['price'] * ($userInfo['available_number'] + $userInfo['freeze_number'] + $number);
-            		$da['position_number'] = $da['position_number'] - $data['number'];
+            		$da['position_number'] = $userInfo['available_number'] + $userInfo['freeze_number'] + $number;
             		$da['fee'] = $userInfo['fee'] + $data['fee'];
             		$da['cost'] = $userInfo['cost'] - $data['price'] * $data['number'] + $data['fee'];
             		$da['cost_price'] = round($da['cost'] / ($userInfo['freeze_number']+$userInfo['available_number']+$number),3);
             		$da['ratio'] = round(($data['price'] - $da['cost_price'])/abs($da['cost_price'])*100,3);
             		$da['last_time'] = date("Y-m-d H:i:s");
+
             		//更改持仓信息到数据库
                  	UserPosition::where(['id'=>$userInfo['id']])->update($da);
                 	Db::commit();
@@ -641,6 +631,7 @@ class Trans extends Base
             	}else{
             		//组装持仓信息
             		$da['available_number'] = $userInfo['available_number'] - $data['number'];
+            		$da['position_number'] = $da['available_number'] + $userInfo['freeze_number'] + $number;
             		$da['assets'] = $stockData[$data['stock']][1] * ($da['available_number'] + $userInfo['freeze_number'] + $number);
             		$da['fee'] = $userInfo['fee'] + $data['fee'];
             		$da['cost'] = $userInfo['cost'] - $stockData[$data['stock']][1] * $data['number'] + $data['fee'];
@@ -652,7 +643,6 @@ class Trans extends Base
                  	return json(['status'=>'success','data'=>'委托成功']);
             	}
         	} catch (\Exception $e) {
-        		echo $e;
         		Db::rollback();
         		return json(['status'=>'failed','data'=>'下单失败，多次失败请联系管理员']);
         	}

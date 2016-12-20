@@ -61,21 +61,25 @@ class Share extends Base
      * @return [type] [description]
      */
     public function historicalPosition(){
+        $limit = $this->_base->_limit;
         $data = input("get.");
         $res = $this->validate($data,"GetTimeChart");
         if (true !== $res) {
             return json(['status'=>'failed','data'=>$res]);
         }
+        $data['p'] = isset($data['p']) ? $data['p'] > 0 ? $data['p'] : 1 : 1;
         if(isset($data['stock']) && $data['stock']){
-            $historical = UserPosition::where(['uid'=>$data['uid'],'is_position'=>2,'stock'=>$data['stock']])->select();
+            $count = ceil(UserPosition::where(['uid'=>$data['uid'],'is_position'=>2,'stock'=>$data['stock']])->count()/$limit);
+            $historical = UserPosition::where(['uid'=>$data['uid'],'is_position'=>2,'stock'=>$data['stock']])->limit(($data['p']-1)*$limit,$limit)->select();
         }else{
-            $historical = UserPosition::where(['uid'=>$data['uid'],'is_position'=>2])->select();
+            $count = ceil(UserPosition::where(['uid'=>$data['uid'],'is_position'=>2])->count()/$limit);
+            $historical = UserPosition::where(['uid'=>$data['uid'],'is_position'=>2])->limit(($data['p']-1)*$limit,$limit)->select();
         }
         
         if($historical){
-            return json(['status'=>'success','data'=>$historical]);
+            return json(['status'=>'success','data'=>$historical,'pageTotal'=>$count]);
         }else{
-            return json(['status'=>'failed','data'=>'还没有历史持仓']);
+            return json(['status'=>'failed','data'=>'还没有历史持仓','pageTotal'=>$count]);
         }
     }
 }	
