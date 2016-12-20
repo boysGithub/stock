@@ -56,7 +56,6 @@ class Index extends Controller
                 foreach ($buy as $key => $value) {
                     if($stockInfo[$value['stock']][1] <= $value['price']){
                         $orderIndex->buyProcess($value,$stockInfo[$value['stock']],true);
-                        exit();
                         $redis->rm($key);
                         $this->handle($value['stock_name']."买入成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
                     }
