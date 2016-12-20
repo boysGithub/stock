@@ -41,39 +41,36 @@ class Index extends Controller
         $t3 = strtotime(date("Y-m-d 13:00:00"));
         $t4 = strtotime(date("Y-m-d 15:00:00"));
         if(($t1 <= time() && $t2 >= time()) || ($t3 <= time() && $t4 >= time())){
-            $redis = new Redis();
-            $buyKeys = $redis->keys("*noBuyOrder*");
-            $sellKeys = $redis->keys("*noSellOrder*");
+            $buyKeys = Transaction::where(['status'=>0,'type'=>1])->select();
+            $sellKeys = Transaction::where(['status'=>0,'type'=>2])->select();
             //卖出操作
             if($buyKeys){
-                for ($i=0; $i < count($buyKeys); $i++) { 
-                    $tmpBuy = $redis->get($buyKeys[$i]);
-                    $buy[$buyKeys[$i]] = $tmpBuy;
-                    $stockBuy[] = $tmpBuy['stock'];
+                foreach ($buyKeys as $key => $value) {
+                    $buy[] = $value;
+                    $stockBuy[] = $value['stock'];
                 }
+                
                 $stockInfo = getStock($stockBuy,"s_");
                 $orderIndex = new Trans;
                 foreach ($buy as $key => $value) {
                     if($stockInfo[$value['stock']][1] <= $value['price']){
                         $orderIndex->buyProcess($value,$stockInfo[$value['stock']],true);
-                        $redis->rm($key);
                         $this->handle($value['stock_name']."买入成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
                     }
                 }
             }
             //卖出操作
             if($sellKeys){
-                for ($i=0; $i < count($sellKeys); $i++) { 
-                    $tmpSell = $redis->get($sellKeys[$i]);
-                    $sell[$sellKeys[$i]] = $tmpSell;
-                    $stockSell[] = $tmpSell['stock'];
+                foreach ($sellKeys as $key => $value) {
+                    $sell[] = $value;
+                    $stockSell[] = $value['stock'];
                 }
+                
                 $stockInfo = getStock($stockSell,"s_");
                 $orderIndex = new Trans;
                 foreach ($sell as $key => $value) {
                     if($stockInfo[$value['stock']][1] >= $value['price']){
                         $orderIndex->sellProcess($value,$stockInfo[$value['stock']],true);
-                        $redis->rm($key);
                         $this->handle($value['stock_name']."卖出成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
                     }
                 }
@@ -246,6 +243,7 @@ class Index extends Controller
                     $userGather .= $value['uid'].',';
                 }
                 $userGather = substr($userGather,0,-1);
+                //dump($userGather);exit;
                 //获取股票集合
                 $stock = $userPosition->where(['is_position'=>1,'uid'=>['in',$userGather]])->Field('stock')->group('stock')->select();
                 
@@ -267,6 +265,7 @@ class Index extends Controller
                         $userInfo[$key]['ratio'] = round(($stockTmp[$value['stock']][2] - $value['cost_price'])/$value['cost_price'] * 100,3);
                     }
                     $userInfo[$key] = $value->toArray();  
+                    dump($userInfo);
                 }
                 $userPosition->saveAll($userInfo);
                 $userInfo = $userPosition->where(['uid'=>['in',$userGather]])->Field('id,uid,ratio,stock,(available_number + freeze_number) as number,cost_price')->select();

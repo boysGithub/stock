@@ -7,7 +7,6 @@ use app\common\model\NoTrande;
 use think\Config;
 use think\Request;
 use app\common\model\UserFunds;
-use think\cache\driver\Redis;
 use think\Db;
 use app\common\model\UserPosition;
 /**
@@ -300,17 +299,11 @@ class Trans extends Base
             $data['available_funds'] = $funds['available_funds'] - $data['fee'] - $data['price'] * $data['number'];
             $Trans = new Transaction();
             $Trans->allowField(true)->save($data);
-            
             UserFunds::where(['uid'=>$funds['uid']])->update(['available_funds'=>$data['available_funds']]);
-            //添加进入redis
-            $da = $Trans->where(['id'=>$Trans->id])->find();
-            $redis = new Redis();
-            $redis->set("noBuyOrder_".$Trans->id."_".$data['uid'],$da);
             Db::commit();
             $result = json(['status'=>'success','data'=>'委托成功']);
         } catch (\Exception $e) {
             Db::rollback();
-            echo $e;exit;
             $result = json(['status'=>'failed','data'=>'下单失败']);
         }
         return $result;
@@ -483,14 +476,10 @@ class Trans extends Base
             UserPosition::where(['id'=>$info['id']])->update(['available_number'=>$info['available_number']-$data['number']]);
             $data['pid'] = $info['id'];
             $Trans = new Transaction;
-            $Trans->allowField(true)->save($data);
-            $da = $Trans->where(['id'=>$Trans->id])->find();
-            $redis = new Redis();
-            $redis->set("noSellOrder_".$Trans->id."_".$data['uid'],$da);
+            $Trans->allowField(true)->save($data); 
             Db::commit();
             $result = json(['status'=>'success','data'=>'委托成功']);
         } catch (\Exception $e) {
-        	echo $e;
             Db::rollback();
             $result = json(['status'=>'failed','data'=>'下单失败']);
         }
@@ -576,7 +565,6 @@ class Trans extends Base
                 	Db::commit();
             	}
         	} catch (\Exception $e) {
-        		echo $e;
         		Db::rollback();
         	}
         }else{
@@ -653,7 +641,6 @@ class Trans extends Base
                  	return json(['status'=>'success','data'=>'委托成功']);
             	}
         	} catch (\Exception $e) {
-        		echo $e;
         		Db::rollback();
         		return json(['status'=>'failed','data'=>'下单失败，多次失败请联系管理员']);
         	}
