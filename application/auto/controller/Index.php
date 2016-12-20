@@ -212,20 +212,6 @@ class Index extends Controller
     }
 
     /**
-     * [autoStockRate 自动更新股票盈利率]
-     * @return [type] [description]
-     */
-    public function autoStockRate(){
-        // 启动事务
-        Db::startTrans();
-        try {
-            //UserPosition::group('stock')->Field('stock')->select();
-        } catch (\Exception $e) {
-            
-        }
-    }
-
-    /**
      * [autoSuccessRate 自动更新胜率]
      * @return [type] [description]
      */
@@ -233,17 +219,15 @@ class Index extends Controller
         // 启动事务
         Db::startTrans();
         try {
-            UserPosition::group('uid')->Field('id,uid,stock')->chunk(500,function($list){
+                $list = UserPosition::group('uid')->Field('id,uid,stock')->select();
                 $userPosition = new UserPosition;
                 $userGather = '';
                 foreach ($list as $key => $value) {
-                    $userGather .= $value['uid'].',';
+                    $tp[] = $value['uid'];
                 }
-                $userGather = substr($userGather,0,-1);
-                //dump($userGather);exit;
+                $userGather = join(',',$tp);
                 //获取股票集合
                 $stock = $userPosition->where(['is_position'=>1,'uid'=>['in',$userGather]])->Field('stock')->group('stock')->select();
-                
                 foreach ($stock as $key => $value) {
                     $stockGather[] = $value['stock'];
                 }
@@ -261,8 +245,7 @@ class Index extends Controller
                         $userInfo[$key]['assets'] = $value['number'] * $stockTmp[$value['stock']][2];
                         $userInfo[$key]['ratio'] = round(($stockTmp[$value['stock']][2] - $value['cost_price'])/$value['cost_price'] * 100,3);
                     }
-                    $userInfo[$key] = $value->toArray();  
-                    dump($userInfo);
+                    $userInfo[$key] = $value->toArray();    
                 }
                 $userPosition->saveAll($userInfo);
                 $userInfo = $userPosition->where(['uid'=>['in',$userGather]])->Field('id,uid,ratio,stock,(available_number + freeze_number) as number,cost_price')->select();
@@ -287,9 +270,7 @@ class Index extends Controller
                 $redis = new Redis;
                 $redis->set("success_rate",$userGather);
                 Db::commit();
-            });
         } catch (\Exception $e) {
-            echo $e;
             Db::rollback();
             $this->handle("自动更新胜率失败",0);
         }
