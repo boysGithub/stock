@@ -3,8 +3,6 @@ var personal = new Vue({
     data: {
         count: 0,
         close: '',
-        cur: 0,
-        all: 0,
         info: {},//用户信息
         market_value: 0,//市值
         positions: [],//用户持仓
@@ -105,8 +103,7 @@ var personal = new Vue({
  
                     }
                     
-                    _this.cur = page;
-                    _this.all = data.pageTotal;
+                    _this.history = {page: page, page_total: data.pageTotal};
                     _this.history_positions = positions;
                 }    
             });

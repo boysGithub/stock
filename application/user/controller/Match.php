@@ -143,13 +143,16 @@ class Match extends Base
         ];
         $field = "mu.id,mu.uid,u.username,uf.success_rate,uf.week_avg_profit_rate,uf.avg_position_day,uf.total_rate,{$days_sql} days_rate, {$weekly_sql} week_rate, {$month_sql} month_rate{$field}";
         
+        $count = MatchUser::where(['match_id'=>$match->id])->alias('mu')->join($join)->count();
+        $page_total = ceil($count / $limit);
+
         $rankList = MatchUser::where(['match_id'=>$match->id])->alias('mu')
             ->field($field)
             ->join($join)
             ->limit(($page-1)*$limit, $limit)
             ->order($order)
             ->select();
-        var_dump($rankList);die;
+        
         $res = [
             'match'=>['id'=>$match->id,'name'=>$match->name,'type'=> $match->type, 'joined'=>0,'total_rate'=>0,'ranking'=> 0],
         ];
@@ -172,7 +175,7 @@ class Match extends Base
 
         $res['rankList'] = $rankList;
 
-        return json(['status'=>'success','data'=>$res]);
+        return json(['status'=>'success', 'data'=>$res, 'pageTotal' => $page_total]);
     }
 
     /**

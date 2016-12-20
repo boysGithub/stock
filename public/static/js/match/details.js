@@ -47,6 +47,7 @@ var match_details = new Vue({
                     match.week_class = (match.type == 1) ? ' tr-color-order' : '';
                     match.month_class = (match.type == 2) ? ' tr-color-order' : '';
                     
+                    _this.page = {p: page, total: data.pageTotal};
                     _this.match = match;
                     _this.ranking = ranking;
                 }    
