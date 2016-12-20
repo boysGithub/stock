@@ -189,18 +189,18 @@ class Index extends Base
      */
     public function read($id)
     {   
-        if(is_numeric($id)){
-           $redis = new Redis;
-            if($redis->get('create_'.$id) !== true){
-                if(User::where(['uid'=>$id])->value('uid')){
-                    if(!UserFunds::where(['uid'=>$id])->value('id')){
-                        $this->createStock($id);
-                    }else{
-                        $redis->set('create_'.$id,true);
-                    }
-                }
-            } 
-        }
+        // if(is_numeric($id)){
+        //    $redis = new Redis;
+        //     if($redis->get('create_'.$id) !== true){
+        //         if(User::where(['uid'=>$id])->value('uid')){
+        //             if(!UserFunds::where(['uid'=>$id])->value('id')){
+        //                 $this->createStock($id);
+        //             }else{
+        //                 $redis->set('create_'.$id,true);
+        //             }
+        //         }
+        //     } 
+        // }
         $stockFunds = $this->_base->_stockFunds;
         $fund = UserFunds::where(['uid'=>$id])->Field('id,uid,funds,time,operationTime,available_funds,sorts,total_rate,avg_position_day,total_profit_rank,week_avg_profit_rate,win_rate,success_rate,account')->find();
         //获取用户资产信息
@@ -224,7 +224,7 @@ class Index extends Base
             $fund->avatar = Config('use_url.img_url') . '/avatar/img/'.$fund->uid.'.png';
             $result = json(['status'=>'success','data'=>$fund]);
         }else{
-            $result = json(['status'=>'failed','data'=>'没有这个用户']);
+            $result = json(['status'=>'failed','data'=>'他还没模拟交易信息']);
         }
         
         return $result;
