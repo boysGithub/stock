@@ -53,6 +53,7 @@ class Index extends Controller
                 $stockInfo = getStock($stockBuy,"s_");
                 foreach ($buy as $key => $value) {
                     if($stockInfo[$value['stock']][1] <= $value['price']){
+                        $value = $value->toArray();
                         $orderIndex->buyProcess($value,$stockInfo[$value['stock']],true);
                         $this->handle($value['stock_name']."买入成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
                     }
@@ -67,6 +68,7 @@ class Index extends Controller
                 $stockInfo = getStock($stockSell,"s_");
                 foreach ($sell as $key => $value) {
                     if($stockInfo[$value['stock']][1] >= $value['price']){
+                        $value = $value->toArray();
                         $orderIndex->sellProcess($value,$stockInfo[$value['stock']],true);
                         $this->handle($value['stock_name']."卖出成功;成交价:".$stockInfo[$value['stock']][1]."_".$value['uid'],1);
                     }

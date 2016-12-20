@@ -514,11 +514,11 @@ class Trans extends Base
         		$d['total_rate'] = round(($d['funds'] - $this->_base->_stockFunds)/$this->_base->_stockFunds * 100,3);
         		UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->update($d);
         		//更改订单状态
-        		Transaction::update($data->toArray());
+        		Transaction::update($data);
         		//获取用户持有股票的信息
             	$userInfo = UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'is_position'=>1,'sorts'=>$data['sorts']])->find();
             	$number = Transaction::where(['pid'=>$userInfo['id'],'type'=>2,'status'=>0])->value('sum(number) as number');
-            	if($userInfo['available_number'] == $data['number'] && $userInfo['freeze_number'] == 0 && is_null($number)){
+            	if($userInfo['available_number'] == 0 && $userInfo['freeze_number'] == 0 && is_null($number)){
             		//计算所有的买入订单
             		$buyInfo = Transaction::where(['pid'=>$userInfo['id'],'type'=>1,'status'=>1])->select();
             		foreach ($buyInfo as $key => $value) {
