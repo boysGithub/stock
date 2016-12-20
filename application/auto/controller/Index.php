@@ -199,7 +199,7 @@ class Index extends Controller
             $userFunds = new UserFunds;
             $userFunds->saveAll($userInfo);
             $this->handle("更新总盈利率和总资产成功",1);
-            $userInfo = UserPosition::field('uid')->group('uid')->select();
+            $userInfo = UserFunds::field('uid')->select();
             foreach ($userInfo as $key => $value) {
                 $tmp1[] = $value['uid'];
             }
@@ -622,7 +622,7 @@ class Index extends Controller
             Db::query($sql);
             Db::commit();
             $this->handle("更新周平均率成功",1);
-            $weekUser = UserPosition::field('uid')->group('uid')->select();
+            $weekUser = WeeklyRatio::field('uid')->group('uid')->select();
             foreach ($weekUser as $key => $value) {
                 $tmp[] = $value['uid'];
             }
@@ -744,12 +744,7 @@ class Index extends Controller
             $this->handle("更新".$value['uid']."粉丝数成功",1);
         }
         $redis = new Redis;
-        $info = UserPosition::field('uid')->group('uid')->select();
-        foreach ($info as $key => $value) {
-            $t[] = $value['uid'];
-        }
-        $user = join(',',$t);
-        $redis->set("fans",$user);
+        $redis->set("fans",$userGather);
     }
 
 }
