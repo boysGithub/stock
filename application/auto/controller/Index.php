@@ -198,15 +198,15 @@ class Index extends Controller
             }
             $userFunds = new UserFunds;
             $userFunds->saveAll($userInfo);
-            Db::commit();
             $this->handle("更新总盈利率和总资产成功",1);
-            $userInfo = UserFunds::field('uid')->select();
+            $userInfo = UserPosition::field('uid')->group('uid')->select();
             foreach ($userInfo as $key => $value) {
                 $tmp1[] = $value['uid'];
             }
             $t = join(',',$tmp1);
             $redis = new Redis;
             $redis->set("total_rate",$t);
+            Db::commit();
         } catch (\Exception $e) {
             Db::rollback();
             $this->handle("更新总盈利率和总资产失败",0);
@@ -622,7 +622,7 @@ class Index extends Controller
             Db::query($sql);
             Db::commit();
             $this->handle("更新周平均率成功",1);
-            $weekUser = WeeklyRatio::field('uid')->group('uid')->select();
+            $weekUser = UserPosition::field('uid')->group('uid')->select();
             foreach ($weekUser as $key => $value) {
                 $tmp[] = $value['uid'];
             }
@@ -744,7 +744,12 @@ class Index extends Controller
             $this->handle("更新".$value['uid']."粉丝数成功",1);
         }
         $redis = new Redis;
-        $redis->set("fans",$userGather);
+        $info = UserPosition::field('uid')->group('uid')->select();
+        foreach ($info as $key => $value) {
+            $t[] = $value['uid'];
+        }
+        $user = join(',',$t);
+        $redis->set("fans",$user);
     }
 
 }
