@@ -236,9 +236,10 @@ class Index extends Base
      */
     public function getRecommend()
     {
-        $users = User::where(['u.recommend'=> 1, 'w.uid'=> ['not null', '']])->alias('u')->field('u.*, (w.endFunds - w.initialCapital) / w.initialCapital week_rate,
-(SELECT count(id) FROM `sjq_weekly_ratio` WHERE week_rate < (endFunds - initialCapital) / initialCapital)+1 ranking')
-                    ->join('sjq_weekly_ratio w', 'u.uid=w.uid', 'LEFT')
+        $users = User::where(['u.recommend'=> 1, 'w.uid'=> ['not null', '']])->alias('u')->field("u.*, (w.endFunds - w.initialCapital) / w.initialCapital week_rate,
+(SELECT count(id) FROM `sjq_weekly_ratio` WHERE DATE_FORMAT(time,'%Y-%u')='" . date('Y-W') . "' AND week_rate < (endFunds - initialCapital) / initialCapital)+1 ranking")
+                    ->join('sjq_weekly_ratio w', "u.uid=w.uid AND DATE_FORMAT(time,'%Y-%u')='" . date('Y-W') . "'", 'LEFT')
+                    ->order('sort ASC')
                     ->select();
         
         foreach ($users as $key => $val) {

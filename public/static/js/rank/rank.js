@@ -6,6 +6,9 @@ var ranking = new Vue({
         week_rate: [],//周赛
         month_rate: [],//月赛
         total_rate: [],//总盈利率
+        success_rate: [],//选股牛人
+        week_avg_profit_rate: [],//常胜牛人
+        fans: [],//人气牛人
 	},
 	methods: {
 		updateTalentDynamic(){
@@ -31,6 +34,7 @@ var ranking = new Vue({
                             state: state,
                             state_class: state_class,
                             price: ret[i].price,
+                            time: ret[i].time.substring(0,16),
                             uid: ret[i].uid
                         });
                     }
@@ -97,19 +101,19 @@ var ranking = new Vue({
                 }
             } 
         },
-        updateTotalRate(){
+        updateTotalRate(order){
             var timestamp = new Date().getTime();
-            var data = localStorage.getItem('total_rate_100');
+            var data = localStorage.getItem(order + '_100');
             data = JSON.parse(data);
-            if(data == null || data.timestamp < timestamp){
+            if(data == null || data.timestamp < timestamp || data.data.length < 1){
                 var _this = this;
-                $.getJSON(api_host + '/rank/getRankList',{condition:'total_rate'},function(data){
+                $.getJSON(api_host + '/rank/getRankList',{condition:order},function(data){
                     if(data.status == 'success'){
                         var ret = data.data;
-                        var total_rate = [];
+                        var ranking = [];
                         var length = (ret.length > 100) ? 100 : ret.length;
                         for (var i = 0; i < length; i++) {
-                            total_rate.push({
+                            ranking.push({
                                 user_name: ret[i].username,
                                 rownum: ret[i].rownum,
                                 rownum_class: (ret[i].rownum > 3) ? '' : ' tr-icon',
@@ -123,18 +127,49 @@ var ranking = new Vue({
                                 total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
                                 success_rate: ret[i].success_rate+'%',
                                 avg_position_day: ret[i].avg_position_day,
+                                fans: ret[i].fans,
                                 week_avg_profit_rate: ret[i].week_avg_profit_rate+'%',
                                 week_avg_profit_rate_class: (ret[i].week_avg_profit_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
                                 uid: ret[i].uid
                             });
                         }
 
-                        localStorage.setItem('total_rate_100',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: total_rate}));
-                        _this.total_rate = total_rate;
+
+                        switch(order){
+                            case 'total_rate':
+                                localStorage.setItem('total_rate_100',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: ranking}));
+                                _this.total_rate = ranking;
+                                break;
+                            case 'success_rate':
+                                localStorage.setItem('success_rate_100',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: ranking}));
+                                _this.success_rate = ranking;
+                                break;
+                            case 'week_avg_profit_rate':
+                                localStorage.setItem('week_avg_profit_rate_100',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: ranking}));
+                                _this.week_avg_profit_rate = ranking;
+                                break;
+                            case 'fans':
+                                localStorage.setItem('fans_100',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: ranking}));
+                                _this.fans = ranking;
+                                break;
+                        }
                     }    
                 });
             } else {
-                this.total_rate = data.data;
+                switch(order){
+                    case 'total_rate':
+                        this.total_rate = data.data;
+                        break;
+                    case 'success_rate':
+                        this.success_rate = data.data;
+                        break;
+                    case 'week_avg_profit_rate':
+                        this.week_avg_profit_rate = data.data;
+                        break;
+                    case 'fans':
+                        this.fans = data.data;
+                        break;
+                }
             }    
         },
 	},
@@ -142,6 +177,9 @@ var ranking = new Vue({
         this.updateTalentDynamic();
         this.updateMatchRank(1);
         this.updateMatchRank(2);
-        this.updateTotalRate();
+        this.updateTotalRate('total_rate');
+        this.updateTotalRate('success_rate');
+        this.updateTotalRate('week_avg_profit_rate');
+        this.updateTotalRate('fans');
 	}
 });

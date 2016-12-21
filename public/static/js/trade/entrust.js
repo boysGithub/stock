@@ -107,7 +107,7 @@ var entrust = new Vue({
                     var detail = eval('hq_str_'+key).split(',');
                     var price = (detail['3'] > 0) ? detail['3'] : detail['2'];//现价
                     
-                    stock.assets = parseFloat(price * stock.available_number);//市值
+                    stock.assets = parseFloat((price * stock.available_number).toFixed(2));//市值
                     stock.price = parseFloat(price);
                     stock.profit = parseFloat((price * stock.available_number - stock.cost).toFixed(2));//盈亏
                     stock.ratio = parseFloat(((price * stock.available_number - stock.cost) / stock.cost * 100).toFixed(2)) + '%';

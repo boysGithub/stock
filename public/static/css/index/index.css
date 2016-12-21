@@ -18,7 +18,7 @@
 
 .tr-talent{margin: 20px 0;}
 .tr-slider{box-shadow: none; background: none;}
-.tr-slider .am-viewport li{font-size: 14px;border-top: 2px solid #f76d63; background: #fff;}
+.tr-slider .am-viewport li{font-size: 14px;border-top: 2px solid #ff4901; background: #fff;}
 .tr-talent-info .tr-talent-name{font-size: 18px; color: #333;}
 .tr-talent-info .tr-talent-ranking{font-size: 14px; color: #666;}
 .tr-talent-info .tr-talent-btn{color: #666;}
@@ -50,14 +50,16 @@
 
 .tr-img-ad{margin: 20px 0;}
 
-.tr-ranking-table .am-table{background: #fff;border: 1px solid #e2e2e2;}
+.tr-ranking .am-panal-title{float: left;}
+
+.tr-ranking-table .am-table{background: #fff;border: 1px solid #e2e2e2;border-top: 2px solid #ff4901;}
 .tr-ranking-table .am-table>thead>tr>th{border:none; background: #faf9f9; font-weight: normal;}
 .tr-ranking-table .am-table>tbody>tr>td{border-top: 1px dashed #eaeaea}
 .tr-ranking-table .am-table>tbody>tr.first>td{border:none;}
 .tr-ranking-table .am-table>tbody>tr>td.tr-ranking-portrait{padding: .3rem;}
 
 .tr-match{margin: 20px 0;}
-.tr-match .am-panel-bd{color:#333; line-height: 26px; font-size: 14px;border: 1px solid #e2e2e2;background: #fff; padding: .5rem 1.6rem;}
+.tr-match .am-panel-bd{color:#333; line-height: 26px; font-size: 14px;border: 1px solid #e2e2e2;border-top: 2px solid #ff4901;background: #fff; padding: .5rem 1.6rem;}
 .tr-match .tr-match-item{}
 .tr-match .tr-simulation-name{font-size: 18px; font-weight: bold;}
 .tr-match .tr-status-div{line-height: 100px;}

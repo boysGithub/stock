@@ -9,6 +9,7 @@ var personal = new Vue({
         positions_c: [],//用户持仓-计算前
         pc_index: 0,//持仓递归计数
         history_positions: [],//历史持仓
+        history: {page:0, page_total:0},//历史持仓分页
         entrust: [],//用户委托
         chart_date: [],//分时图日期
         chart_rate: []//分时图盈亏
@@ -18,6 +19,9 @@ var personal = new Vue({
             var uid = $("#uid").val();
             return (uid > 0) ? uid : header.user.uid;
         }
+    },
+    components: {
+        'vue-nav': Vnav
     },
     methods: {
         info(){
@@ -32,7 +36,7 @@ var personal = new Vue({
                         position: ret.position + '%',//持仓
                         win_rate: ret.win_rate + '%',//胜率
                         shares: ret.shares,//当日盈亏
-                        shares_rate: "1%",//当日盈亏比例
+                        shares_rate: parseFloat((ret.shares / (ret.funds - ret.shares) * 100).toFixed(2)) + '%',//当日盈亏比例
                         week_avg_profit_rate: ret.week_avg_profit_rate + '%', //周平均率
                         success_rate: ret.success_rate + '%',//选股成功率
                         time: ret.time.substring(0,10), 
@@ -78,9 +82,9 @@ var personal = new Vue({
                 }    
             });
         },
-        getHistoryPositions(){
+        getHistoryPositions(page){
             var _this = this;
-            $.getJSON(api_host + '/share/historicalPosition',{uid: _this.uid},function(data){
+            $.getJSON(api_host + '/share/historicalPosition',{uid: _this.uid, p: page},function(data){
                 if(data.status == 'success'){
                     var positions = [];//持仓信息
 
@@ -99,6 +103,7 @@ var personal = new Vue({
  
                     }
                     
+                    _this.history = {page: page, page_total: data.pageTotal};
                     _this.history_positions = positions;
                 }    
             });
@@ -169,7 +174,7 @@ var personal = new Vue({
                     var detail = eval('hq_str_'+key).split(',');
                     var price = (detail['3'] > 0) ? detail['3'] : detail['2'];//现价
                     
-                    stock.assets = parseFloat(price * stock.available_number);//市值
+                    stock.assets = parseFloat((price * stock.available_number).toFixed(2));//市值
                     stock.price = parseFloat(price);
                     stock.profit = parseFloat((price * stock.available_number - stock.cost).toFixed(2));//盈亏
                     stock.ratio = parseFloat(((price * stock.available_number - stock.cost) / stock.cost * 100).toFixed(2)) + '%';
@@ -187,7 +192,7 @@ var personal = new Vue({
             var myChart = echarts.init(document.getElementById('main')); 
             var option = {
                 title: {
-                    text: '账户总盈亏'
+                    text: ''
                 },
                 tooltip: {
                     trigger: 'axis',
@@ -226,7 +231,7 @@ var personal = new Vue({
             if(this.uid > 0){
                 this.info();
                 this.getPositions();
-                this.getHistoryPositions();
+                this.getHistoryPositions(1);
                 this.getEntrust();
                 this.getTimeChart();
             } else {
