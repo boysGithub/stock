@@ -65,6 +65,8 @@ var personal = new Vue({
                         positions.push({
                             stock: stock.stock,
                             stock_name: stock.stock_name,
+                            stock_label: stock.stock_name+'('+stock.stock+')',
+                            stock_url: header.getStockUrl(stock.stock),
                             available_number: num,//持仓
                             cost_price: parseFloat(stock.cost_price),//成本价
                             cost: parseFloat(stock.cost),//成本价
@@ -94,6 +96,8 @@ var personal = new Vue({
                         positions.push({
                             stock: stock.stock,
                             stock_name: stock.stock_name,
+                            stock_label: stock.stock_name+'('+stock.stock+')',
+                            stock_url: header.getStockUrl(stock.stock),
                             time: stock.time.substring(0,10),
                             update_time: stock.update_time.substring(0,10),
                             profit: parseFloat((stock.cost * stock.ratio / 100).toFixed(2)),//盈亏
@@ -121,12 +125,15 @@ var personal = new Vue({
                             uid: et.uid,
                             stock: et.stock,
                             stock_name: et.stock_name,
+                            stock_label: et.stock_name+'('+et.stock+')',
+                            stock_url: header.getStockUrl(et.stock),
                             price: et.price,
                             number: et.number,
-                            time: et.time,
+                            time: et.time.substring(0,10),
                             type_label: (et.type == 1) ? '买入' : '卖出', 
                             type_class: (et.type == 1) ? 'tr-color-buy' : 'tr-color-sale', 
                             status: et.status,
+                            status_name: et.status_name,
                             fee: et.fee
                         });
                     }

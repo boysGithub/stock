@@ -76,22 +76,22 @@
                     <table class="am-table am-margin-bottom-0 am-table-centered am-table-hover">
                         <thead>
                             <tr>
-                                <th class="am-text-left">股票名称</th>
-                                <th>股票代码</th>
+                                <th width="8%">序号</th>
+                                <th width="20%">股票名称(代码)</th>
                                 <th>持仓数量</th>
-                                <th>买入成本</th>
+                                <th>成本价</th>
                                 <th>最新价</th>
-                                <th>最新市值</th>
-                                <th>浮动盈亏</th>
+                                <th>市值</th>
+                                <th>盈亏</th>
                                 <th>盈亏比例</th>
-                                <th>建仓时间</th>
+                                <th width="14%">建仓时间</th>
                             </tr>
                         </thead>
                         <tbody>
                             <template v-if="positions.length > 0">
-                                <tr v-for="item in positions">
-                                    <td class="am-text-left">{{ item.stock_name }}</td>
-                                    <td>{{ item.stock }}</td>
+                                <tr v-for="(item, index) in positions">
+                                    <td>{{ index+1 }}</td>
+                                    <td class="am-text-left"><a :href="item.stock_url" target="_blank" rel="nofollow"><span class="tr-shares-name">{{ item.stock_label }}</span></a></td>
                                     <td>{{ item.available_number }}</td>
                                     <td><span class="tr-color-price">{{ item.cost_price }}</span></td>
                                     <td><span class="tr-color-price">{{ item.price }}</span></td>
@@ -118,22 +118,24 @@
                     <table class="am-table am-margin-bottom-0 am-table-centered am-table-hover">
                         <thead>
                             <tr>
-                                <th class="am-text-left" width="18%">股票名称</th>
-                                <th width="18%">股票代码</th>
+                                <th width="8%">序号</th>
+                                <th width="20%">股票名称(代码)</th>
                                 <th>方式</th>
                                 <th>成交价格</th>
-                                <th>数量</th>
+                                <th>成交数量</th>
+                                <th>状态</th>
                                 <th width="18%">时间</th>
                             </tr>
                         </thead>
                         <tbody>
                             <template v-if="entrust.length > 0">
-                            <tr v-for="item in entrust">
-                                <td class="am-text-left">{{ item.stock_name }}</td>
-                                <td>{{ item.stock }}</td>
+                            <tr v-for="(item, index) in entrust">
+                                <td>{{ index+1 }}</td>
+                                <td class="am-text-left"><a :href="item.stock_url" target="_blank" rel="nofollow"><span class="tr-shares-name">{{ item.stock_label }}</span></a></td>
                                 <td><span :class="item.type_class">{{ item.type_label }}</td>
                                 <td>{{ item.price }}</td>
                                 <td>{{ item.number }}</td>
+                                <td>{{ item.status_name }}</td>
                                 <td>{{ item.time }}</td>
                             </tr>
                             </template>
@@ -152,23 +154,23 @@
                     <table class="am-table am-margin-bottom-0 am-table-centered am-table-hover">
                         <thead>
                             <tr>
-                                <th class="am-text-left" width="18%">买入时间</th>
-                                <th width="18%">卖出时间</th>
-                                <th width="18%">股票名称</th>
-                                <th width="18%">股票代码</th>
+                                <th width="8%">序号</th>
+                                <th width="20%">股票名称(代码)</th>
                                 <th>收益率</th>
                                 <th>盈亏</th>
+                                <th width="18%">买入时间</th>
+                                <th width="18%">卖出时间</th>
                             </tr>
                         </thead>
                         <tbody>
                             <template v-if="history_positions.length > 0">
-                                <tr v-for="item in history_positions">
-                                    <td class="am-text-left">{{ item.time }}</td>
-                                    <td>{{ item.update_time }}</td>
-                                    <td>{{ item.stock_name }}</td>
-                                    <td>{{ item.stock }}</td>
+                                <tr v-for="(item, index) in history_positions"> 
+                                    <td>{{ index+1 }}</td>
+                                    <td class="am-text-left"><a :href="item.stock_url" target="_blank" rel="nofollow"><span class="tr-shares-name">{{ item.stock_label }}</span></a></td>
                                     <td><span :class="item.ratio_class">{{ item.ratio }}</span></td>
                                     <td><span :class="item.ratio_class">{{ item.profit }}</span></td>
+                                    <td>{{ item.time }}</td>
+                                    <td>{{ item.update_time }}</td>
                                 </tr>
                             </template>
                             <template v-else>
