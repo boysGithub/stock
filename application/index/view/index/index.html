@@ -67,9 +67,10 @@
                         <tr>
                             <th>用户名</th>
                             <th>股票名称</th>
-                            <th width="15%">状态</th>
-                            <th width="15%">价格(&yen;)</th>
-                            <th width="20%">今日动态</th>
+                            <th width="12%">状态</th>
+                            <th width="12%">价格(&yen;)</th>
+                            <th width="20%">时间</th>
+                            <th width="15%">今日动态</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -79,12 +80,13 @@
                                 <td><span class="tr-shares-name">{{ item.stock }}</span></td>
                                 <td><span :class="item.state_class">{{ item.state }}</span></td>
                                 <td><span class="tr-color-price">{{ item.price }}</span></td>
+                                <td><span>{{ item.time }}</span></td>
                                 <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" class="am-btn am-btn-primary am-btn-xs am-radius">追踪可看</a></td>
                             </tr>
                         </template>
                         <template v-else>
                             <tr>
-                                <td colspan="5"><span>暂无数据</span></td>
+                                <td colspan="6"><span>暂无数据</span></td>
                             </tr>
                         </template>
                     </tbody>
@@ -201,12 +203,15 @@
     </div>
     
     <div class="am-g">
-        <div class="am-u-md-6 am-padding-right-sm">
+        <div class="am-u-md-6 am-padding-right-sm tr-ranking">
             <section class="am-panel am-panel-default">
-                <div class="am-panel-hd">
-                    <h2 class="am-panel-title ">
+                <div class="am-panel-hd am-container">
+                    <h2 class="am-panel-title am-fl">
                         总收益榜
                     </h2>
+                    <nav class="am-panel-nav am-fr am-padding-right-sm">
+                        <a href="{:url('index/index/rankingList', ['order'=>'total_rate'])}" class="">更多 &raquo;</a>
+                    </nav>
                 </div>
                 <div class="tr-ranking-table">
                     <table class="am-table am-table-centered am-margin-0">
@@ -228,12 +233,15 @@
                 </div>
             </section>
         </div>
-        <div class="am-u-md-6 am-padding-left-sm">
+        <div class="am-u-md-6 am-padding-left-sm tr-ranking">
             <section class="am-panel am-panel-default">
-                <div class="am-panel-hd">
-                    <h2 class="am-panel-title ">
+                <div class="am-panel-hd am-container">
+                    <h2 class="am-panel-title am-fl">
                         选股牛人
                     </h2>
+                    <nav class="am-panel-nav am-fr am-padding-right-sm">
+                        <a href="{:url('index/index/rankingList', ['order'=>'success_rate'])}" class="">更多 &raquo;</a>
+                    </nav>
                 </div>
                 <div class="tr-ranking-table">
                     <table class="am-table am-table-centered am-margin-0">
@@ -260,12 +268,15 @@
         <a :href="index_banner.url" :title="index_banner.title" target="_blank"><img :src="index_banner.image" :alt="index_banner.title" class="am-img-responsive" /></a>
     </p>
     <div class="am-g">
-        <div class="am-u-md-6 am-padding-right-sm">
+        <div class="am-u-md-6 am-padding-right-sm tr-ranking">
             <section class="am-panel am-panel-default">
-                <div class="am-panel-hd">
-                    <h2 class="am-panel-title ">
+                <div class="am-panel-hd am-container">
+                    <h2 class="am-panel-title am-fl">
                         常胜牛人
                     </h2>
+                    <nav class="am-panel-nav am-fr am-padding-right-sm">
+                        <a href="{:url('index/index/rankingList', ['order'=>'week_avg_profit_rate'])}" class="">更多 &raquo;</a>
+                    </nav>
                 </div>
                 <div class="tr-ranking-table">
                     <table class="am-table am-table-centered am-margin-0">
@@ -287,12 +298,15 @@
                 </div>
             </section>
         </div>
-        <div class="am-u-md-6 am-padding-left-sm">
+        <div class="am-u-md-6 am-padding-left-sm tr-ranking">
             <section class="am-panel am-panel-default">
-                <div class="am-panel-hd">
-                    <h2 class="am-panel-title ">
+                <div class="am-panel-hd am-container">
+                    <h2 class="am-panel-title am-fl">
                         人气牛人
                     </h2>
+                    <nav class="am-panel-nav am-fr am-padding-right-sm">
+                        <a href="{:url('index/index/rankingList', ['order'=>'fans'])}" class="">更多 &raquo;</a>
+                    </nav>
                 </div>
                 <div class="tr-ranking-table">
                     <table class="am-table am-table-centered am-margin-0">
