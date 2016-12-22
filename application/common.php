@@ -180,3 +180,58 @@ function is_https()
   
         return FALSE;
     }
+
+
+
+/**
+ * [cookieDecrypt cookie解密]
+ * @return [type] [description]
+ */
+function cookieDecrypt($data){
+    /* 打开加密算法和模式 */
+    $td = mcrypt_module_open('rijndael-256', '', 'ofb', '');
+    $ks = mcrypt_enc_get_key_size($td);
+    /* 创建密钥 */
+    $key = substr(md5('sjqcj.com'), 0, $ks);
+    /* 获取初始向量，并且检测密钥长度。*/
+    $data = base64_decode($data);
+    $iv_dec = substr($data, 0, $ks);
+    $data_dec = substr($t, $ks);
+    /* 初始化解密模块 */
+    mcrypt_generic_init($td, $key, $iv_dec);
+    /* 解密数据 */
+    $decrypted = mdecrypt_generic($td, $data_dec);
+    //结束解密，执行清理工作，并且关闭模块 
+    mcrypt_generic_deinit($td);
+    mcrypt_module_close($td);
+    return trim($decrypted);
+}
+
+
+/**
+ * [encryption cookie加密]
+ * @return [type] [description]
+ */
+function cookieEncrypt($data){
+    /* 打开加密算法和模式 */
+    $td = mcrypt_module_open('rijndael-256', '', 'ofb', '');
+    /* 创建初始向量，并且检测密钥长度。 
+     * Windows 平台请使用 MCRYPT_RAND。 */
+    $iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_DEV_RANDOM);
+    $ks = mcrypt_enc_get_key_size($td);
+    /* 创建密钥 */
+    $key = substr(md5('sjqcj.com'), 0, $ks);
+    /* 初始化加密 */
+    mcrypt_generic_init($td, $key, $iv);
+
+    /* 加密数据 */
+    $encrypted = mcrypt_generic($td, $data);
+
+    $encrypted = $iv.$encrypted;
+
+    $encrypted_base64 = base64_encode($encrypted);
+
+    /* 结束加密，执行清理工作 */
+    mcrypt_generic_deinit($td);
+    return $encrypted_base64;
+}
