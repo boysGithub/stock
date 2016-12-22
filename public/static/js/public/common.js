@@ -35,10 +35,10 @@ var header = new Vue({
         logout:function(){
             $.get(
                 api_host + "/index/base/logout", function(msg){
-                    if(msg.status == "success"){
-                        setTimeout(function(){
-                            location.href = "/";
-                        },500)
+                    if(msg.status == "failed"){
+                        
+                        location.reload();
+                        
                     }else{
                         alert("退出失败");
                     }
