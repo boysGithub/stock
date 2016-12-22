@@ -19,7 +19,7 @@ var vue = new Vue({
                         if(msg.status == "success"){
                             modal.imitateAlert(msg.data);
                             setTimeout(function(){
-                                location.href = "http://moni.local.com";
+                                location.reload();
                             },1000);
                         }else{
                             modal.imitateAlert(msg.data);
