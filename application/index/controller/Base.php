@@ -201,6 +201,6 @@ class Base extends Controller
         setcookie('login_email','',0,'/','.sjqcj.com');
         setcookie('login_password','',0,'/','.sjqcj.com');
         $_SESSION = [];
-        return json(['status'=>'success','data'=>'退出成功']);
+        return json(['status'=>'failed','data'=>'退出成功']);
     }
 }
