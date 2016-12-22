@@ -1,5 +1,5 @@
 (function(){
-var tm = '<div class="page">'+
+var tm = '<div class="page" v-if="all > 1">'+
             '<ul class="pagination">'+
             '<li v-if="cur!=1 && cur!=0"><a v-on:click="cur--">&lt;&lt;</a></li>'+
             '<li v-for="index in indexs" :class="{ active: cur == index}">'+

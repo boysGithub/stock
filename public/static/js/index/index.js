@@ -134,6 +134,7 @@ var index = new Vue({
                         talent_dynamic.push({
                             user_name: ret[i].username,
                             stock: ret[i].stock_name+'('+ret[i].stock+')',
+                            stock_url: header.getStockUrl(ret[i].stock),
                             state: state,
                             state_class: state_class,
                             price: ret[i].price,

@@ -20,6 +20,17 @@ var header = new Vue({
                     _this.logined = false;
                 }
             });
+        },
+        getStockUrl: function(stock){
+            var url = 'http://finance.sina.com.cn/realstock/company/';
+            if(parseInt(stock.substring(0,1)) == 6){
+                url += 'sh' + stock;
+            } else {
+                url += 'sz' + stock;
+            }
+            url += '/nc.shtml';
+
+            return url;
         }
     },
     mounted: function() {

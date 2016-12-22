@@ -41,7 +41,7 @@
                         <template v-if="talent_dynamic.length > 0">
                             <tr v-for="item in talent_dynamic">
                                 <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name">{{ item.user_name }}</a></td>
-                                <td><span class="tr-shares-name">{{ item.stock }}</span></td>
+                                <td><a :href="item.stock_url" target="_blank" rel="nofollow"><span class="tr-shares-name">{{ item.stock }}</span></a></td>
                                 <td><span :class="item.state_class">{{ item.state }}</span></td>
                                 <td><span class="tr-color-price">{{ item.price }}</span></td>
                                 <td><span>{{ item.time }}</span></td>

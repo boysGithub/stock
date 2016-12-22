@@ -30,6 +30,7 @@ var entrust = new Vue({
                         orders.push({
                             id: ret[i].id, 
                             title: ret[i].stock_name + '(' + ret[i].stock + ')', 
+                            stock_url: header.getStockUrl(ret[i].stock), 
                             type_label: (ret[i].type == 1) ? '买入' : '卖出', 
                             type_class: (ret[i].type == 1) ? 'tr-color-buy' : 'tr-color-sale', 
                             price: parseFloat(ret[i].price), 
@@ -71,6 +72,7 @@ var entrust = new Vue({
                         positions.push({
                             stock: stock.stock,
                             stock_name: stock.stock_name,
+                            stock_url: header.getStockUrl(stock.stock),
                             available_number: num,//持仓
                             cost_price: parseFloat(stock.cost_price),//成本价
                             cost: parseFloat(stock.cost),//成本价
