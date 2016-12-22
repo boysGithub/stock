@@ -213,7 +213,6 @@ class Index extends Controller
     		}else{
     			$login = cookieDecrypt($_COOKIE['login_email']);
 				$passowrd = cookieDecrypt($_COOKIE['login_password']);
-				dump($login);exit;
 				$base = new Base;
 				$base->doLogin($login,$passowrd);
 				if(isset($_SESSION['uid'])){
