@@ -141,10 +141,10 @@ class Base extends Controller
             if($salt){
                 $pass = md5(md5($password).$salt);
                 if($info = User::where(['login'=>$login,'password'=>$pass])->find()){
-                    setcookie('login_email','',0,'/','.local.com');
-                    setcookie('login_password','',0,'/','.local.com');
-                    setcookie('login_email',cookieEncrypt($login),time()+86400,'/','.local.com');
-                    setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.local.com');
+                    setcookie('login_email','',0,'/','.sjqcj.com');
+                    setcookie('login_password','',0,'/','.sjqcj.com');
+                    setcookie('login_email',cookieEncrypt($login),time()+86400,'/','.sjqcj.com');
+                    setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
                     $_SESSION['username'] = $info['username'];
                     $_SESSION['uid'] = $info['uid'];
                     return json(['status'=>'success','data'=>'登录成功，正在跳转....']);
@@ -159,10 +159,10 @@ class Base extends Controller
             if($salt){
                 $pass = md5(md5($password).$salt);
                 if($info = User::where(['phone'=>$login,'password'=>$pass])->find()){
-                    setcookie('login_email','',0,'/','.local.com');
-                    setcookie('login_password','',0,'/','.local.com');
-                    setcookie('login_email',cookieEncrypt($login),time()+86400,'/','.local.com');
-                    setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.local.com');
+                    setcookie('login_email','',0,'/','.sjqcj.com');
+                    setcookie('login_password','',0,'/','.sjqcj.com');
+                    setcookie('login_email',cookieEncrypt($login),time()+86400,'/','.sjqcj.com');
+                    setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
                     $_SESSION['username'] = $info['username'];
                     $_SESSION['uid'] = $info['uid'];
                     return json(['status'=>'success','data'=>'登录成功，正在跳转....']);
@@ -177,10 +177,10 @@ class Base extends Controller
             if($salt){
                 $pass = md5(md5($password).$salt);
                 if($info = User::where(['username'=>$login,'password'=>$pass])->find()){
-                    setcookie('login_email','',0,'/','.local.com');
-                    setcookie('login_password','',0,'/','.local.com');
-                    setcookie('login_email',cookieEncrypt($login),time()+86400,'/','.local.com');
-                    setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.local.com');
+                    setcookie('login_email','',0,'/','.sjqcj.com');
+                    setcookie('login_password','',0,'/','.sjqcj.com');
+                    setcookie('login_email',cookieEncrypt($login),time()+86400,'/','.sjqcj.com');
+                    setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
                     $_SESSION['username'] = $info['username'];
                     $_SESSION['uid'] = $info['uid'];
                     return json(['status'=>'success','data'=>'登录成功，正在跳转....']);
@@ -198,8 +198,8 @@ class Base extends Controller
      * @return [type] [description]
      */
     public function logout(){
-        setcookie('login_email','',0,'/','.local.com');
-        setcookie('login_password','',0,'/','.local.com');
+        setcookie('login_email','',0,'/','.sjqcj.com');
+        setcookie('login_password','',0,'/','.sjqcj.com');
         $_SESSION = [];
         return json(['status'=>'success','data'=>'退出成功']);
     }
