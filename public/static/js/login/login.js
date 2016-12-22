@@ -4,7 +4,7 @@ var vue = new Vue({
         username: '',
         password: '',
         remember: 0, 
-        url: api_host + "/index/base/doLogin"
+        url: api_host + "/index/base/doLogin" 
     },
     methods: {
         doLogin: function() {
