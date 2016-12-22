@@ -164,58 +164,60 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoCalcGrossProfitRate(){
-        $fund = $this->_stockFunds;
-        // 启动事务
-        Db::startTrans();
-        try {
-            //计算买入待成交的资产
-            $pendBuy = Transaction::where(['type'=>1,'status'=>'0'])->group('uid')->Field('uid,sum(price * number + fee) as total')->select();
-            //计算卖出待成交的资产
-            $pendSell = Transaction::where(['type'=>2,'status'=>'0'])->Field('pid,uid,number,stock')->select();
-            //获取所有的持仓
-            $position = userPosition::where(['is_position'=>1])->Field('id,uid,(available_number + freeze_number) as number,stock')->select();
-            $market = array_merge($pendSell,$position);
-            foreach ($market as $key => $value) {
-                $stock[] = $value['stock'];
-                $tmp[$value['uid']][$value['stock']][] = $value['number'];
-            }
-            $stock = array_values(array_unique($stock));
-            $stockData = getStock($stock,'s_');
-            foreach ($tmp as $key => $value) {
-               foreach ($value as $k => $val) {
-                    $num = array_sum($val);
-                    $user[$key][] = $stockData[$k][1] * $num;
-               }
-            }
-            if($pendBuy){
-                foreach ($pendBuy as $key => $value) {
-                    $user[$value['uid']][] = $value['total'];
+        if($this->isUpdate()){
+            $fund = $this->_stockFunds;
+            // 启动事务
+            Db::startTrans();
+            try {
+                //计算买入待成交的资产
+                $pendBuy = Transaction::where(['type'=>1,'status'=>'0'])->group('uid')->Field('uid,sum(price * number + fee) as total')->select();
+                //计算卖出待成交的资产
+                $pendSell = Transaction::where(['type'=>2,'status'=>'0'])->Field('pid,uid,number,stock')->select();
+                //获取所有的持仓
+                $position = userPosition::where(['is_position'=>1])->Field('id,uid,(available_number + freeze_number) as number,stock')->select();
+                $market = array_merge($pendSell,$position);
+                foreach ($market as $key => $value) {
+                    $stock[] = $value['stock'];
+                    $tmp[$value['uid']][$value['stock']][] = $value['number'];
                 }
-            }
-            
-            $userInfo = UserFunds::field('id,uid,funds,available_funds')->select();
-            foreach ($userInfo as $key => $value) {
-                if(isset($user[$value['uid']])){
-                    $value['funds'] = array_sum($user[$value['uid']])+$value['available_funds'];
+                $stock = array_values(array_unique($stock));
+                $stockData = getStock($stock,'s_');
+                foreach ($tmp as $key => $value) {
+                   foreach ($value as $k => $val) {
+                        $num = array_sum($val);
+                        $user[$key][] = $stockData[$k][1] * $num;
+                   }
                 }
-                $value['total_rate'] = round(($value['funds'] - $fund)/$fund*100,3);
-                unset($value['available_funds']);
-                $userInfo[$key] = $value->toArray();
+                if($pendBuy){
+                    foreach ($pendBuy as $key => $value) {
+                        $user[$value['uid']][] = $value['total'];
+                    }
+                }
+                
+                $userInfo = UserFunds::field('id,uid,funds,available_funds')->select();
+                foreach ($userInfo as $key => $value) {
+                    if(isset($user[$value['uid']])){
+                        $value['funds'] = array_sum($user[$value['uid']])+$value['available_funds'];
+                    }
+                    $value['total_rate'] = round(($value['funds'] - $fund)/$fund*100,3);
+                    unset($value['available_funds']);
+                    $userInfo[$key] = $value->toArray();
+                }
+                $userFunds = new UserFunds;
+                $userFunds->saveAll($userInfo);
+                $this->handle("更新总盈利率和总资产成功",1);
+                $userInfo = UserFunds::field('uid')->select();
+                foreach ($userInfo as $key => $value) {
+                    $tmp1[] = $value['uid'];
+                }
+                $t = join(',',$tmp1);
+                $redis = new Redis;
+                $redis->set("total_rate",$t);
+                Db::commit();
+            } catch (\Exception $e) {
+                Db::rollback();
+                $this->handle("更新总盈利率和总资产失败",0);
             }
-            $userFunds = new UserFunds;
-            $userFunds->saveAll($userInfo);
-            $this->handle("更新总盈利率和总资产成功",1);
-            $userInfo = UserFunds::field('uid')->select();
-            foreach ($userInfo as $key => $value) {
-                $tmp1[] = $value['uid'];
-            }
-            $t = join(',',$tmp1);
-            $redis = new Redis;
-            $redis->set("total_rate",$t);
-            Db::commit();
-        } catch (\Exception $e) {
-            Db::rollback();
-            $this->handle("更新总盈利率和总资产失败",0);
         }
     }
 
@@ -224,63 +226,65 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoSuccessRate(){
-        // 启动事务
-        Db::startTrans();
-        try {
-                $list = UserPosition::group('uid')->Field('id,uid,stock')->select();
-                $userPosition = new UserPosition;
-                $userGather = '';
-                foreach ($list as $key => $value) {
-                    $tp[] = $value['uid'];
-                }
-                $userGather = join(',',$tp);
-                //获取股票集合
-                $stock = $userPosition->where(['is_position'=>1,'uid'=>['in',$userGather]])->Field('stock')->group('stock')->select();
-                foreach ($stock as $key => $value) {
-                    $stockGather[] = $value['stock'];
-                }
-                $stockTmp = getStock($stockGather);
-                //获取持仓的集合
-                $userInfo = $userPosition->where(['uid'=>['in',$userGather],'is_position'=>1])->Field('id,uid,ratio,stock,(available_number + freeze_number) as number,cost_price')->select();
-                //计算选股成功率
-                foreach ($userInfo as $key => $value) {
-                    //把某一个用户的市值统计出来
-                    if($stockTmp[$value['stock']][3] != 0){
-                        $userInfo[$key]['assets'] = $value['number'] * $stockTmp[$value['stock']][3];
-                        $userInfo[$key]['ratio'] = round(($stockTmp[$value['stock']][3] - $value['cost_price'])/$value['cost_price'] * 100,3);
+        if($this->isUpdate()){
+            // 启动事务
+            Db::startTrans();
+            try {
+                    $list = UserPosition::group('uid')->Field('id,uid,stock')->select();
+                    $userPosition = new UserPosition;
+                    $userGather = '';
+                    foreach ($list as $key => $value) {
+                        $tp[] = $value['uid'];
+                    }
+                    $userGather = join(',',$tp);
+                    //获取股票集合
+                    $stock = $userPosition->where(['is_position'=>1,'uid'=>['in',$userGather]])->Field('stock')->group('stock')->select();
+                    foreach ($stock as $key => $value) {
+                        $stockGather[] = $value['stock'];
+                    }
+                    $stockTmp = getStock($stockGather);
+                    //获取持仓的集合
+                    $userInfo = $userPosition->where(['uid'=>['in',$userGather],'is_position'=>1])->Field('id,uid,ratio,stock,(available_number + freeze_number) as number,cost_price')->select();
+                    //计算选股成功率
+                    foreach ($userInfo as $key => $value) {
+                        //把某一个用户的市值统计出来
+                        if($stockTmp[$value['stock']][3] != 0){
+                            $userInfo[$key]['assets'] = $value['number'] * $stockTmp[$value['stock']][3];
+                            $userInfo[$key]['ratio'] = round(($stockTmp[$value['stock']][3] - $value['cost_price'])/$value['cost_price'] * 100,3);
 
-                    }else{
-                        $userInfo[$key]['assets'] = $value['number'] * $stockTmp[$value['stock']][2];
-                        $userInfo[$key]['ratio'] = round(($stockTmp[$value['stock']][2] - $value['cost_price'])/$value['cost_price'] * 100,3);
-                    }
-                    $userInfo[$key] = $value->toArray();    
-                }
-                $userPosition->saveAll($userInfo);
-                $userInfo = $userPosition->where(['uid'=>['in',$userGather]])->Field('id,uid,ratio,stock,(available_number + freeze_number) as number,cost_price')->select();
-                foreach ($userInfo as $key => $value) {
-                    $winRate[$value['uid']][] = $value['ratio'];
-                }
-                $userFunds = new userFunds;
-                $funds = $userFunds->where(['uid'=>['in',$userGather]])->Field('id,uid,success_rate')->select();
-                foreach ($funds as $key => $value) {
-                    $tmp = 0;
-                    for ($i=0; $i < count($winRate[$value['uid']]); $i++) { 
-                        if($winRate[$value['uid']][$i] > 0 ){
-                            $tmp += 1;
+                        }else{
+                            $userInfo[$key]['assets'] = $value['number'] * $stockTmp[$value['stock']][2];
+                            $userInfo[$key]['ratio'] = round(($stockTmp[$value['stock']][2] - $value['cost_price'])/$value['cost_price'] * 100,3);
                         }
+                        $userInfo[$key] = $value->toArray();    
                     }
-                    $funds[$key]['success_rate'] = round($tmp/count($winRate[$value['uid']])*100,3);
-                    $funds[$key] = $value->toArray();
-                }
-                //更新选股成功率
-                $userFunds->saveAll($funds);
-                $this->handle("自动更新胜率成功",1);
-                $redis = new Redis;
-                $redis->set("success_rate",$userGather);
-                Db::commit();
-        } catch (\Exception $e) {
-            Db::rollback();
-            $this->handle("自动更新胜率失败",0);
+                    $userPosition->saveAll($userInfo);
+                    $userInfo = $userPosition->where(['uid'=>['in',$userGather]])->Field('id,uid,ratio,stock,(available_number + freeze_number) as number,cost_price')->select();
+                    foreach ($userInfo as $key => $value) {
+                        $winRate[$value['uid']][] = $value['ratio'];
+                    }
+                    $userFunds = new userFunds;
+                    $funds = $userFunds->where(['uid'=>['in',$userGather]])->Field('id,uid,success_rate')->select();
+                    foreach ($funds as $key => $value) {
+                        $tmp = 0;
+                        for ($i=0; $i < count($winRate[$value['uid']]); $i++) { 
+                            if($winRate[$value['uid']][$i] > 0 ){
+                                $tmp += 1;
+                            }
+                        }
+                        $funds[$key]['success_rate'] = round($tmp/count($winRate[$value['uid']])*100,3);
+                        $funds[$key] = $value->toArray();
+                    }
+                    //更新选股成功率
+                    $userFunds->saveAll($funds);
+                    $this->handle("自动更新胜率成功",1);
+                    $redis = new Redis;
+                    $redis->set("success_rate",$userGather);
+                    Db::commit();
+            } catch (\Exception $e) {
+                Db::rollback();
+                $this->handle("自动更新胜率失败",0);
+            }
         }
     }
 
@@ -764,4 +768,17 @@ class Index extends Controller
         $redis->set("fans",$userGather);
     }
 
+    /**
+     * [isUpdate 是否能更新]
+     * @return boolean [description]
+     */
+    public function isUpdate(){
+        $t1 = strtotime(date("Y-m-d 9:30:00"));
+        $t2 = strtotime(date("Y-m-d 15:05:00"));
+        if(time() > $t1 && time() < $t2){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
