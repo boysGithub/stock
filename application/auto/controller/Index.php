@@ -27,9 +27,15 @@ class Index extends Controller
     public function __construct(){
         $addr = getIP();
         #if(!($addr=='115.29.199.94')) exit("非法请求");
-        
     }
 
+    public function test(){
+        
+        $t = "9987ead20a56278edd5115988e018b98";
+        $e = "9987ead20a56278edd5115988e018b98";
+        $s = "sjq.comball";
+        echo md5(md5($s)."29036");
+    }
     /**
      * [autoTrans 自动成交的方法]
      * @return [type] [description]
@@ -600,14 +606,25 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoUpdateUser(){
-        $uid = User::order('uid desc')->value('uid');
-        if(!$uid) $uid = 0;
-        $userInfo = Db::connect('sjq1')->name('user')->where('uid','>',$uid)->Field('uid,uname as username')->chunk(2000,function($list){
-            foreach ($list as $key => $value) {
-                $id = User::create($value)->$id;
-                $this->handle('添加用户'.$id,1);
-            }
-        });
+        $sql = "SELECT uid,uname,login_salt,password from ts_user";
+        $obj = Db::connect('sjq1')->query($sql);
+        $user = User::all();
+        foreach ($obj as $key => $value) {
+            User::create(['username'=>$value['uname'],'password'=>$value['password'],'login_salt'=>$value['login_salt'],'uid'=>$value['uid']]);
+        }
+        // // 启动事务
+        // Db::startTrans();
+        // try {
+
+        //     $sql = "UPDATE stock.sjq_users u,(select uid,uname,login_salt,password from cjcj.ts_user) obj set u.username = obj.uname,u.login_salt = obj.login_salt,u.password = obj.password where u.uid = obj.uid;";
+        //     Db::connect('sjq1')->query($sql);
+        //     echo Db::getLastSql();exit;
+        //     $this->handle("更新用户成功",1);
+        //     Db::commit();
+        // } catch (\Exception $e) {
+        //     Db::rollback();
+        // }
+        
     }
 
     /**
