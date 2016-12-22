@@ -61,7 +61,7 @@ var personal = new Vue({
 
                     for (var i = 0; i < data.data.length; i++) {
                         var stock = data.data[i];
-                        var num = parseInt(stock.available_number) + parseInt(stock.freeze_number)
+                        var num = parseInt(stock.position_number);
                         positions.push({
                             stock: stock.stock,
                             stock_name: stock.stock_name,
@@ -129,7 +129,7 @@ var personal = new Vue({
                             stock_url: header.getStockUrl(et.stock),
                             price: et.price,
                             number: et.number,
-                            time: et.time.substring(0,10),
+                            time: et.time.substring(0,16),
                             type_label: (et.type == 1) ? '买入' : '卖出', 
                             type_class: (et.type == 1) ? 'tr-color-buy' : 'tr-color-sale', 
                             status: et.status,

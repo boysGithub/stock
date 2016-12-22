@@ -68,10 +68,11 @@ var entrust = new Vue({
                     
                     for (var i = 0; i < data.data.length; i++) {
                         var stock = data.data[i];
-                        var num = parseInt(stock.available_number) + parseInt(stock.freeze_number)
+                        var num = parseInt(stock.position_number);
                         positions.push({
                             stock: stock.stock,
                             stock_name: stock.stock_name,
+                            title: stock.stock_name + '(' + stock.stock + ')',
                             stock_url: header.getStockUrl(stock.stock),
                             available_number: num,//持仓
                             cost_price: parseFloat(stock.cost_price),//成本价
