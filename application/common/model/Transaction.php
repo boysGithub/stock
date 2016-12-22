@@ -22,6 +22,10 @@ class Transaction extends Model
         return date("Y-m-d H:i",strtotime($time));
     }
 
+    protected function getDealTimeAttr($deal_time){
+        return date("Y-m-d H:i",strtotime($deal_time));
+    }
+
     protected function getStatusNameAttr($value,$data){
     	$status = [0=>'待交易',1=>'交易成功',2=>'撤单成功'];
         return $status[$data['status']];
