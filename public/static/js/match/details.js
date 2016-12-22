@@ -25,6 +25,7 @@ var match_details = new Vue({
                     for (var i = 0; i < ret.length; i++) {
                         ranking.push({
                             user_name: ret[i].username,
+                            portrait: ret[i].avatar,
                             week_rate: ret[i].week_rate + '%',
                             week_rate_class: (ret[i].week_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
                             days_rate: ret[i].days_rate + '%',

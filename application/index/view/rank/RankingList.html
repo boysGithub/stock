@@ -11,36 +11,44 @@
 {block name="header"}{include file="public/header" /}{/block}
 {block name="main"}
 <div class="am-container" id="ranking">
+    <input type="hidden" name="order" id="order" value="{$order}">
     <div class="am-g">
         
     </div>
-    <div class="am-tabs tr-tabs" data-am-tabs="{noSwipe: 1}" id="tr-tabs">
+    <div class="am-tabs tr-tabs" id="tr-tabs">
         <ul class="am-tabs-nav am-nav am-nav-tabs">
-            <li{eq name="order" value="talent_dynamic"} class="am-active"{/eq}><a href="javascript:;">牛人动态</a></li>
-            <li{eq name="order" value="week_rate"} class="am-active"{/eq}><a href="javascript:;">周赛排名</a></li>
-            <li{eq name="order" value="month_rate"} class="am-active"{/eq}><a href="javascript:;">月赛排名</a></li>
-            <li{eq name="order" value="total_rate"} class="am-active"{/eq}><a href="javascript:;">总盈利率</a></li>
-            <li{eq name="order" value="success_rate"} class="am-active"{/eq}><a href="javascript:;">选股牛人</a></li>
-            <li{eq name="order" value="week_avg_profit_rate"} class="am-active"{/eq}><a href="javascript:;">常胜牛人</a></li>
-            <li{eq name="order" value="fans"} class="am-active"{/eq}><a href="javascript:;">人气牛人</a></li>
+            <li{eq name="order" value="talent_dynamic"} class="am-active"{/eq}><a href="{:url('index/index/rankingList', ['order'=>'talent_dynamic'])}">牛人动态</a></li>
+            <li{eq name="order" value="days_rank"} class="am-active"{/eq}><a href="{:url('index/index/rankingList', ['order'=>'days_rank'])}">日盈利率</a></li>
+            <li{eq name="order" value="week_rank"} class="am-active"{/eq}><a href="{:url('index/index/rankingList', ['order'=>'week_rank'])}">周赛排名</a></li>
+            <li{eq name="order" value="month_rank"} class="am-active"{/eq}><a href="{:url('index/index/rankingList', ['order'=>'month_rank'])}">月赛排名</a></li>
+            <li{eq name="order" value="total_rate"} class="am-active"{/eq}><a href="{:url('index/index/rankingList', ['order'=>'total_rate'])}">总盈利率</a></li>
+            <li{eq name="order" value="success_rate"} class="am-active"{/eq}><a href="{:url('index/index/rankingList', ['order'=>'success_rate'])}">选股牛人</a></li>
+            <li{eq name="order" value="week_avg_profit_rate"} class="am-active"{/eq}><a href="{:url('index/index/rankingList', ['order'=>'week_avg_profit_rate'])}">常胜牛人</a></li>
+            <li{eq name="order" value="fans"} class="am-active"{/eq}><a href="{:url('index/index/rankingList', ['order'=>'fans'])}">人气牛人</a></li>
         </ul>
         <div class="am-tabs-bd">
             <div class="am-tab-panel{eq name="order" value="talent_dynamic"} am-active{/eq}">
-                <table class="am-table">
+                <table class="am-table am-table-centered">
                     <thead>
                         <tr>
-                            <th>用户名</th>
-                            <th>股票名称</th>
-                            <th width="10%">状态</th>
-                            <th width="10%">价格(&yen;)</th>
-                            <th width="25%">时间</th>
-                            <th width="12%">今日动态</th>
+                            <th width="6%">序号</th>
+                            <th width="18%">用户名</th>
+                            <th width="16%">股票名称</th>
+                            <th>状态</th>
+                            <th>价格(&yen;)</th>
+                            <th width="18%">时间</th>
+                            <th>今日动态</th>
                         </tr>
                     </thead>
                     <tbody>
                         <template v-if="talent_dynamic.length > 0">
-                            <tr v-for="item in talent_dynamic">
-                                <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name">{{ item.user_name }}</a></td>
+                            <tr v-for="(item, index) in talent_dynamic">
+                                <td>{{ index+1 }}</td>
+                                <td class="am-text-left">
+                                    <div class="tr-username">
+                                        <a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a>
+                                    </div>
+                                </td>
                                 <td><a :href="item.stock_url" target="_blank" rel="nofollow"><span class="tr-shares-name">{{ item.stock }}</span></a></td>
                                 <td><span :class="item.state_class">{{ item.state }}</span></td>
                                 <td><span class="tr-color-price">{{ item.price }}</span></td>
@@ -50,39 +58,43 @@
                         </template>
                         <template v-else>
                             <tr>
-                                <td colspan="6"><span>暂无数据</span></td>
+                                <td colspan="7"><span>暂无数据</span></td>
                             </tr>
                         </template>
                     </tbody>
                 </table>
             </div>
-            <div class="am-tab-panel{eq name="order" value="week_rate"} am-active{/eq}">
+            <div class="am-tab-panel{eq name="order" value="days_rank"} am-active{/eq}">
                 <table class="am-table am-table-centered">
                     <thead>
                         <tr>
                             <th>排名</th>
-                            <th>用户名</th>
-                            <th><span class="tr-color-order">周盈利率</span></th>
-                            <th>日盈利率</th>
+                            <th width="18%">用户名</th>
+                            <th><span class="tr-color-order">日盈利率</span></th>
+                            <th>周盈利率</span></th>
                             <th>月盈利率</th>
                             <th>总盈利率</th>
                             <th>选股成功率</th>
-                            <th>平均交易天数</th>
                             <th>周均收益率</th>
+                            <th>平均持股天数</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <template v-if="week_rate.length > 0">
-                        <tr v-for="item in week_rate">
+                        <template v-if="days_rate.length > 0">
+                        <tr v-for="item in days_rate">
                             <td><span :class="'tr-rank'+ item.ranking_icon">{{ item.ranking }}</span></td>
-                            <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name">{{ item.user_name }}</a></td>
-                            <td><span :class="'tr-color-order '+item.week_rate_class">{{ item.week_rate }}</span></td>
-                            <td><span :class="item.days_rate_class">{{ item.days_rate }}</span></td>
+                            <td class="am-text-left">
+                                <div class="tr-username">
+                                    <a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a>
+                                </div>
+                            </td>
+                            <td><span :class="'tr-color-order '+item.days_rate_class">{{ item.days_rate }}</span></td>
+                            <td><span :class="item.week_rate_class">{{ item.week_rate }}</span></td>
                             <td><span :class="item.month_rate_class">{{ item.month_rate }}</span></td>
                             <td><span :class="item.total_rate_class">{{ item.total_rate }}</span></td>
                             <td><span>{{ item.success_rate }}</span></td>
-                            <td><span>{{ item.avg_position_day }}</span></td>
                             <td><span :class="item.week_avg_profit_rate_class">{{ item.week_avg_profit_rate }}</span></td>
+                            <td><span>{{ item.avg_position_day }}</span></td>
                         </tr>
                         </template>
                         <template v-else>
@@ -91,33 +103,76 @@
                     </tbody>
                 </table>
             </div>
-            <div class="am-tab-panel{eq name="order" value="month_rate"} am-active{/eq}">
+            <div class="am-tab-panel{eq name="order" value="week_rank"} am-active{/eq}">
                 <table class="am-table am-table-centered">
                     <thead>
                         <tr>
-                            <th>排名</th>
-                            <th>用户名</th>
-                            <th>周盈利率</th>
+                            <th width="6%">排名</th>
+                            <th width="18%">用户名</th>
                             <th>日盈利率</th>
+                            <th><span class="tr-color-order">周盈利率</span></th>
+                            <th>月盈利率</th>
+                            <th>总盈利率</th>
+                            <th>选股成功率</th>
+                            <th>周均收益率</th>
+                            <th>平均持股天数</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template v-if="week_rate.length > 0">
+                        <tr v-for="item in week_rate">
+                            <td><span :class="'tr-rank'+ item.ranking_icon">{{ item.ranking }}</span></td>
+                            <td class="am-text-left">
+                                <div class="tr-username">
+                                    <a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a>
+                                </div>
+                            </td>
+                            <td><span :class="item.days_rate_class">{{ item.days_rate }}</span></td>
+                            <td><span :class="'tr-color-order '+item.week_rate_class">{{ item.week_rate }}</span></td>
+                            <td><span :class="item.month_rate_class">{{ item.month_rate }}</span></td>
+                            <td><span :class="item.total_rate_class">{{ item.total_rate }}</span></td>
+                            <td><span>{{ item.success_rate }}</span></td>
+                            <td><span :class="item.week_avg_profit_rate_class">{{ item.week_avg_profit_rate }}</span></td>
+                            <td><span>{{ item.avg_position_day }}</span></td>
+                        </tr>
+                        </template>
+                        <template v-else>
+                        <tr><td colspan="9"><span>暂无数据</span></td></tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+            <div class="am-tab-panel{eq name="order" value="month_rank"} am-active{/eq}">
+                <table class="am-table am-table-centered">
+                    <thead>
+                        <tr>
+                            <th width="6%">排名</th>
+                            <th width="18%">用户名</th>
+                            <th>日盈利率</th>
+                            <th>周盈利率</th>
                             <th><span class="tr-color-order">月盈利率</span></th>
                             <th>总盈利率</th>
                             <th>选股成功率</th>
-                            <th>平均交易天数</th>
                             <th>周均收益率</th>
+                            <th>平均持股天数</th>
                         </tr>
                     </thead>
                     <tbody>
                         <template v-if="month_rate.length > 0">
                         <tr v-for="item in month_rate">
                             <td><span :class="'tr-rank'+ item.ranking_icon">{{ item.ranking }}</span></td>
-                            <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name">{{ item.user_name }}</a></td>
-                            <td><span :class="item.week_rate_class">{{ item.week_rate }}</span></td>
+                            <td class="am-text-left">
+                                <div class="tr-username">
+                                    <a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a>
+                                </div>
+                            </td>
                             <td><span :class="item.days_rate_class">{{ item.days_rate }}</span></td>
+                            <td><span :class="item.week_rate_class">{{ item.week_rate }}</span></td>
                             <td><span :class="'tr-color-order '+item.month_rate_class">{{ item.month_rate }}</span></td>
                             <td><span :class="item.total_rate_class">{{ item.total_rate }}</span></td>
                             <td><span>{{ item.success_rate }}</span></td>
-                            <td><span>{{ item.avg_position_day }}</span></td>
                             <td><span :class="item.week_avg_profit_rate_class">{{ item.week_avg_profit_rate }}</span></td>
+                            <td><span>{{ item.avg_position_day }}</span></td>
                         </tr>
                         </template>
                         <template v-else>
@@ -130,15 +185,15 @@
                 <table class="am-table am-table-centered">
                     <thead>
                         <tr>
-                            <th>排名</th>
-                            <th>用户名</th>
-                            <th>周盈利率</th>
+                            <th width="6%">排名</th>
+                            <th width="18%">用户名</th>
                             <th>日盈利率</th>
+                            <th>周盈利率</th>
                             <th>月盈利率</th>
                             <th><span class="tr-color-order">总盈利率</span></th>
                             <th>选股成功率</th>
-                            <th>平均交易天数</th>
                             <th>周均收益率</th>
+                            <th>平均持股天数</th>
                             <th>粉丝</th>
                         </tr>
                     </thead>
@@ -146,14 +201,18 @@
                         <template v-if="total_rate.length > 0">
                             <tr v-for="item in total_rate">
                                 <td><span :class="'tr-rank'+item.rownum_class">{{ item.rownum }}</span></td>
-                                <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name">{{ item.user_name }}</a></td>
-                                <td><span :class="item.week_rate_class">{{ item.week_rate }}</span></td>
+                                <td class="am-text-left">
+                                    <div class="tr-username">
+                                        <a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a>
+                                    </div>
+                                </td>
                                 <td><span :class="item.days_rate_class">{{ item.days_rate }}</span></td>
+                                <td><span :class="item.week_rate_class">{{ item.week_rate }}</span></td>
                                 <td><span :class="item.month_rate_class">{{ item.month_rate }}</span></td>
                                 <td><span :class="'tr-color-order '+item.total_rate_class">{{ item.total_rate }}</span></td>
                                 <td><span class="">{{ item.success_rate }}</span></td>
-                                <td><span>{{ item.avg_position_day }}</span></td>
                                 <td><span :class="item.week_avg_profit_rate_class">{{ item.week_avg_profit_rate }}</span></td>
+                                <td><span>{{ item.avg_position_day }}</span></td>
                                 <td><span>{{ item.fans }}</span></td>
                             </tr>
                         </template>
@@ -169,15 +228,15 @@
                 <table class="am-table am-table-centered">
                     <thead>
                         <tr>
-                            <th>排名</th>
-                            <th>用户名</th>
-                            <th>周盈利率</th>
+                            <th width="6%">排名</th>
+                            <th width="18%">用户名</th>
                             <th>日盈利率</th>
+                            <th>周盈利率</th>
                             <th>月盈利率</th>
                             <th>总盈利率</th>
                             <th><span class="tr-color-order">选股成功率</span></th>
-                            <th>平均交易天数</th>
                             <th>周均收益率</th>
+                            <th>平均持股天数</th>
                             <th>粉丝</th>
                         </tr>
                     </thead>
@@ -185,14 +244,18 @@
                         <template v-if="success_rate.length > 0">
                             <tr v-for="item in success_rate">
                                 <td><span :class="'tr-rank'+item.rownum_class">{{ item.rownum }}</span></td>
-                                <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name">{{ item.user_name }}</a></td>
-                                <td><span :class="item.week_rate_class">{{ item.week_rate }}</span></td>
+                                <td class="am-text-left">
+                                    <div class="tr-username">
+                                        <a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a>
+                                    </div>
+                                </td>
                                 <td><span :class="item.days_rate_class">{{ item.days_rate }}</span></td>
+                                <td><span :class="item.week_rate_class">{{ item.week_rate }}</span></td>
                                 <td><span :class="item.month_rate_class">{{ item.month_rate }}</span></td>
                                 <td><span :class="item.total_rate_class">{{ item.total_rate }}</span></td>
                                 <td><span class="tr-color-order">{{ item.success_rate }}</span></td>
-                                <td><span>{{ item.avg_position_day }}</span></td>
                                 <td><span :class="item.week_avg_profit_rate_class">{{ item.week_avg_profit_rate }}</span></td>
+                                <td><span>{{ item.avg_position_day }}</span></td>
                                 <td><span>{{ item.fans }}</span></td>
                             </tr>
                         </template>
@@ -208,14 +271,14 @@
                 <table class="am-table am-table-centered">
                     <thead>
                         <tr>
-                            <th>排名</th>
-                            <th>用户名</th>
-                            <th>周盈利率</th>
+                            <th width="6%">排名</th>
+                            <th width="18%">用户名</th>
                             <th>日盈利率</th>
+                            <th>周盈利率</th>
                             <th>月盈利率</th>
                             <th>总盈利率</span></th>
                             <th>选股成功率</th>
-                            <th>平均交易天数</th>
+                            <th>平均持股天数</th>
                             <th><span class="tr-color-order">周均收益率</span></th>
                             <th>粉丝</th>
                         </tr>
@@ -224,14 +287,18 @@
                         <template v-if="week_avg_profit_rate.length > 0">
                             <tr v-for="item in week_avg_profit_rate">
                                 <td><span :class="'tr-rank'+item.rownum_class">{{ item.rownum }}</span></td>
-                                <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name">{{ item.user_name }}</a></td>
-                                <td><span :class="item.week_rate_class">{{ item.week_rate }}</span></td>
+                                <td class="am-text-left">
+                                    <div class="tr-username">
+                                        <a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a>
+                                    </div>
+                                </td>
                                 <td><span :class="item.days_rate_class">{{ item.days_rate }}</span></td>
+                                <td><span :class="item.week_rate_class">{{ item.week_rate }}</span></td>
                                 <td><span :class="item.month_rate_class">{{ item.month_rate }}</span></td>
                                 <td><span :class="item.total_rate_class">{{ item.total_rate }}</span></td>
                                 <td><span class="">{{ item.success_rate }}</span></td>
-                                <td><span>{{ item.avg_position_day }}</span></td>
                                 <td><span :class="'tr-color-order '+item.week_avg_profit_rate_class">{{ item.week_avg_profit_rate }}</span></td>
+                                <td><span>{{ item.avg_position_day }}</span></td>
                                 <td><span>{{ item.fans }}</span></td>
                             </tr>
                         </template>
@@ -247,15 +314,15 @@
                 <table class="am-table am-table-centered">
                     <thead>
                         <tr>
-                            <th>排名</th>
-                            <th>用户名</th>
-                            <th>周盈利率</th>
+                            <th width="6%">排名</th>
+                            <th width="18%">用户名</th>
                             <th>日盈利率</th>
+                            <th>周盈利率</th>
                             <th>月盈利率</th>
                             <th>总盈利率</span></th>
                             <th>选股成功率</th>
-                            <th>平均交易天数</th>
                             <th>周均收益率</th>
+                            <th>平均持股天数</th>
                             <th><span class="tr-color-order">粉丝</span></th>
                         </tr>
                     </thead>
@@ -263,14 +330,18 @@
                         <template v-if="fans.length > 0">
                             <tr v-for="item in fans">
                                 <td><span :class="'tr-rank'+item.rownum_class">{{ item.rownum }}</span></td>
-                                <td><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name">{{ item.user_name }}</a></td>
-                                <td><span :class="item.week_rate_class">{{ item.week_rate }}</span></td>
+                                <td class="am-text-left">
+                                    <div class="tr-username">
+                                        <a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a>
+                                    </div>
+                                </td>
                                 <td><span :class="item.days_rate_class">{{ item.days_rate }}</span></td>
+                                <td><span :class="item.week_rate_class">{{ item.week_rate }}</span></td>
                                 <td><span :class="item.month_rate_class">{{ item.month_rate }}</span></td>
                                 <td><span :class="item.total_rate_class">{{ item.total_rate }}</span></td>
                                 <td><span class="">{{ item.success_rate }}</span></td>
-                                <td><span>{{ item.avg_position_day }}</span></td>
                                 <td><span :class="item.week_avg_profit_rate_class">{{ item.week_avg_profit_rate }}</span></td>
+                                <td><span>{{ item.avg_position_day }}</span></td>
                                 <td><span class="tr-color-order">{{ item.fans }}</span></td>
                             </tr>
                         </template>

@@ -27,6 +27,10 @@ class Index extends Base
      */
     public function index(){
         $expert = Db::table('sjq_transaction t')->join('sjq_users u','t.uid=u.uid')->join('sjq_users_funds uf','u.uid=uf.uid')->join('sjq_users_position up','u.uid=up.uid AND t.stock=up.stock')->where('status',1)->Field('t.id,t.uid,t.stock,t.stock_name,u.username,t.price,t.time,t.type,uf.total_rate,up.ratio')->order('t.id desc')->limit(30)->select();
+        foreach ($expert as $key => $value) {
+            $expert[$key]['avatar'] = Config('use_url.img_url') . '/avatar/img/'.$value['uid'].'.png';
+        }
+
         if($expert){
             $result = json(['status'=>'success','data'=>$expert]);
         }else{
