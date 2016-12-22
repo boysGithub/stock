@@ -404,7 +404,7 @@
                 </div>    
                 <div class="am-u-lg-2 am-list-main am-text-center tr-list-button">
                     <template v-if="item.status == 3"> 
-                        <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-sm">查看比赛</a> 
+                        <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-primary am-btn-sm">查看比赛</a> 
                     </template>    
                     <template v-else> 
                         <a href="javascript:;" :href-url="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-sm" :id="item.id" v-on:click="join_match">参加比赛</a> 
@@ -429,7 +429,7 @@
                 </div>    
                 <div class="am-u-lg-2 am-list-main am-text-center tr-list-button">
                     <template v-if="item.status == 3"> 
-                        <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-sm">查看比赛</a> 
+                        <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-primary am-btn-sm">查看比赛</a> 
                     </template>    
                     <template v-else> 
                         <a href="javascript:;" :href-url="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-sm" :id="item.id" v-on:click="join_match">参加比赛</a> 
