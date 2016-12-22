@@ -97,24 +97,8 @@ class Index extends Controller
 		return $this->fetch('member/personal');
 	}
 
-	public function doLogin(){
-        if($_COOKIE['PHPSESSID']){
-            $uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->value('uid');
-            if($uid){
-            	$token = Db::connect('sjq1')->name('user')->where(['uid'=>$uid])->value('stock_token');
-            	$userInfo = Db::name('users')->where(['uid'=>$uid])->find();
-            	$userInfo['token'] = $token;
-                return json(['status'=>'success','data'=>$userInfo]);
-            }else{
-            	return json(['status'=>'failed','data'=>'已经退出,请重新登录']);
-            }
-        }else{
-        	return json(['status'=>'failed','data'=>'获取不到cookie']);
-        }
-	}
-
 	public function login(){
-		return $this->redirect("http://www.sjqcj.com",0);
+		return $this->fetch("login/login");
 	}
 
 	public function register(){
@@ -123,14 +107,11 @@ class Index extends Controller
 
 	//登录验证
 	private function checkLogin(){
-		$logined = false;
-		if(@$_COOKIE['PHPSESSID']){
-			$uid = Db::connect('sjq1')->name('moni_user')->where(['sessionid'=>$_COOKIE['PHPSESSID']])->find();
-			if($uid){
-				$logined = true;
-			}
+		if(isset($_SESSION['uid'])){
+			return true;
+		}else{
+			return false;
 		}
-		return $logined;
 	}
 	
 	/**
@@ -222,6 +203,29 @@ class Index extends Controller
         $avatar .= '/original_200_200.jpg';
 
         return $avatar;
+    }
+
+    public function doLogin(){
+    	if(isset($_COOKIE['login_email']) && isset($_COOKIE['login_password'])){
+    		if(isset($_SESSION['uid'])){
+    			$token = Db::connect('sjq1')->name('user')->where(['uid'=>$_SESSION['uid']])->Field('stock_token as token,uname as username,uid')->find();
+    			return json(['status'=>'success','data'=>$token]);
+    		}else{
+    			$login = cookieDecrypt($_COOKIE['login_email']);
+				$passowrd = cookieDecrypt($_COOKIE['login_password']);
+				$base = new Base;
+				$base->doLogin($login,$passowrd);
+				if(isset($_SESSION['uid'])){
+					$token = Db::connect('sjq1')->name('user')->where(['uid'=>$_SESSION['uid']])->Field('stock_token as token,uname as username,uid')->find();
+    				return json(['status'=>'success','data'=>$token]);
+				}else{
+					return json(['status'=>'failed','data'=>'账号密码不匹配']);
+				}
+    		}
+    	}else{
+    		$base = new Base;
+    		$base->logout();
+    	}
     }
 }
 ?>

@@ -1,4 +1,4 @@
-var api_host = 'https://moni.sjqcj.com';
+var api_host = 'http://moni.local.com';
 var header = new Vue({
     el: "#header",
     data: {
@@ -31,9 +31,23 @@ var header = new Vue({
             url += '/nc.shtml';
 
             return url;
+        },
+        logout:function(){
+            $.get(
+                api_host + "/index/base/logout", function(msg){
+                    if(msg.status == "success"){
+                        setTimeout(function(){
+                            location.href = "/";
+                        },500)
+                    }else{
+                        alert("退出失败");
+                    }
+                },
+                'json'
+            );
         }
     },
     mounted: function() {
-       this.checkLogin();
+        this.checkLogin();
     }
 });

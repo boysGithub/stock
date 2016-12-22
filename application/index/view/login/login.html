@@ -1,25 +1,24 @@
 {extend name="base" /} {block name="head"}
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>水晶球登陆页面</title>
-<link rel="stylesheet" href="/static/css/public/amazeui.datatables.min.css" />
-{/block}
-{block name="css"}
+<link rel="stylesheet" href="/static/css/public/amazeui.datatables.min.css" /> {/block} {block name="css"}
 <style type="text/css" media="screen">
-.tpl-g{
+.tpl-g {
     background: #fff;
 }
+
 .tpl-login-content {
     width: 300px;
     height: 300px;
     margin: 0 auto;
 }
-.h1{
+
+.h1 {
     text-align: center;
-    font-size:50px;
+    font-size: 50px;
 }
 </style>
-{/block}
-{block name="header"}{include file="public/header" /}{/block} {block name="main"}
+{/block} {block name="header"}{include file="public/header" /}{/block} {block name="main"}
 
 <body data-type="login">
     <div class="am-g tpl-g" id="login">
@@ -28,12 +27,12 @@
                 <div class="tpl-login-logo">
                 </div>
                 <h1 class="h1">登录</h1>
-                <form class="am-form tpl-form-line-form" >
+                <form class="am-form tpl-form-line-form" action="{:url('index/base/doLogin')}" method="post">
                     <div class="am-form-group">
-                        <input type="text" class="tpl-form-input" v-model="username"  placeholder="请输入账号">
+                        <input type="text" class="tpl-form-input" name="login_email" v-model="username" placeholder="请输入账号">
                     </div>
                     <div class="am-form-group">
-                        <input type="password" class="tpl-form-input" v-model="password"  placeholder="请输入密码">
+                        <input type="password" class="tpl-form-input" name="login_password" v-model="password" placeholder="请输入密码">
                     </div>
                     <div class="am-form-group tpl-login-remember-me">
                         <input id="remember-me" type="checkbox" v-model="remember" value="1">
@@ -48,7 +47,4 @@
             </div>
         </div>
     </div>
-    {/block} {block name="footer"}{include file="public/footer" /}{/block} {block name="js"}
-    {js file="/static/js/login/app.js"}
-    {js file="/static/js/login/login.js"}
-    {/block}
+    {/block} {block name="footer"}{include file="public/footer" /}{include file="public/modal" /}{/block} {block name="js"} {js file="/static/js/public/modal.js"} {js file="/static/js/login/login.js"} {/block}

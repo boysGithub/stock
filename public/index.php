@@ -11,6 +11,7 @@ header('Access-Control-Allow-Origin:*');
 // +----------------------------------------------------------------------
 
 // [ 应用入口文件 ]
+session_start();
 ini_set('session.cookie_path', '/');
 ini_set('session.cookie_domain', 'sjqcj.com');
 ini_set('session.cookie_lifetime', '86400');

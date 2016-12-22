@@ -196,7 +196,7 @@ function cookieDecrypt($data){
     /* 获取初始向量，并且检测密钥长度。*/
     $data = base64_decode($data);
     $iv_dec = substr($data, 0, $ks);
-    $data_dec = substr($t, $ks);
+    $data_dec = substr($data, $ks);
     /* 初始化解密模块 */
     mcrypt_generic_init($td, $key, $iv_dec);
     /* 解密数据 */
