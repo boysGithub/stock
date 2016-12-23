@@ -315,7 +315,7 @@ class Index extends Controller
      */
     public function logout(){
         $_SESSION = [];
-        $this->redirect('http://www.sjqcj.com/index.php?app=public&mod=Passport&act=logout');
+        $this->redirect('http://www.sjqcj.com/index.php?app=public&mod=Passport&act=logout',0);
     }
 }
 ?>

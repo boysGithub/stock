@@ -9,7 +9,7 @@
 					<template v-if="logined">
 						您好，
 						<a href="{:url('index/index/personal')}" title="个人中心" class="topbar-login">{{user.username}}</a>
-						<a href="" v-on:click="logout" title="退出" class="topbar-out">退出</a>
+						<a href="{:url('index/index/logout')}" title="退出" class="topbar-out">退出</a>
 					</template>	
 					<template v-else>
 						<a href="{:url('index/index/login')}" title="登录" class="topbar-login">登录</a>
