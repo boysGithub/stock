@@ -213,7 +213,7 @@ class Index extends Controller
         if($login == ''){
         	$login = input('post.login_email');
         }
-        if($passowrd == ''){
+        if($password == ''){
         	$password = input('post.login_password');
         }
         if($login == ''){
