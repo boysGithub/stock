@@ -34,7 +34,7 @@ var header = new Vue({
         },
         logout:function(){
             $.get(
-                api_host + "/index/base/logout", function(msg){
+                api_host + "/index/index/logout", function(msg){
                     if(msg.status == "failed"){
                         
                         location.reload();
