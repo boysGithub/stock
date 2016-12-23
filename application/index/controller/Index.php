@@ -98,6 +98,7 @@ class Index extends Controller
 	}
 
 	public function login(){
+		session_start();
 		if(isset($_SESSION['uid'])){
 			$this->success("您已经登录过了",'Index/index',1);
 		}else{
@@ -111,6 +112,7 @@ class Index extends Controller
 
 	//登录验证
 	private function checkLogin(){
+		session_start();
 		if(isset($_SESSION['uid'])){
 			return true;
 		}else{
@@ -289,6 +291,7 @@ class Index extends Controller
     }
 
     public function doLogin(){
+    	session_start();
     	if(isset($_COOKIE['login_email']) || isset($_COOKIE['login_password'])){
     		if(isset($_SESSION['uid'])){
     			$token = Db::connect('sjq1')->name('user')->where(['uid'=>$_SESSION['uid']])->Field('stock_token as token,uname as username,uid,passowrd')->find();
@@ -315,6 +318,7 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function logout(){
+    	session_start();
         setcookie('login_email','',0,'/','.sjqcj.com');
         setcookie('login_password','',0,'/','.sjqcj.com');
         $_SESSION = [];
