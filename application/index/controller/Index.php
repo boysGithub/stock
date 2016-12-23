@@ -288,7 +288,7 @@ class Index extends Controller
     }
 
     public function doLogin(){
-    	if(isset($_COOKIE['login_email']) || isset($_COOKIE['login_password'])){
+    	if(isset($_COOKIE['login_email']) || isset($_COOKIE['login_password']) || isset($_SESSION['uid'])){
     		if(isset($_SESSION['uid'])){
     			$token = Db::connect('sjq1')->name('user')->where(['uid'=>$_SESSION['uid']])->Field('stock_token as token,uname as username,uid')->find();
     			return json(['status'=>'success','data'=>$token]);
