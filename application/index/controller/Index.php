@@ -296,7 +296,7 @@ class Index extends Controller
     	session_start();
     	if(isset($_COOKIE['login_email']) || isset($_COOKIE['login_password'])){
     		if(isset($_SESSION['uid'])){
-    			$token = Db::connect('sjq1')->name('user')->where(['uid'=>$_SESSION['uid']])->Field('stock_token as token,uname as username,uid,passowrd')->find();
+    			$token = Db::connect('sjq1')->name('user')->where(['uid'=>$_SESSION['uid']])->Field('stock_token as token,uname as username,uid')->find();
     			return json(['status'=>'success','data'=>$token]);
     		}else{
     			$login = cookieDecrypt($_COOKIE['login_email']);
