@@ -319,9 +319,10 @@ class Index extends Controller
      * [divisionLogin 区分登录方式]
      * @return [type] [description]
      */
-    public function logout(){
-        setcookie('login_email','',0,'/','.sjqcj.com');
-        setcookie('login_password','',0,'/','.sjqcj.com');
+    public function logout($auto = false){
+        if(!$auto){
+        	session_start();
+        }
         $_SESSION = [];
         return json(['status'=>'failed','data'=>'退出成功']);
     }
