@@ -206,7 +206,7 @@ class Index extends Controller
                 $userFunds = new UserFunds;
                 $userFunds->saveAll($userInfo);
                 $this->handle("更新总盈利率和总资产成功",1);
-                $userInfo = UserFunds::field('uid')->select();
+                $userInfo = UserFunds::field('uid')->where(['is_trans'=>1])->select();
                 foreach ($userInfo as $key => $value) {
                     $tmp1[] = $value['uid'];
                 }
@@ -643,11 +643,12 @@ class Index extends Controller
             Db::query($sql);
             Db::commit();
             $this->handle("更新周平均率成功",1);
-            $weekUser = WeeklyRatio::field('uid')->group('uid')->select();
-            foreach ($weekUser as $key => $value) {
-                $tmp[] = $value['uid'];
-            }
-            $t = join(',',$tmp);
+            
+            $userInfo = UserFunds::field('uid')->where(['is_trans'=>1])->select();
+                foreach ($userInfo as $key => $value) {
+                    $tmp1[] = $value['uid'];
+                }
+            $t = join(',',$tmp1);
             $redis = new Redis;
             $redis->set("week_avg_profit_rate",$t);
         } catch (\Exception $e) {
@@ -764,8 +765,13 @@ class Index extends Controller
             UserFunds::update(['fans'=>$value['fans']],['uid'=>$value['uid']]);
             $this->handle("更新".$value['uid']."粉丝数成功",1);
         }
+        $userInfo = UserFunds::field('uid')->where(['is_trans'=>1])->select();
+            foreach ($userInfo as $key => $value) {
+                $tmp1[] = $value['uid'];
+            }
+        $t = join(',',$tmp1);
         $redis = new Redis;
-        $redis->set("fans",$userGather);
+        $redis->set("fans",$t);
     }
 
     /**
