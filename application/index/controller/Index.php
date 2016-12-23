@@ -303,24 +303,24 @@ class Index extends Controller
     }
 
     public function doLogin(){
-    	if(isset($_COOKIE['login_email']) || isset($_COOKIE['login_password'])){
-    		if(isset($_SESSION['uid'])){
-    			$token = Db::connect('sjq1')->name('user')->where(['uid'=>$_SESSION['uid']])->Field('stock_token as token,uname as username,uid')->find();
-    			return json(['status'=>'success','data'=>$token]);
-    		}else{
-    			$login = cookieDecrypt($_COOKIE['login_email']);
-				$passowrd = cookieDecrypt($_COOKIE['login_password']);
-				$this->autoLogin($login,$passowrd,true);
-				if(isset($_SESSION['uid'])){
-					$token = Db::connect('sjq1')->name('user')->where(['uid'=>$_SESSION['uid']])->Field('stock_token as token,uname as username,uid')->find();
-    				return json(['status'=>'success','data'=>$token]);
-				}else{
-					return json(['status'=>'failed','data'=>'账号密码不匹配']);
-				}
-    		}
-    	}else{
-    		return $this->logout();
-    	}
+    // 	if(isset($_COOKIE['login_email']) || isset($_COOKIE['login_password'])){
+    // 		if(isset($_SESSION['uid'])){
+    // 			$token = Db::connect('sjq1')->name('user')->where(['uid'=>$_SESSION['uid']])->Field('stock_token as token,uname as username,uid')->find();
+    // 			return json(['status'=>'success','data'=>$token]);
+    // 		}else{
+    // 			$login = cookieDecrypt($_COOKIE['login_email']);
+				// $passowrd = cookieDecrypt($_COOKIE['login_password']);
+				// $this->autoLogin($login,$passowrd,true);
+				// if(isset($_SESSION['uid'])){
+				// 	$token = Db::connect('sjq1')->name('user')->where(['uid'=>$_SESSION['uid']])->Field('stock_token as token,uname as username,uid')->find();
+    // 				return json(['status'=>'success','data'=>$token]);
+				// }else{
+				// 	return json(['status'=>'failed','data'=>'账号密码不匹配']);
+				// }
+    // 		}
+    // 	}else{
+    // 		return $this->logout();
+    // 	}
     }
 
    	
