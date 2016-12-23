@@ -209,118 +209,110 @@ class Index extends Controller
         return $avatar;
     }
 
-    public function autoLogin(){
+    public function autoLogin($login='',$password='',$auto=false){
     	session_start();
-        $login = input('post.login_email');
-        $password = input('post.login_password');
+    	if($login == ''){
+    		$login = input('post.login_email');
+    	}
+        if($password=''){
+        	$password = input('post.login_password');
+        }
         if($login == ''){
            $this->error("用户名不能为空",'Index/login','',1);
+           exit();
         }
         if($password == ''){
            $this->error("密码不能为空",'Index/login','',1);
+           exit();
         }
-        $salt = User::where(['username'=>$login])->value('login_salt');
-        if($salt){
-        	$pass = md5(md5($password).$salt);
-	        if($info = User::where(['username'=>$login,'password'=>$pass])->find()){
-		        setcookie('login_email','',0,'/','.sjqcj.com');
-	            setcookie('login_password','',0,'/','.sjqcj.com');
-	            setcookie('login_email',cookieEncrypt($login),time()+86400,'/','.sjqcj.com');
-	            setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
-	            $_SESSION['username'] = $info['username'];
-	            $_SESSION['uid'] = $info['uid'];
-	        	$_SESSION['username'] = $info['username'];
-	            $_SESSION['uid'] = $info['uid'];
-	            $this->success('登录成功，正在跳转....','Index/index','',1);
-	        }else{
-	        	$this->error("用户名和密码不匹配",'Index/login','',1);
-	        }
+        if(strpos($login,"@")){
+            $salt = User::where(['login'=>$login])->value('login_salt');
+            if($salt){
+                $pass = md5(md5($password).$salt);
+                if($info = User::where(['login'=>$login,'password'=>$pass])->find()){
+                    setcookie('login_email','',0,'/','.sjqcj.com');
+                    setcookie('login_password','',0,'/','.sjqcj.com');
+                    setcookie('login_email',cookieEncrypt($login),time()+86400,'/','.sjqcj.com');
+                    setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
+                    $_SESSION['username'] = $info['username'];
+                    $_SESSION['uid'] = $info['uid'];
+                    if(!$auto){
+                    	$this->success('登录成功，正在跳转....','Index/index','',1);
+                    }
+                }else{
+                    $this->error("用户名和密码不匹配",'Index/login','',1);
+                    exit();
+                }
+            }else{
+                $this->error("用户不存在",'Index/login','',1);
+                exit();
+            }
+        }else if(is_numeric($login) && strlen($login) == 11){
+            $salt = User::where(['phone'=>$login])->value('login_salt');
+            if($salt){
+                $pass = md5(md5($password).$salt);
+                if($info = User::where(['phone'=>$login,'password'=>$pass])->find()){
+                    setcookie('login_email','',0,'/','.sjqcj.com');
+                    setcookie('login_password','',0,'/','.sjqcj.com');
+                    setcookie('login_email',cookieEncrypt($login),time()+86400,'/','.sjqcj.com');
+                    setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
+                    $_SESSION['username'] = $info['username'];
+                    $_SESSION['uid'] = $info['uid'];
+                    if(!$auto){
+                    	$this->success('登录成功，正在跳转....','Index/index','',1);
+                    }
+                }else{
+                    $this->error("用户名和密码不匹配",'Index/login','',1);
+                    exit();
+                }
+            }else{
+                $this->error("用户不存在",'Index/login','',1);
+                exit();
+            }
         }else{
-        	$this->error("用户不存在",'Index/login','',1);
+            $salt = User::where(['username'=>$login])->value('login_salt');
+            if($salt){
+                $pass = md5(md5($password).$salt);
+                if($info = User::where(['username'=>$login,'password'=>$pass])->find()){
+                    setcookie('login_email','',0,'/','.sjqcj.com');
+                    setcookie('login_password','',0,'/','.sjqcj.com');
+                    setcookie('login_email',cookieEncrypt($login),time()+86400,'/','.sjqcj.com');
+                    setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
+                    $_SESSION['username'] = $info['username'];
+                    $_SESSION['uid'] = $info['uid'];
+                    if(!$auto){
+                    	$this->success('登录成功，正在跳转....','Index/index','',1);
+                    }
+                }else{
+                    $this->error("用户名和密码不匹配",'Index/login','',1);
+                    exit();
+                }
+            }else{
+                $this->error("用户不存在",'Index/login','',1);
+                exit();
+            }
         }
-        
-        // if(strpos($login,"@")){
-        //     $salt = User::where(['login'=>$login])->value('login_salt');
-        //     if($salt){
-        //         $pass = md5(md5($password).$salt);
-        //         if($info = User::where(['login'=>$login,'password'=>$pass])->find()){
-        //             setcookie('login_email','',0,'/','.sjqcj.com');
-        //             setcookie('login_password','',0,'/','.sjqcj.com');
-        //             setcookie('login_email',cookieEncrypt($login),time()+86400,'/','.sjqcj.com');
-        //             setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
-        //             $_SESSION['username'] = $info['username'];
-        //             $_SESSION['uid'] = $info['uid'];
-        //             if(!$auto){
-        //             	$this->success('登录成功，正在跳转....','Index/index','',1);
-        //             }
-        //         }else{
-        //             $this->error("用户名和密码不匹配",'Index/login','',1);
-        //         }
-        //     }else{
-        //         $this->error("用户不存在",'Index/login','',1);
-        //     }
-        // }else if(is_numeric($login) && strlen($login) == 11){
-        //     $salt = User::where(['phone'=>$login])->value('login_salt');
-        //     if($salt){
-        //         $pass = md5(md5($password).$salt);
-        //         if($info = User::where(['phone'=>$login,'password'=>$pass])->find()){
-        //             setcookie('login_email','',0,'/','.sjqcj.com');
-        //             setcookie('login_password','',0,'/','.sjqcj.com');
-        //             setcookie('login_email',cookieEncrypt($login),time()+86400,'/','.sjqcj.com');
-        //             setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
-        //             $_SESSION['username'] = $info['username'];
-        //             $_SESSION['uid'] = $info['uid'];
-        //             if(!$auto){
-        //             	$this->success('登录成功，正在跳转....','Index/index','',1);
-        //             }
-        //         }else{
-        //             $this->error("用户名和密码不匹配",'Index/login','',1);
-        //         }
-        //     }else{
-        //         $this->error("用户不存在",'Index/login','',1);
-        //     }
-        // }else{
-        //     $salt = User::where(['username'=>$login])->value('login_salt');
-        //     if($salt){
-        //         $pass = md5(md5($password).$salt);
-        //         if($info = User::where(['username'=>$login,'password'=>$pass])->find()){
-        //             setcookie('login_email','',0,'/','.sjqcj.com');
-        //             setcookie('login_password','',0,'/','.sjqcj.com');
-        //             setcookie('login_email',cookieEncrypt($login),time()+86400,'/','.sjqcj.com');
-        //             setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
-        //             $_SESSION['username'] = $info['username'];
-        //             $_SESSION['uid'] = $info['uid'];
-        //             if(!$auto){
-        //             	$this->success('登录成功，正在跳转....','Index/index','',1);
-        //             }
-        //         }else{
-        //             $this->error("用户名和密码不匹配",'Index/login','',1);
-        //         }
-        //     }else{
-        //         $this->error("用户不存在",'Index/login','',1);
-        //     }
-        // }
     }
 
     public function doLogin(){
-    // 	if(isset($_COOKIE['login_email']) || isset($_COOKIE['login_password'])){
-    // 		if(isset($_SESSION['uid'])){
-    // 			$token = Db::connect('sjq1')->name('user')->where(['uid'=>$_SESSION['uid']])->Field('stock_token as token,uname as username,uid')->find();
-    // 			return json(['status'=>'success','data'=>$token]);
-    // 		}else{
-    // 			$login = cookieDecrypt($_COOKIE['login_email']);
-				// $passowrd = cookieDecrypt($_COOKIE['login_password']);
-				// $this->autoLogin($login,$passowrd,true);
-				// if(isset($_SESSION['uid'])){
-				// 	$token = Db::connect('sjq1')->name('user')->where(['uid'=>$_SESSION['uid']])->Field('stock_token as token,uname as username,uid')->find();
-    // 				return json(['status'=>'success','data'=>$token]);
-				// }else{
-				// 	return json(['status'=>'failed','data'=>'账号密码不匹配']);
-				// }
-    // 		}
-    // 	}else{
-    // 		return $this->logout();
-    // 	}
+    	if(isset($_COOKIE['login_email']) || isset($_COOKIE['login_password'])){
+    		if(isset($_SESSION['uid'])){
+    			$token = Db::connect('sjq1')->name('user')->where(['uid'=>$_SESSION['uid']])->Field('stock_token as token,uname as username,uid')->find();
+    			return json(['status'=>'success','data'=>$token]);
+    		}else{
+    			$login = cookieDecrypt($_COOKIE['login_email']);
+				$passowrd = cookieDecrypt($_COOKIE['login_password']);
+				$this->autoLogin($login,$passowrd,true);
+				if(isset($_SESSION['uid'])){
+					$token = Db::connect('sjq1')->name('user')->where(['uid'=>$_SESSION['uid']])->Field('stock_token as token,uname as username,uid')->find();
+    				return json(['status'=>'success','data'=>$token]);
+				}else{
+					return json(['status'=>'failed','data'=>'账号密码不匹配']);
+				}
+    		}
+    	}else{
+    		return $this->logout();
+    	}
     }
 
    	
