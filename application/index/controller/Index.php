@@ -298,8 +298,8 @@ class Index extends Controller
     			return json(['status'=>'success','data'=>$token]);
     		}else{
     			$login = cookieDecrypt($_COOKIE['login_email']);
-				$passowrd = cookieDecrypt($_COOKIE['login_password']);
-				$this->autoLogin($login,$passowrd,true);
+				$password = cookieDecrypt($_COOKIE['login_password']);
+				$this->autoLogin($login,$password,true);
 				if(isset($_SESSION['uid'])){
 					$token = Db::connect('sjq1')->name('user')->where(['uid'=>$_SESSION['uid']])->Field('stock_token as token,uname as username,uid')->find();
     				return json(['status'=>'success','data'=>$token]);
