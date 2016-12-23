@@ -43,7 +43,7 @@ var header = new Vue({
                         location.href="http://www.sjqcj.com/index.php?app=public&mod=Passport&act=logout";
                         
                     }else{
-                        alert("退出失败");
+                        // alert("退出失败");
                     }
                 },
                 'json'
