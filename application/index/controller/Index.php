@@ -4,14 +4,14 @@ namespace app\index\controller;
 use think\Controller;
 use think\Request;
 use think\Db;
-use app\index\controller\Base;
+use app\common\model\User;
 /**
 * 首页的控制器
 */
 class Index extends Controller
 {	
 	public function index(){
-		return $this->fetch();
+		return $this->fetch('index/index');
 	}
 
 	/**
@@ -98,7 +98,11 @@ class Index extends Controller
 	}
 
 	public function login(){
-		return $this->fetch("login/login");
+		if(isset($_SESSION['uid'])){
+			$this->success("您已经登录过了",'Index/index',1);
+		}else{
+			return $this->fetch("login/login");
+		}
 	}
 
 	public function register(){
@@ -205,6 +209,76 @@ class Index extends Controller
         return $avatar;
     }
 
+    public function autoLogin($login='',$password=''){
+        
+        $login = input('post.login_email');
+        
+        
+        $password = input('post.login_password');
+        
+        if($login == ''){
+           $this->error("用户名不能为空");
+        }
+        if($password == ''){
+           $this->error("密码不能为空",'Index/login',1);
+        }
+        if(strpos($login,"@")){
+            $salt = User::where(['login'=>$login])->value('login_salt');
+            if($salt){
+                $pass = md5(md5($password).$salt);
+                if($info = User::where(['login'=>$login,'password'=>$pass])->find()){
+                    setcookie('login_email','',0,'/','.sjqcj.com');
+                    setcookie('login_password','',0,'/','.sjqcj.com');
+                    setcookie('login_email',cookieEncrypt($login),time()+86400,'/','.sjqcj.com');
+                    setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
+                    $_SESSION['username'] = $info['username'];
+                    $_SESSION['uid'] = $info['uid'];
+                    $this->success('登录成功，正在跳转....','Index/index',1);
+                }else{
+                    $this->error("用户名和密码不匹配");
+                }
+            }else{
+                $this->error("用户不存在");
+            }
+        }else if(is_numeric($login) && strlen($login) == 11){
+            $salt = User::where(['phone'=>$login])->value('login_salt');
+            if($salt){
+                $pass = md5(md5($password).$salt);
+                if($info = User::where(['phone'=>$login,'password'=>$pass])->find()){
+                    setcookie('login_email','',0,'/','.sjqcj.com');
+                    setcookie('login_password','',0,'/','.sjqcj.com');
+                    setcookie('login_email',cookieEncrypt($login),time()+86400,'/','.sjqcj.com');
+                    setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
+                    $_SESSION['username'] = $info['username'];
+                    $_SESSION['uid'] = $info['uid'];
+                    $this->success('登录成功，正在跳转....','Index/index',1);
+                }else{
+                    $this->error("用户名和密码不匹配");
+                }
+            }else{
+                $this->error("用户不存在");
+            }
+        }else{
+            $salt = User::where(['username'=>$login])->value('login_salt');
+            if($salt){
+                $pass = md5(md5($password).$salt);
+                if($info = User::where(['username'=>$login,'password'=>$pass])->find()){
+                    setcookie('login_email','',0,'/','.sjqcj.com');
+                    setcookie('login_password','',0,'/','.sjqcj.com');
+                    setcookie('login_email',cookieEncrypt($login),time()+86400,'/','.sjqcj.com');
+                    setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
+                    $_SESSION['username'] = $info['username'];
+                    $_SESSION['uid'] = $info['uid'];
+                    $this->success('登录成功，正在跳转....','Index/index',1);
+                }else{
+                    $this->error("用户名和密码不匹配");
+                }
+            }else{
+                $this->error("用户不存在");
+            }
+        }
+    }
+
     public function doLogin(){
     	if(isset($_COOKIE['login_email']) && isset($_COOKIE['login_password'])){
     		if(isset($_SESSION['uid'])){
@@ -213,8 +287,7 @@ class Index extends Controller
     		}else{
     			$login = cookieDecrypt($_COOKIE['login_email']);
 				$passowrd = cookieDecrypt($_COOKIE['login_password']);
-				$base = new Base;
-				$base->doLogin($login,$passowrd);
+				$this->autoLogin($login,$passowrd);
 				if(isset($_SESSION['uid'])){
 					$token = Db::connect('sjq1')->name('user')->where(['uid'=>$_SESSION['uid']])->Field('stock_token as token,uname as username,uid')->find();
     				return json(['status'=>'success','data'=>$token]);
@@ -223,9 +296,20 @@ class Index extends Controller
 				}
     		}
     	}else{
-    		$base = new Base;
-    		return $base->logout();
+    		return $this->logout();
     	}
+    }
+
+   	
+    /**
+     * [divisionLogin 区分登录方式]
+     * @return [type] [description]
+     */
+    public function logout(){
+        setcookie('login_email','',0,'/','.sjqcj.com');
+        setcookie('login_password','',0,'/','.sjqcj.com');
+        $_SESSION = [];
+        return json(['status'=>'failed','data'=>'退出成功']);
     }
 }
 ?>

@@ -11,6 +11,9 @@ var header = new Vue({
         checkLogin: function() {
             var _this = this;
             $.getJSON(api_host+"/index/index/doLogin", function(msg) {
+                if(msg.code == 1){
+                    location.reload();
+                }
                 if (msg.status == "success") {
                     _this.logined = true;
                     
@@ -34,7 +37,7 @@ var header = new Vue({
         },
         logout:function(){
             $.get(
-                api_host + "/index/base/logout", function(msg){
+                api_host + "/index/index/logout", function(msg){
                     if(msg.status == "failed"){
                         
                         location.reload();
