@@ -318,7 +318,6 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function logout(){
-    	session_start();
         setcookie('login_email','',0,'/','.sjqcj.com');
         setcookie('login_password','',0,'/','.sjqcj.com');
         $_SESSION = [];
