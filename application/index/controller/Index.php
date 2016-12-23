@@ -209,7 +209,7 @@ class Index extends Controller
         return $avatar;
     }
 
-    public function autoLogin($login='',$password='',$auto = false){
+    public function autoLogin(){
         $login = input('post.login_email');
         $password = input('post.login_password');
         if($login == ''){
@@ -230,9 +230,7 @@ class Index extends Controller
 	            $_SESSION['uid'] = $info['uid'];
 	        	$_SESSION['username'] = $info['username'];
 	            $_SESSION['uid'] = $info['uid'];
-	            if(!$auto){
-	            	$this->success('登录成功，正在跳转....','Index/index','',1);
-	            }
+	            $this->success('登录成功，正在跳转....','Index/index','',1);
 	        }else{
 	        	$this->error("用户名和密码不匹配",'Index/login','',1);
 	        }
