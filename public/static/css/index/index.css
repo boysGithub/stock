@@ -48,7 +48,7 @@
 .tr-tabs .am-table .tr-icon{color: #fff;}
 .tr-tabs .am-table .am-btn-xs{font-size: 14px; padding: .5rem .5rem;}
 .tr-tabs .am-table .tr-ranking-portrait{margin: 0 3% 0 15%;width: 30px;}
-
+.am-table .tr-username{overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
 
 .tr-img-ad{margin: 20px 0;}
 
