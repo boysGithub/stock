@@ -212,7 +212,9 @@ class Index extends Controller
     }
 
     public function autoLogin($login='',$password='',$auto=false){
-    	session_start();
+    	if(!$auto){
+    		session_start();
+    	}
     	if($login == ''){
     		$login = input('post.login_email');
     	}
