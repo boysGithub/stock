@@ -189,7 +189,7 @@ class Index extends Controller
 			$img = 'https://moni.sjqcj.com/static/img/portrait.gif';
 		}
 
-		header('content-type: image/png'); 
+		header('Content-type: image/png'); 
 		echo @file_get_contents($img);
 	}
 
