@@ -30,6 +30,7 @@
                             </div>
                         </div>
                         <form method="get" action="{:url('user/index')}">
+                        <input type="hidden" name="page" value="{$page}">
                         <div class="am-u-sm-12 am-u-md-6 am-u-lg-3">
                             <div class="am-form-group tpl-table-list-select">
                                 <select name="recommend" data-am-selected="{btnSize: 'sm'}">
@@ -85,7 +86,7 @@
                         </div>
                         <div class="am-u-lg-12 am-cf">
                             <div class="am-fr">
-                            {$page}
+                            {$pages}
                             </div>
                         </div>
                     </div>

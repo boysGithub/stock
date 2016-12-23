@@ -48,13 +48,16 @@ class Match extends Base
         $res = [];
         foreach ($matchs as $key => $val) {
 
-        	if(time() >= strtotime($val->start_date) && time() < strtotime($val->end_date) + 24 * 3600){
+        	if(time() >= strtotime(date('Y-m-d 9:00:00', strtotime($val->start_date))) && time() < strtotime(date('Y-m-d 15:30:00', strtotime($val->end_date)))){
         		$status = 1;
         		$status_name = '进行中';
-        	} else if(time() >= strtotime($val->end_date) + 24 * 3600){
+        	} else if(time() >= strtotime(date('Y-m-d 15:30:00', strtotime($val->end_date)))){
         		$status = 3;
         		$status_name = '已结束';
-        	}
+        	} else {
+                $status = 2;
+                $status_name = '待举行';
+            }
 
             $match = [
                 'id' => $val->id,
@@ -199,7 +202,7 @@ class Match extends Base
         }
 
         $match = MatchModel::where(['id'=>$data['id']])->find();
-        if(empty($match) || time() < strtotime($match['start_date']) || time() > strtotime($match['end_date'])+24*3600){
+        if(empty($match) || time() < strtotime(date('Y-m-d 09:00:00', strtotime($match->start_date))) && time() >= strtotime(date('Y-m-d 15:30:00', strtotime($match->end_date)))){
             return json(['status'=>'failed','data'=>'不可参加']);
         }
         

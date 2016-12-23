@@ -12,21 +12,25 @@ class User extends Base
 		$where = [];
 
 		$hot = input('get.recommend', '');
+		$query = [];
 		if($hot != ''){//推荐
 			$where['recommend'] = $hot;
+			$query['recommend'] = $hot;
 		}
 
 		$key = input('get.key', '');
 		if(!empty($key)){
 			$where['username'] = ['like', "%{$key}%"];
+			$query['key'] = $key;
 		}
 
-		$users = UserModel::where($where)->order('uid desc')->paginate(20);
+		$users = UserModel::where($where)->order('uid desc')->paginate(20,false,['query' => $query]);
 
 
 		$this->assign([
 			'users' => $users,
-			'page' => $users->render()
+			'pages' => $users->render(),
+			'page' => input('get.page', 1)
 		]);
 
 		return $this->fetch();
