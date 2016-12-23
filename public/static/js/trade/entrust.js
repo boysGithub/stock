@@ -85,13 +85,13 @@ var entrust = new Vue({
                             stock_url: header.getStockUrl(stock.stock),
                             position_number: num,//持仓
                             available_number: parseInt(stock.available_number),//持仓
-                            cost_price: stock.cost_price).toFixed(3),//成本价
+                            cost_price: (stock.cost_price).toFixed(3),//成本价
                             cost: parseFloat(stock.cost),//成本价
                             time: stock.time.substring(0,10),
                             assets: parseFloat((stock.assets).toFixed(2)),
                             profit: parseFloat((stock.assets - stock.cost).toFixed(2)),
                             price: 0,
-                            ratio: stock.ratio.toFixed(2) + '%',
+                            ratio: (stock.ratio).toFixed(2) + '%',
                             ratio_class: ((stock.assets - stock.cost) < 0) ? 'tr-color-lose' : 'tr-color-win'
                         });
 
