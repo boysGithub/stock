@@ -610,24 +610,13 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoUpdateUser(){
-        $sql = "SELECT uid,uname,login_salt,password from ts_user";
-        $obj = Db::connect('sjq1')->query($sql);
-        $user = User::all();
-        foreach ($obj as $key => $value) {
-            User::create(['username'=>$value['uname'],'password'=>$value['password'],'login_salt'=>$value['login_salt'],'uid'=>$value['uid']]);
-        }
-        // // 启动事务
-        // Db::startTrans();
-        // try {
-
-        //     $sql = "UPDATE stock.sjq_users u,(select uid,uname,login_salt,password from cjcj.ts_user) obj set u.username = obj.uname,u.login_salt = obj.login_salt,u.password = obj.password where u.uid = obj.uid;";
-        //     Db::connect('sjq1')->query($sql);
-        //     echo Db::getLastSql();exit;
-        //     $this->handle("更新用户成功",1);
-        //     Db::commit();
-        // } catch (\Exception $e) {
-        //     Db::rollback();
-        // }
+        $uid = User::order('uid desc')->value('uid');
+        if(!$uid) $uid = 0;
+        $userInfo = Db::connect('sjq1')->name('user')->where('uid','>',$uid)->Field('uid,uname as username,password,login_salt,login,phone')->select();
+            foreach ($userInfo as $key => $value) {
+                User::create($value);
+                $this->handle('添加用户'.$value['uid'],1);
+            }
         
     }
 
