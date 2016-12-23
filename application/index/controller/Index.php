@@ -210,6 +210,7 @@ class Index extends Controller
     }
 
     public function autoLogin(){
+    	session_start();
         $login = input('post.login_email');
         $password = input('post.login_password');
         if($login == ''){

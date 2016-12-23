@@ -11,7 +11,6 @@ header('Access-Control-Allow-Origin:*');
 // +----------------------------------------------------------------------
 
 // [ 应用入口文件 ]
-session_start();
 // 定义应用目录
 define('APP_PATH', __DIR__ . '/../application/');
 // 加载框架引导文件
