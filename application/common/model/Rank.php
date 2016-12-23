@@ -28,7 +28,7 @@ class Rank extends Model
 				        END AS rownum
 				FROM (SELECT uid, {$condition}
 					FROM `sjq_users_funds`
-					WHERE sorts = {$sorts}
+					WHERE sorts = {$sorts} AND where is_trans = 1
 					ORDER BY {$condition} DESC
 					) obj,(select @rownum := 0) r
 					order by obj.{$condition} desc) new_obj
