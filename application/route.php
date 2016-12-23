@@ -11,7 +11,6 @@
 use think\Route;
 
 Route::resource('orders','order/index');
-Route::resource('index','index/index');
 Route::resource('users','user/index');
 Route::get('rank/:method','user/rank/:method');
 Route::get('share/:method','order/share/:method');

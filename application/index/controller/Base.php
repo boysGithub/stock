@@ -131,10 +131,10 @@ class Base extends Controller
             $password = input('post.login_password');
         }
         if($login == ''){
-           return json(['status'=>'failed','data'=>'用户名不能为空']);
+           $this->error("用户名不能为空");
         }
         if($password == ''){
-           return json(['status'=>'failed','data'=>'密码不能为空']);
+           $this->error("密码不能为空",'Index/login',1);
         }
         if(strpos($login,"@")){
             $salt = User::where(['login'=>$login])->value('login_salt');
@@ -147,12 +147,12 @@ class Base extends Controller
                     setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
                     $_SESSION['username'] = $info['username'];
                     $_SESSION['uid'] = $info['uid'];
-                    return json(['status'=>'success','data'=>'登录成功，正在跳转....']);
+                    $this->success('登录成功，正在跳转....','Index/index',1);
                 }else{
-                    return json(['status'=>'failed','data'=>'用户名和密码不匹配']);
+                    $this->error("用户名和密码不匹配");
                 }
             }else{
-                return json(['status'=>'failed','data'=>'用户不存在']);
+                $this->error("用户不存在");
             }
         }else if(is_numeric($login) && strlen($login) == 11){
             $salt = User::where(['phone'=>$login])->value('login_salt');
@@ -165,12 +165,12 @@ class Base extends Controller
                     setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
                     $_SESSION['username'] = $info['username'];
                     $_SESSION['uid'] = $info['uid'];
-                    return json(['status'=>'success','data'=>'登录成功，正在跳转....']);
+                    $this->success('登录成功，正在跳转....','Index/index',1);
                 }else{
-                    return json(['status'=>'failed','data'=>'用户名和密码不匹配']);
+                    $this->error("用户名和密码不匹配");
                 }
             }else{
-                return json(['status'=>'failed','data'=>'用户不存在']);
+                $this->error("用户不存在");
             }
         }else{
             $salt = User::where(['username'=>$login])->value('login_salt');
@@ -183,12 +183,12 @@ class Base extends Controller
                     setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
                     $_SESSION['username'] = $info['username'];
                     $_SESSION['uid'] = $info['uid'];
-                    return json(['status'=>'success','data'=>'登录成功，正在跳转....']);
+                    $this->success('登录成功，正在跳转....','Index/index',1);
                 }else{
-                    return json(['status'=>'failed','data'=>'用户名和密码不匹配']);
+                    $this->error("用户名和密码不匹配");
                 }
             }else{
-                return json(['status'=>'failed','data'=>'用户不存在']);
+                $this->error("用户不存在");
             }
         }
     }

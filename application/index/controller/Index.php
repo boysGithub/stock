@@ -11,7 +11,7 @@ use app\index\controller\Base;
 class Index extends Controller
 {	
 	public function index(){
-		return $this->fetch();
+		return $this->fetch('index/index');
 	}
 
 	/**
@@ -98,7 +98,11 @@ class Index extends Controller
 	}
 
 	public function login(){
-		return $this->fetch("login/login");
+		if(isset($_SESSION['uid'])){
+			$this->success("您已经登录过了",'Index/index',1);
+		}else{
+			return $this->fetch("login/login");
+		}
 	}
 
 	public function register(){
