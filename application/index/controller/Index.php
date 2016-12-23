@@ -98,7 +98,6 @@ class Index extends Controller
 	}
 
 	public function login(){
-		session_start();
 		if(isset($_SESSION['uid'])){
 			$this->success("您已经登录过了",'Index/index',1);
 		}else{
@@ -112,7 +111,6 @@ class Index extends Controller
 
 	//登录验证
 	private function checkLogin(){
-		session_start();
 		if(isset($_SESSION['uid'])){
 			return true;
 		}else{
@@ -212,9 +210,6 @@ class Index extends Controller
     }
 
     public function autoLogin($login='',$password='',$auto=false){
-    	if(!$auto){
-    		session_start();
-    	}
     	if($login == ''){
     		$login = input('post.login_email');
     	}
@@ -293,7 +288,6 @@ class Index extends Controller
     }
 
     public function doLogin(){
-    	session_start();
     	if(isset($_COOKIE['login_email']) || isset($_COOKIE['login_password']) || isset($_SESSION['uid'])){
     		if(isset($_SESSION['uid'])){
     			$token = Db::connect('sjq1')->name('user')->where(['uid'=>$_SESSION['uid']])->Field('stock_token as token,uname as username,uid')->find();
@@ -319,10 +313,7 @@ class Index extends Controller
      * [divisionLogin 区分登录方式]
      * @return [type] [description]
      */
-    public function logout($auto = false){
-        if(!$auto){
-        	session_start();
-        }
+    public function logout(){
         $_SESSION = [];
         return json(['status'=>'failed','data'=>'退出成功']);
     }

@@ -12,6 +12,7 @@ header('Access-Control-Allow-Origin:*');
 
 // [ 应用入口文件 ]
 // 定义应用目录
+session_start();
 define('APP_PATH', __DIR__ . '/../application/');
 // 加载框架引导文件
 require __DIR__ . '/../thinkphp/start.php';
