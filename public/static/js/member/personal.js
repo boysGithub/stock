@@ -58,13 +58,20 @@ var personal = new Vue({
                 if(data.status == 'success'){
                     var market_value = 0; //市值
                     var positions = [];//持仓信息
+                    var stock_key = [];
 
                     for (var i = 0; i < data.data.length; i++) {
                         var stock = data.data[i];
                         var num = parseInt(stock.position_number);
+                        var key = 'sz' + stock.stock;
+                        if(parseInt(stock.stock.substring(0,1)) == 6){
+                            key = 'sh' + stock.stock;
+                        }
+
                         positions.push({
                             stock: stock.stock,
                             stock_name: stock.stock_name,
+                            stock_key: key,
                             stock_label: stock.stock_name+'('+stock.stock+')',
                             stock_url: header.getStockUrl(stock.stock),
                             available_number: num,//持仓
@@ -77,10 +84,31 @@ var personal = new Vue({
                             ratio: parseFloat(stock.ratio.toFixed(2)) + '%',
                             ratio_class: ((stock.assets - stock.cost) < 0) ? 'tr-color-lose' : 'tr-color-win'
                         });
+
+                        stock_key.push(key);
                     }
 
-                    _this.positions_c = positions;
-                    _this.getMarketValue();
+                    $.getScript(api_host+'/index/index/getStocks?stock='+stock_key.join(','),function(){
+                        for (var i = 0; i < positions.length; i++) {
+                            var stock = positions[i];
+                            if(eval('hq_str_'+stock.stock_key)){
+                                var detail = eval('hq_str_'+stock.stock_key).split(',');
+                                var price = (detail['3'] > 0) ? detail['3'] : detail['2'];//现价
+                              
+                                stock.assets = parseFloat((price * stock.available_number).toFixed(2));//市值
+                                stock.price = parseFloat(price);
+                                stock.profit = parseFloat((price * stock.available_number - stock.cost).toFixed(2));//盈亏
+                                stock.ratio = parseFloat(((price * stock.available_number - stock.cost) / stock.cost * 100).toFixed(2)) + '%';
+                                stock.ratio_class = ((price * stock.available_number - stock.cost) < 0) ? 'tr-color-lose' : 'tr-color-win';
+                                
+                                market_value += stock.assets
+                                positions[i] = stock;
+                            }
+                        }
+
+                        _this.market_value = market_value;
+                        _this.positions = positions
+                    });
                 }    
             });
         },
@@ -160,38 +188,6 @@ var personal = new Vue({
                     _this.chart_rate = chart_rate;
                     _this.drawing();
                 }    
-            });
-        },
-        getMarketValue(){
-            var _this = this;
-            var index = _this.pc_index;
-            if(index >= _this.positions_c.length){   
-                return;  
-            } 
-            var stock = _this.positions_c[index];
-
-            var key = 'sz' + stock.stock;
-            if(parseInt(stock.stock.substring(0,1)) == 6){
-                key = 'sh' + stock.stock;
-            }
-
-            //股票交易信息
-            $.getScript(api_host + '/index/index/quiet?stock='+key,function(){
-                if(eval('hq_str_'+key)){
-                    var detail = eval('hq_str_'+key).split(',');
-                    var price = (detail['3'] > 0) ? detail['3'] : detail['2'];//现价
-                    
-                    stock.assets = parseFloat((price * stock.available_number).toFixed(2));//市值
-                    stock.price = parseFloat(price);
-                    stock.profit = parseFloat((price * stock.available_number - stock.cost).toFixed(2));//盈亏
-                    stock.ratio = parseFloat(((price * stock.available_number - stock.cost) / stock.cost * 100).toFixed(2)) + '%';
-                    stock.ratio_class = ((price * stock.available_number - stock.cost) < 0) ? 'tr-color-lose' : 'tr-color-win';
-                }
-                
-                _this.market_value = parseFloat(_this.market_value) + stock.assets; 
-                _this.positions.push(stock);
-                _this.pc_index++;
-                _this.getMarketValue();
             });
         },
         drawing: function(){

@@ -149,7 +149,7 @@ class Index extends Controller
 	}
 
 	/**
-	 * [quiet 获取多支股票简要数据]
+	 * [quiet 获取多支股票数据]
 	 * @param  Request $request [description]
 	 * @return [type]           [description]
 	 */
