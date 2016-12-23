@@ -198,7 +198,7 @@ class Index extends Controller
      * [获取用户头像]
      * @return [string] 
      */
-    private function getAvatar($uid)
+    public function getAvatar($uid)
     {
         $avatar = 'http://www.sjqcj.com/data/upload/avatar/';
 

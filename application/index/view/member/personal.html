@@ -14,7 +14,7 @@
         <section class="am-panel am-panel-default">
             <input type="hidden" name="uid" id="uid" value="{$uid}">
           <div class="am-panel-bd am-text-center">
-            <p class="tr-portrait am-padding-horizontal-lg"><img :src="info.avatar" class="am-img-thumbnail am-circle" />
+            <p class="tr-portrait am-padding-horizontal-lg"><img :src="info.avatar" onerror="javascript:this.src=img_url+'/static/img/portrait.gif'" class="am-img-thumbnail am-circle" />
             </p>
             <p class="am-margin-top-sm">{{ info.user_name }}</p>
             <hr data-am-widget="divider" style="" class="am-divider am-divider-dotted" />

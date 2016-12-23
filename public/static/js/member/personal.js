@@ -33,17 +33,17 @@ var personal = new Vue({
                         avatar: ret.avatar,
                         user_name: ret.username, 
                         account: ret.account, 
-                        position: ret.position + '%',//持仓
-                        win_rate: ret.win_rate + '%',//胜率
+                        position: (ret.position).toFixed(2) + '%',//持仓
+                        win_rate: (ret.win_rate).toFixed(2) + '%',//胜率
                         shares: ret.shares,//当日盈亏
-                        shares_rate: parseFloat((ret.shares / (ret.funds - ret.shares) * 100).toFixed(2)) + '%',//当日盈亏比例
-                        week_avg_profit_rate: ret.week_avg_profit_rate + '%', //周平均率
-                        success_rate: ret.success_rate + '%',//选股成功率
+                        shares_rate: (ret.shares / (ret.funds - ret.shares) * 100).toFixed(2) + '%',//当日盈亏比例
+                        week_avg_profit_rate: (ret.week_avg_profit_rate).toFixed(2) + '%', //周平均率
+                        success_rate: (ret.success_rate).toFixed(2) + '%',//选股成功率
                         time: ret.time.substring(0,10), 
                         operationTime: ret.operationTime.substring(0,10), 
                         funds: ret.funds, //总资产
                         available_funds: ret.available_funds, //可用资金
-                        total_rate: ret.total_rate + '%',
+                        total_rate: (ret.total_rate).toFixed(2) + '%',
                         total_rate_class: (ret.total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
                         total_profit_rank: ret.total_profit_rank//总排名
                     };
@@ -75,13 +75,13 @@ var personal = new Vue({
                             stock_label: stock.stock_name+'('+stock.stock+')',
                             stock_url: header.getStockUrl(stock.stock),
                             available_number: num,//持仓
-                            cost_price: parseFloat(stock.cost_price),//成本价
+                            cost_price: stock.cost_price).toFixed(3),//成本价
                             cost: parseFloat(stock.cost),//成本价
                             time: stock.time.substring(0,10),
-                            assets: parseFloat(stock.assets),
-                            profit: parseFloat(stock.assets - stock.cost),
+                            assets: parseFloat((stock.assets).toFixed(2)),
+                            profit: parseFloat((stock.assets - stock.cost).toFixed(2)),
                             price: 0,
-                            ratio: parseFloat(stock.ratio.toFixed(2)) + '%',
+                            ratio: stock.ratio.toFixed(2) + '%',
                             ratio_class: ((stock.assets - stock.cost) < 0) ? 'tr-color-lose' : 'tr-color-win'
                         });
 
@@ -98,7 +98,7 @@ var personal = new Vue({
                                 stock.assets = parseFloat((price * stock.available_number).toFixed(2));//市值
                                 stock.price = parseFloat(price);
                                 stock.profit = parseFloat((price * stock.available_number - stock.cost).toFixed(2));//盈亏
-                                stock.ratio = parseFloat(((price * stock.available_number - stock.cost) / stock.cost * 100).toFixed(2)) + '%';
+                                stock.ratio = ((price * stock.available_number - stock.cost) / stock.cost * 100).toFixed(2) + '%';
                                 stock.ratio_class = ((price * stock.available_number - stock.cost) < 0) ? 'tr-color-lose' : 'tr-color-win';
                                 
                                 market_value += stock.assets
@@ -128,8 +128,8 @@ var personal = new Vue({
                             stock_url: header.getStockUrl(stock.stock),
                             time: stock.time.substring(0,10),
                             update_time: stock.update_time.substring(0,10),
-                            profit: parseFloat((stock.cost * stock.ratio / 100).toFixed(2)),//盈亏
-                            ratio: stock.ratio + '%',
+                            profit: (stock.cost * stock.ratio / 100).toFixed(2),//盈亏
+                            ratio: (stock.ratio).toFixed(2) + '%',
                             ratio_class: (stock.ratio < 0) ? 'tr-color-lose' : 'tr-color-win'
                         });
  

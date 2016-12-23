@@ -58,7 +58,7 @@ class Rank extends Base
             $value->total_rate = round($value->total_rate, 2);
             $value->success_rate = round($value->success_rate, 2);
             $value->week_avg_profit_rate = round($value->week_avg_profit_rate, 2);
-			$value->avatar = Config('use_url.img_url') . '/avatar/img/'.$value->uid.'.png';
+			$value->avatar = $this->getAvatar($value->uid);
 		}
 		if($rankList){
 			$result = json(['status'=>'success','data'=>$rankList]);
@@ -99,7 +99,7 @@ class Rank extends Base
 			->select();
 			
 		foreach ($rankList as $key => $value) {
-			$value->avatar = Config('use_url.img_url') . '/avatar/img/'.$value->uid.'.png';
+			$value->avatar = $this->getAvatar($value->uid);
 			$value->days_rate = round($value->days_rate, 2);
             $value->week_rate = round($value->week_rate, 2);
             $value->month_rate = round($value->month_rate, 2);
