@@ -75,7 +75,7 @@ var personal = new Vue({
                             stock_label: stock.stock_name+'('+stock.stock+')',
                             stock_url: header.getStockUrl(stock.stock),
                             available_number: num,//持仓
-                            cost_price: stock.cost_price).toFixed(3),//成本价
+                            cost_price: stock.cost_price.toFixed(3),//成本价
                             cost: parseFloat(stock.cost),//成本价
                             time: stock.time.substring(0,10),
                             assets: parseFloat((stock.assets).toFixed(2)),
