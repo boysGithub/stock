@@ -131,7 +131,7 @@ var sale = new Vue({
         },
         order: function(market){//卖出
             var _this = this;
-            if(!(_this.sale_num > 0 && _this.sale_num < _this.max_num)){
+            if(!(_this.sale_num > 0 && _this.sale_num <= _this.max_num)){
                 modal.imitateAlert('请输入正确的卖出数量');
                 return;
             }
