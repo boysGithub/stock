@@ -11,11 +11,11 @@
       </ul>
     </div>   
     <div class="tr-proclamation"> 
-        <div class="am-u-md-2 tr-pro-t">
+        <div class="am-fl tr-pro-t">
             <span class="am-icon-volume-up"></span>
             <span class="tr-pro-t-c">最新播报</span>
         </div>
-        <div class="am-u-md-10">
+        <div class="am-fl">
             <dl id="ticker-1">
                 <dd v-for="item in proclamation"><a :href="item.href" :title="item.title" target="_blank">{{ item.title }}</a></dd>
             </dl>
@@ -33,7 +33,7 @@
                     <div class="am-g tr-talent-info am-padding">
                         <div class="am-u-sm-5 am-padding-right">
                             <a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name">
-                                <img :src="item.avatar" alt="portrait" class="am-circle">
+                                <img :src="item.avatar" onerror="javascript:this.src=img_url+'/static/img/portrait.gif'" alt="portrait" class="am-circle">
                             </a>
                         </div>
                         <div class="am-u-sm-7">
@@ -81,7 +81,7 @@
                                 <td>{{ index+1 }}</td>
                                 <td class="am-text-left">
                                     <div class="tr-username">
-                                        <a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a>
+                                        <a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" onerror="javascript:this.src=img_url+'/static/img/portrait.gif'" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a>
                                     </div>
                                 </td>
                                 <td><a :href="item.stock_url" target="_blank" rel="nofollow"><span class="tr-shares-name">{{ item.stock }}</span></a></td>
@@ -120,7 +120,7 @@
                             <td><span :class="'tr-rank'+ item.ranking_icon">{{ item.ranking }}</span></td>
                             <td class="am-text-left">
                                 <div class="tr-username">
-                                    <a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a>
+                                    <a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" onerror="javascript:this.src=img_url+'/static/img/portrait.gif'" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a>
                                 </div>
                             </td>
                             <td><span :class="'tr-color-order '+item.days_rate_class">{{ item.days_rate }}</span></td>
@@ -159,7 +159,7 @@
                             <td><span :class="'tr-rank'+ item.ranking_icon">{{ item.ranking }}</span></td>
                             <td class="am-text-left">
                                 <div class="tr-username">
-                                    <a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a>
+                                    <a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" onerror="javascript:this.src=img_url+'/static/img/portrait.gif'" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a>
                                 </div>
                             </td>
                             <td><span :class="item.days_rate_class">{{ item.days_rate }}</span></td>
@@ -198,7 +198,7 @@
                             <td><span :class="'tr-rank'+ item.ranking_icon">{{ item.ranking }}</span></td>
                             <td class="am-text-left">
                                 <div class="tr-username">
-                                    <a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a>
+                                    <a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" onerror="javascript:this.src=img_url+'/static/img/portrait.gif'" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a>
                                 </div>
                             </td>
                             <td><span :class="item.days_rate_class">{{ item.days_rate }}</span></td>
@@ -237,7 +237,7 @@
                                 <td><span :class="'tr-rank'+item.rownum_class">{{ item.rownum }}</span></td>
                                 <td class="am-text-left">
                                     <div class="tr-username">
-                                        <a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a>
+                                        <a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" onerror="javascript:this.src=img_url+'/static/img/portrait.gif'" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a>
                                     </div>
                                 </td>
                                 <td><span :class="item.days_rate_class">{{ item.days_rate }}</span></td>
@@ -281,7 +281,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="item in total_rate_5">
-                                <td class="am-text-left"><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a></td>
+                                <td class="am-text-left"><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" onerror="javascript:this.src=img_url+'/static/img/portrait.gif'" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a></td>
                                 <td><span :class="item.total_rate_class">{{ item.total_rate }}</span></td>
                             </tr>
                         </tbody>
@@ -309,7 +309,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="item in success_rate">
-                                <td class="am-text-left"><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a></td>
+                                <td class="am-text-left"><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" onerror="javascript:this.src=img_url+'/static/img/portrait.gif'" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a></td>
                                 <td><span :class="item.success_rate_class">{{ item.success_rate }}</span></td>
                             </tr>
                         </tbody>
@@ -342,7 +342,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="item in week_avg_profit_rate">
-                                <td class="am-text-left"><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a></td>
+                                <td class="am-text-left"><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" onerror="javascript:this.src=img_url+'/static/img/portrait.gif'" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a></td>
                                 <td><span :class="item.week_avg_profit_rate_class">{{ item.week_avg_profit_rate }}</span></td>
                             </tr>
                         </tbody>
@@ -370,7 +370,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="item in fans">
-                                <td class="am-text-left"><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a></td>
+                                <td class="am-text-left"><a :href="'{:url("index/index/personal")}?uid=' + item.uid" :title="item.user_name"><img :src="item.portrait" onerror="javascript:this.src=img_url+'/static/img/portrait.gif'" class="am-circle tr-ranking-portrait" alt="">{{ item.user_name }}</a></td>
                                 <td><span>{{ item.fans }}</span></td>
                             </tr>
                         </tbody>

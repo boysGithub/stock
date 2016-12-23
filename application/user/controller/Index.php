@@ -221,7 +221,7 @@ class Index extends Base
             }else{
                 $buyMoney = 0;
             }
-            $fund->avatar = Config('use_url.img_url') . '/avatar/img/'.$fund->uid.'.png';
+            $fund->avatar = $this->getAvatar($fund->uid);
             $result = json(['status'=>'success','data'=>$fund]);
         }else{
             $result = json(['status'=>'failed','data'=>'他还没模拟交易信息']);
@@ -244,7 +244,7 @@ class Index extends Base
         
         foreach ($users as $key => $val) {
             $val->week_rate = empty($val->week_rate) ? 0 : round($val->week_rate * 100, 2);
-            $val->avatar = Config('use_url.img_url') . '/avatar/img/'.$val->uid.'.png';;
+            $val->avatar = $this->getAvatar($val->uid);
         }
         
         $result = json(['status'=>'success', 'data'=> $users]);

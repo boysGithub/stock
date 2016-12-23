@@ -8,7 +8,7 @@
 .am-slider-default.tr-slider-ad .am-control-nav li a.am-active{background-color:#0e90d2;}
 
 .tr-proclamation{padding: 12px 30px 12px 12px; margin-bottom: 20px; font-size: 14px;background: #fff; height: 48px; overflow: hidden;}
-.tr-proclamation .tr-pro-t{color: #4a9ff6;}
+.tr-proclamation .tr-pro-t{color: #4a9ff6; width: 115px;}
 .tr-proclamation .tr-pro-t .am-icon-volume-up{vertical-align: middle;}
 .tr-proclamation .tr-pro-t .tr-pro-t-c{ vertical-align: middle; display: inline-block; padding-right: 20px;border-right: 1px solid #4a9ff6;}
 .tr-proclamation dl{background: none;}
@@ -48,7 +48,7 @@
 .tr-tabs .am-table .tr-icon{color: #fff;}
 .tr-tabs .am-table .am-btn-xs{font-size: 14px; padding: .5rem .5rem;}
 .tr-tabs .am-table .tr-ranking-portrait{margin: 0 3% 0 15%;width: 30px;}
-
+.am-table .tr-username{overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
 
 .tr-img-ad{margin: 20px 0;}
 

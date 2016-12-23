@@ -28,9 +28,9 @@
                         <table class="am-table am-table-centered">
                             <thead>
                                 <tr>
-                                    <th width="8%">序号</th>
                                     <th width="18%">股票名称(代码)</th>
                                     <th>持仓数量</th>
+                                    <th>可卖数量</th>
                                     <th>成本</th>
                                     <th>最新价</th>
                                     <th>市值</th>
@@ -42,8 +42,8 @@
                             <tbody>
                                 <template v-if="positions.length > 0">
                                     <tr v-for="(item, index) in positions">
-                                        <td>{{ index+1 }}</td>
                                         <td><a :href="item.stock_url" target="_blank" rel="nofollow"><span class="tr-shares-name">{{ item.title }}</span></a></td>
+                                        <td>{{ item.position_number }}</td>
                                         <td>{{ item.available_number }}</td>
                                         <td><span class="tr-color-price">{{ item.cost_price }}</span></td>
                                         <td><span class="tr-color-price">{{ item.price }}</span></td>

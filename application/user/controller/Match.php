@@ -164,7 +164,7 @@ class Match extends Base
                 $res['match']['ranking'] = $val->ranking;
             }
 
-            $val->avatar = Config('use_url.img_url') . '/avatar/img/'.$val->uid.'.png';
+            $val->avatar = $this->getAvatar($val->uid);
             $val->days_rate = round($val->days_rate, 2);
             $val->week_rate = round($val->week_rate, 2);
             $val->month_rate = round($val->month_rate, 2);

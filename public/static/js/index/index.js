@@ -90,7 +90,7 @@ var index = new Vue({
                         for (var i = 0; i < ret.length; i++) {
                             recommend.push({
                                 user_name: ret[i].username,
-                                week_rate: ret[i].week_rate + '%',
+                                week_rate: (ret[i].week_rate).toFixed(2) + '%',
                                 week_rate_class: (ret[i].week_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
                                 ranking: ret[i].ranking,
                                 avatar: ret[i].avatar,
@@ -139,7 +139,7 @@ var index = new Vue({
                             stock_url: header.getStockUrl(ret[i].stock),
                             state: state,
                             state_class: state_class,
-                            price: ret[i].price,
+                            price: (ret[i].price).toFixed(2),
                             time: ret[i].time.substring(0,16),
                             uid: ret[i].uid
                         });
@@ -169,17 +169,17 @@ var index = new Vue({
                                     portrait: ret[i].avatar,
                                     ranking: ret[i].ranking,
                                     ranking_icon: (ret[i].ranking < 4) ? ' tr-icon' : '',
-                                    week_rate: ret[i].week_rate + '%',
+                                    week_rate: (ret[i].week_rate).toFixed(2) + '%',
                                     week_rate_class: (ret[i].week_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                    days_rate: ret[i].days_rate + '%',
+                                    days_rate: (ret[i].days_rate).toFixed(2) + '%',
                                     days_rate_class: (ret[i].days_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                    month_rate: ret[i].month_rate + '%',
+                                    month_rate: (ret[i].month_rate).toFixed(2) + '%',
                                     month_rate_class: (ret[i].month_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                    total_rate: ret[i].total_profit_rate + '%',
+                                    total_rate: (ret[i].total_profit_rate).toFixed(2) + '%',
                                     total_rate_class: (ret[i].total_profit_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                    success_rate: ret[i].success_rate + '%',
+                                    success_rate: (ret[i].success_rate).toFixed(2) + '%',
                                     avg_position_day: ret[i].avg_position_day,
-                                    week_avg_profit_rate: ret[i].week_avg_profit_rate + '%',
+                                    week_avg_profit_rate: (ret[i].week_avg_profit_rate).toFixed(2) + '%',
                                     week_avg_profit_rate_class: (ret[i].week_avg_profit_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
                                     uid: ret[i].uid
                                 });
@@ -225,17 +225,17 @@ var index = new Vue({
                                     portrait: ret[i].avatar,
                                     ranking: ret[i].ranking,
                                     ranking_icon: (ret[i].ranking < 4) ? ' tr-icon' : '',
-                                    week_rate: ret[i].week_rate + '%',
+                                    week_rate: (ret[i].week_rate).toFixed(2) + '%',
                                     week_rate_class: (ret[i].week_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                    days_rate: ret[i].days_rate + '%',
+                                    days_rate: (ret[i].days_rate).toFixed(2) + '%',
                                     days_rate_class: (ret[i].days_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                    month_rate: ret[i].month_rate + '%',
+                                    month_rate: (ret[i].month_rate).toFixed(2) + '%',
                                     month_rate_class: (ret[i].month_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                    total_rate: ret[i].total_rate + '%',
+                                    total_rate: (ret[i].total_rate).toFixed(2) + '%',
                                     total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                    success_rate: ret[i].success_rate + '%',
+                                    success_rate: (ret[i].success_rate).toFixed(2) + '%',
                                     avg_position_day: ret[i].avg_position_day,
-                                    week_avg_profit_rate: ret[i].week_avg_profit_rate + '%',
+                                    week_avg_profit_rate: (ret[i].week_avg_profit_rate).toFixed(2) + '%',
                                     week_avg_profit_rate_class: (ret[i].week_avg_profit_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
                                     uid: ret[i].uid
                                 });
@@ -269,7 +269,7 @@ var index = new Vue({
                                 total_rate_5.push({
                                     user_name: ret[i].username,
                                     portrait: ret[i].avatar,
-                                    total_rate: ret[i].total_rate+'%',
+                                    total_rate: (ret[i].total_rate).toFixed(2)+'%',
                                     total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
                                     uid: ret[i].uid
                                 });
@@ -279,17 +279,17 @@ var index = new Vue({
                                 portrait: ret[i].avatar,
                                 rownum: ret[i].rownum,
                                 rownum_class: (ret[i].rownum > 3) ? '' : ' tr-icon',
-                                week_rate: ret[i].week_rate + '%',
+                                week_rate: (ret[i].week_rate).toFixed(2) + '%',
                                 week_rate_class: (ret[i].week_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                days_rate: ret[i].days_rate + '%',
+                                days_rate: (ret[i].days_rate).toFixed(2) + '%',
                                 days_rate_class: (ret[i].days_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                month_rate: ret[i].month_rate + '%',
+                                month_rate: (ret[i].month_rate).toFixed(2) + '%',
                                 month_rate_class: (ret[i].month_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                total_rate: ret[i].total_rate+'%',
+                                total_rate: (ret[i].total_rate).toFixed(2)+'%',
                                 total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
-                                success_rate: ret[i].success_rate+'%',
+                                success_rate: (ret[i].success_rate).toFixed(2)+'%',
                                 avg_position_day: ret[i].avg_position_day,
-                                week_avg_profit_rate: ret[i].week_avg_profit_rate+'%',
+                                week_avg_profit_rate: (ret[i].week_avg_profit_rate).toFixed(2)+'%',
                                 week_avg_profit_rate_class: (ret[i].week_avg_profit_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
                                 uid: ret[i].uid
                             });
@@ -321,7 +321,7 @@ var index = new Vue({
                             success_rate.push({
                                 user_name: ret[i].username,
                                 portrait: ret[i].avatar,
-                                success_rate: ret[i].success_rate+'%',
+                                success_rate: (ret[i].success_rate).toFixed(2)+'%',
                                 success_rate_class: (ret[i].success_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
                                 uid: ret[i].uid
                             });
@@ -360,7 +360,7 @@ var index = new Vue({
                             week_avg_profit_rate.push({
                                 user_name: ret[i].username,
                                 portrait: ret[i].avatar,
-                                week_avg_profit_rate: ret[i].week_avg_profit_rate+'%',
+                                week_avg_profit_rate: (ret[i].week_avg_profit_rate).toFixed(2)+'%',
                                 week_avg_profit_rate_class: (ret[i].week_avg_profit_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
                                 uid: ret[i].uid
                             });
@@ -474,7 +474,7 @@ function proclamationSlider(){
         pauseOnHover: 'immediate'
     };
     $('#ticker-1').carouFredSel({
-        width: 783,
+        width: 840,
         align: false,
         items: {
             width: 'variable',
