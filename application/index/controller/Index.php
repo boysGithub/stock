@@ -213,10 +213,10 @@ class Index extends Controller
         $login = input('post.login_email');
         $password = input('post.login_password');
         if($login == ''){
-           $this->error("用户名不能为空");
+           $this->error("用户名不能为空",'Index/login','',1);
         }
         if($password == ''){
-           $this->error("密码不能为空",'Index/login',1);
+           $this->error("密码不能为空",'Index/login','',1);
         }
         if(strpos($login,"@")){
             $salt = User::where(['login'=>$login])->value('login_salt');
@@ -229,12 +229,12 @@ class Index extends Controller
                     setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
                     $_SESSION['username'] = $info['username'];
                     $_SESSION['uid'] = $info['uid'];
-                    $this->success('登录成功，正在跳转....','Index/index',1);
+                    $this->success('登录成功，正在跳转....','Index/index','',1);
                 }else{
-                    $this->error("用户名和密码不匹配");
+                    $this->error("用户名和密码不匹配",'Index/login','',1);
                 }
             }else{
-                $this->error("用户不存在");
+                $this->error("用户不存在",'Index/login','',1);
             }
         }else if(is_numeric($login) && strlen($login) == 11){
             $salt = User::where(['phone'=>$login])->value('login_salt');
@@ -247,12 +247,12 @@ class Index extends Controller
                     setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
                     $_SESSION['username'] = $info['username'];
                     $_SESSION['uid'] = $info['uid'];
-                    $this->success('登录成功，正在跳转....','Index/index',1);
+                    $this->success('登录成功，正在跳转....','Index/index','',1);
                 }else{
-                    $this->error("用户名和密码不匹配");
+                    $this->error("用户名和密码不匹配",'Index/login','',1);
                 }
             }else{
-                $this->error("用户不存在");
+                $this->error("用户不存在",'Index/login','',1);
             }
         }else{
             $salt = User::where(['username'=>$login])->value('login_salt');
@@ -265,12 +265,12 @@ class Index extends Controller
                     setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
                     $_SESSION['username'] = $info['username'];
                     $_SESSION['uid'] = $info['uid'];
-                    $this->success('登录成功，正在跳转....','Index/index',1);
+                    $this->success('登录成功，正在跳转....','Index/index','',1);
                 }else{
-                    $this->error("用户名和密码不匹配");
+                    $this->error("用户名和密码不匹配",'Index/login','',1);
                 }
             }else{
-                $this->error("用户不存在");
+                $this->error("用户不存在",'Index/login','',1);
             }
         }
     }
