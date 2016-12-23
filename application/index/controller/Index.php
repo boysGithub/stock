@@ -210,12 +210,8 @@ class Index extends Controller
     }
 
     public function autoLogin($login='',$password=''){
-    	if($login == ''){
-    		$login = input('post.login_email');
-    	}
-        if($password == ''){
-           $password = input('post.login_password');
-        }
+        $login = input('post.login_email');
+        $password = input('post.login_password');
         if($login == ''){
            $this->error("用户名不能为空",'Index/login','',1);
         }
