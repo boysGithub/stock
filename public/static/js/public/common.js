@@ -40,7 +40,7 @@ var header = new Vue({
                 api_host + "/index/index/logout", function(msg){
                     if(msg.status == "failed"){
                         
-                        location.reload();
+                        location.href="http://www.sjqcj.com/index.php?app=public&mod=Passport&act=logout";
                         
                     }else{
                         alert("退出失败");
