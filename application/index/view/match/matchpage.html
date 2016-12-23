@@ -43,7 +43,7 @@
                         </div>
                         <div class="am-u-lg-2 am-list-main am-text-center tr-list-button">
                             <template v-if="item.status == 3">
-                                <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-lg">查看比赛</a>
+                                <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-primary am-btn-lg">查看比赛</a>
                             </template>
                             <template v-if="item.status == 1 && item.joined == 0">
                                 <template v-if="logined">
@@ -54,7 +54,7 @@
                                 </template>
                             </template>
                             <template v-if="item.status == 1 && item.joined == 1">
-                                <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-lg">进入比赛</a>
+                                <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-primary am-btn-lg">进入比赛</a>
                             </template>
                             
                                 <!-- <a href="{:url('stocks/match/matchDetails')}" class="am-btn am-btn-danger am-btn-lg" onclick="jumpDetails('',1)">已参加</a> -->

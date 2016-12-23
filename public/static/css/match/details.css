@@ -2,3 +2,5 @@
 .tr-table-ranking>tbody>tr>td{height: 42px; line-height: 42px;}
 .tr-table-ranking>thead>tr>th{background:#f6f6f6; height: 28px; line-height: 28px; font-size: 1.4rem;font-weight: 400;}
 .tr-table-ranking .tr-icon{color: #fff; line-height: 30px;}
+.tr-table-ranking .tr-ranking-portrait{margin: 0 3% 0 15%;width: 30px;}
+.tr-table-ranking .tr-username{overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}

@@ -6,6 +6,7 @@ var index = new Vue({
         proclamation: [],//公告
         recommend: [],//牛人推荐
         talent_dynamic: [],//牛人动态
+        days_rate: [],//日盈利率
         week_rate: [],//周赛排名
         month_rate: [],//月赛排名
         total_rate_5: [],//总收益榜
@@ -133,6 +134,7 @@ var index = new Vue({
                         }
                         talent_dynamic.push({
                             user_name: ret[i].username,
+                            portrait: ret[i].avatar,
                             stock: ret[i].stock_name+'('+ret[i].stock+')',
                             stock_url: header.getStockUrl(ret[i].stock),
                             state: state,
@@ -164,6 +166,7 @@ var index = new Vue({
                             for (var i = 0; i < ret.length; i++) {
                                 match_rate.push({
                                     user_name: ret[i].username,
+                                    portrait: ret[i].avatar,
                                     ranking: ret[i].ranking,
                                     ranking_icon: (ret[i].ranking < 4) ? ' tr-icon' : '',
                                     week_rate: ret[i].week_rate + '%',
@@ -205,6 +208,48 @@ var index = new Vue({
                 }
             } 
         },
+        updateDaysRate(){
+            var timestamp = new Date().getTime();
+            var data = localStorage.getItem('days_rate_10');
+            data = JSON.parse(data);
+            if(data == null || data.timestamp < timestamp || data.data.length < 1){
+                var _this = this;
+                $.getJSON(api_host+'/rank/rateRank',{limit: 10},function(data){
+                    if(data.status == 'success'){
+                        var ret = data.data;
+                        var days_rate = [];
+                        if(ret.length > 0){
+                            for (var i = 0; i < ret.length; i++) {
+                                days_rate.push({
+                                    user_name: ret[i].username,
+                                    portrait: ret[i].avatar,
+                                    ranking: ret[i].ranking,
+                                    ranking_icon: (ret[i].ranking < 4) ? ' tr-icon' : '',
+                                    week_rate: ret[i].week_rate + '%',
+                                    week_rate_class: (ret[i].week_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                    days_rate: ret[i].days_rate + '%',
+                                    days_rate_class: (ret[i].days_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                    month_rate: ret[i].month_rate + '%',
+                                    month_rate_class: (ret[i].month_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                    total_rate: ret[i].total_rate + '%',
+                                    total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                    success_rate: ret[i].success_rate + '%',
+                                    avg_position_day: ret[i].avg_position_day,
+                                    week_avg_profit_rate: ret[i].week_avg_profit_rate + '%',
+                                    week_avg_profit_rate_class: (ret[i].week_avg_profit_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                    uid: ret[i].uid
+                                });
+                            }
+                        }    
+
+                        localStorage.setItem('days_rate_10',JSON.stringify({timestamp: timestamp + _this.cache_t, data: days_rate}));
+                        _this.days_rate = days_rate;
+                    }
+                });
+            } else {    
+                this.days_rate = data.data;
+            } 
+        },
         updateTotalRate(){
             var timestamp = new Date().getTime();
             var data = localStorage.getItem('total_rate_5');
@@ -231,6 +276,7 @@ var index = new Vue({
                             }
                             total_rate_10.push({
                                 user_name: ret[i].username,
+                                portrait: ret[i].avatar,
                                 rownum: ret[i].rownum,
                                 rownum_class: (ret[i].rownum > 3) ? '' : ' tr-icon',
                                 week_rate: ret[i].week_rate + '%',
@@ -404,6 +450,7 @@ var index = new Vue({
         this.updateProclamation();
         this.updateRecommend();
         this.updateTalentDynamic();
+        this.updateDaysRate();
         this.updateMatchRank(1);
         this.updateMatchRank(2);
         this.updateTotalRate();

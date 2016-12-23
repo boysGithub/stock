@@ -28,6 +28,8 @@ ul{list-style: none;}
 .tr-color-lose{color: green;}/*亏*/
 .tr-color-price{color: #666;}/*价格*/
 .tr-color-order{font-weight: bold;}
+a .tr-shares-name{color: #865501; cursor: pointer;}
+a .tr-shares-name:hover{color: #c87f04;}
 
 .tr-icon{background: url('../../img/ranking-icon.png') 0 0 no-repeat; width: 30px; height:30px; display: inline-block;background-size: 100%;vertical-align: middle;}
 

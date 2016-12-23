@@ -10,6 +10,7 @@ use app\common\model\Rank as RankModel;
 use app\common\model\DaysRatio;
 use app\common\model\WeeklyRatio;
 use app\common\model\MonthRatio;
+use app\common\model\NoTrande;
 use think\cache\driver\Redis;
 /**
 * 排行榜控制器
@@ -68,6 +69,49 @@ class Rank extends Base
 	}
 
 	/**
+	 * [rateRank 盈利率排名]
+	 * @return json
+	 */
+	public function rateRank()
+	{
+		$data = input('get.');
+		$page = isset($data['p']) && $data['p'] > 0 ? intval($data['p']) : 1;
+		$limit = isset($data['limit']) && $data['limit'] > 0 && $data['limit'] < 1000 ? intval($data['limit']) : $this->_base->_limit;
+
+		$date = $this->getRecentTradeDay();
+		$ranking_sql = DaysRatio::where("DATE_FORMAT(time,'%Y-%m-%d')='{$date}' AND (endFunds - initialCapital) / initialCapital * 100 > days_rate")->field('count(id)')->buildSql();
+
+		$join = [
+            ["sjq_users u", "dr.uid=u.uid", 'LEFT'],
+            ["sjq_users_funds uf", "dr.uid=uf.uid", 'LEFT'],
+            ["sjq_weekly_ratio wr", "dr.uid=wr.uid AND DATE_FORMAT(wr.time,'%Y-%u')='" . date('Y-W', strtotime($date)) . "'", 'LEFT'],
+            ["sjq_month_ratio mr", "dr.uid=mr.uid AND DATE_FORMAT(mr.time,'%Y-%m')='" . date('Y-m', strtotime($date)) . "'", 'LEFT'],
+		];
+
+		$count = DaysRatio::where("DATE_FORMAT(dr.time,'%Y-%m-%d')='{$date}'")->alias('dr')->join($join)->count();
+        $page_total = ceil($count / $limit);
+
+		$rankList = DaysRatio::where("DATE_FORMAT(dr.time,'%Y-%m-%d')='{$date}'")->alias('dr')
+			->field("dr.id,u.uid,u.username,uf.success_rate,uf.week_avg_profit_rate,uf.avg_position_day,uf.total_rate,(dr.endFunds - dr.initialCapital) / dr.initialCapital * 100 days_rate,(wr.endFunds - wr.initialCapital) / wr.initialCapital * 100 week_rate,(mr.endFunds - mr.initialCapital) / mr.initialCapital * 100 month_rate,{$ranking_sql}+1 ranking")
+			->join($join)
+            ->limit(($page-1)*$limit, $limit)
+			->order("days_rate DESC,dr.id DESC")
+			->select();
+			
+		foreach ($rankList as $key => $value) {
+			$value->avatar = Config('use_url.img_url') . '/avatar/img/'.$value->uid.'.png';
+			$value->days_rate = round($value->days_rate, 2);
+            $value->week_rate = round($value->week_rate, 2);
+            $value->month_rate = round($value->month_rate, 2);
+            $value->total_rate = round($value->total_rate, 2);
+            $value->success_rate = round($value->success_rate, 2);
+            $value->week_avg_profit_rate = round($value->week_avg_profit_rate, 2);
+		}	
+
+		return json(['status'=>'success', 'data'=>$rankList, 'pageTotal' => $page_total]);
+	}
+
+	/**
 	 * [dayRateRank 日盈利率排名]
 	 * @return [type] [description]
 	 */
@@ -77,7 +121,7 @@ class Rank extends Base
 		$data['p'] = isset($data['p']) ? $data['p'] > 0 ? $data['p'] : 1 : 1 ;
 		$w = date('w');
 		if($w == 6 || $w == 0){
-			$dtime = date('Y-m-d H:i:s',strtotime("last Friday"));
+			$dtime = date('Y-m-d 00:00:00',strtotime("last Friday"));
 		}else{
 			$dtime = date('Y-m-d 00:00:00');
 		}
@@ -150,5 +194,29 @@ class Rank extends Base
 			return json(['status'=>'failed','data'=>'获取数据失败']);
 		}
 	}	
+
+	/**
+	 * 获取最近一个交易日
+	 * @param string $date 日期
+	 * @return string
+	 */
+	public function getRecentTradeDay($date = '')
+	{
+		if(empty($date)){
+			$date = date('Y-m-d');
+		}
+
+		if(date("w",strtotime($date)) == '0' || date("w",strtotime($date)) == '6'){
+			$date = date('Y-m-d', strtotime($date . 'last Friday'));
+		}
+
+		$no_trade_day = NoTrande::where([])->column("DATE_FORMAT(day,'%Y-%m-%d')");
+		if(in_array($date, $no_trade_day)){//节假日
+			$date = date('Y-m-d', strtotime($date . '-1 day'));
+			$this->getRecentTradeDay($date);
+		}
+
+		return $date;
+	}
 }
 ?>

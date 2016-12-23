@@ -3,6 +3,7 @@ var ranking = new Vue({
 	data: {
 		cache_t: 600000,
         talent_dynamic: [],//牛人动态
+        days_rate: [],//日盈利率
         week_rate: [],//周赛
         month_rate: [],//月赛
         total_rate: [],//总盈利率
@@ -30,6 +31,7 @@ var ranking = new Vue({
                         }
                         talent_dynamic.push({
                             user_name: ret[i].username,
+                            portrait: ret[i].avatar,
                             stock: ret[i].stock_name+'('+ret[i].stock+')',
                             stock_url: header.getStockUrl(ret[i].stock),
                             state: state,
@@ -44,6 +46,48 @@ var ranking = new Vue({
                 }
             });    
         },
+        updateDaysRate(){
+            var timestamp = new Date().getTime();
+            var data = localStorage.getItem('days_rate_100');
+            data = JSON.parse(data);
+            if(data == null || data.timestamp < timestamp || data.data.length < 1){
+                var _this = this;
+                $.getJSON(api_host + '/rank/rateRank',{limit: 100},function(data){
+                    if(data.status == 'success'){
+                        var ret = data.data;
+                        var days_rate = [];
+                        if(ret.length > 0){
+                            for (var i = 0; i < ret.length; i++) {
+                                days_rate.push({
+                                    user_name: ret[i].username,
+                                    portrait: ret[i].avatar,
+                                    ranking: ret[i].ranking,
+                                    ranking_icon: (ret[i].ranking < 4) ? ' tr-icon' : '',
+                                    week_rate: ret[i].week_rate + '%',
+                                    week_rate_class: (ret[i].week_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                    days_rate: ret[i].days_rate + '%',
+                                    days_rate_class: (ret[i].days_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                    month_rate: ret[i].month_rate + '%',
+                                    month_rate_class: (ret[i].month_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                    total_rate: ret[i].total_rate + '%',
+                                    total_rate_class: (ret[i].total_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                    success_rate: ret[i].success_rate + '%',
+                                    avg_position_day: ret[i].avg_position_day,
+                                    week_avg_profit_rate: ret[i].week_avg_profit_rate + '%',
+                                    week_avg_profit_rate_class: (ret[i].week_avg_profit_rate < 0) ? 'tr-color-lose' : 'tr-color-win',
+                                    uid: ret[i].uid
+                                });
+                            }
+                        }    
+
+                        localStorage.setItem('days_rate_100',JSON.stringify({timestamp: timestamp + _this.cache_t, data: days_rate}));
+                        _this.days_rate = days_rate;
+                    }
+                });
+            } else {    
+                this.days_rate = data.data;
+            } 
+        },
         updateMatchRank(type){
             var timestamp = new Date().getTime();
             var data = localStorage.getItem('week_rate_100');
@@ -53,7 +97,7 @@ var ranking = new Vue({
             data = JSON.parse(data);
             if(data == null || data.timestamp < timestamp || data.data.length < 1){
                 var _this = this;
-                $.getJSON(api_host + '/match/detail',{type:type, np: 1, limit: 10},function(data){
+                $.getJSON(api_host + '/match/detail',{type:type, np: 1, limit: 100},function(data){
                     if(data.status == 'success'){
                         var ret = data.data.rankList;
                         var match_rate = [];
@@ -61,6 +105,7 @@ var ranking = new Vue({
                             for (var i = 0; i < ret.length; i++) {
                                 match_rate.push({
                                     user_name: ret[i].username,
+                                    portrait: ret[i].avatar,
                                     ranking: ret[i].ranking,
                                     ranking_icon: (ret[i].ranking < 4) ? ' tr-icon' : '',
                                     week_rate: ret[i].week_rate + '%',
@@ -116,6 +161,7 @@ var ranking = new Vue({
                         for (var i = 0; i < length; i++) {
                             ranking.push({
                                 user_name: ret[i].username,
+                                portrait: ret[i].avatar,
                                 rownum: ret[i].rownum,
                                 rownum_class: (ret[i].rownum > 3) ? '' : ' tr-icon',
                                 week_rate: ret[i].week_rate + '%',
@@ -175,12 +221,32 @@ var ranking = new Vue({
         },
 	},
 	mounted: function(){
-        this.updateTalentDynamic();
-        this.updateMatchRank(1);
-        this.updateMatchRank(2);
-        this.updateTotalRate('total_rate');
-        this.updateTotalRate('success_rate');
-        this.updateTotalRate('week_avg_profit_rate');
-        this.updateTotalRate('fans');
+        var order = $("#order").val() ? $("#order").val() : 'total_rate';
+        switch(order){
+            case 'talent_dynamic':
+                this.updateTalentDynamic();
+            break;
+            case 'days_rank':
+                this.updateDaysRate();
+            break;
+            case 'week_rank':
+                this.updateMatchRank(1);
+            break;
+            case 'month_rank':
+                this.updateMatchRank(2);
+            break;
+            case 'total_rate':
+                this.updateTotalRate('total_rate');
+            break;
+            case 'success_rate':
+                this.updateTotalRate('success_rate');
+            break;
+            case 'week_avg_profit_rate':
+                this.updateTotalRate('week_avg_profit_rate');
+            break;
+            case 'fans':
+                this.updateTotalRate('fans');
+            break;
+        }
 	}
 });

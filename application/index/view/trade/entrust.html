@@ -29,7 +29,7 @@
                             <thead>
                                 <tr>
                                     <th width="8%">序号</th>
-                                    <th width="20%">股票名称(代码)</th>
+                                    <th width="18%">股票名称(代码)</th>
                                     <th>持仓数量</th>
                                     <th>成本</th>
                                     <th>最新价</th>
@@ -66,20 +66,20 @@
                             <thead>
                                 <tr>
                                     <th>序号</th>
-                                    <th>股票名称</th>
+                                    <th width="20%">股票名称(代码)</th>
                                     <th>买入/卖出</th>
                                     <th>委托价格(&yen;)</th>
                                     <th>委托数量</th>
-                                    <th>委托时间</th>
+                                    <th width="20%">委托时间</th>
                                     <th>成交状态</th>
                                     <th>操作</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <template v-if="today_entrust.length > 0">
-                                    <tr v-for="item in today_entrust">
-                                        <td><span>{{ item.id }}</span></td>
-                                        <td><a :href="item.stock_url" target="_blank" rel="nofollow"><span class="tr-shares-name">{{ item.stock }}</span></a></td>
+                                    <tr v-for="(item, index) in today_entrust">
+                                        <td><span>{{ index+1 }}</span></td>
+                                        <td><a :href="item.stock_url" target="_blank" rel="nofollow"><span class="tr-shares-name">{{ item.title }}</span></a></td>
                                         <td><span :class="item.type_class">{{ item.type_label }}</span></td>
                                         <td><span class="tr-price">{{ item.price }}</span></td>
                                         <td>{{ item.number }}</td>
@@ -100,7 +100,7 @@
                         <table class="am-table am-table-centered">
                             <thead>
                                 <tr>
-                                    <th>股票名称</th>
+                                    <th>股票名称(代码)</th>
                                     <th>买入/卖出</th>
                                     <th>成交价格(&yen;)</th>
                                     <th>成交数量</th>
@@ -111,7 +111,7 @@
                             <tbody>
                                 <template v-if="today_turnover.length > 0">
                                     <tr v-for="item in today_turnover">
-                                        <td><a :href="item.stock_url" target="_blank" rel="nofollow"><span class="tr-shares-name">{{ item.stock }}</span></a></td>
+                                        <td><a :href="item.stock_url" target="_blank" rel="nofollow"><span class="tr-shares-name">{{ item.title }}</span></a></td>
                                         <td><span :class="item.type_class">{{ item.type_label }}</span></td>
                                         <td><span class="tr-price">{{ item.price }}</span></td>
                                         <td>{{ item.number }}</td>
@@ -132,7 +132,7 @@
                             <thead>
                                 <tr>
                                     <th>序号</th>
-                                    <th>股票名称</th>
+                                    <th>股票名称(代码)</th>
                                     <th>买入/卖出</th>
                                     <th>委托价格(&yen;)</th>
                                     <th>委托数量</th>
@@ -142,9 +142,9 @@
                             </thead>
                             <tbody>
                                 <template v-if="history_entrust.length > 0">
-                                    <tr v-for="item in history_entrust">
-                                        <td><span>{{ item.id }}</span></td>
-                                        <td><a :href="item.stock_url" target="_blank" rel="nofollow"><span class="tr-shares-name">{{ item.stock }}</span></a></td>
+                                    <tr v-for="(item, index) in history_entrust">
+                                        <td><span>{{ index+1 }}</span></td>
+                                        <td><a :href="item.stock_url" target="_blank" rel="nofollow"><span class="tr-shares-name">{{ item.title }}</span></a></td>
                                         <td><span :class="item.type_class">{{ item.type_label }}</span></td>
                                         <td><span class="tr-price">{{ item.price }}</span></td>
                                         <td>{{ item.number }}</td>
@@ -164,7 +164,7 @@
                         <table class="am-table am-table-centered">
                             <thead>
                                 <tr>
-                                    <th>股票名称</th>
+                                    <th>股票名称(代码)</th>
                                     <th>买入/卖出</th>
                                     <th>成交价格(&yen;)</th>
                                     <th>成交数量</th>
@@ -175,7 +175,7 @@
                             <tbody>
                                 <template v-if="history_turnover.length > 0">
                                     <tr v-for="item in history_turnover">
-                                        <td><a :href="item.stock_url" target="_blank" rel="nofollow"><span class="tr-shares-name">{{ item.stock }}</span></a></td>
+                                        <td><a :href="item.stock_url" target="_blank" rel="nofollow"><span class="tr-shares-name">{{ item.title }}</span></a></td>
                                         <td><span :class="item.type_class">{{ item.type_label }}</span></td>
                                         <td><span class="tr-price">{{ item.price }}</span></td>
                                         <td>{{ item.number }}</td>
