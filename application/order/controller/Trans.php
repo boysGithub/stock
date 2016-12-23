@@ -335,6 +335,7 @@ class Trans extends Base
 	            $d['funds'] = $funds['funds'] - $data['fee'];
 	            $d['total_rate'] = round(($d['funds'] - $this->_base->_stockFunds)/$this->_base->_stockFunds * 100,3);
 	            $d['available_funds'] = $funds['available_funds'] + $tmp - $data['price'] * $data['number'];
+	            $d['is_trans'] = 1;
 	            UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->update($d);
 	            //查看是否持有这只股票
             	$userInfo = UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'is_position'=>1,'sorts'=>$data['sorts']])->find();
@@ -401,6 +402,7 @@ class Trans extends Base
 	       		$d['funds'] = $funds['funds'] - $data['fee'];
 	       		$d['total_rate'] = round(($d['funds'] - $this->_base->_stockFunds)/$this->_base->_stockFunds * 100,3);
 	       		$d['available_funds'] = $data['available_funds'];
+	       		$d['is_trans'] = 1;
 	       		UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->update($d);
 	       		//更改用户持仓信息
 	    		//查看是否持有这只股票
@@ -512,6 +514,7 @@ class Trans extends Base
         		$d['funds'] = $funds['funds'] - $data['fee'];
         		$d['available_funds'] = $data['available_funds'];
         		$d['total_rate'] = round(($d['funds'] - $this->_base->_stockFunds)/$this->_base->_stockFunds * 100,3);
+        		$d['is_trans'] = 1;
         		UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->update($d);
         		//更改订单状态
         		Transaction::update($data);
@@ -586,6 +589,7 @@ class Trans extends Base
             	$d['funds'] = $funds['funds'] - $data['fee'];
             	$d['available_funds'] = $data['available_funds'];
             	$d['total_rate'] = round(($d['funds'] - $this->_base->_stockFunds)/$this->_base->_stockFunds * 100,3);
+            	$d['is_trans'] = 1;
             	UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->update($d);
             	//获取用户持有股票的信息
             	$userInfo = UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'is_position'=>1,'sorts'=>$data['sorts']])->find();
