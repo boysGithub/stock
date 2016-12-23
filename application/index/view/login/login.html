@@ -27,7 +27,7 @@
                 <div class="tpl-login-logo">
                 </div>
                 <h1 class="h1">登录</h1>
-                <form class="am-form tpl-form-line-form" action="{:url('index/base/doLogin')}" method="post">
+                <form class="am-form tpl-form-line-form" action="{:url('index/index/autoLogin')}" method="post">
                     <div class="am-form-group">
                         <input type="text" class="tpl-form-input" name="login_email" v-model="username" placeholder="请输入账号">
                     </div>
@@ -47,4 +47,4 @@
             </div>
         </div>
     </div>
-    {/block} {block name="footer"}{include file="public/footer" /}{include file="public/modal" /}{/block} {block name="js"} {js file="/static/js/public/modal.js"} {js file="/static/js/login/login.js"} {/block}
+    {/block} {block name="footer"}{include file="public/footer" /}{/block}
