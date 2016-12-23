@@ -202,7 +202,7 @@ class Match extends Base
         }
 
         $match = MatchModel::where(['id'=>$data['id']])->find();
-        if(empty($match) || time() < strtotime(date('Y-m-d 09:00:00', strtotime($match->start_date))) && time() >= strtotime(date('Y-m-d 15:30:00', strtotime($match->end_date)))){
+        if(empty($match) || time() < strtotime(date('Y-m-d 09:00:00', strtotime($match->start_date))) || time() >= strtotime(date('Y-m-d 15:30:00', strtotime($match->end_date)))){
             return json(['status'=>'failed','data'=>'不可参加']);
         }
         

@@ -13,7 +13,7 @@ use think\Session;
 class Base extends Controller
 {
     public function _initialize()
-    {
+    {	if (!session_id()) session_start();
     	$controller = Request::instance()->controller();
     	$c_arr = ['Login'];
 
@@ -31,7 +31,7 @@ class Base extends Controller
 
 	public function get_user()
 	{
-		$id = Session::get('id','admin');
+		$id = $_SESSION['admin_id'];
 		$user = [];
 		if(!empty($id)){
 			$user = Db::name('admin')->where(['id'=>$id])->find();
@@ -43,6 +43,6 @@ class Base extends Controller
 
 	public function isLogined()
 	{
-		return Session::has('id','admin');
+		return isset($_SESSION['admin_id']) && !empty($_SESSION['admin_id']);
 	}
 }
