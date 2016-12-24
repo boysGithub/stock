@@ -1,3 +1,4 @@
+
 var index = new Vue({
     el: "#index",
     data: {
@@ -408,7 +409,7 @@ var index = new Vue({
                 if(data.status == 'success'){
                     var ret = data.data;
                     var matchs = [];
-                    var sc = {1: ' tr-status-underway', 3: ' tr-status-end'};
+                    var sc = {1: ' tr-status-underway',2: ' tr-status-end', 3: ' tr-status-end'};
                     for (var i = 0; i < ret.length; i++) {
                         matchs.push({
                             name: ret[i].name,

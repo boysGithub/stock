@@ -35,7 +35,7 @@ class Login extends Base
 			$this->error('登录失败');
 		}
 
-		Session::set('id', $user['id'], 'admin');
+		$_SESSION['admin_id'] = $user['id'];
 
 		$this->success('登录成功', 'index/index');
 	}
