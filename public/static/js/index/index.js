@@ -19,6 +19,11 @@ var index = new Vue({
         week_matchs: [],//周赛
         month_matchs: []//月赛
     },
+    computed: {
+        logined: function(){
+            return header.logined;
+        }
+    },
     methods: {
         updateAdSlider(){
             var timestamp = new Date().getTime();
@@ -417,6 +422,7 @@ var index = new Vue({
                             id: ret[i].id,
                             start_date: ret[i].start_date.substring(0,10),
                             end_date: ret[i].end_date.substring(0,10),
+                            joined: typeof(ret[i].joined) == 'undefined' ? 0 : ret[i].joined,
                             status: ret[i].status,
                             status_name: ret[i].status_name,
                             status_class: sc[ret[i].status]

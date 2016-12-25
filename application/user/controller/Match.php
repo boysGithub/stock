@@ -108,9 +108,8 @@ class Match extends Base
         $where = [];
         if(!isset($data['id'])){
             $where = [
-                'type'=> !isset($data['type']) ? 1 : intval($data['type']),
-                'start_date' => ['<=', date('Y-m-d')],
-                'end_date' => ['>=', date('Y-m-d')]
+                "type"=> !isset($data['type']) ? 1 : intval($data['type']),
+                "DATE_FORMAT(start_date, '%Y-%m-%d 09:00:00')" => ['<', date('Y-m-d H:i:s')],
             ];
         } else {
             $where = ['m.id'=> intval($data['id'])];
@@ -119,7 +118,7 @@ class Match extends Base
         $page = isset($data['np']) && (int)$data['np'] > 0 ? $data['np'] : 1;
         $limit = isset($data['limit']) && (int)$data['limit'] > 0 ? $data['limit'] : 100;
 
-        $match = MatchModel::where($where)->alias('m')->field('m.id,name,type,start_date,end_date')->find();
+        $match = MatchModel::where($where)->alias('m')->field('m.id,name,type,start_date,end_date')->order('m.start_date DESC')->find();
         if (empty($match)) {
             return json(['status'=>'failed','data'=>'比赛不存在']);
         }
@@ -202,7 +201,7 @@ class Match extends Base
         }
 
         $match = MatchModel::where(['id'=>$data['id']])->find();
-        if(empty($match) || time() < strtotime(date('Y-m-d 09:00:00', strtotime($match->start_date))) || time() >= strtotime(date('Y-m-d 15:30:00', strtotime($match->end_date)))){
+        if(empty($match) || time() >= strtotime(date('Y-m-d 15:30:00', strtotime($match->end_date)))){
             return json(['status'=>'failed','data'=>'不可参加']);
         }
         

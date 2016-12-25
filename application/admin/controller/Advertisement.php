@@ -31,7 +31,17 @@ class Advertisement extends Base
 	//广告
 	public function banner()
 	{
-		$advertisement = AdModel::where(['type'=>['not in', [1,2]]])->select();
+		$advertisement = AdModel::where(['type'=>['in', [3,4]]])->select();
+
+		$this->assign('ads', $advertisement);
+
+		return $this->fetch();
+	}
+
+	//赛况
+	public function report()
+	{
+		$advertisement = AdModel::where(['type'=>5])->select();
 
 		$this->assign('ads', $advertisement);
 
@@ -40,6 +50,13 @@ class Advertisement extends Base
 
 	public function add()
 	{
+		$title = ['1'=>'添加首页轮播图','2'=>'添加公告','3'=>'添加banner','4'=>'添加banner','5'=>'添加赛况'];
+
+		$this->assign([
+			'type'=> input('param.type', 2),
+			'title' => $title[input('param.type', 2)]
+			]);
+
 		return $this->fetch();
 	}
 
@@ -63,7 +80,21 @@ class Advertisement extends Base
 		if(AdModel::create($data) === false){
 			$this->error('添加失败');
 		} else {
-			$this->success('添加成功', 'announcement');
+			switch ($data['type']) {
+				case '1':
+					$this->success('添加成功', 'index');
+					break;
+				case '2':
+					$this->success('添加成功', 'announcement');
+					break;
+				case '3':
+				case '4':
+					$this->success('添加成功', 'banner');
+					break;
+				case '5':
+					$this->success('添加成功', 'report');
+					break;
+			}
 		}
 	}
 

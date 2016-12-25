@@ -45,10 +45,7 @@
                             <template v-if="item.status == 3">
                                 <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-primary am-btn-lg">查看比赛</a>
                             </template>
-                            <template v-if="item.status == 2">
-                                <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-primary am-btn-lg">查看比赛</a>
-                            </template>
-                            <template v-if="item.status == 1 && item.joined == 0">
+                            <template v-if="(item.status == 1 || item.status == 2) && item.joined == 0">
                                 <template v-if="logined">
                                         <a href="javascript:;" :href-url="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-lg" :id="item.id" v-on:click="join_match">参加比赛</a>
                                 </template>
@@ -56,7 +53,7 @@
                                         <a href="{:url('index/login')}" class="am-btn am-btn-danger am-btn-lg" target="_blank">参加比赛</a>
                                 </template>
                             </template>
-                            <template v-if="item.status == 1 && item.joined == 1">
+                            <template v-if="item.joined == 1">
                                 <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-primary am-btn-lg">进入比赛</a>
                             </template>
                             
