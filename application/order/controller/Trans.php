@@ -293,6 +293,7 @@ class Trans extends Base
         try {
             //买入没有成交的处理
             $data['stock_name'] = $stockData[$data['stock']][0];
+            $data['entrustment'] = $data['price'];
             $data['fee'] = $data['price']*$data['number']*$scale >=5?$data['price']*$data['number']*$scale:5;
             $data['time'] = date("Y-m-d H:i:s");
             //扣除用户资金
@@ -391,6 +392,7 @@ class Trans extends Base
 	       	try {
 	       		//订单参数
 	            $data['status'] = 1;
+	            $data['entrustment'] = $data['price'];
 	            $data['price'] = $stockData[$data['stock']][1];
 	            $data['stock_name'] = $stockData[$data['stock']][0];
 	            $data['time'] = date("Y-m-d H:i:s");
@@ -473,6 +475,7 @@ class Trans extends Base
         	$info = UserPosition::where(['uid'=>$data['uid'],'stock'=>$data['stock'],'is_position'=>1,'sorts'=>$data['sorts']])->find();
             //卖出没有成交的处理
             $data['stock_name'] = $stockData[$data['stock']][0];
+            $data['entrustment'] = $data['price'];
             $data['time'] = date("Y-m-d H:i:s");
             $data['fee'] = $data['price']*$data['number']*$scale >=5?$data['price']*$data['number']*$scale:5;
             //减少可卖数量
@@ -579,6 +582,7 @@ class Trans extends Base
         	try {
         		//订单参数
             	$data['status'] = 1;
+            	$data['entrustment'] = $data['price'];
             	$data['price'] = $stockData[$data['stock']][1];
             	$data['time'] = date("Y-m-d H:i:s");
             	$data['deal_time'] = date("Y-m-d H:i:s");

@@ -106,7 +106,8 @@ class Index extends Base
             Db::startTrans();
             try {
                 $redis = new Redis;
-                Transaction::update(['status'=>$data['status']],['id'=>$id,'uid'=>$data['uid']]);
+                $data['deal_time'] = date("Y-m-d H:i:s");
+                Transaction::update(['status'=>$data['status'],'deal_time'=>$data['deal_time']],['id'=>$id,'uid'=>$data['uid']]);
                 if($userOrder['type'] == 1){
                     $availableFunds = UserFunds::where(['uid'=>$userOrder['uid']])->value('available_funds');
                     $da['available_funds'] = $userOrder['fee'] + $userOrder['price'] * $userOrder['number'] + $availableFunds;
