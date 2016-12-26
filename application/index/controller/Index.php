@@ -282,6 +282,8 @@ class Index extends Controller
             	}
                 if($info = User::where(['username'=>$login,'password'=>$pass])->find()){
                     if(!$auto){
+                    	$login = cookieEncrypt($login);
+                    	$password = cookieEncrypt($password);
                     	setcookie("login_email",$login,time()+86400,'/','.sjqcj.com');
                     	setcookie("login_password",$password,time()+86400,'/','.sjqcj.com');
                     	$this->success('登录成功，正在跳转....','Index/index','',1);
