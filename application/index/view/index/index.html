@@ -403,12 +403,20 @@
                     </div>
                 </div>    
                 <div class="am-u-lg-2 am-list-main am-text-center tr-list-button">
-                    <template v-if="item.status == 1"> 
-                        <a href="javascript:;" :href-url="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-sm" :id="item.id" v-on:click="join_match">参加比赛</a> 
-                    </template>    
-                    <template v-else>
-                        <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-primary am-btn-sm">查看比赛</a> 
-                    </template>  
+                    <template v-if="item.status == 3">
+                        <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-primary am-btn-lg">查看比赛</a>
+                    </template>
+                    <template v-if="(item.status == 1 || item.status == 2) && item.joined == 0">
+                        <template v-if="logined">
+                                <a href="javascript:;" :href-url="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-lg" :id="item.id" v-on:click="join_match">参加比赛</a>
+                        </template>
+                        <template v-else>
+                                <a href="{:url('index/login')}" class="am-btn am-btn-danger am-btn-lg" target="_blank">参加比赛</a>
+                        </template>
+                    </template>
+                    <template v-if="item.joined == 1">
+                        <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-primary am-btn-lg">进入比赛</a>
+                    </template>   
                 </div>
             </div>
             <div class="am-u-md-12 am-padding-vertical-sm tr-match-item" v-for="item in month_matchs">
@@ -422,18 +430,31 @@
                         </div>
                         <p>比赛时间：{{ item.start_date }} 到 {{ item.end_date }}
                         </p>
+                        <div class="am-u-md-12">
+                            <template v-if="item.joined == 1">
+                            <label>我在比赛中的排名：</label><span>{{ item.ranking }}名</span>
+                            </template>
+                        </div>
                     </div>
                     <div class="am-u-md-2 am-padding-left tr-status-div">
                         <span :class="'tr-status'+item.status_class">{{ item.status_name }}</span>
                     </div>
                 </div>    
                 <div class="am-u-lg-2 am-list-main am-text-center tr-list-button">
-                    <template v-if="item.status == 1"> 
-                        <a href="javascript:;" :href-url="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-sm" :id="item.id" v-on:click="join_match">参加比赛</a> 
-                    </template>    
-                    <template v-else> 
-                        <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-primary am-btn-sm">查看比赛</a> 
-                    </template>  
+                    <template v-if="item.status == 3">
+                        <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-primary am-btn-lg">查看比赛</a>
+                    </template>
+                    <template v-if="(item.status == 1 || item.status == 2) && item.joined == 0">
+                        <template v-if="logined">
+                                <a href="javascript:;" :href-url="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-lg" :id="item.id" v-on:click="join_match">参加比赛</a>
+                        </template>
+                        <template v-else>
+                                <a href="{:url('index/login')}" class="am-btn am-btn-danger am-btn-lg" target="_blank">参加比赛</a>
+                        </template>
+                    </template>
+                    <template v-if="item.joined == 1">
+                        <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-primary am-btn-lg">进入比赛</a>
+                    </template> 
                 </div>   
             </div>
         </div>

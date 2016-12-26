@@ -3,6 +3,8 @@ var index = new Vue({
     el: "#index",
     data: {
         cache_t: 600000,//毫秒
+        count: 0,
+        close: '',
         ad_slider: [],//轮播
         proclamation: [],//公告
         recommend: [],//牛人推荐
@@ -18,6 +20,11 @@ var index = new Vue({
         fans: [],//人气牛人
         week_matchs: [],//周赛
         month_matchs: []//月赛
+    },
+    computed: {
+        logined: function(){
+            return header.logined;
+        }
     },
     methods: {
         updateAdSlider(){
@@ -417,6 +424,8 @@ var index = new Vue({
                             id: ret[i].id,
                             start_date: ret[i].start_date.substring(0,10),
                             end_date: ret[i].end_date.substring(0,10),
+                            joined: typeof(ret[i].joined) == 'undefined' ? 0 : ret[i].joined,
+                            ranking: typeof(ret[i].ranking) == 'undefined' ? 0 : ret[i].ranking,
                             status: ret[i].status,
                             status_name: ret[i].status_name,
                             status_class: sc[ret[i].status]
@@ -445,6 +454,19 @@ var index = new Vue({
                 window.location.href = url;
             }
         },
+        updateIndex: function(){
+            if(this.logined){
+                this.updateMatchs('1');
+                this.updateMatchs('2');
+            } else {
+                if(this.count < 10){
+                    this.close = setTimeout(this.updateIndex, 300);
+                    this.count += 1;
+                } else {
+                    clearTimeout(this.close);
+                }
+            }
+        }
     },
     mounted: function(){
         this.updateAdSlider();
@@ -461,6 +483,7 @@ var index = new Vue({
         this.updateFans();
         this.updateMatchs('1');
         this.updateMatchs('2');
+        setTimeout(this.updateIndex, 100);
     }
 });
 

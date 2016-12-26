@@ -7,13 +7,13 @@
 .am-slider-default.tr-slider-ad .am-control-nav li a{width: 13px; height: 13px;background-color:#fff;}
 .am-slider-default.tr-slider-ad .am-control-nav li a.am-active{background-color:#0e90d2;}
 
-.tr-proclamation{padding: 12px 30px 12px 12px; margin-bottom: 20px; font-size: 14px;background: #fff; height: 48px; overflow: hidden;}
+.tr-proclamation{padding: 12px 30px 12px 12px; margin-bottom: 20px; font-size: 15px;background: #fff; height: 48px; overflow: hidden;}
 .tr-proclamation .tr-pro-t{color: #4a9ff6; width: 115px;}
 .tr-proclamation .tr-pro-t .am-icon-volume-up{vertical-align: middle;}
 .tr-proclamation .tr-pro-t .tr-pro-t-c{ vertical-align: middle; display: inline-block; padding-right: 20px;border-right: 1px solid #4a9ff6;}
 .tr-proclamation dl{background: none;}
 .tr-proclamation dd{display: block;float: left;margin-right:30px;}
-.tr-proclamation dd a{color: #666; font-size: 14px;}
+.tr-proclamation dd a{color: red; font-size: 15px;}
 .tr-proclamation dd a:hover{color: #fb7471;}
 
 .tr-talent{ margin-bottom: 20px;}

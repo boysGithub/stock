@@ -1,0 +1,93 @@
+{extend name="base" /}
+{block name="head"}
+<meta name="description" content="">
+<meta name="keywords" content="">
+<title>赛况管理</title>
+{/block}
+{block name="css"}
+{/block}
+ <div class="am-g tpl-g">
+{block name="header"}{include file="public/header" /}{/block}
+{block name="left"}{include file="public/left" /}{/block}
+{block name="right"}
+<!-- 内容区域 -->
+<div class="tpl-content-wrapper">
+    <div class="row-content am-cf">
+        <div class="row">
+            <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                <div class="widget am-cf">
+                    <div class="widget-head am-cf">
+                        <div class="widget-title am-cf">赛况列表</div>
+                    </div>
+                    <div class="widget-body  am-fr">
+                        <div class="am-u-sm-12 am-u-md-6 am-u-lg-6">
+                            <div class="am-form-group">
+                                <div class="am-btn-toolbar">
+                                    <div class="am-btn-group am-btn-group-xs">
+                                        <a class="am-btn am-btn-default am-btn-success" href="{:url('advertisement/add',['type'=>5])}"><span class="am-icon-plus"></span>新增</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="am-u-sm-12 am-u-md-6 am-u-lg-3">
+                        </div>
+                        <div class="am-u-sm-12 am-u-md-12 am-u-lg-3">
+                        </div>
+                        </form>
+                        <div class="am-u-sm-12 tpl-ad">
+                            <section data-am-widget="accordion" class="am-accordion am-accordion-gapped" data-am-accordion='{  }'>
+                            {volist name="ads" id="vo" mod="2"}
+                                <dl class="am-accordion-item{eq name="$i" value="1"} am-active{/eq}">
+                                    <dt class="am-accordion-title">
+                                      {$vo.title}
+                                      <div class="am-fr">{if condition="$vo.enabled"}启用{else /}停用{/if}</div>
+                                    </dt>
+                                    <dd class="am-accordion-bd am-collapse{eq name="$i" value="1"} am-in{/eq}">
+                                      <div class="am-accordion-content">
+                                        <form action="{:url('advertisement/save_edit')}" class="am-form tpl-form-border-form tpl-form-border-br" method="post" enctype="multipart/form-data">
+                                            <input type="hidden" name="id" value="{$vo.id}" />
+                                            <div class="am-form-group">
+                                                <label class="am-u-sm-3 am-form-label">标题<span class="tpl-form-line-small-title"></span></label>
+                                                <div class="am-u-sm-9">
+                                                    <input type="text" value="{$vo.title}" name="url" class="am-form-field tpl-form-no-bg" placeholder="请输入标题">
+                                                    <small></small>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group">
+                                                <label class="am-u-sm-3 am-form-label">链接地址<span class="tpl-form-line-small-title"></span></label>
+                                                <div class="am-u-sm-9">
+                                                    <input type="text" value="{$vo.url}" name="url" class="am-form-field tpl-form-no-bg" placeholder="请输入链接地址">
+                                                    <small></small>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group">
+                                                <label class="am-u-sm-3 am-form-label">状态<span class="tpl-form-line-small-title"></span></label>
+                                                <div class="am-u-sm-9">
+                                                    <select data-am-selected="{}" name="enabled">
+                                                    <option value="1"{eq name="$vo.enabled" value="1"} selected="" {/eq}>启用</option>
+                                                    <option value="0"{eq name="$vo.enabled" value="0"} selected="" {/eq}>停用</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="am-form-group">
+                                                <div class="am-u-sm-9 am-u-sm-push-3">
+                                                    <button type="submit" class="am-btn am-btn-primary tpl-btn-bg-color-success ">提交</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                      </div>
+                                    </dd>
+                                </dl>
+                                {/volist}
+                          </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+</div>
+{block name="js"}
+{/block}

@@ -81,6 +81,12 @@ class Index extends Controller
 		}
 	}
 
+	//赛况报道
+	public function report()
+	{
+		return $this->fetch('ad/report');
+	}
+
 	/**
 	 * [personal 个人中心页面]
 	 * @return [type] [description]

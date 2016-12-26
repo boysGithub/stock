@@ -1,0 +1,24 @@
+{extend name="base" /} 
+{block name="head"}
+<meta name="description" content="">
+<meta name="keywords" content="">
+<title>赛况报道</title>
+{/block} 
+{block name="css"} 
+{css href="/static/css/ad/ad.css"} 
+{/block} 
+{block name="header"}{include file="public/header" /}{/block} 
+{block name="main"}
+<div class="am-g am-container" id="report">
+    <div class="am-g tr-report">
+        <h2> 赛况报道 </h2>
+        <ul class="am-list">
+          <li v-for="item in reports"><span class="am-badge">{{ item.time }}</span><a :href="item.href" class="am-text-truncate" target="_blank">{{ item.title }}</a></li>
+        </ul>
+    </div>
+</div>
+{/block} 
+{block name="footer"}{include file="public/footer" /}{/block} 
+{block name="js"} 
+{js href="/static/js/ad/report.js"} 
+{/block}
