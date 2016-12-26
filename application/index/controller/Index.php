@@ -118,7 +118,7 @@ class Index extends Controller
 
 	//登录验证
 	private function checkLogin(){
-		if(isset($_SESSION['uid'])){
+		if(isset($_COOKIE['login_email']) && isset($_COOKIE['login_password'])){
 			return true;
 		}else{
 			return false;
