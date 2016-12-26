@@ -242,7 +242,7 @@ class Index extends Controller
                     if(!$auto){
                     	$this->success('登录成功，正在跳转....','Index/index','',1);
                     }
-                    return json(['data' => $info,'type'=>1]);
+                    return ['data' => $info,'type'=>1];
                 }else{
                     $this->error("用户名和密码不匹配",'Index/login','',1);
                     exit();
@@ -263,7 +263,7 @@ class Index extends Controller
                     if(!$auto){
                     	$this->success('登录成功，正在跳转....','Index/index','',1);
                     }
-                    return json(['data' => $info,'type'=>2]);
+                    return ['data' => $info,'type'=>2];
                 }else{
                     $this->error("用户名和密码不匹配",'Index/login','',1);
                     exit();
@@ -284,7 +284,7 @@ class Index extends Controller
                     if(!$auto){
                     	$this->success('登录成功，正在跳转....','Index/index','',1);
                     }
-                    return json(['data' => $info,'type'=>3]);
+                    return ['data' => $info,'type'=>3];
                 }else{
                     $this->error("用户名和密码不匹配",'Index/login','',1);
                     exit();
@@ -301,7 +301,6 @@ class Index extends Controller
 			$login = cookieDecrypt($_COOKIE['login_email']);
 			$password = cookieDecrypt($_COOKIE['login_password']);
 			$info = $this->autoLogin($login,$password,true);
-			$info = json_decode($info,true);
 			if($info['type'] == 1){
 				if($token = Db::connect('sjq1')->name('user')->where(['login'=>$info['data']['login']])->Field('stock_token as token,uname as username,uid')->find()){
     				return json(['status'=>'success','data'=>$token]);
