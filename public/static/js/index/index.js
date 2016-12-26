@@ -412,7 +412,11 @@ var index = new Vue({
         },
         updateMatchs: function(type){               
             var _this = this;
-            $.getJSON(api_host+'/match/index',{type: type, limit:2},function(data){
+            var r_data = {type: type, limit:2};
+            if(this.logined){
+                r_data.uid = header.user.uid;
+            }
+            $.getJSON(api_host+'/match/index',r_data,function(data){
                 if(data.status == 'success'){
                     var ret = data.data;
                     var matchs = [];
@@ -448,7 +452,13 @@ var index = new Vue({
             var url = e.currentTarget.attributes["href-url"].nodeValue;
             if(header.logined){
                 $.post(api_host + '/match/join',{id: id, uid: header.user.uid, token: header.user.token},function(data){
-                    window.location.href = url;    
+                    if(data.status == 'success'){
+                        modal.imitateAlert(data.data, function(){
+                            window.location.href = url; 
+                        }); 
+                    } else {
+                        modal.imitateAlert('参加失败');
+                    }  
                 }, 'json');
             }else{
                 window.location.href = url;

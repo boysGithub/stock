@@ -157,6 +157,7 @@ var personal = new Vue({
                             stock_url: header.getStockUrl(et.stock),
                             price: et.price,
                             number: et.number,
+                            deal_time: et.time.substring(0,16),
                             time: et.time.substring(0,16),
                             type_label: (et.type == 1) ? '买入' : '卖出', 
                             type_class: (et.type == 1) ? 'tr-color-buy' : 'tr-color-sale', 

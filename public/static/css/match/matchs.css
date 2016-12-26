@@ -1,7 +1,7 @@
 .tr-list{}
 .tr-list .tr-list-li,.tr-list .tr-list-li a{font-size: 14px;}
 .tr-list .tr-list-li{border:1px solid #e8e8e8;margin-top: 1rem; padding: 1rem;}
-.tr-list .tr-list-li .tr-list-main{border-right: 1px solid #e8e8e8;}
+.tr-list .tr-list-li .tr-list-main{}
 .tr-list .tr-list-li .tr-simulation-name{font-size: 18px; font-weight: bold;}
 .tr-list .tr-list-li .tr-list-button{ line-height: 100px;}
 .tr-list .tr-list-li .tr-status{display: inline-block; vertical-align: middle; width: 58px; height: 32px; line-height: 30px; text-align: center; font-size: 1.2rem; border-radius: 2px;}

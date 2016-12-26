@@ -147,7 +147,7 @@ var sale = new Vue({
                 token: header.user.token
             }, function(data){
                 if(data.status == 'success'){
-                     modal.imitateAlert('委托提交成功',true);
+                     modal.imitateAlert('委托提交成功',function(){window.location.reload(ture);});
                 } else {
                      modal.imitateAlert(data.data);
                 }
