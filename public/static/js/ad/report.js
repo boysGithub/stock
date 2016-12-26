@@ -8,7 +8,7 @@ var report = new Vue({
     methods: {
         updateReports(){               
             var _this = this;
-            $.getJSON('http://www.tp5.com/ad/index.html',{type:5},function(data){
+            $.getJSON(api_host + '/ad',{type:5},function(data){
                 if(data.status == 'success'){
                     var ret = data.data;
                     var reports = [];

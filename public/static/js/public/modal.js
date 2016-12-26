@@ -4,13 +4,13 @@ var modal = new Vue({
         modal: {msg:'提示'},
     },
     methods: {
-        imitateAlert: function(msg){
-            var refresh = arguments[1] || false;
+        imitateAlert: function(msg,callback){
+            var callback = arguments[1] || false;
             this.modal.msg = msg;
             $('#my-alert').modal({});
             $('#my-alert').on('closed.modal.amui', function(){
-                if(refresh){
-                    window.location.reload(true);
+                if (typeof (callback) == 'function') {
+                    callback();
                 }
             });
         },

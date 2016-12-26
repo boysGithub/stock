@@ -11,7 +11,7 @@ class Advertisement extends Base
 {
 	//轮播图
 	public function index(){
-		$advertisement = AdModel::where(['type'=>1])->select();
+		$advertisement = AdModel::where(['type'=>1])->order('id DESC')->select();
 
 		$this->assign('ads', $advertisement);
 
@@ -21,7 +21,7 @@ class Advertisement extends Base
 	//公告
 	public function announcement()
 	{
-		$advertisement = AdModel::where(['type'=>2])->select();
+		$advertisement = AdModel::where(['type'=>2])->order('id DESC')->select();
 
 		$this->assign('ads', $advertisement);
 
@@ -31,7 +31,7 @@ class Advertisement extends Base
 	//广告
 	public function banner()
 	{
-		$advertisement = AdModel::where(['type'=>['in', [3,4]]])->select();
+		$advertisement = AdModel::where(['type'=>['in', [3,4]]])->order('id DESC')->select();
 
 		$this->assign('ads', $advertisement);
 
@@ -41,7 +41,7 @@ class Advertisement extends Base
 	//赛况
 	public function report()
 	{
-		$advertisement = AdModel::where(['type'=>5])->select();
+		$advertisement = AdModel::where(['type'=>5])->order('id DESC')->select();
 
 		$this->assign('ads', $advertisement);
 
@@ -132,7 +132,21 @@ class Advertisement extends Base
 		}
 
 		if(AdModel::where(['id'=>$id])->delete()){
-			$this->success('删除成功');
+			switch (input('param.type', 2)) {
+				case '1':
+					$this->success('删除成功', 'index');
+					break;
+				case '2':
+					$this->success('删除成功', 'announcement');
+					break;
+				case '3':
+				case '4':
+					$this->success('删除成功', 'banner');
+					break;
+				case '5':
+					$this->success('删除成功', 'report');
+					break;
+			}
 		} else {
 			$this->error('删除失败');
 		}

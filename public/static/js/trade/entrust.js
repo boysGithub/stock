@@ -38,8 +38,9 @@ var entrust = new Vue({
                             status_name: ret[i].status_name,
                             status: ret[i].status,
                             turnover: parseFloat((ret[i].number * ret[i].price).toFixed(2)),
-                            number: ret[i].number, 
-                            time: ret[i].time
+                            number: ret[i].number,
+                            deal_time: et.time.substring(0,16),
+                            time: ret[i].time.substring(0,16)
                         });
                     }
 
@@ -130,7 +131,7 @@ var entrust = new Vue({
                 data: {id: id,uid: header.user.uid,status: 2,token: header.user.token,},
                 success: function(data){
                     if(data.status == 'success'){
-                        modal.imitateAlart('撤单成功', true);
+                        modal.imitateAlart('撤单成功', function(){window.location.reload(ture);});
                     } else {
                         modal.imitateAlart(data.data);
                     }

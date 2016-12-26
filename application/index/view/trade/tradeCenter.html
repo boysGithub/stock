@@ -24,13 +24,11 @@
                             <table class="am-table am-table-centered am-table-bordered am-table-hover" id="stockTable">
                                 <thead>
                                     <tr>
-                                        <th>选项</th><th>类型</th><th>代码</th><th>中文名称</th>
+                                        <th>代码</th><th>中文名称</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-on:mousedown="selectStock" v-for="item in stockList" v-bind:id="item.id">
-                                        <td>{{ item.option }}</td>
-                                        <td>{{ item.type }}</td>
                                         <td>{{ item.code }}</td>
                                         <td>{{ item.name }}</td>
                                     </tr>

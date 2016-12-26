@@ -53,23 +53,32 @@ var trStock = new Vue({
                 function() {
                     if (suggestdata != '') {
                         var data = suggestdata.split(";");
-                        var list = [];
-                        for (var i = 0; i < data.length; i++) {
-                            if (data[i] == '') {
-                                continue;
+                        if(data.length == 1){
+                            $(".tr-stock-table").hide();
+                            var stock = data[0].split(',');
+                            _this.stock_key = stock['3'];
+                            _this.stock_code = stock['2'];
+                            _this.isSelect = true;
+                            _this.updateStockInfo();
+                        } else {
+                            var list = [];
+                            for (var i = 0; i < data.length; i++) {
+                                if (data[i] == '') {
+                                    continue;
+                                }
+                                var val = data[i].split(',');
+                                var type = 'A股';
+                                switch (val['1']) {
+                                    case '111':
+                                        type = 'A股';
+                                        break;
+                                }
+                                list.push({ id: data[i], option: val['0'], type: type, code: val['2'], name: val['4'] });
                             }
-                            var val = data[i].split(',');
-                            var type = 'A股';
-                            switch (val['1']) {
-                                case '111':
-                                    type = 'A股';
-                                    break;
-                            }
-                            list.push({ id: data[i], option: val['0'], type: type, code: val['2'], name: val['4'] });
-                        }
 
-                        _this.stockList = list;
-                        $(".tr-stock-table").show();
+                            _this.stockList = list;
+                            $(".tr-stock-table").show();
+                        }    
                     } else {
                         $(".tr-stock-table").hide();
                     }
@@ -180,19 +189,9 @@ var trStock = new Vue({
                 token: header.user.token,
             }, function(data) {
                 if (data.status == 'success') {
-                    modal.imitateAlert('委托提交成功', true);
+                    modal.imitateAlert('委托提交成功', function(){window.location.reload(ture);});
                 } else {
                     modal.imitateAlert(data.data);
-                }
-            });
-        },
-        imitateAlert: function(msg){
-            var refresh = arguments[1] || false;
-            this.modal.msg = msg;
-            $('#my-alert').modal({});
-            $('#my-alert').on('closed.modal.amui', function(){
-                if(refresh){
-                    window.location.reload(true);
                 }
             });
         },

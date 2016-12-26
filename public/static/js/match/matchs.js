@@ -17,10 +17,12 @@ var matchs = new Vue({
             var url = e.currentTarget.attributes["href-url"].nodeValue;
             $.post(api_host + '/match/join',{id: id, uid: header.user.uid, token: header.user.token},function(data){
                 if(data.status == 'success'){
-                    window.location.href = url;
-                }else{
-                    alert(data.data);
-                }     
+                    modal.imitateAlert(data.data, function(){
+                        window.location.href = url; 
+                    }); 
+                } else {
+                    modal.imitateAlert('参加失败');
+                }      
             }, 'json');
         },
         updateMatchs(){               

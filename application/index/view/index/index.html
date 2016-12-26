@@ -386,7 +386,7 @@
             </h2>
         </div>
         <div class="am-panel-bd am-container">
-            <div class="am-u-md-12 am-padding-vertical-sm tr-match-item" v-for="item in week_matchs">
+            <div v-for="item in week_matchs" class="am-u-md-12 am-padding-vertical-sm tr-match-item" >
                 <div class="am-u-lg-10 tr-list-main">
                     <div class="am-u-md-3 am-padding-horizontal-sm">
                         <a :href="'{:url('index/macthUser')}?id=' + item.id"><img :src="item.image" :alt="item.name" width="100%" /></a>
@@ -403,9 +403,6 @@
                     </div>
                 </div>    
                 <div class="am-u-lg-2 am-list-main am-text-center tr-list-button">
-                    <template v-if="item.status == 3">
-                        <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-primary am-btn-lg">查看比赛</a>
-                    </template>
                     <template v-if="(item.status == 1 || item.status == 2) && item.joined == 0">
                         <template v-if="logined">
                                 <a href="javascript:;" :href-url="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-lg" :id="item.id" v-on:click="join_match">参加比赛</a>
@@ -414,9 +411,9 @@
                                 <a href="{:url('index/login')}" class="am-btn am-btn-danger am-btn-lg" target="_blank">参加比赛</a>
                         </template>
                     </template>
-                    <template v-if="item.joined == 1">
-                        <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-primary am-btn-lg">进入比赛</a>
-                    </template>   
+                    <template v-else>
+                        <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-primary am-btn-lg">查看比赛</a>
+                    </template>  
                 </div>
             </div>
             <div class="am-u-md-12 am-padding-vertical-sm tr-match-item" v-for="item in month_matchs">
@@ -441,9 +438,6 @@
                     </div>
                 </div>    
                 <div class="am-u-lg-2 am-list-main am-text-center tr-list-button">
-                    <template v-if="item.status == 3">
-                        <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-primary am-btn-lg">查看比赛</a>
-                    </template>
                     <template v-if="(item.status == 1 || item.status == 2) && item.joined == 0">
                         <template v-if="logined">
                                 <a href="javascript:;" :href-url="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-danger am-btn-lg" :id="item.id" v-on:click="join_match">参加比赛</a>
@@ -452,17 +446,21 @@
                                 <a href="{:url('index/login')}" class="am-btn am-btn-danger am-btn-lg" target="_blank">参加比赛</a>
                         </template>
                     </template>
-                    <template v-if="item.joined == 1">
-                        <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-primary am-btn-lg">进入比赛</a>
-                    </template> 
+                    <template v-else>
+                        <a :href="'{:url('index/macthUser')}?id='+item.id" class="am-btn am-btn-primary am-btn-lg">查看比赛</a>
+                    </template>
                 </div>   
             </div>
         </div>
     </div>
 </div>
 {/block} 
-{block name="footer"}{include file="public/footer" /}{/block} 
+{block name="footer"}
+    {include file="public/footer" /}
+    {include file="public/modal" /}
+{/block} 
 {block name="js"} 
-{js file="/static/js/widget/carouFredSel.js"}
-{js file="/static/js/index/index.js"} 
+    {js href="/static/js/widget/carouFredSel.js"}
+    {js href="/static/js/public/modal.js"}
+    {js href="/static/js/index/index.js"} 
 {/block}
