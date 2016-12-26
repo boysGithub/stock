@@ -329,7 +329,7 @@ class Trans extends Base
 	            $data['status'] = 1;
 	            $tmp = $data['price'] * $data['number'];
 	            $data['price'] = $stockData[1];
-	            // $data['time'] = date("Y-m-d H:i:s");
+	            $data['deal_time'] = date("Y-m-d H:i:s");
 	            $data['fee'] = $data['price']*$data['number']*$scale >=5?$data['price']*$data['number']*$scale:5;
 	            //更改用户资金账户信息
 	            $d['funds'] = $funds['funds'] - $data['fee'];
@@ -394,6 +394,7 @@ class Trans extends Base
 	            $data['price'] = $stockData[$data['stock']][1];
 	            $data['stock_name'] = $stockData[$data['stock']][0];
 	            $data['time'] = date("Y-m-d H:i:s");
+	            $data['deal_time'] = date("Y-m-d H:i:s");
 	       		//手续费最低为5元
             	$data['fee'] = $data['price']*$data['number']*$scale >=5?$data['price']*$data['number']*$scale:5;
 	       		$funds = UserFunds::where(['uid'=>$data['uid']])->find();
@@ -505,7 +506,7 @@ class Trans extends Base
         		//订单参数
         		$data['status'] = 1;
         		$data['price'] = $stockData[1];
-        		// $data['time'] = date("Y-m-d H:i:s");
+        		$data['deal_time'] = date("Y-m-d H:i:s");
         		//手续费最低为5元
             	$data['fee'] = $data['price']*$data['number']*$scale >=5?$data['price']*$data['number']*$scale:5;
         		$funds = UserFunds::where(['uid'=>$data['uid'],'sorts'=>$data['sorts']])->find();
@@ -580,6 +581,7 @@ class Trans extends Base
             	$data['status'] = 1;
             	$data['price'] = $stockData[$data['stock']][1];
             	$data['time'] = date("Y-m-d H:i:s");
+            	$data['deal_time'] = date("Y-m-d H:i:s");
             	$data['stock_name'] = $stockData[$data['stock']][0];
             	//手续费最低为5元
             	$data['fee'] = $data['price']*$data['number']*$scale >=5?$data['price']*$data['number']*$scale:5;
