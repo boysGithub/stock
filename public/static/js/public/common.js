@@ -34,20 +34,6 @@ var header = new Vue({
             url += '/nc.shtml';
 
             return url;
-        },
-        logout:function(){
-            $.get(
-                api_host + "/index/index/logout", function(msg){
-                    if(msg.status == "failed"){
-                        
-                        location.reload();
-                        
-                    }else{
-                        alert("退出失败");
-                    }
-                },
-                'json'
-            );
         }
     },
     mounted: function() {
