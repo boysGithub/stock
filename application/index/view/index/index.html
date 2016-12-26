@@ -430,6 +430,11 @@
                         </div>
                         <p>比赛时间：{{ item.start_date }} 到 {{ item.end_date }}
                         </p>
+                        <div class="am-u-md-12">
+                            <template v-if="item.joined == 1">
+                            <label>我在比赛中的排名：</label><span>{{ item.ranking }}名</span>
+                            </template>
+                        </div>
                     </div>
                     <div class="am-u-md-2 am-padding-left tr-status-div">
                         <span :class="'tr-status'+item.status_class">{{ item.status_name }}</span>
