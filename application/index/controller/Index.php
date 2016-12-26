@@ -303,19 +303,19 @@ class Index extends Controller
 				$info = $this->autoLogin($login,$password,true);
 				$info = json_decode($info,true);
 				if($info['type'] == 1){
-					if($token = Db::connect('sjq1')->name('user')->where(['login'=>$info['data']['login']])->Field('stock_token as token,uname as username,uid')->find();){
+					if($token = Db::connect('sjq1')->name('user')->where(['login'=>$info['data']['login']])->Field('stock_token as token,uname as username,uid')->find()){
 	    				return json(['status'=>'success','data'=>$token]);
 					}else{
 						return json(['status'=>'failed','data'=>'账号密码不匹配']);
 					}
 				}else if($info['type'] == 2){
-					if($token = Db::connect('sjq1')->name('user')->where(['phone'=>$info['data']['phone']])->Field('stock_token as token,uname as username,uid')->find();){
+					if($token = Db::connect('sjq1')->name('user')->where(['phone'=>$info['data']['phone']])->Field('stock_token as token,uname as username,uid')->find()){
 	    				return json(['status'=>'success','data'=>$token]);
 					}else{
 						return json(['status'=>'failed','data'=>'账号密码不匹配']);
 					}
 				}else if($info['type'] == 3){
-					if($token = Db::connect('sjq1')->name('user')->where(['uname'=>$info['data']['username']])->Field('stock_token as token,uname as username,uid')->find();){
+					if($token = Db::connect('sjq1')->name('user')->where(['uname'=>$info['data']['username']])->Field('stock_token as token,uname as username,uid')->find()){
 	    				return json(['status'=>'success','data'=>$token]);
 					}else{
 						return json(['status'=>'failed','data'=>'账号密码不匹配']);
