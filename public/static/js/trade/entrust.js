@@ -39,7 +39,7 @@ var entrust = new Vue({
                             status: ret[i].status,
                             turnover: parseFloat((ret[i].number * ret[i].price).toFixed(2)),
                             number: ret[i].number,
-                            deal_time: et.time.substring(0,16),
+                            deal_time: ret[i].time.substring(0,16),
                             time: ret[i].time.substring(0,16)
                         });
                     }

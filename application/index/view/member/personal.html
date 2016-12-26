@@ -76,7 +76,6 @@
                     <table class="am-table am-margin-bottom-0 am-table-centered am-table-hover">
                         <thead>
                             <tr>
-                                <th width="8%">序号</th>
                                 <th width="20%">股票名称(代码)</th>
                                 <th>持仓数量</th>
                                 <th>成本价</th>
@@ -90,7 +89,6 @@
                         <tbody>
                             <template v-if="positions.length > 0">
                                 <tr v-for="(item, index) in positions">
-                                    <td>{{ index+1 }}</td>
                                     <td class="am-text-left"><a :href="item.stock_url" target="_blank" rel="nofollow"><span class="tr-shares-name">{{ item.stock_label }}</span></a></td>
                                     <td>{{ item.available_number }}</td>
                                     <td><span class="tr-color-price">{{ item.cost_price }}</span></td>
@@ -118,7 +116,6 @@
                     <table class="am-table am-margin-bottom-0 am-table-centered am-table-hover">
                         <thead>
                             <tr>
-                                <th width="8%">序号</th>
                                 <th width="20%">股票名称(代码)</th>
                                 <th>方式</th>
                                 <th>成交价格</th>
@@ -130,7 +127,6 @@
                         <tbody>
                             <template v-if="entrust.length > 0">
                             <tr v-for="(item, index) in entrust">
-                                <td>{{ index+1 }}</td>
                                 <td class="am-text-left"><a :href="item.stock_url" target="_blank" rel="nofollow"><span class="tr-shares-name">{{ item.stock_label }}</span></a></td>
                                 <td><span :class="item.type_class">{{ item.type_label }}</td>
                                 <td>{{ item.price }}</td>
