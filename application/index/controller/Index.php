@@ -239,11 +239,10 @@ class Index extends Controller
             		$pass = md5(md5($password).$salt);
             	}
                 if($info = User::where(['login'=>$login,'password'=>$pass])->find()){
-                    $_SESSION['username'] = $info['username'];
-                    $_SESSION['uid'] = $info['uid'];
                     if(!$auto){
                     	$this->success('登录成功，正在跳转....','Index/index','',1);
                     }
+                    return ['data' => $info,'type'=>1];
                 }else{
                     $this->error("用户名和密码不匹配",'Index/login','',1);
                     exit();
@@ -261,11 +260,10 @@ class Index extends Controller
             		$pass = md5(md5($password).$salt);
             	}
                 if($info = User::where(['phone'=>$login,'password'=>$pass])->find()){
-                    $_SESSION['username'] = $info['username'];
-                    $_SESSION['uid'] = $info['uid'];
                     if(!$auto){
                     	$this->success('登录成功，正在跳转....','Index/index','',1);
                     }
+                    return ['data' => $info,'type'=>2];
                 }else{
                     $this->error("用户名和密码不匹配",'Index/login','',1);
                     exit();
@@ -283,11 +281,14 @@ class Index extends Controller
             		$pass = md5(md5($password).$salt);
             	}
                 if($info = User::where(['username'=>$login,'password'=>$pass])->find()){
-                    $_SESSION['username'] = $info['username'];
-                    $_SESSION['uid'] = $info['uid'];
                     if(!$auto){
+                    	$login = cookieEncrypt($login);
+                    	$password = cookieEncrypt($password);
+                    	setcookie("login_email",$login,time()+86400,'/','.sjqcj.com');
+                    	setcookie("login_password",$password,time()+86400,'/','.sjqcj.com');
                     	$this->success('登录成功，正在跳转....','Index/index','',1);
                     }
+                    return ['data' => $info,'type'=>3];
                 }else{
                     $this->error("用户名和密码不匹配",'Index/login','',1);
                     exit();
@@ -300,21 +301,29 @@ class Index extends Controller
     }
 
     public function doLogin(){
-    	if(isset($_COOKIE['login_email']) || isset($_COOKIE['login_password'])){
-    		if(isset($_SESSION['uid'])){
-    			$token = Db::connect('sjq1')->name('user')->where(['uid'=>$_SESSION['uid']])->Field('stock_token as token,uname as username,uid')->find();
-    			return json(['status'=>'success','data'=>$token]);
-    		}else{
-    			$login = cookieDecrypt($_COOKIE['login_email']);
-				$password = cookieDecrypt($_COOKIE['login_password']);
-				$this->autoLogin($login,$password,true);
-				if(isset($_SESSION['uid'])){
-					$token = Db::connect('sjq1')->name('user')->where(['uid'=>$_SESSION['uid']])->Field('stock_token as token,uname as username,uid')->find();
+    	if(isset($_COOKIE['login_email']) && isset($_COOKIE['login_password'])){
+			$login = cookieDecrypt($_COOKIE['login_email']);
+			$password = cookieDecrypt($_COOKIE['login_password']);
+			$info = $this->autoLogin($login,$password,true);
+			if($info['type'] == 1){
+				if($token = Db::connect('sjq1')->name('user')->where(['login'=>$info['data']['login']])->Field('stock_token as token,uname as username,uid')->find()){
     				return json(['status'=>'success','data'=>$token]);
 				}else{
 					return json(['status'=>'failed','data'=>'账号密码不匹配']);
 				}
-    		}
+			}else if($info['type'] == 2){
+				if($token = Db::connect('sjq1')->name('user')->where(['phone'=>$info['data']['phone']])->Field('stock_token as token,uname as username,uid')->find()){
+    				return json(['status'=>'success','data'=>$token]);
+				}else{
+					return json(['status'=>'failed','data'=>'账号密码不匹配']);
+				}
+			}else if($info['type'] == 3){
+				if($token = Db::connect('sjq1')->name('user')->where(['uname'=>$info['data']['username']])->Field('stock_token as token,uname as username,uid')->find()){
+    				return json(['status'=>'success','data'=>$token]);
+				}else{
+					return json(['status'=>'failed','data'=>'账号密码不匹配']);
+				}
+			}
     	}else{
     		return $this->logout(true);
     	}
