@@ -233,9 +233,11 @@ class Index extends Controller
         if(strpos($login,"@")){
             $salt = User::where(['login'=>$login])->value('login_salt');
             if($salt){
-            	
+            	if(strlen($password) == 32){
+            		$pass = $password;
+            	}else{
             		$pass = md5(md5($password).$salt);
-            	
+            	}
                 if($info = User::where(['login'=>$login,'password'=>$pass])->find()){
                     $_SESSION['username'] = $info['username'];
                     $_SESSION['uid'] = $info['uid'];
@@ -253,9 +255,11 @@ class Index extends Controller
         }else if(is_numeric($login) && strlen($login) == 11){
             $salt = User::where(['phone'=>$login])->value('login_salt');
             if($salt){
-                
+            	if(strlen($password) == 32){
+            		$pass = $password;
+            	}else{
             		$pass = md5(md5($password).$salt);
-            	
+            	}
                 if($info = User::where(['phone'=>$login,'password'=>$pass])->find()){
                     $_SESSION['username'] = $info['username'];
                     $_SESSION['uid'] = $info['uid'];
@@ -273,9 +277,11 @@ class Index extends Controller
         }else{
             $salt = User::where(['username'=>$login])->value('login_salt');
             if($salt){
-                
+                if(strlen($password) == 32){
+            		$pass = $password;
+            	}else{
             		$pass = md5(md5($password).$salt);
-            	
+            	}
                 if($info = User::where(['username'=>$login,'password'=>$pass])->find()){
                     $_SESSION['username'] = $info['username'];
                     $_SESSION['uid'] = $info['uid'];
