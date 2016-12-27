@@ -138,4 +138,21 @@ class Base extends Controller
 
         return $avatar;
     }
+
+    /**
+     * [syncLogin 同步登录]
+     * @return [type] [description]
+     */
+    public function syncLogin(){
+        $this->checkToken();
+        $token = Request::instance()->param('token');
+        $info = Db::connect('sjq1')->name('user')->where(['stock_token'=>$token])->find();
+        if($info){
+            $data['login_email'] = cookieEncrypt($info['uname']);
+            $data['login_password'] = cookieEncrypt($info['password']);
+            return json(['status'=>'success','data'=>$data]);
+        }else{
+            return json(['status'=>'failed','data'=>'用户获取失败']);
+        }
+    }
 }

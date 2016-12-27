@@ -12,9 +12,9 @@
 						<a href="{:url('index/index/logout')}" title="退出" class="topbar-out">退出</a>
 					</template>	
 					<template v-else>
-						<a href="{:url('index/index/login')}" title="登录" class="topbar-login">登录</a>
-						&nbsp;|&nbsp;
-						<a href="{:url('index/index/register')}" title="注册" class="topbar-register">注册</a>
+						<a href="{:url('index/index/login')}" title="登录" class="topbar-login">返回水晶球登录</a>
+						<!-- &nbsp;|&nbsp;
+						<a href="{:url('index/index/register')}" title="注册" class="topbar-register">注册</a> -->
 					</template>
 				</div>
 			</div>
@@ -32,9 +32,9 @@
 				    <li class="home{if condition="$Request.controller eq 'Index' and $Request.action eq 'index'"} am-active{/if}"><a href="/" title="模拟炒股首页">模拟炒股首页</a></li>
 				    <li class="{if condition="$Request.controller eq 'Index' and $Request.action eq 'matchlist'"} am-active{/if}"><a href="{:url('index/index/matchList')}">模拟赛场</a></li>
 				    <li class="{if condition="$Request.controller eq 'Index' and $Request.action eq 'rankinglist'"} am-active{/if}"><a href="{:url('index/index/rankingList')}">牛人排行榜</a></li>
-				    <li class="{if condition="$Request.controller eq 'Index' and $Request.action eq 'tradecenter'"} am-active{/if}"><a href="{:url('index/index/tradeCenter')}">交易中心</a></li>
 				    <li class="{if condition="$Request.controller eq 'Index' and $Request.action eq 'report'"} am-active{/if}"><a href="{:url('index/index/report')}">赛况报道</a></li>
 				    <li><a href="http://www.sjqcj.com/info/10" target="_blank">比赛介绍</a></li>
+				    <li class="{if condition="$Request.controller eq 'Index' and $Request.action eq 'tradecenter'"} am-active{/if}"><a href="{:url('index/index/tradeCenter')}">我的交易</a></li>
 				</ul>
 				</div>
 			</div>

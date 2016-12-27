@@ -4,7 +4,7 @@ var vue = new Vue({
         username: '',
         password: '',
         remember: 0, 
-        url: api_host + "/index/base/doLogin" 
+        url: api_host + "/index/index/autoLogin" 
     },
     methods: {
         doLogin: function() {
@@ -16,11 +16,27 @@ var vue = new Vue({
                         login_remember:this.remember
                     },
                     function(msg) {
-                        if(msg.status == "success"){
-                            modal.imitateAlert(msg.data);
-                            setTimeout(function(){
-                                location.reload();
-                            },1000);
+                        if(msg.status == "success"){   
+                            $.getJSON(api_host + 'index/base/syncLogin',{
+                                token:msg.data.token
+                            },function(reg){
+                                if(reg.status == 'success'){
+                                    $.cookie('login_eamil',reg.data.login_email,{
+                                        path:'/',
+                                        expiress:7,
+                                        domin:".local.com"
+                                    });
+                                    $.cookie('login_password',reg.data.password,{
+                                        path:'/',
+                                        expiress:7,
+                                        domin:".local.com"
+                                    });
+                                    setTimeout(function(){
+                                        location.reload();
+                                    },1000);
+                                }
+                            });
+                            
                         }else{
                             modal.imitateAlert(msg.data);
                         }

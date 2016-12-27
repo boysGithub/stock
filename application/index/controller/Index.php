@@ -104,11 +104,12 @@ class Index extends Controller
 	}
 
 	public function login(){
-		if(isset($_SESSION['uid'])){
-			$this->success("您已经登录过了",'Index/index',1);
-		}else{
-			return $this->fetch("login/login");
-		}
+		return $this->redirect("http://www.sjqcj.com",0);
+		// if(isset($_SESSION['uid'])){
+		// 	$this->success("您已经登录过了",'Index/index',1);
+		// }else{
+		// 	return $this->fetch("login/login");
+		// }
 	}
 
 	public function register(){
@@ -117,7 +118,7 @@ class Index extends Controller
 
 	//登录验证
 	private function checkLogin(){
-		if(isset($_SESSION['uid'])){
+		if(isset($_COOKIE['login_email']) && isset($_COOKIE['login_password'])){
 			return true;
 		}else{
 			return false;
@@ -282,13 +283,11 @@ class Index extends Controller
             	}
                 if($info = User::where(['username'=>$login,'password'=>$pass])->find()){
                     if(!$auto){
-                    	$login = cookieEncrypt($login);
-                    	$password = cookieEncrypt($password);
-                    	setcookie("login_email",$login,time()+86400,'/','.sjqcj.com');
-                    	setcookie("login_password",$password,time()+86400,'/','.sjqcj.com');
                     	$this->success('登录成功，正在跳转....','Index/index','',1);
+                    }else{
+                    	return ['data' => $info,'type'=>3];
                     }
-                    return ['data' => $info,'type'=>3];
+                    
                 }else{
                     $this->error("用户名和密码不匹配",'Index/login','',1);
                     exit();
