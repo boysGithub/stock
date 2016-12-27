@@ -33,13 +33,14 @@ var entrust = new Vue({
                             stock_url: header.getStockUrl(ret[i].stock), 
                             type_label: (ret[i].type == 1) ? '买入' : '卖出', 
                             type_class: (ret[i].type == 1) ? 'tr-color-buy' : 'tr-color-sale', 
-                            price: parseFloat(ret[i].price), 
+                            price: ret[i].price, 
+                            entrustment: ret[i].entrustment,
                             number: ret[i].number,
                             status_name: ret[i].status_name,
                             status: ret[i].status,
                             turnover: parseFloat((ret[i].number * ret[i].price).toFixed(2)),
                             number: ret[i].number,
-                            deal_time: ret[i].time.substring(0,16),
+                            deal_time: ret[i].deal_time.substring(0,16),
                             time: ret[i].time.substring(0,16)
                         });
                     }
@@ -131,7 +132,7 @@ var entrust = new Vue({
                 data: {id: id,uid: header.user.uid,status: 2,token: header.user.token,},
                 success: function(data){
                     if(data.status == 'success'){
-                        modal.imitateAlart('撤单成功', function(){window.location.reload(ture);});
+                        modal.imitateAlart('撤单成功', function(){window.location.reload(true);});
                     } else {
                         modal.imitateAlart(data.data);
                     }
