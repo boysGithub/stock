@@ -365,17 +365,17 @@ class Index extends Controller
         if($week == 0 || $week == 6){
             exit("非法请求");
         }
-        $sql = "INSERT into `sjq_days_ratio` (`uid`,`initialCapital`,`time`) VALUES";
-        $t = DaysRatio::whereTime('time','between',['2016-12-26','2016-12-27'])->Field('uid,endFunds')->select();
-        $a = DaysRatio::whereTime('time','>','2016-12-27')->Field('uid,endFunds')->select();
+        // $sql = "INSERT into `sjq_days_ratio` (`uid`,`initialCapital`,`time`) VALUES";
+        // $t = DaysRatio::whereTime('time','between',['2016-12-26','2016-12-27'])->Field('uid,endFunds')->select();
+        // $a = DaysRatio::whereTime('time','>','2016-12-27')->Field('uid,endFunds')->select();
         
-        foreach ($t as $key => $value) {
+        // foreach ($t as $key => $value) {
 
-                $sql .= "({$value['uid']},{$value['endFunds']},'".date("Y-m-d 00:00:02",time())."'),";
-            } 
-            // dump($a);
+        //         $sql .= "({$value['uid']},{$value['endFunds']},'".date("Y-m-d 00:00:02",time())."'),";
+        //     } 
+        //     // dump($a);
               
-        echo $sql;exit;
+        // echo $sql;exit;
         if(DaysRatio::whereTime('time','today')->value('id')){
             $this->handle("添加日盈利率报警，请检查",2);
         }else{
