@@ -79,7 +79,7 @@ class Rank extends Base
 		$limit = isset($data['limit']) && $data['limit'] > 0 && $data['limit'] < 1000 ? intval($data['limit']) : $this->_base->_limit;
 
 		$date = $this->getRecentTradeDay();
-		$ranking_sql = DaysRatio::where("DATE_FORMAT(time,'%Y-%m-%d')='{$date}' AND (endFunds - initialCapital) / initialCapital * 100 > days_rate")->field('count(id)')->buildSql();
+		$ranking_sql = DaysRatio::where("uf.is_trans=1 AND DATE_FORMAT(drc.time,'%Y-%m-%d')='{$date}' AND (endFunds - initialCapital) / initialCapital * 100 > days_rate")->alias('drc')->join("sjq_users_funds uf", "drc.uid=uf.uid", 'LEFT')->field('count(drc.id)')->buildSql();
 
 		$join = [
             ["sjq_users u", "dr.uid=u.uid", 'LEFT'],
@@ -94,7 +94,7 @@ class Rank extends Base
 		$rankList = DaysRatio::where("DATE_FORMAT(dr.time,'%Y-%m-%d')='{$date}'")->alias('dr')
 			->field("dr.id,u.uid,u.username,uf.success_rate,uf.week_avg_profit_rate,uf.avg_position_day,uf.total_rate,(dr.endFunds - dr.initialCapital) / dr.initialCapital * 100 days_rate,(wr.endFunds - wr.initialCapital) / wr.initialCapital * 100 week_rate,(mr.endFunds - mr.initialCapital) / mr.initialCapital * 100 month_rate,{$ranking_sql}+1 ranking")
 			->join($join)
-			->where(['is_trans'=>1])
+			->where(['uf.is_trans'=>1])
             ->limit(($page-1)*$limit, $limit)
 			->order("days_rate DESC,dr.id DESC")
 			->select();
