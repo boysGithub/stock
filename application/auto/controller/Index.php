@@ -317,27 +317,17 @@ class Index extends Controller
     public function autoWeekRatio(){
         //获取一周的时间
         $week = date('w');
+        $sdefaultDate = date("Y-m-d");
+        $first=1;
         if($week == 6 || $week == 0) return json(['status'=>'failed','data'=> '周末不能操作']);
+        $week_start=date('Y-m-d 00:00:00',strtotime("$sdefaultDate -".($week ? $week - $first : 6).' days'));
         // 启动事务
         Db::startTrans();
         try {
-            WeeklyRatio::whereTime('time','week')->order('uid desc')->Field('id,uid,initialCapital')->chunk(500,function($list){
-                $userGather = '';
-                foreach ($list as $key => $value) {
-                    $userGather .= $value['uid'].',';
-                }
-                $userGather = substr($userGather,0,-1);
-                $funds = userFunds::where(['uid'=>['in',$userGather]])->order('uid desc')->Field('id,uid,funds')->select();
-                foreach ($list as $key => $value) {
-                    $value['endFunds'] = $funds[$key]['funds'];
-                    $value['proportion'] = round(($value['endFunds'] - $value['initialCapital'])/$value['initialCapital'] * 100 , 8);
-                    $list[$key] = $value->toArray();
-                }
-                $weeklyRatio = new WeeklyRatio;
-                $weeklyRatio->allowField(true)->saveAll($list);
-                Db::commit();
+            $sql = "UPDATE `sjq_weekly_ratio` r,(SELECT `d`.`id`,f.funds as endFunds,round((f.funds-d.initialCapital)/d.initialCapital*100,3) as proportion FROM `sjq_weekly_ratio` `d` INNER JOIN `sjq_users_funds` `f` ON `d`.`uid`=`f`.`uid` WHERE  `d`.`time` >  '".$week_start."') obj set r.endFunds = obj.endFunds,r.proportion = obj.proportion where r.id=obj.id";
+                Db::query($sql);
                 $this->handle("自动更新周盈利率成功",1);
-            });
+                Db::commit();
         } catch (\Exception $e) {
             Db::rollback();
             $this->handle("自动更新周盈利率失败",0);
@@ -352,26 +342,14 @@ class Index extends Controller
         //获取一周的时间
         $week = date('w');
         if($week == 6 || $week == 0) return json(['status'=>'failed','data'=> '周末不能操作']);
+        $mtime = date('Y-m-1 00:00:00');
         // 启动事务
         Db::startTrans();
         try {
-            MonthRatio::whereTime('time','month')->order('uid desc')->Field('id,uid,initialCapital')->chunk(500,function($list){
-                $userGather = '';
-                foreach ($list as $key => $value) {
-                    $userGather .= $value['uid'].',';
-                }
-                $userGather = substr($userGather,0,-1);
-                $funds = userFunds::where(['uid'=>['in',$userGather]])->order('uid desc')->Field('id,uid,funds')->select();
-                foreach ($list as $key => $value) {
-                    $value['endFunds'] = $funds[$key]['funds'];
-                    $value['proportion'] = round(($value['endFunds'] - $value['initialCapital'])/$value['initialCapital'] * 100 , 8);
-                    $list[$key] = $value->toArray();
-                }
-                $weeklyRatio = new MonthRatio;
-                $weeklyRatio->allowField(true)->saveAll($list);
-                Db::commit();
+            $sql = "UPDATE `sjq_month_ratio` r,(SELECT `d`.`id`,f.funds as endFunds,round((f.funds-d.initialCapital)/d.initialCapital*100,3) as proportion FROM `sjq_month_ratio` `d` INNER JOIN `sjq_users_funds` `f` ON `d`.`uid`=`f`.`uid` WHERE  `d`.`time` >  '".$mtime."') obj set r.endFunds = obj.endFunds,r.proportion = obj.proportion where r.id=obj.id";
+                Db::query($sql);
                 $this->handle("自动更新月盈利率成功",1);
-            });
+                Db::commit();
         } catch (\Exception $e) {
             Db::rollback();
             $this->handle("自动更新月盈利率失败",0);
