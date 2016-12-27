@@ -18,11 +18,7 @@ var trStock = new Vue({
         maxBuy: function() {
             var max_buy = 0;
             if (this.buy_price != '' && this.buy_price > 0) {
-                if (this.funds * 0.399 > this.usableFunds) {
-                    max_buy = Math.floor(this.usableFunds * 0.999 / this.buy_price / 100) * 100;
-                } else {
-                    max_buy = Math.floor(this.funds * 0.399 / this.buy_price / 100) * 100;
-                }
+                max_buy = Math.floor(this.usableFunds * 0.999 / this.buy_price / 100) * 100;
             } else {
                 max_buy = '';
             }
