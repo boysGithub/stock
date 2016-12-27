@@ -26,16 +26,9 @@ class Index extends Controller
     public $_stockFunds = 1000000; //股票账户初始金额
     public function __construct(){
         $addr = getIP();
-        #if(!($addr=='115.29.199.94')) exit("非法请求");
+        if(!($addr=='115.29.199.94')) exit("非法请求");
     }
-
-    public function test(){
-        
-        $t = "9987ead20a56278edd5115988e018b98";
-        $e = "9987ead20a56278edd5115988e018b98";
-        $s = "sjq.comball";
-        echo md5(md5($s)."29036");
-    }
+    
     /**
      * [autoTrans 自动成交的方法]
      * @return [type] [description]
@@ -609,7 +602,6 @@ class Index extends Controller
             Db::query($sql);
             Db::commit();
             $this->handle("更新周平均率成功",1);
-            
             $userInfo = UserFunds::field('uid')->where(['is_trans'=>1])->select();
                 foreach ($userInfo as $key => $value) {
                     $tmp1[] = $value['uid'];

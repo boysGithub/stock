@@ -94,6 +94,7 @@ class Rank extends Base
 		$rankList = DaysRatio::where("DATE_FORMAT(dr.time,'%Y-%m-%d')='{$date}'")->alias('dr')
 			->field("dr.id,u.uid,u.username,uf.success_rate,uf.week_avg_profit_rate,uf.avg_position_day,uf.total_rate,(dr.endFunds - dr.initialCapital) / dr.initialCapital * 100 days_rate,(wr.endFunds - wr.initialCapital) / wr.initialCapital * 100 week_rate,(mr.endFunds - mr.initialCapital) / mr.initialCapital * 100 month_rate,{$ranking_sql}+1 ranking")
 			->join($join)
+			->where(['is_trans'=>1])
             ->limit(($page-1)*$limit, $limit)
 			->order("days_rate DESC,dr.id DESC")
 			->select();
