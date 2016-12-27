@@ -293,29 +293,17 @@ class Index extends Controller
      * @return [type] [description]
      */
     public function autoDayRatio(){
+
         //获取一周的时间
         $week = date('w');
         if($week == 6 || $week == 0) return json(['status'=>'failed','data'=> '周末不能操作']);
         // 启动事务
         Db::startTrans();
         try {
-            DaysRatio::whereTime('time','today')->Field('id,uid,initialCapital')->chunk(500,function($list){
-                $userGather = '';
-                foreach ($list as $key => $value) {
-                    $userGather .= $value['uid'].',';
-                }
-                $userGather = substr($userGather,0,-1);
-                $funds = userFunds::where(['uid'=>['in',$userGather]])->Field('id,uid,funds')->select();
-                foreach ($list as $key => $value) {
-                    $value['endFunds'] = $funds[$key]['funds'];
-                    $value['proportion'] = round(($value['endFunds'] - $value['initialCapital'])/$value['initialCapital'] * 100 , 8);
-                    $list[$key] = $value->toArray();
-                }
-                $weeklyRatio = new DaysRatio;
-                $weeklyRatio->allowField(true)->saveAll($list);
-                Db::commit();
+                $sql = "UPDATE `sjq_days_ratio` r,(SELECT `d`.`id`,f.funds as endFunds,round((f.funds-d.initialCapital)/d.initialCapital*100,3) as proportion FROM `sjq_days_ratio` `d` INNER JOIN `sjq_users_funds` `f` ON `d`.`uid`=`f`.`uid` WHERE  `d`.`time` >  '".date("Y-m-d 00:00:00")."') obj set r.endFunds = obj.endFunds,r.proportion = obj.proportion where r.id=obj.id";
+                Db::query($sql);
                 $this->handle("自动更新日盈利率成功",1);
-            });
+                Db::commit();
         } catch (\Exception $e) {
             Db::rollback();
             $this->handle("自动更新日盈利率失败",0);
@@ -333,13 +321,13 @@ class Index extends Controller
         // 启动事务
         Db::startTrans();
         try {
-            WeeklyRatio::whereTime('time','week')->Field('id,uid,initialCapital')->chunk(500,function($list){
+            WeeklyRatio::whereTime('time','week')->order('uid desc')->Field('id,uid,initialCapital')->chunk(500,function($list){
                 $userGather = '';
                 foreach ($list as $key => $value) {
                     $userGather .= $value['uid'].',';
                 }
                 $userGather = substr($userGather,0,-1);
-                $funds = userFunds::where(['uid'=>['in',$userGather]])->Field('id,uid,funds')->select();
+                $funds = userFunds::where(['uid'=>['in',$userGather]])->order('uid desc')->Field('id,uid,funds')->select();
                 foreach ($list as $key => $value) {
                     $value['endFunds'] = $funds[$key]['funds'];
                     $value['proportion'] = round(($value['endFunds'] - $value['initialCapital'])/$value['initialCapital'] * 100 , 8);
@@ -367,13 +355,13 @@ class Index extends Controller
         // 启动事务
         Db::startTrans();
         try {
-            MonthRatio::whereTime('time','month')->Field('id,uid,initialCapital')->chunk(500,function($list){
+            MonthRatio::whereTime('time','month')->order('uid desc')->Field('id,uid,initialCapital')->chunk(500,function($list){
                 $userGather = '';
                 foreach ($list as $key => $value) {
                     $userGather .= $value['uid'].',';
                 }
                 $userGather = substr($userGather,0,-1);
-                $funds = userFunds::where(['uid'=>['in',$userGather]])->Field('id,uid,funds')->select();
+                $funds = userFunds::where(['uid'=>['in',$userGather]])->order('uid desc')->Field('id,uid,funds')->select();
                 foreach ($list as $key => $value) {
                     $value['endFunds'] = $funds[$key]['funds'];
                     $value['proportion'] = round(($value['endFunds'] - $value['initialCapital'])/$value['initialCapital'] * 100 , 8);
@@ -399,6 +387,17 @@ class Index extends Controller
         if($week == 0 || $week == 6){
             exit("非法请求");
         }
+        $sql = "INSERT into `sjq_days_ratio` (`uid`,`initialCapital`,`time`) VALUES";
+        $t = DaysRatio::whereTime('time','between',['2016-12-26','2016-12-27'])->Field('uid,endFunds')->select();
+        $a = DaysRatio::whereTime('time','>','2016-12-27')->Field('uid,endFunds')->select();
+        
+        foreach ($t as $key => $value) {
+
+                $sql .= "({$value['uid']},{$value['endFunds']},'".date("Y-m-d 00:00:02",time())."'),";
+            } 
+            // dump($a);
+              
+        echo $sql;exit;
         if(DaysRatio::whereTime('time','today')->value('id')){
             $this->handle("添加日盈利率报警，请检查",2);
         }else{
@@ -628,7 +627,7 @@ class Index extends Controller
         // 启动事务
         Db::startTrans();
         try {
-            $sql = "UPDATE `sjq_users_funds` f,(select uid,avg(proportion) as week_avg from `sjq_weekly_ratio` GROUP BY uid) obj set f.week_avg_profit_rate = obj.week_avg where f.uid=obj.uid";
+            $sql = "UPDATE `sjq_users_funds` f,(select uid,obj.tmp_a/obj.tmp_week_avg as week_avg from (select uid,COUNT(proportion) as tmp_week_avg,sum(proportion) as tmp_a from `sjq_weekly_ratio` GROUP BY uid) obj group by obj.uid) new_obj set f.week_avg_profit_rate = new_obj.week_avg where f.uid=new_obj.uid";
             Db::query($sql);
             Db::commit();
             $this->handle("更新周平均率成功",1);
