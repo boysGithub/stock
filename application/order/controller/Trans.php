@@ -394,6 +394,9 @@ class Trans extends Base
 	            $data['status'] = 1;
 	            $data['entrustment'] = $data['price'];
 	            $data['price'] = $stockData[$data['stock']][1];
+	            if($data['isMarket'] == 1){
+	            	$data['entrustment'] = $data['price'];
+	            }
 	            $data['stock_name'] = $stockData[$data['stock']][0];
 	            $data['time'] = date("Y-m-d H:i:s");
 	            $data['deal_time'] = date("Y-m-d H:i:s");
@@ -584,6 +587,9 @@ class Trans extends Base
             	$data['status'] = 1;
             	$data['entrustment'] = $data['price'];
             	$data['price'] = $stockData[$data['stock']][1];
+            	if($data['isMarket'] == 1){
+	            	$data['entrustment'] = $data['price'];
+	            }
             	$data['time'] = date("Y-m-d H:i:s");
             	$data['deal_time'] = date("Y-m-d H:i:s");
             	$data['stock_name'] = $stockData[$data['stock']][0];
