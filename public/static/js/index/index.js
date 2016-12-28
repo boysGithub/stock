@@ -28,10 +28,10 @@ var index = new Vue({
     },
     methods: {
         updateAdSlider(){
-            var timestamp = new Date().getTime();
-            var data = localStorage.getItem('ad_slider');
-            data = JSON.parse(data);
-            if(data == null || data.timestamp < timestamp){
+            // var timestamp = new Date().getTime();
+            // var data = localStorage.getItem('ad_slider');
+            // data = JSON.parse(data);
+            // if(data == null || data.timestamp < timestamp){
                 var _this = this;
                 $.getJSON(api_host + '/ad',{type:1},function(data){
                     if(data.status == 'success'){
@@ -45,13 +45,13 @@ var index = new Vue({
                             });
                         }
 
-                        localStorage.setItem('ad_slider',JSON.stringify({timestamp: timestamp + _this.cache_t, data: ad_slider}));
+                        //localStorage.setItem('ad_slider',JSON.stringify({timestamp: timestamp + _this.cache_t, data: ad_slider}));
                         _this.ad_slider = ad_slider;
                     }
                 });
-            } else {
-                this.ad_slider = data.data;
-            } 
+            // } else {
+            //     this.ad_slider = data.data;
+            // } 
             setTimeout(function(){
                 $('#tr-slider-ad').flexslider({
                     directionNav: false,
@@ -60,10 +60,10 @@ var index = new Vue({
             }, 300);
         },
         updateProclamation(){
-            var timestamp = new Date().getTime();
-            var data = localStorage.getItem('proclamation');
-            data = JSON.parse(data);
-            if(data == null || data.timestamp < timestamp){
+            // var timestamp = new Date().getTime();
+            // var data = localStorage.getItem('proclamation');
+            // data = JSON.parse(data);
+            // if(data == null || data.timestamp < timestamp){
                 var _this = this;
                 $.getJSON(api_host + '/ad',{type:2},function(data){
                     if(data.status == 'success'){
@@ -76,20 +76,20 @@ var index = new Vue({
                             });
                         }
 
-                        localStorage.setItem('proclamation',JSON.stringify({timestamp: timestamp + _this.cache_t, data: proclamation}));
+                        //localStorage.setItem('proclamation',JSON.stringify({timestamp: timestamp + _this.cache_t, data: proclamation}));
                         _this.proclamation = proclamation;
                     }
                 });
-            } else {
-                this.proclamation = data.data;
-            }    
+            // } else {
+            //     this.proclamation = data.data;
+            // }    
             setTimeout(proclamationSlider, 200);
         },
         updateRecommend(){
-            var timestamp = new Date().getTime();
-            var data = localStorage.getItem('recommend');
-            data = JSON.parse(data);
-            if(data == null || data.timestamp < timestamp){
+            // var timestamp = new Date().getTime();
+            // var data = localStorage.getItem('recommend');
+            // data = JSON.parse(data);
+            // if(data == null || data.timestamp < timestamp){
                 var _this = this;
                 $.getJSON(api_host + '/user/getRecommend',{},function(data){
                     if(data.status == 'success'){
@@ -107,13 +107,13 @@ var index = new Vue({
                             });
                         }
 
-                        localStorage.setItem('recommend',JSON.stringify({timestamp: timestamp + _this.cache_t, data: recommend}));
+                        //localStorage.setItem('recommend',JSON.stringify({timestamp: timestamp + _this.cache_t, data: recommend}));
                         _this.recommend = recommend;
                     }
                 });
-            } else {
-                this.recommend = data.data;
-            } 
+            // } else {
+            //     this.recommend = data.data;
+            // } 
             setTimeout(function(){
                 $('#tr-slider').flexslider({
                      itemWidth: 320, 
@@ -158,13 +158,13 @@ var index = new Vue({
             });    
         },
         updateMatchRank(type){
-            var timestamp = new Date().getTime();
-            var data = localStorage.getItem('week_rate');
-            if(type == 2){
-                data = localStorage.getItem('month_rate');
-            }
-            data = JSON.parse(data);
-            if(data == null || data.timestamp < timestamp || data.data.length < 1){
+            // var timestamp = new Date().getTime();
+            // var data = localStorage.getItem('week_rate');
+            // if(type == 2){
+            //     data = localStorage.getItem('month_rate');
+            // }
+            // data = JSON.parse(data);
+            // if(data == null || data.timestamp < timestamp || data.data.length < 1){
                 var _this = this;
                 $.getJSON(api_host + '/match/detail',{type:type, np: 1, limit: 10},function(data){
                     if(data.status == 'success'){
@@ -195,32 +195,32 @@ var index = new Vue({
                         }    
                         switch(type){
                             case 1:
-                                localStorage.setItem('week_rate',JSON.stringify({timestamp: timestamp + _this.cache_t, data: match_rate}));
+                                //localStorage.setItem('week_rate',JSON.stringify({timestamp: timestamp + _this.cache_t, data: match_rate}));
                                 _this.week_rate = match_rate;
                             break;
                             case 2:
-                                localStorage.setItem('month_rate',JSON.stringify({timestamp: timestamp + _this.cache_t, data: match_rate}));
+                                //localStorage.setItem('month_rate',JSON.stringify({timestamp: timestamp + _this.cache_t, data: match_rate}));
                                 _this.month_rate = match_rate;
                             break;
                         }
                     }
                 });
-            } else {    
-                switch(type){
-                    case 1:
-                        this.week_rate = data.data;
-                    break;
-                    case 2:
-                        this.month_rate = data.data;
-                    break;
-                }
-            } 
+            // } else {    
+            //     switch(type){
+            //         case 1:
+            //             this.week_rate = data.data;
+            //         break;
+            //         case 2:
+            //             this.month_rate = data.data;
+            //         break;
+            //     }
+            // } 
         },
         updateDaysRate(){
-            var timestamp = new Date().getTime();
-            var data = localStorage.getItem('days_rate_10');
-            data = JSON.parse(data);
-            if(data == null || data.timestamp < timestamp || data.data.length < 1){
+            // var timestamp = new Date().getTime();
+            // var data = localStorage.getItem('days_rate_10');
+            // data = JSON.parse(data);
+            // if(data == null || data.timestamp < timestamp || data.data.length < 1){
                 var _this = this;
                 $.getJSON(api_host+'/rank/rateRank',{limit: 10},function(data){
                     if(data.status == 'success'){
@@ -250,21 +250,21 @@ var index = new Vue({
                             }
                         }    
 
-                        localStorage.setItem('days_rate_10',JSON.stringify({timestamp: timestamp + _this.cache_t, data: days_rate}));
+                        //localStorage.setItem('days_rate_10',JSON.stringify({timestamp: timestamp + _this.cache_t, data: days_rate}));
                         _this.days_rate = days_rate;
                     }
                 });
-            } else {    
-                this.days_rate = data.data;
-            } 
+            // } else {    
+            //     this.days_rate = data.data;
+            // } 
         },
         updateTotalRate(){
-            var timestamp = new Date().getTime();
-            var data = localStorage.getItem('total_rate_5');
-            var data_10 = localStorage.getItem('total_rate_10');
-            data = JSON.parse(data);
-            data_10 = JSON.parse(data_10);
-            if(data == null || data.timestamp < timestamp || data.data.length < 1){
+            // var timestamp = new Date().getTime();
+            // var data = localStorage.getItem('total_rate_5');
+            // var data_10 = localStorage.getItem('total_rate_10');
+            // data = JSON.parse(data);
+            // data_10 = JSON.parse(data_10);
+            // if(data == null || data.timestamp < timestamp || data.data.length < 1){
                 var _this = this;
                 $.getJSON(api_host+'/rank/getRankList',{condition:'total_rate'},function(data){
                     if(data.status == 'success'){
@@ -303,22 +303,22 @@ var index = new Vue({
                             });
                         }
 
-                        localStorage.setItem('total_rate_5',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: total_rate_5}));
-                        localStorage.setItem('total_rate_10',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: total_rate_10}));
+                        //localStorage.setItem('total_rate_5',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: total_rate_5}));
+                        //localStorage.setItem('total_rate_10',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: total_rate_10}));
                         _this.total_rate_5 = total_rate_5;
                         _this.total_rate_10 = total_rate_10;
                     }    
                 });
-            } else {
-                this.total_rate_5 = data.data;
-                this.total_rate_10 = data_10.data;
-            }    
+            // } else {
+            //     this.total_rate_5 = data.data;
+            //     this.total_rate_10 = data_10.data;
+            // }    
         },
         updateSuccessRate(){
-            var timestamp = new Date().getTime();
-            var data = localStorage.getItem('success_rate');
-            data = JSON.parse(data);
-            if(data == null || data.timestamp < timestamp){
+            // var timestamp = new Date().getTime();
+            // var data = localStorage.getItem('success_rate');
+            // data = JSON.parse(data);
+            // if(data == null || data.timestamp < timestamp){
                 var _this = this;
                 $.getJSON(api_host + '/rank/getRankList',{condition:'success_rate'},function(data){
                     if(data.status == 'success'){
@@ -335,13 +335,13 @@ var index = new Vue({
                             });
                         }
 
-                        localStorage.setItem('success_rate',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: success_rate}));
+                        //localStorage.setItem('success_rate',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: success_rate}));
                         _this.success_rate = success_rate;
                     }    
                 });
-            } else {
-                this.success_rate = data.data;
-            }    
+            // } else {
+            //     this.success_rate = data.data;
+            // }    
         },
         updateIndexBanner(){
             var _this = this;
@@ -355,10 +355,11 @@ var index = new Vue({
             }); 
         },
         updateweekAvgRate(){
-            var timestamp = new Date().getTime();
-            var data = localStorage.getItem('week_avg_profit_rate');
-            data = JSON.parse(data);
-            if(data == null || data.timestamp < timestamp){                var _this = this;
+            // var timestamp = new Date().getTime();
+            // var data = localStorage.getItem('week_avg_profit_rate');
+            // data = JSON.parse(data);
+            // if(data == null || data.timestamp < timestamp){                
+                var _this = this;
                 $.getJSON(api_host + '/rank/getRankList',{condition:'week_avg_profit_rate'},function(data){
                     if(data.status == 'success'){
                         var ret = data.data;
@@ -374,19 +375,19 @@ var index = new Vue({
                             });
                         }
 
-                        localStorage.setItem('week_avg_profit_rate',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: week_avg_profit_rate}));
+                        //localStorage.setItem('week_avg_profit_rate',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: week_avg_profit_rate}));
                         _this.week_avg_profit_rate = week_avg_profit_rate;
                     }    
                 });
-            } else {
-                this.week_avg_profit_rate = data.data;
-            }    
+            // } else {
+            //     this.week_avg_profit_rate = data.data;
+            // }    
         },
         updateFans(){
-            var timestamp = new Date().getTime();
-            var data = localStorage.getItem('fans');
-            data = JSON.parse(data);
-            if(data == null || data.timestamp < timestamp){                
+            // var timestamp = new Date().getTime();
+            // var data = localStorage.getItem('fans');
+            // data = JSON.parse(data);
+            // if(data == null || data.timestamp < timestamp){                
                 var _this = this;
                 $.getJSON(api_host + '/rank/getRankList',{condition:'fans'},function(data){
                     if(data.status == 'success'){
@@ -402,13 +403,13 @@ var index = new Vue({
                             });
                         }
 
-                        localStorage.setItem('fans',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: fans}));
+                        //localStorage.setItem('fans',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: fans}));
                         _this.fans = fans;
                     }    
                 });
-            } else {
-                this.fans = data.data;
-            }    
+            // } else {
+            //     this.fans = data.data;
+            // }    
         },
         updateMatchs: function(type){               
             var _this = this;

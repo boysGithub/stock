@@ -47,10 +47,10 @@ var ranking = new Vue({
             });    
         },
         updateDaysRate(){
-            var timestamp = new Date().getTime();
-            var data = localStorage.getItem('days_rate_100');
-            data = JSON.parse(data);
-            if(data == null || data.timestamp < timestamp || data.data.length < 1){
+            // var timestamp = new Date().getTime();
+            // var data = localStorage.getItem('days_rate_100');
+            // data = JSON.parse(data);
+            // if(data == null || data.timestamp < timestamp || data.data.length < 1){
                 var _this = this;
                 $.getJSON(api_host + '/rank/rateRank',{limit: 100},function(data){
                     if(data.status == 'success'){
@@ -80,22 +80,22 @@ var ranking = new Vue({
                             }
                         }    
 
-                        localStorage.setItem('days_rate_100',JSON.stringify({timestamp: timestamp + _this.cache_t, data: days_rate}));
+                        //localStorage.setItem('days_rate_100',JSON.stringify({timestamp: timestamp + _this.cache_t, data: days_rate}));
                         _this.days_rate = days_rate;
                     }
                 });
-            } else {    
-                this.days_rate = data.data;
-            } 
+            // } else {    
+            //     this.days_rate = data.data;
+            // } 
         },
         updateMatchRank(type){
-            var timestamp = new Date().getTime();
-            var data = localStorage.getItem('week_rate_100');
-            if(type == 2){
-                data = localStorage.getItem('month_rate_100');
-            }
-            data = JSON.parse(data);
-            if(data == null || data.timestamp < timestamp || data.data.length < 1){
+            // var timestamp = new Date().getTime();
+            // var data = localStorage.getItem('week_rate_100');
+            // if(type == 2){
+            //     data = localStorage.getItem('month_rate_100');
+            // }
+            // data = JSON.parse(data);
+            // if(data == null || data.timestamp < timestamp || data.data.length < 1){
                 var _this = this;
                 $.getJSON(api_host + '/match/detail',{type:type, np: 1, limit: 100},function(data){
                     if(data.status == 'success'){
@@ -126,32 +126,32 @@ var ranking = new Vue({
                         }    
                         switch(type){
                             case 1:
-                                localStorage.setItem('week_rate_100',JSON.stringify({timestamp: timestamp + _this.cache_t, data: match_rate}));
+                                //localStorage.setItem('week_rate_100',JSON.stringify({timestamp: timestamp + _this.cache_t, data: match_rate}));
                                 _this.week_rate = match_rate;
                             break;
                             case 2:
-                                localStorage.setItem('month_rate_100',JSON.stringify({timestamp: timestamp + _this.cache_t, data: match_rate}));
+                                //localStorage.setItem('month_rate_100',JSON.stringify({timestamp: timestamp + _this.cache_t, data: match_rate}));
                                 _this.month_rate = match_rate;
                             break;
                         }
                     }
                 });
-            } else {    
-                switch(type){
-                    case 1:
-                        this.week_rate = data.data;
-                    break;
-                    case 2:
-                        this.month_rate = data.data;
-                    break;
-                }
-            } 
+            // } else {    
+            //     switch(type){
+            //         case 1:
+            //             this.week_rate = data.data;
+            //         break;
+            //         case 2:
+            //             this.month_rate = data.data;
+            //         break;
+            //     }
+            // } 
         },
         updateTotalRate(order){
-            var timestamp = new Date().getTime();
-            var data = localStorage.getItem(order + '_100');
-            data = JSON.parse(data);
-            if(data == null || data.timestamp < timestamp || data.data.length < 1){
+            // var timestamp = new Date().getTime();
+            // var data = localStorage.getItem(order + '_100');
+            // data = JSON.parse(data);
+            // if(data == null || data.timestamp < timestamp || data.data.length < 1){
                 var _this = this;
                 $.getJSON(api_host + '/rank/getRankList',{condition:order},function(data){
                     if(data.status == 'success'){
@@ -184,40 +184,40 @@ var ranking = new Vue({
 
                         switch(order){
                             case 'total_rate':
-                                localStorage.setItem('total_rate_100',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: ranking}));
+                                //localStorage.setItem('total_rate_100',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: ranking}));
                                 _this.total_rate = ranking;
                                 break;
                             case 'success_rate':
-                                localStorage.setItem('success_rate_100',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: ranking}));
+                                //localStorage.setItem('success_rate_100',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: ranking}));
                                 _this.success_rate = ranking;
                                 break;
                             case 'week_avg_profit_rate':
-                                localStorage.setItem('week_avg_profit_rate_100',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: ranking}));
+                                //localStorage.setItem('week_avg_profit_rate_100',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: ranking}));
                                 _this.week_avg_profit_rate = ranking;
                                 break;
                             case 'fans':
-                                localStorage.setItem('fans_100',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: ranking}));
+                                //localStorage.setItem('fans_100',JSON.stringify({timestamp: new Date().getTime() + _this.cache_t, data: ranking}));
                                 _this.fans = ranking;
                                 break;
                         }
                     }    
                 });
-            } else {
-                switch(order){
-                    case 'total_rate':
-                        this.total_rate = data.data;
-                        break;
-                    case 'success_rate':
-                        this.success_rate = data.data;
-                        break;
-                    case 'week_avg_profit_rate':
-                        this.week_avg_profit_rate = data.data;
-                        break;
-                    case 'fans':
-                        this.fans = data.data;
-                        break;
-                }
-            }    
+            // } else {
+            //     switch(order){
+            //         case 'total_rate':
+            //             this.total_rate = data.data;
+            //             break;
+            //         case 'success_rate':
+            //             this.success_rate = data.data;
+            //             break;
+            //         case 'week_avg_profit_rate':
+            //             this.week_avg_profit_rate = data.data;
+            //             break;
+            //         case 'fans':
+            //             this.fans = data.data;
+            //             break;
+            //     }
+            // }    
         },
 	},
 	mounted: function(){

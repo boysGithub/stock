@@ -104,12 +104,12 @@ class Index extends Controller
 	}
 
 	public function login(){
-		return $this->redirect("http://www.sjqcj.com",0);
-		// if(isset($_SESSION['uid'])){
-		// 	$this->success("您已经登录过了",'Index/index',1);
-		// }else{
-		// 	return $this->fetch("login/login");
-		// }
+		//return $this->redirect("http://www.sjqcj.com",0);
+		if(isset($_SESSION['uid'])){
+			$this->success("您已经登录过了",'Index/index',1);
+		}else{
+			return $this->fetch("login/login");
+		}
 	}
 
 	public function register(){
@@ -241,6 +241,10 @@ class Index extends Controller
             	}
                 if($info = User::where(['login'=>$login,'password'=>$pass])->find()){
                     if(!$auto){
+                    	setcookie('login_email','',0,'/','.sjqcj.com');
+	                    setcookie('login_password','',0,'/','.sjqcj.com');
+	                    setcookie('login_email',cookieEncrypt($login),time()+86400,'/','.sjqcj.com');
+	                    setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
                     	$this->success('登录成功，正在跳转....','Index/index','',1);
                     }
                     return ['data' => $info,'type'=>1];
@@ -262,6 +266,10 @@ class Index extends Controller
             	}
                 if($info = User::where(['phone'=>$login,'password'=>$pass])->find()){
                     if(!$auto){
+                    	setcookie('login_email','',0,'/','.sjqcj.com');
+	                    setcookie('login_password','',0,'/','.sjqcj.com');
+	                    setcookie('login_email',cookieEncrypt($login),time()+86400,'/','.sjqcj.com');
+	                    setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
                     	$this->success('登录成功，正在跳转....','Index/index','',1);
                     }
                     return ['data' => $info,'type'=>2];
@@ -283,6 +291,10 @@ class Index extends Controller
             	}
                 if($info = User::where(['username'=>$login,'password'=>$pass])->find()){
                     if(!$auto){
+                    	setcookie('login_email','',0,'/','.sjqcj.com');
+	                    setcookie('login_password','',0,'/','.sjqcj.com');
+	                    setcookie('login_email',cookieEncrypt($login),time()+86400,'/','.sjqcj.com');
+	                    setcookie('login_password',cookieEncrypt($password),time()+86400,'/','.sjqcj.com');
                     	$this->success('登录成功，正在跳转....','Index/index','',1);
                     }else{
                     	return ['data' => $info,'type'=>3];
@@ -336,6 +348,8 @@ class Index extends Controller
     public function logout($auto=false){
         $_SESSION = [];
         if(!$auto){
+        	setcookie('login_email','',0,'/','.sjqcj.com');
+	        setcookie('login_password','',0,'/','.sjqcj.com');
         	$this->redirect('http://www.sjqcj.com/index.php?app=public&mod=Passport&act=logout',0);
         }
     }
