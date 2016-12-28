@@ -249,7 +249,7 @@ var index = new Vue({
                                 });
                             }
                         }    
-
+                        
                         //localStorage.setItem('days_rate_10',JSON.stringify({timestamp: timestamp + _this.cache_t, data: days_rate}));
                         _this.days_rate = days_rate;
                     }
