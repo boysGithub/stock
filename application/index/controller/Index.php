@@ -348,7 +348,9 @@ class Index extends Controller
     public function logout($auto=false){
         $_SESSION = [];
         if(!$auto){
-        	$this->redirect('http://www.sjqcj.com/index.php?app=public&mod=Passport&act=logout',0);
+        	setcookie('login_email','',0,'/','.sjqcj.com');
+	        setcookie('login_password','',0,'/','.sjqcj.com');
+        	// $this->redirect('http://www.sjqcj.com/index.php?app=public&mod=Passport&act=logout',0);
         }
     }
 }
