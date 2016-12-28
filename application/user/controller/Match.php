@@ -175,7 +175,7 @@ class Match extends Base
         if(isset($data['uid']) && $data['uid'] > 0){//登录后获取参加状态和排名
             $user = MatchUser::where(['u.uid'=>$data['uid'], 'u.match_id'=>$match->id])->alias('u');
             if($match->type == 1){//周赛
-                $user->field("u.id,(r.endFunds - r.initialCapital) / r.initialCapital * 100 total_rate,(SELECT count(uc.id) FROM sjq_match_user uc LEFT JOIN sjq_weekly_ratio rc ON uc.uid=rc.uid AND DATE_FORMAT(time,'%Y-%u')='" . date('Y-W', strtotime($match->start_date)) . "' WHERE uc.match_id=".$match->id." AND (rc.endFunds - rc.initialCapital) / rc.initialCapital > total_rate)+1 ranking")
+                $user->field("u.id,(r.endFunds - r.initialCapital) / r.initialCapital * 100 total_rate,(SELECT count(uc.id) FROM sjq_match_user uc LEFT JOIN sjq_weekly_ratio rc ON uc.uid=rc.uid AND DATE_FORMAT(time,'%Y-%u')='" . date('Y-W', strtotime($match->start_date)) . "' WHERE uc.match_id=".$match->id." AND (rc.endFunds - rc.initialCapital) / rc.initialCapital * 100 > total_rate)+1 ranking")
                 ->join("sjq_weekly_ratio r", "u.uid=r.uid AND DATE_FORMAT(time,'%Y-%u')='" . date('Y-W', strtotime($match->start_date)) . "'", "LEFT");
             } elseif ($match->type == 2){//月赛
                 $user->field("u.id,(r.endFunds - r.initialCapital) / r.initialCapital * 100 total_rate,(SELECT count(uc.id) FROM sjq_match_user uc LEFT JOIN sjq_month_ratio rc ON uc.uid=rc.uid AND DATE_FORMAT(time,'%Y-%m')='" . date('Y-m', strtotime($match->start_date)) . "' WHERE uc.match_id={$match->id} AND (rc.endFunds - rc.initialCapital) / rc.initialCapital * 100 > total_rate)+1 ranking")
