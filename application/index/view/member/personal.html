@@ -48,8 +48,8 @@
                         <div class="am-u-sm-2">日盈利率</div>
                         <div class="am-u-sm-4"><span :class="info.total_rate_class">{{ info.total_rate }}</span></div>
                         <div class="am-u-sm-3"><span class="tr-color-win">{{ info.total_profit_rank }}</span></div>
-                        <div class="am-u-sm-3"><span class="tr-color-win">{{ info.shares }}</span></div>
-                        <div class="am-u-sm-2"><span class="tr-color-lose">{{ info.shares_rate }}</span></div>
+                        <div class="am-u-sm-3"><span :class="info.shares_class">{{ info.shares }}</span></div>
+                        <div class="am-u-sm-2"><span :class="info.shares_class">{{ info.shares_rate }}</span></div>
                     </div>
                     <hr class="am-margin-vertical-sm">
                     <div class="am-g tr-asset-content">
