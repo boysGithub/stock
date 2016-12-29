@@ -192,7 +192,7 @@ class Index extends Base
         		$user = $user->toArray();
         		Order::where($user)->update(['status'=>2]);
         		Db::commit();
-        		return json(['status'=>'failed','data'=>'取消订阅成功']);
+        		return json(['status'=>'success','data'=>'取消订阅成功']);
         	} catch (\Exception $e) {
         		Db::rollback();
         		return json(['status'=>'failed','data'=>'取消订阅失败']);
