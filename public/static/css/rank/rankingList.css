@@ -9,6 +9,7 @@
 .tr-tabs .am-tabs-bd{border:none;}
 .tr-tabs .am-table{margin-bottom: 0;}
 .tr-tabs .am-table>thead>tr>th{border: none; background: #f5f5f5;color: #333;font-weight: normal;}
+.tr-tabs .am-table>thead>tr>th .tr-color-order{color: #4a9ff6;}e
 .tr-tabs .am-tab-panel{padding-bottom: 19px;}
 .tr-tabs .am-table>tbody>tr>td{font-size: 14px; color: #666; line-height: 2.6rem;}
 .tr-tabs .am-table .tr-icon{color: #fff;}

@@ -1,4 +1,8 @@
 .tr-report{background: #fff; padding: .5rem 0 1rem;}
 .tr-report h2{ line-height: 52px; padding: 0 2rem;margin: 0;}
 .tr-report .am-list li{padding: 0 2rem;}
-.tr-report .am-list>li>.am-badge{background: none;color: gray; font-size: 14px;padding: 1rem 0; line-height: normal;font-weight: normal;}
+.tr-report .am-list li a{font-size: 15px;}
+.tr-report .am-list>li>.am-badge{text-align: left;min-width: 140px;background: none;color: gray; font-size: 14px;padding: 1rem 0; line-height: normal;font-weight: normal;}
+.tr-report .am-list li.title{font-size: 16px; font-weight: bold;}
+.tr-report .am-list li.title .tr-t{display: block;padding: 1rem 0;}
+.tr-report .am-list li.title .am-badge{ color: #000;}

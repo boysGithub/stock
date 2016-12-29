@@ -30,6 +30,7 @@ ul{list-style: none;}
 .tr-color-order{font-weight: bold;}
 a .tr-shares-name{color: #865501; cursor: pointer;}
 a .tr-shares-name:hover{color: #c87f04;}
+th.tr-color-order{color: #4a9ff6;}
 
 .tr-icon{background: url('../../img/ranking-icon.png') 0 0 no-repeat; width: 30px; height:30px; display: inline-block;background-size: 100%;vertical-align: middle;}
 

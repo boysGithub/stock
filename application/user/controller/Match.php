@@ -136,7 +136,7 @@ class Match extends Base
             $field .= ",(SELECT count(muc.id) FROM sjq_match_user muc LEFT JOIN sjq_month_ratio mr ON muc.uid=mr.uid AND {$where} WHERE muc.match_id={$match['id']} AND (mr.endFunds - mr.initialCapital) / mr.initialCapital * 100 > month_rate)+1 ranking";
             $order = "month_rate DESC";
         }
-        $date = $this->getRecentTradeDay();
+        $date = $this->getRecentTradeDay($match->end_date);
         $join = [
             ["sjq_users u", "mu.uid=u.uid", 'LEFT'],
             ["sjq_users_funds uf", "mu.uid=uf.uid", 'LEFT'],

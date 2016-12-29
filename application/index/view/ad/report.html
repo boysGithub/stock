@@ -13,6 +13,7 @@
     <div class="am-g tr-report">
         <h2> 赛况报道 </h2>
         <ul class="am-list">
+          <li class="title"><span class="am-badge">时间</span><span class="tr-t">标题</span></li>
           <li v-for="item in reports"><span class="am-badge">{{ item.time }}</span><a :href="item.href" class="am-text-truncate" target="_blank">{{ item.title }}</a></li>
         </ul>
     </div>

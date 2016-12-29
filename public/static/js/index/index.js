@@ -495,6 +495,9 @@ var index = new Vue({
         this.updateMatchs('1');
         this.updateMatchs('2');
         setTimeout(this.updateIndex, 100);
+        $('#tr-tabs').find('a.item').on('opened.tabs.amui', function(e) {
+            $('#tr-tabs-more').prop('href', $(this).attr('more-url'));
+        })
     }
 });
 
