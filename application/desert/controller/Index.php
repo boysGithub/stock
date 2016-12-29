@@ -95,7 +95,7 @@ class Index extends Base
         $user = $desert->where(['uid'=>$data['uid'],'price_uid'=>$data['price_uid']])->find();
         if($user){
         	if(floor((strtotime($user['exp_time']) - time())/24/3600) > 30){
-	        	return json(['status'=>'failed','data'=>'时间小于30天才可以延迟订阅时间']);
+	        	return json(['status'=>'failed','data'=>'时间小于31天才可以延迟订阅时间']);
 	        }else{
 	        	$tmp = UserPrice::where(['uid'=>$data['price_uid'],'exp_time'=>$data['desert_time']])->Field('id,price')->find();
 		        if($tmp){
@@ -267,6 +267,9 @@ class Index extends Base
    		$data = input('get.');
       $limit = $this->_base->_limit;
       $data['p'] = isset($data['p']) ? (int)$data['p'] > 0 ? $data['p'] : 1 : 1 ;
+      if(!Desert::where(['price_uid'=>$data['price_uid']])->find()){
+        return json(['status'=>'failed','data'=>'还没有订阅']);
+      }
    		$info = Desert::where(['uid'=>$data['uid'],'status'=>1])->Field('price_uid')->select();
    		if($info){
    			foreach ($info as $key => $value) {
