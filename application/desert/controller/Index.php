@@ -187,7 +187,7 @@ class Index extends Base
         if($user['uid'] == $data['uid']){
         	Db::startTrans();
         	try {
-        		Desert::update(['status'=>-1,'exp_time'=>"0000-00-00 00:00:00"],['id'=>$data['id']]);
+        		Desert::delete(['id'=>$data['id']]);
         		$user = $user->toArray();
         		Order::where($user)->update(['status'=>2]);
         		Db::commit();
@@ -225,14 +225,18 @@ class Index extends Base
    	public function orderList(){
    		$this->_base->checkToken();
    		$data = input('get.');
-   		$limit = $this->_base->_limit;
-   		$data['p'] = isset($data['p']) ? (int)$data['p'] > 0 ? $data['p'] : 1 : 1 ;
-   		$list = Db::table('sjq_order d')->join("sjq_users us","us.uid=d.price_uid")->Field('d.id,d.price_uid,us.username as price_username,d.exp_time,d.status,d.time,d.order_number')->where(['d.uid'=>$data['uid']])->order('id desc')->limit(($data['p']-1)*$limit,$limit)->select();
-   		if($list){
-   			return json(['status'=>'success','data'=>$list]);
-   		}else{
-   			return json(['status'=>'failed','data'=>[]]);
-   		}
+      if(!isset($data['price_uid'])){
+          return json(['status'=>'failed','data'=>'必须传被订阅人的id']);
+      }else{
+        $limit = $this->_base->_limit;
+        $data['p'] = isset($data['p']) ? (int)$data['p'] > 0 ? $data['p'] : 1 : 1 ;
+        $list = @Db::table('sjq_order d')->join("sjq_users us","us.uid=d.price_uid")->join("sjq_desert o",'o.uid=d.uid and o.price_uid=d.price_uid')->Field('d.id,d.price_uid,us.username as price_username,d.exp_time,d.status,d.time,d.order_number,d.uid,o.id as t')->where(['d.price_uid'=>$data['price_uid']])->order('id desc')->limit(($data['p']-1)*$limit,$limit)->select();
+        if($list){
+          return json(['status'=>'success','data'=>$list]);
+        }else{
+          return json(['status'=>'failed','data'=>[]]);
+        }
+      }
    	}
 
    	/**
@@ -260,13 +264,15 @@ class Index extends Base
    	public function getCattleTrack(){
    		$this->_base->checkToken();
    		$data = input('get.');
+      $limit = $this->_base->_limit;
+      $data['p'] = isset($data['p']) ? (int)$data['p'] > 0 ? $data['p'] : 1 : 1 ;
    		$info = Desert::where(['uid'=>$data['uid'],'status'=>1])->Field('price_uid')->select();
    		if($info){
    			foreach ($info as $key => $value) {
 	   			$tmp[] = $value['price_uid'];
 	   		}
 	   		$user = join(',',$tmp);
-	   		$expert = Db::table('sjq_transaction t')->join('sjq_users u','t.uid=u.uid')->join('sjq_users_funds uf','u.uid=uf.uid')->join('sjq_users_position up','u.uid=up.uid AND t.stock=up.stock')->where(['t.status'=>1,'t.uid'=>['in',$user]])->Field('t.id,t.uid,t.stock,t.stock_name,u.username,t.price,t.time,t.type,uf.total_rate,up.ratio')->order('t.id desc')->limit(30)->select();
+	   		$expert = Db::table('sjq_transaction t')->join('sjq_users u','t.uid=u.uid')->join('sjq_users_funds uf','u.uid=uf.uid')->join('sjq_users_position up','u.uid=up.uid AND t.stock=up.stock')->where(['t.status'=>1,'t.uid'=>['in',$user]])->Field('t.id,t.uid,t.stock,t.stock_name,u.username,t.price,t.time,t.type,uf.total_rate,up.ratio')->order('t.id desc')->limit(($data['p']-1)*$limit,$limit)->select();
 	        foreach ($expert as $key => $value) {
 	            $expert[$key]['avatar'] = $this->getAvatar($value['uid']);
 	        }
