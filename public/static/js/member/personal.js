@@ -36,6 +36,7 @@ var personal = new Vue({
                         position: (ret.position).toFixed(2) + '%',//持仓
                         win_rate: (ret.win_rate).toFixed(2) + '%',//胜率
                         shares: ret.shares,//当日盈亏
+                        shares_class: (ret.shares < 0) ? 'tr-color-lose' : 'tr-color-win',//当日盈亏
                         shares_rate: (ret.shares / (ret.funds - ret.shares) * 100).toFixed(2) + '%',//当日盈亏比例
                         week_avg_profit_rate: (ret.week_avg_profit_rate).toFixed(2) + '%', //周平均率
                         success_rate: (ret.success_rate).toFixed(2) + '%',//选股成功率

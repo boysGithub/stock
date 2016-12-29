@@ -16,7 +16,7 @@ class Ad extends Base
             return json(['status'=>'failed','data'=>'参数错误']);
         }
 
-        $ads = AdModel::where(['type'=>$type, 'enabled'=>1])->field('image,title,url,time')->select();
+        $ads = AdModel::where(['type'=>$type, 'enabled'=>1])->field('image,title,url,time')->order('sort ASC,time DESC')->select();
 
         $res = [];
         foreach ($ads as $key => $val) {
