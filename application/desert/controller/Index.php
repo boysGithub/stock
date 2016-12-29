@@ -238,7 +238,7 @@ class Index extends Base
       }else{
         $limit = $this->_base->_limit;
         $data['p'] = isset($data['p']) ? (int)$data['p'] > 0 ? $data['p'] : 1 : 1 ;
-        $list = @Db::table('sjq_order d')->join("sjq_users us","us.uid=d.price_uid")->join("sjq_desert o",'o.uid=d.uid and o.price_uid=d.price_uid')->Field('d.id,d.price_uid,us.username as price_username,d.exp_time,d.status,d.time,d.order_number,d.uid,o.id as t')->where(['d.price_uid'=>$data['price_uid']])->order('id desc')->limit(($data['p']-1)*$limit,$limit)->select();
+        $list = @Db::table('sjq_order d')->join("sjq_users us","us.uid=d.price_uid")->join("sjq_desert o",'o.uid=d.uid and o.price_uid=d.price_uid')->Field('d.id,d.price_uid,us.username as price_username,d.exp_time,d.status,d.time,d.order_number,d.uid,o.id as t')->where(['d.price_uid'=>$data['price_uid'],'d.uid'=>$data['uid']])->order('id desc')->limit(($data['p']-1)*$limit,$limit)->select();
         if($list){
           return json(['status'=>'success','data'=>$list]);
         }else{
