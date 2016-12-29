@@ -212,6 +212,13 @@ class Index extends Base
    		$limit = $this->_base->_limit;
    		$data['p'] = isset($data['p']) ? (int)$data['p'] > 0 ? $data['p'] : 1 : 1 ;
    		$list = Db::table('sjq_desert d')->join("sjq_users us","us.uid=d.price_uid")->Field('d.id,d.price_uid,us.username as price_username,d.exp_time,d.status')->where(['d.uid'=>$data['uid']])->order('time desc')->limit(($data['p']-1)*$limit,$limit)->select();
+      foreach ($list as $key => $value) {
+        if(floor((strtotime($value['exp_time']) - time())/24/3600) > 30){
+          $list[$key]['is_extend'] = -1;
+        }else{
+          $list[$key]['is_extend'] = 1;
+        }
+      }
    		if($list){
    			return json(['status'=>'success','data'=>$list]);
    		}else{
