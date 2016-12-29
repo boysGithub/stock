@@ -7,6 +7,7 @@ use think\Db;
 use app\common\model\Desert;
 use app\common\model\UserPrice;
 use app\common\model\Order;
+use think\Config;
 /**
 * 
 */
@@ -187,7 +188,7 @@ class Index extends Base
         if($user['uid'] == $data['uid']){
         	Db::startTrans();
         	try {
-        		Desert::delete(['id'=>$data['id']]);
+        		Desert::destroy($data['id']);
         		$user = $user->toArray();
         		Order::where($user)->update(['status'=>2]);
         		Db::commit();
