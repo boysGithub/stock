@@ -127,7 +127,7 @@ class Index extends Base
 		        		$user = $user->toArray();
 		        		$desert->update($user);
 		        		Db::commit();
-		        		return json(['status'=>'failed','data'=>'订阅成功']);
+		        		return json(['status'=>'success','data'=>'订阅成功']);
 		        	} catch (\Exception $e) {
 		        		echo $e;
 		        		Db::rollback();
@@ -161,7 +161,7 @@ class Index extends Base
 	        		
 	        		$desert->allowField(true)->save($data);
 	        		Db::commit();
-	        		return json(['status'=>'failed','data'=>'订阅成功']);
+	        		return json(['status'=>'suceess','data'=>'订阅成功']);
 	        	} catch (\Exception $e) {
 	        		Db::rollback();
 	        		return json(['status'=>'failed','data'=>'订阅失败']);

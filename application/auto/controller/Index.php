@@ -26,7 +26,7 @@ class Index extends Controller
     public $_stockFunds = 1000000; //股票账户初始金额
     public function __construct(){
         $addr = getIP();
-        if(!($addr=='115.29.199.94')) exit("非法请求");
+        // if(!($addr=='115.29.199.94')) exit("非法请求");
     }
     
     /**
@@ -174,11 +174,16 @@ class Index extends Controller
                     $tmp[$value['uid']][$value['stock']][] = $value['number'];
                 }
                 $stock = array_values(array_unique($stock));
-                $stockData = getStock($stock,'s_');
+                $stockData = getStock($stock);
                 foreach ($tmp as $key => $value) {
                    foreach ($value as $k => $val) {
                         $num = array_sum($val);
-                        $user[$key][] = $stockData[$k][1] * $num;
+                        if($stockData[$k][3] != 0){
+                            $user[$key][] = $stockData[$k][3] * $num;
+                        }else{
+                            $user[$key][] = $stockData[$k][2] * $num;
+                        }
+                        
                    }
                 }
                 if($pendBuy){
