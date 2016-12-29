@@ -136,18 +136,19 @@ class Match extends Base
             $field .= ",(SELECT count(muc.id) FROM sjq_match_user muc LEFT JOIN sjq_month_ratio mr ON muc.uid=mr.uid AND {$where} WHERE muc.match_id={$match['id']} AND (mr.endFunds - mr.initialCapital) / mr.initialCapital * 100 > month_rate)+1 ranking";
             $order = "month_rate DESC";
         }
-        $days_sql = DaysRatio::where($where.' AND uid=mu.uid')->field("(endFunds - initialCapital) / initialCapital * 100")->order('time DESC')->limit(1)->buildSql();
-        $weekly_sql = WeeklyRatio::where($where.' AND uid=mu.uid')->field("(endFunds - initialCapital) / initialCapital * 100")->order('time DESC')->limit(1)->buildSql();
-        $month_sql = MonthRatio::where("DATE_FORMAT(time,'%Y-%m')='" . date('Y-m', strtotime($match->start_date)) . "' AND uid=mu.uid")->field("(endFunds - initialCapital) / initialCapital * 100")->order('time DESC')->limit(1)->buildSql();
+        $date = $this->getRecentTradeDay();
         $join = [
             ["sjq_users u", "mu.uid=u.uid", 'LEFT'],
             ["sjq_users_funds uf", "mu.uid=uf.uid", 'LEFT'],
+            ["sjq_days_ratio dr", "mu.uid=dr.uid AND DATE_FORMAT(dr.time,'%Y-%m-%d')='" . date('Y-m-d', strtotime($date)) . "'", 'LEFT'],
+            ["sjq_weekly_ratio wr", "mu.uid=wr.uid AND DATE_FORMAT(wr.time,'%Y-%u')='" . date('Y-W', strtotime($date)) . "'", 'LEFT'],
+            ["sjq_month_ratio mr", "mu.uid=mr.uid AND DATE_FORMAT(mr.time,'%Y-%m')='" . date('Y-m', strtotime($date)) . "'", 'LEFT'],
         ];
-        $field = "mu.id,mu.uid,u.username,uf.success_rate,uf.week_avg_profit_rate,uf.avg_position_day,uf.total_rate,{$days_sql} days_rate, {$weekly_sql} week_rate, {$month_sql} month_rate{$field}";
+        $field = "mu.id,mu.uid,u.username,uf.success_rate,uf.week_avg_profit_rate,uf.avg_position_day,uf.total_rate,(dr.endFunds - dr.initialCapital) / dr.initialCapital * 100 days_rate, (wr.endFunds - wr.initialCapital) / wr.initialCapital * 100 week_rate, (mr.endFunds - mr.initialCapital) / mr.initialCapital * 100 month_rate{$field}";
         
         $count = MatchUser::where(['match_id'=>$match->id])->alias('mu')->join($join)->count();
         $page_total = ceil($count / $limit);
-
+        
         $rankList = MatchUser::where(['match_id'=>$match->id])->alias('mu')
             ->field($field)
             ->join($join)
@@ -206,7 +207,7 @@ class Match extends Base
         if (true !== $res) {
             return json(['status'=>'failed','data'=>$res]);
         }
-
+        
         $count = MatchUser::where(['uid'=>$data['uid'],'match_id'=>$data['id']])->count();
         if($count > 0){
             return json(['status'=>'failed','data'=>'已参加']);

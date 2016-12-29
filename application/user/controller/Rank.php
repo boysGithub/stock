@@ -10,7 +10,6 @@ use app\common\model\Rank as RankModel;
 use app\common\model\DaysRatio;
 use app\common\model\WeeklyRatio;
 use app\common\model\MonthRatio;
-use app\common\model\NoTrande;
 use think\cache\driver\Redis;
 /**
 * 排行榜控制器
@@ -42,13 +41,16 @@ class Rank extends Base
 		];
 		$redis = new Redis;
 		$uid = $redis->get($data['condition']);
-		$days_sql = DaysRatio::where('uid=uf.uid')->field("(endFunds - initialCapital) / initialCapital * 100")->order('time DESC')->limit(1)->buildSql();
-        $weekly_sql = WeeklyRatio::where('uid=uf.uid')->field("(endFunds - initialCapital) / initialCapital * 100")->order('time DESC')->limit(1)->buildSql();
-        $month_sql = MonthRatio::where("uid=uf.uid")->field("(endFunds - initialCapital) / initialCapital * 100")->order('time DESC')->limit(1)->buildSql();
+        $date = $this->getRecentTradeDay();
+		$join = [
+            ["sjq_days_ratio dr", "uf.uid=dr.uid AND DATE_FORMAT(dr.time,'%Y-%m-%d')='" . date('Y-m-d', strtotime($date)) . "'", 'LEFT'],
+            ["sjq_weekly_ratio wr", "uf.uid=wr.uid AND DATE_FORMAT(wr.time,'%Y-%u')='" . date('Y-W', strtotime($date)) . "'", 'LEFT'],
+            ["sjq_month_ratio mr", "uf.uid=mr.uid AND DATE_FORMAT(mr.time,'%Y-%m')='" . date('Y-m', strtotime($date)) . "'", 'LEFT'],
+        ];
 		if($uid){
-			$rankList = Userfunds::where(['uf.uid'=>['in',$uid],'is_trans'=>1])->alias('uf')->order("{$tmp[$data['condition']]} asc")->limit(($data['p']-1)*$limit,$limit)->Field("uf.uid,total_rate,{$days_sql} days_rate, {$weekly_sql} week_rate, {$month_sql} month_rate,success_rate,avg_position_day,week_avg_profit_rate,round((funds-available_funds)/funds*100,2) as position,{$tmp[$data['condition']]} as rownum,fans,account")->select();
+			$rankList = Userfunds::where(['uf.uid'=>['in',$uid],'is_trans'=>1])->alias('uf')->order("{$tmp[$data['condition']]} asc")->limit(($data['p']-1)*$limit,$limit)->Field("uf.uid,total_rate,(dr.endFunds - dr.initialCapital) / dr.initialCapital * 100 days_rate, (wr.endFunds - wr.initialCapital) / wr.initialCapital * 100 week_rate, (mr.endFunds - mr.initialCapital) / mr.initialCapital * 100 month_rate,success_rate,avg_position_day,week_avg_profit_rate,round((funds-available_funds)/funds*100,2) as position,{$tmp[$data['condition']]} as rownum,fans,account")->join($join)->select();
 		}else{
-			$rankList = Userfunds::where(['is_trans'=>1])->order("{$tmp[$data['condition']]} asc")->alias('uf')->limit(($data['p']-1)*$limit,$limit)->Field("uf.uid,total_rate,{$days_sql} days_rate, {$weekly_sql} week_rate, {$month_sql} month_rate,success_rate,avg_position_day,week_avg_profit_rate,round((funds-available_funds)/funds*100,2) as position,{$tmp[$data['condition']]} as rownum,fans,account")->select();
+			$rankList = Userfunds::where(['is_trans'=>1])->order("{$tmp[$data['condition']]} asc")->alias('uf')->limit(($data['p']-1)*$limit,$limit)->Field("uf.uid,total_rate,(dr.endFunds - dr.initialCapital) / dr.initialCapital * 100 days_rate, (wr.endFunds - wr.initialCapital) / wr.initialCapital * 100 week_rate, (mr.endFunds - mr.initialCapital) / mr.initialCapital * 100 month_rate,success_rate,avg_position_day,week_avg_profit_rate,round((funds-available_funds)/funds*100,2) as position,{$tmp[$data['condition']]} as rownum,fans,account")->join($join)->select();
 		}
 		foreach ($rankList as $key => $value) {
 			$value->append(['username']);
@@ -194,30 +196,6 @@ class Rank extends Base
 		}else{
 			return json(['status'=>'failed','data'=>'获取数据失败']);
 		}
-	}	
-
-	/**
-	 * 获取最近一个交易日
-	 * @param string $date 日期
-	 * @return string
-	 */
-	public function getRecentTradeDay($date = '')
-	{
-		if(empty($date)){
-			$date = date('Y-m-d');
-		}
-
-		if(date("w",strtotime($date)) == '0' || date("w",strtotime($date)) == '6'){
-			$date = date('Y-m-d', strtotime($date . 'last Friday'));
-		}
-
-		$no_trade_day = NoTrande::where([])->column("DATE_FORMAT(day,'%Y-%m-%d')");
-		if(in_array($date, $no_trade_day)){//节假日
-			$date = date('Y-m-d', strtotime($date . '-1 day'));
-			$this->getRecentTradeDay($date);
-		}
-
-		return $date;
 	}
 }
 ?>

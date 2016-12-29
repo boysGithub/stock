@@ -11,6 +11,7 @@ use app\common\model\UserFunds;
 use app\common\model\DaysRatio;
 use app\common\model\WeeklyRatio;
 use app\common\model\MonthRatio;
+use app\common\model\NoTrande;
 use app\common\model\User;
 /**
 * 
@@ -154,5 +155,29 @@ class Base extends Controller
         }else{
             return json(['status'=>'failed','data'=>'用户获取失败']);
         }
+    }
+    
+    /**
+     * 获取最近一个交易日
+     * @param string $date 日期
+     * @return string
+     */
+    public function getRecentTradeDay($date = '')
+    {
+        if(empty($date)){
+            $date = date('Y-m-d');
+        }
+
+        if(date("w",strtotime($date)) == '0' || date("w",strtotime($date)) == '6'){
+            $date = date('Y-m-d', strtotime($date . 'last Friday'));
+        }
+
+        $no_trade_day = NoTrande::where([])->column("DATE_FORMAT(day,'%Y-%m-%d')");
+        if(in_array($date, $no_trade_day)){//节假日
+            $date = date('Y-m-d', strtotime($date . '-1 day'));
+            $this->getRecentTradeDay($date);
+        }
+
+        return $date;
     }
 }
