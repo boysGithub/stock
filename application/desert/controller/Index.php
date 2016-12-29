@@ -267,17 +267,18 @@ class Index extends Base
    		$data = input('get.');
       $limit = $this->_base->_limit;
       $data['p'] = isset($data['p']) ? (int)$data['p'] > 0 ? $data['p'] : 1 : 1 ;
-      if(!Desert::where(['price_uid'=>$data['price_uid']])->find()){
-        return json(['status'=>'failed','data'=>'还没有订阅']);
-      }
+      
    		$info = Desert::where(['uid'=>$data['uid'],'status'=>1])->Field('price_uid')->select();
    		if($info){
-   			foreach ($info as $key => $value) {
-	   			$tmp[] = $value['price_uid'];
-	   		}
         if(!isset($data['price_uid'])){
+          foreach ($info as $key => $value) {
+            $tmp[] = $value['price_uid'];
+          }
           $user = join(',',$tmp);
         }else{
+          if(!Desert::where(['price_uid'=>$data['price_uid'],'uid'=>$data['uid'],'status'=>1])->find()){
+            return json(['status'=>'failed','data'=>'还没有订阅']);
+          }
           $user = $data['price_uid'];
         }
 	   		
