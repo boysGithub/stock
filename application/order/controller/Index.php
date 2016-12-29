@@ -34,7 +34,7 @@ class Index extends Base
         if($expert){
             $result = json(['status'=>'success','data'=>$expert]);
         }else{
-            $result = json(['status'=>'failed','data'=>'还没有数据']);
+            $result = json(['status'=>'failed','data'=>[]]);
         }
         return $result;
     }
