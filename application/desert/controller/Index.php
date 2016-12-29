@@ -31,27 +31,27 @@ class Index extends Base
      * @return [type] [description]
      */
     public function userOrder(){
-    	$this->_base->checkToken();
-    	$data = input('post.');
-    	unset($data['token']);
-    	$res = $this->validate($data,'UserOrder');
-        if (true !== $res) {
-            return json(['status'=>'failed','data'=>$res]);
-        }
-        $data['time'] = date("Y-m-d H:i:s");
-        if($id = UserPrice::where(['uid'=>$data['uid'],'exp_time'=>$data['exp_time']])->value('id')){
-        	if(UserPrice::update($data,['id'=>$id])){
-        		return json(['status'=>'success','data'=>'修改定价成功']);
-        	}else{
-        		return json(['status'=>'failed','data'=>'修改定价失败']);
-        	}
-        }else{
-        	if(UserPrice::create($data)){
-        		return json(['status'=>'success','data'=>'定价成功']);
-        	}else{
-        		return json(['status'=>'failed','data'=>'定价失败']);
-        	}
-        }
+    	// $this->_base->checkToken();
+    	// $data = input('post.');
+    	// unset($data['token']);
+    	// $res = $this->validate($data,'UserOrder');
+     //    if (true !== $res) {
+     //        return json(['status'=>'failed','data'=>$res]);
+     //    }
+     //    $data['time'] = date("Y-m-d H:i:s");
+     //    if($id = UserPrice::where(['uid'=>$data['uid'],'exp_time'=>$data['exp_time']])->value('id')){
+     //    	if(UserPrice::update($data,['id'=>$id])){
+     //    		return json(['status'=>'success','data'=>'修改定价成功']);
+     //    	}else{
+     //    		return json(['status'=>'failed','data'=>'修改定价失败']);
+     //    	}
+     //    }else{
+     //    	if(UserPrice::create($data)){
+     //    		return json(['status'=>'success','data'=>'定价成功']);
+     //    	}else{
+     //    		return json(['status'=>'failed','data'=>'定价失败']);
+     //    	}
+     //    }
     }
 
     /**
