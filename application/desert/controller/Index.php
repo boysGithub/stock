@@ -272,7 +272,12 @@ class Index extends Base
    			foreach ($info as $key => $value) {
 	   			$tmp[] = $value['price_uid'];
 	   		}
-	   		$user = join(',',$tmp);
+        if(!isset($data['price_uid'])){
+          $user = join(',',$tmp);
+        }else{
+          $user = $data['price_uid'];
+        }
+	   		
 	   		$expert = Db::table('sjq_transaction t')->join('sjq_users u','t.uid=u.uid')->join('sjq_users_funds uf','u.uid=uf.uid')->join('sjq_users_position up','u.uid=up.uid AND t.stock=up.stock')->where(['t.status'=>1,'t.uid'=>['in',$user]])->Field('t.id,t.uid,t.stock,t.stock_name,u.username,t.price,t.time,t.type,uf.total_rate,up.ratio')->order('t.id desc')->limit(($data['p']-1)*$limit,$limit)->select();
 	        foreach ($expert as $key => $value) {
 	            $expert[$key]['avatar'] = $this->getAvatar($value['uid']);
