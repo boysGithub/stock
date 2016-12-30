@@ -7,6 +7,7 @@ use think\Db;
 use app\common\model\Desert;
 use app\common\model\UserPrice;
 use app\common\model\Order;
+use think\Config;
 /**
 * 
 */
@@ -30,27 +31,27 @@ class Index extends Base
      * @return [type] [description]
      */
     public function userOrder(){
-    	$this->_base->checkToken();
-    	$data = input('post.');
-    	unset($data['token']);
-    	$res = $this->validate($data,'UserOrder');
-        if (true !== $res) {
-            return json(['status'=>'failed','data'=>$res]);
-        }
-        $data['time'] = date("Y-m-d H:i:s");
-        if($id = UserPrice::where(['uid'=>$data['uid'],'exp_time'=>$data['exp_time']])->value('id')){
-        	if(UserPrice::update($data,['id'=>$id])){
-        		return json(['status'=>'success','data'=>'修改定价成功']);
-        	}else{
-        		return json(['status'=>'failed','data'=>'修改定价失败']);
-        	}
-        }else{
-        	if(UserPrice::create($data)){
-        		return json(['status'=>'success','data'=>'定价成功']);
-        	}else{
-        		return json(['status'=>'failed','data'=>'定价失败']);
-        	}
-        }
+    	// $this->_base->checkToken();
+    	// $data = input('post.');
+    	// unset($data['token']);
+    	// $res = $this->validate($data,'UserOrder');
+     //    if (true !== $res) {
+     //        return json(['status'=>'failed','data'=>$res]);
+     //    }
+     //    $data['time'] = date("Y-m-d H:i:s");
+     //    if($id = UserPrice::where(['uid'=>$data['uid'],'exp_time'=>$data['exp_time']])->value('id')){
+     //    	if(UserPrice::update($data,['id'=>$id])){
+     //    		return json(['status'=>'success','data'=>'修改定价成功']);
+     //    	}else{
+     //    		return json(['status'=>'failed','data'=>'修改定价失败']);
+     //    	}
+     //    }else{
+     //    	if(UserPrice::create($data)){
+     //    		return json(['status'=>'success','data'=>'定价成功']);
+     //    	}else{
+     //    		return json(['status'=>'failed','data'=>'定价失败']);
+     //    	}
+     //    }
     }
 
     /**
@@ -94,7 +95,7 @@ class Index extends Base
         $user = $desert->where(['uid'=>$data['uid'],'price_uid'=>$data['price_uid']])->find();
         if($user){
         	if(floor((strtotime($user['exp_time']) - time())/24/3600) > 30){
-	        	return json(['status'=>'failed','data'=>'时间小于30天才可以延迟订阅时间']);
+	        	return json(['status'=>'failed','data'=>'时间小于31天才可以延迟订阅时间']);
 	        }else{
 	        	$tmp = UserPrice::where(['uid'=>$data['price_uid'],'exp_time'=>$data['desert_time']])->Field('id,price')->find();
 		        if($tmp){
@@ -187,11 +188,11 @@ class Index extends Base
         if($user['uid'] == $data['uid']){
         	Db::startTrans();
         	try {
-        		Desert::update(['status'=>-1,'exp_time'=>"0000-00-00 00:00:00"],['id'=>$data['id']]);
+        		Desert::destroy($data['id']);
         		$user = $user->toArray();
         		Order::where($user)->update(['status'=>2]);
         		Db::commit();
-        		return json(['status'=>'failed','data'=>'取消订阅成功']);
+        		return json(['status'=>'success','data'=>'取消订阅成功']);
         	} catch (\Exception $e) {
         		Db::rollback();
         		return json(['status'=>'failed','data'=>'取消订阅失败']);
@@ -211,6 +212,13 @@ class Index extends Base
    		$limit = $this->_base->_limit;
    		$data['p'] = isset($data['p']) ? (int)$data['p'] > 0 ? $data['p'] : 1 : 1 ;
    		$list = Db::table('sjq_desert d')->join("sjq_users us","us.uid=d.price_uid")->Field('d.id,d.price_uid,us.username as price_username,d.exp_time,d.status')->where(['d.uid'=>$data['uid']])->order('time desc')->limit(($data['p']-1)*$limit,$limit)->select();
+      foreach ($list as $key => $value) {
+        if(floor((strtotime($value['exp_time']) - time())/24/3600) > 30){
+          $list[$key]['is_extend'] = -1;
+        }else{
+          $list[$key]['is_extend'] = 1;
+        }
+      }
    		if($list){
    			return json(['status'=>'success','data'=>$list]);
    		}else{
@@ -225,14 +233,18 @@ class Index extends Base
    	public function orderList(){
    		$this->_base->checkToken();
    		$data = input('get.');
-   		$limit = $this->_base->_limit;
-   		$data['p'] = isset($data['p']) ? (int)$data['p'] > 0 ? $data['p'] : 1 : 1 ;
-   		$list = Db::table('sjq_order d')->join("sjq_users us","us.uid=d.price_uid")->Field('d.id,d.price_uid,us.username as price_username,d.exp_time,d.status,d.time,d.order_number')->where(['d.uid'=>$data['uid']])->order('id desc')->limit(($data['p']-1)*$limit,$limit)->select();
-   		if($list){
-   			return json(['status'=>'success','data'=>$list]);
-   		}else{
-   			return json(['status'=>'failed','data'=>[]]);
-   		}
+      if(!isset($data['price_uid'])){
+          return json(['status'=>'failed','data'=>'必须传被订阅人的id']);
+      }else{
+        $limit = $this->_base->_limit;
+        $data['p'] = isset($data['p']) ? (int)$data['p'] > 0 ? $data['p'] : 1 : 1 ;
+        $list = @Db::table('sjq_order d')->join("sjq_users us","us.uid=d.price_uid")->join("sjq_desert o",'o.uid=d.uid and o.price_uid=d.price_uid')->Field('d.id,d.price_uid,us.username as price_username,d.exp_time,d.status,d.time,d.order_number,d.uid,o.id as t')->where(['d.price_uid'=>$data['price_uid'],'d.uid'=>$data['uid']])->order('id desc')->limit(($data['p']-1)*$limit,$limit)->select();
+        if($list){
+          return json(['status'=>'success','data'=>$list]);
+        }else{
+          return json(['status'=>'failed','data'=>[]]);
+        }
+      }
    	}
 
    	/**
@@ -260,13 +272,24 @@ class Index extends Base
    	public function getCattleTrack(){
    		$this->_base->checkToken();
    		$data = input('get.');
+      $limit = $this->_base->_limit;
+      $data['p'] = isset($data['p']) ? (int)$data['p'] > 0 ? $data['p'] : 1 : 1 ;
+      
    		$info = Desert::where(['uid'=>$data['uid'],'status'=>1])->Field('price_uid')->select();
    		if($info){
-   			foreach ($info as $key => $value) {
-	   			$tmp[] = $value['price_uid'];
-	   		}
-	   		$user = join(',',$tmp);
-	   		$expert = Db::table('sjq_transaction t')->join('sjq_users u','t.uid=u.uid')->join('sjq_users_funds uf','u.uid=uf.uid')->join('sjq_users_position up','u.uid=up.uid AND t.stock=up.stock')->where(['t.status'=>1,'t.uid'=>['in',$user]])->Field('t.id,t.uid,t.stock,t.stock_name,u.username,t.price,t.time,t.type,uf.total_rate,up.ratio')->order('t.id desc')->limit(30)->select();
+        if(!isset($data['price_uid'])){
+          foreach ($info as $key => $value) {
+            $tmp[] = $value['price_uid'];
+          }
+          $user = join(',',$tmp);
+        }else{
+          if(!Desert::where(['price_uid'=>$data['price_uid'],'uid'=>$data['uid'],'status'=>1])->find()){
+            return json(['status'=>'failed','data'=>'还没有订阅']);
+          }
+          $user = $data['price_uid'];
+        }
+	   		
+	   		$expert = Db::table('sjq_transaction t')->join('sjq_users u','t.uid=u.uid')->join('sjq_users_funds uf','u.uid=uf.uid')->join('sjq_users_position up','u.uid=up.uid AND t.stock=up.stock')->where(['t.status'=>1,'t.uid'=>['in',$user]])->Field('t.id,t.uid,t.stock,t.stock_name,u.username,t.price,t.time,t.type,uf.total_rate,up.ratio')->order('t.id desc')->limit(($data['p']-1)*$limit,$limit)->select();
 	        foreach ($expert as $key => $value) {
 	            $expert[$key]['avatar'] = $this->getAvatar($value['uid']);
 	        }

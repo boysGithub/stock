@@ -70,10 +70,10 @@ class Share extends Base
         $data['p'] = isset($data['p']) ? $data['p'] > 0 ? $data['p'] : 1 : 1;
         if(isset($data['stock']) && $data['stock']){
             $count = ceil(UserPosition::where(['uid'=>$data['uid'],'is_position'=>2,'stock'=>$data['stock']])->count()/$limit);
-            $historical = UserPosition::where(['uid'=>$data['uid'],'is_position'=>2,'stock'=>$data['stock']])->limit(($data['p']-1)*$limit,$limit)->select();
+            $historical = UserPosition::where(['uid'=>$data['uid'],'is_position'=>2,'stock'=>$data['stock']])->order('last_time desc')->limit(($data['p']-1)*$limit,$limit)->select();
         }else{
             $count = ceil(UserPosition::where(['uid'=>$data['uid'],'is_position'=>2])->count()/$limit);
-            $historical = UserPosition::where(['uid'=>$data['uid'],'is_position'=>2])->limit(($data['p']-1)*$limit,$limit)->select();
+            $historical = UserPosition::where(['uid'=>$data['uid'],'is_position'=>2])->order('last_time desc')->limit(($data['p']-1)*$limit,$limit)->select();
         }
         
         if($historical){
