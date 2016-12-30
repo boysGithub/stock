@@ -52,14 +52,14 @@
     </div>
     <div class="am-tabs tr-tabs" data-am-tabs="{noSwipe: 1}" id="tr-tabs">
         <ul class="am-tabs-nav am-nav am-nav-tabs">
-            <li class="am-active"><a href="javascript:;">牛人动态</a></li>
-            <li><a href="javascript:;">日盈利率</a></li>
-            <li><a href="javascript:;">周赛排名</a></li>
-            <li><a href="javascript:;">月赛排名</a></li>
-            <li><a href="javascript:;">总盈利率</a></li>
+            <li class="am-active"><a href="javascript:;" class="item" more-url="{:url('index/index/rankingList', ['order'=>'talent_dynamic'])}">牛人动态</a></li>
+            <li><a href="javascript:;" class="item" more-url="{:url('index/index/rankingList', ['order'=>'days_rank'])}">日盈利率</a></li>
+            <li><a href="javascript:;" class="item" more-url="{:url('index/index/rankingList', ['order'=>'week_rank'])}">周赛排名</a></li>
+            <li><a href="javascript:;" class="item" more-url="{:url('index/index/rankingList', ['order'=>'month_rank'])}">月赛排名</a></li>
+            <li><a href="javascript:;" class="item" more-url="{:url('index/index/rankingList', ['order'=>'total_rate'])}">总盈利率</a></li>
         </ul>
         <div class="tr-more">
-            <a href="{:url('index/index/rankingList')}" alt="查看百强排名">查看百强排名&gt;&gt;</a>
+            <a id="tr-tabs-more" href="{:url('index/index/rankingList', ['order'=>'talent_dynamic'])}" alt="查看百强排名">查看百强排名&gt;&gt;</a>
         </div>
         <div class="am-tabs-bd">
             <div class="am-tab-panel am-active">

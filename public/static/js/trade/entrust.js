@@ -3,20 +3,30 @@ var entrust = new Vue({
     data: {
         count: 0,//计数
         close: '',//定时器
+        type: '',
         positions: [],//当前持仓
         positions_c: [],//用户持仓-计算前
         pc_index: 0,//持仓递归计数
         today_entrust: [],//今日委托
         today_turnover: [],//今日成交
         history_entrust: [],//历史委托
+        history_entrust_page: {page: 0, page_total: 0},//历史委托
         history_turnover: [],//历史成交
+        history_turnover_page: {page: 0, page_total: 0},//历史成交
     },
     computed: {
     },
+    components: {
+        'turnover-page': Vnav,
+        'entrust-page': Vnav
+    },
     methods: {
-        updateOrder(type){
+        orderPage(page){
+            this.updateOrder(this.type, page);
+        },
+        updateOrder(type, page){
             var _this = this;
-            var r_data = {type: type};
+            var r_data = {type: type, p:page};
             if($.inArray(type, ['historical','trans']) != -1){
                 r_data['stime'] = '2016-12-01';
                 r_data['etime'] = '2017-12-01';
@@ -53,9 +63,11 @@ var entrust = new Vue({
                             _this.today_turnover = orders;
                             break;
                         case 'historical':
+                            _this.history_entrust_page = {page: page, page_total: data.totalPage};
                             _this.history_entrust = orders;
                             break;
                         case 'trans':
+                            _this.history_turnover_page = {page: page, page_total: data.totalPage};
                             _this.history_turnover = orders;
                             break;
                     }
@@ -146,13 +158,13 @@ var entrust = new Vue({
         getEntrust: function(){
             if(header.logined){
                 this.getPositions();
-                this.updateOrder('entrust');
-                this.updateOrder('deal');
-                this.updateOrder('historical');
-                this.updateOrder('trans');
+                this.updateOrder('entrust',1);
+                this.updateOrder('deal',1);
+                this.updateOrder('historical',1);
+                this.updateOrder('trans',1);
             } else {
-                if(this.count < 20){
-                    this.close = setTimeout(this.getEntrust, 300);
+                if(this.count < 10){
+                    this.close = setTimeout(this.getEntrust, 200);
                     this.count += 1;
                 } else {
                     clearTimeout(this.close);
@@ -162,5 +174,9 @@ var entrust = new Vue({
     },
     mounted: function(){
         this.getEntrust();
+        var _this = this;
+        $('#tr-tabs').find('a.item').on('opened.tabs.amui', function(e) {
+            _this.type = $(this).attr('type');
+        })
     }
 });

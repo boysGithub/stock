@@ -58,7 +58,7 @@
                 </ul>
             </div>    
             <div class="pages am-text-center">
-                
+                <match-page :cur.sync="match_page.page" :all.sync="match_page.page_total" v-on:btn-click="updateMatchs"></match-page>
             </div>
         </div>
     </div>
@@ -71,5 +71,7 @@
 {/block} 
 {block name="js"} 
     {js href="/static/js/public/modal.js"}
+    {css href="/static/css/public/pagination.css" /}
+    {js href="/static/js/widget/page.js" /}
     {js href="/static/js/match/matchs.js" /}
 {/block}

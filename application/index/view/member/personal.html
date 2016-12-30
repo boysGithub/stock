@@ -143,6 +143,9 @@
                         </tbody>
                     </table>
                 </main>
+                <div class="am-panel-footer page" id="entrust-page">
+                    <entrust-page :cur.sync="entrust_page.page" :all.sync="entrust_page.page_total" v-on:btn-click="getEntrust"></entrust-page>
+                </div>
             </section>
             <section class="am-panel am-panel-default">
                 <div class="am-panel-hd"><h2 class="am-panel-title"><span class="am-icon-database am-icon-sm am-icon"></span>历史持仓</h2></div>
@@ -178,7 +181,7 @@
                     </table>
                 </main>
                 <div class="am-panel-footer page" id="history">
-                    <vue-nav :cur.sync="history.page" :all.sync="history.page_total" v-on:btn-click="getHistoryPositions"></vue-nav>
+                    <history-page :cur.sync="history.page" :all.sync="history.page_total" v-on:btn-click="getHistoryPositions"></history-page>
                 </div>
             </section>
             <!-- <section class="am-panel am-panel-default tr-comments">
