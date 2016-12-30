@@ -34,17 +34,21 @@ class Match extends Base
             $where['type'] = intval($data['type']);
         }
 
-        $matchs = MatchModel::where($where)->alias('m')->limit(($page-1)*$limit, $limit)->order('start_date desc');
         $field = '';
+        $join = [];
         if(isset($data['uid']) && $data['uid'] > 0){//登录后获取参加状态和排名
             $field .= ",u.id muid";
             if(isset($data['joined']) && $data['joined'] == 1){
                 $where['u.id'] = ['not null',''];
             }
-            $matchs->join('sjq_match_user u',"u.match_id=m.id AND u.uid={$data['uid']}", 'LEFT');
+            $join[] = ['sjq_match_user u',"u.match_id=m.id AND u.uid={$data['uid']}", 'LEFT'];
         }
 
-        $matchs = MatchModel::where($where)->field('m.id,name,image,type,start_date,end_date'.$field)->select();
+        $count = MatchModel::where($where)->alias('m')->join($join)->count();
+        $page_total = ceil($count / $limit);
+        
+        $matchs = MatchModel::where($where)->alias('m')->field('m.id,name,image,type,start_date,end_date'.$field)->limit(($page-1)*$limit, $limit)->order('start_date desc')->join($join)->select();
+        
         $res = [];
         foreach ($matchs as $key => $val) {
 
@@ -94,7 +98,7 @@ class Match extends Base
             $res[] = $match;
         }
 
-        return json(['status'=>'success','data'=>$res]);
+        return json(['status'=>'success','data'=>$res, 'pageTotal' => $page_total]);
     }
 
     /**

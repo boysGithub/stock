@@ -11,6 +11,7 @@ var personal = new Vue({
         history_positions: [],//历史持仓
         history: {page:0, page_total:0},//历史持仓分页
         entrust: [],//用户委托
+        entrust_page: {page:0, page_total:0},//用户委托分页
         chart_date: [],//分时图日期
         chart_rate: []//分时图盈亏
     },
@@ -21,7 +22,8 @@ var personal = new Vue({
         }
     },
     components: {
-        'vue-nav': Vnav
+        'history-page': Vnav,
+        'entrust-page': Vnav
     },
     methods: {
         info(){
@@ -141,11 +143,11 @@ var personal = new Vue({
                 }    
             });
         },
-        getEntrust(){
+        getEntrust(page){
             var _this = this;
-            var r_data = {uid: _this.uid, type: 'trans',stime: '2016-12-01', etime:'2017-12-01'};
+            var r_data = {uid: _this.uid, p:page, type: 'trans',stime: '2016-12-01', etime:'2017-12-01'};
             
-            $.getJSON(api_host + '/orders/'+ _this.uid, r_data, function(data){
+            $.getJSON( api_host + '/orders/'+ _this.uid, r_data, function(data){
                 if(data.status == 'success'){
                     var entrust = [];//委托信息
                     for (var i = 0; i < data.data.length; i++) {
@@ -169,6 +171,7 @@ var personal = new Vue({
                         });
                     }
 
+                    _this.entrust_page = {page: page, page_total: data.totalPage};
                     _this.entrust = entrust;
                 }    
             });
@@ -238,7 +241,7 @@ var personal = new Vue({
                 this.info();
                 this.getPositions();
                 this.getHistoryPositions(1);
-                this.getEntrust();
+                this.getEntrust(1);
                 this.getTimeChart();
             } else {
                 if(this.count < 20){

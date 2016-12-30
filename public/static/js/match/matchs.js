@@ -4,12 +4,16 @@ var matchs = new Vue({
         count: 0,
         close: '',
         match_banner: {},
-        matchList: []//赛场
+        matchList: [],//赛场
+        match_page: {page:0, page_total:0}//赛场
     },
     computed: {
         logined: function(){
             return header.logined;
         }
+    },
+    components: {
+        'match-page': Vnav
     },
     methods: {
         join_match: function(e){
@@ -25,9 +29,9 @@ var matchs = new Vue({
                 }      
             }, 'json');
         },
-        updateMatchs(){               
+        updateMatchs(page){               
             var _this = this;
-            var r_data = {};
+            var r_data = {np:page};
             if(header.user.uid > 0){
                 r_data = {uid: header.user.uid};
             }
@@ -51,6 +55,7 @@ var matchs = new Vue({
                         });
                     }
 
+                    _this.match_page = {page: page, page_total: data.pageTotal};
                     _this.matchList = matchList;
                 }    
             });
@@ -68,8 +73,7 @@ var matchs = new Vue({
         },
         getMatchs(){
             if(this.logined){
-                this.updateMatchs();
-                this.updateMatchBanner();
+                this.updateMatchs(1);
             } else {
                 if(this.count < 10){
                     this.close = setTimeout(this.getMatchs, 300);
@@ -81,7 +85,8 @@ var matchs = new Vue({
         }
     },
     mounted: function(){
-        this.updateMatchs();
+        this.updateMatchs(1);
+        this.updateMatchBanner();
         setTimeout(this.getMatchs, 100);
     }
 });
