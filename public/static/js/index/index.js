@@ -266,7 +266,7 @@ var index = new Vue({
             // data_10 = JSON.parse(data_10);
             // if(data == null || data.timestamp < timestamp || data.data.length < 1){
                 var _this = this;
-                $.getJSON(api_host+'/rank/getRankList',{condition:'total_rate'},function(data){
+                $.getJSON(api_host+'/rank/getRankList',{condition:'total_rate',limit:10},function(data){
                     if(data.status == 'success'){
                         var ret = data.data;
                         var total_rate_5 = [];
@@ -320,7 +320,7 @@ var index = new Vue({
             // data = JSON.parse(data);
             // if(data == null || data.timestamp < timestamp){
                 var _this = this;
-                $.getJSON(api_host + '/rank/getRankList',{condition:'success_rate'},function(data){
+                $.getJSON(api_host + '/rank/getRankList',{condition:'success_rate',limit:10},function(data){
                     if(data.status == 'success'){
                         var ret = data.data;
                         var success_rate = [];
@@ -360,7 +360,7 @@ var index = new Vue({
             // data = JSON.parse(data);
             // if(data == null || data.timestamp < timestamp){                
                 var _this = this;
-                $.getJSON(api_host + '/rank/getRankList',{condition:'week_avg_profit_rate'},function(data){
+                $.getJSON(api_host + '/rank/getRankList',{condition:'week_avg_profit_rate',limit:10},function(data){
                     if(data.status == 'success'){
                         var ret = data.data;
                         var week_avg_profit_rate = [];
@@ -389,7 +389,7 @@ var index = new Vue({
             // data = JSON.parse(data);
             // if(data == null || data.timestamp < timestamp){                
                 var _this = this;
-                $.getJSON(api_host + '/rank/getRankList',{condition:'fans'},function(data){
+                $.getJSON(api_host + '/rank/getRankList',{condition:'fans',limit:10},function(data){
                     if(data.status == 'success'){
                         var ret = data.data;
                         var fans = [];
