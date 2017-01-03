@@ -97,9 +97,6 @@ class Rank extends Base
 	            ["sjq_month_ratio mr", "dr.uid=mr.uid AND DATE_FORMAT(mr.time,'%Y-%m')='" . date('Y-m', strtotime($date)) . "'", 'LEFT'],
 			];
 
-			$count = DaysRatio::where("DATE_FORMAT(dr.time,'%Y-%m-%d')='{$date}'")->alias('dr')->join($join)->count();
-	        $page_total = ceil($count / $limit);
-
 			$rankList = DaysRatio::where("DATE_FORMAT(dr.time,'%Y-%m-%d')='{$date}'")->alias('dr')
 				->field("dr.id,u.uid,u.username,uf.success_rate,uf.week_avg_profit_rate,uf.avg_position_day,uf.total_rate,(dr.endFunds - dr.initialCapital) / dr.initialCapital * 100 days_rate,(wr.endFunds - wr.initialCapital) / wr.initialCapital * 100 week_rate,(mr.endFunds - mr.initialCapital) / mr.initialCapital * 100 month_rate,{$ranking_sql}+1 ranking")
 				->join($join)
@@ -121,7 +118,7 @@ class Rank extends Base
 		}else{
 			$rankList = $redis->get('rateRank'.$limit);
 		}
-		return json(['status'=>'success', 'data'=>$rankList, 'pageTotal' => $page_total]);
+		return json(['status'=>'success', 'data'=>$rankList]);
 	}
 
 	/**
