@@ -164,7 +164,7 @@ class Base extends Controller
      */
     public function getRecentTradeDay($date = '')
     {
-        if(empty($date)){
+        if(empty($date) || strtotime($date)>time()){
             $date = date('Y-m-d');
         }
 
@@ -177,6 +177,8 @@ class Base extends Controller
             $date = date('Y-m-d', strtotime($date . '-1 day'));
             $this->getRecentTradeDay($date);
         }
+
+        $date = date('Y-m-d', strtotime($date));
 
         return $date;
     }
