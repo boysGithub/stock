@@ -319,11 +319,11 @@ ul.tpl-dropdown-content .tpl-dropdown-menu-messages-item .menu-messages-content 
   display: none;
 }
 .sidebar-nav-sub .sidebar-nav-link {
-  font-size: 12px;
+  font-size: 14px;
   padding-left: 30px;
 }
 .sidebar-nav-sub .sidebar-nav-link a {
-  font-size: 12px;
+  font-size: 14px;
   padding-left: 0;
 }
 .sidebar-nav-sub .sidebar-nav-link-logo {
@@ -365,6 +365,10 @@ ul.tpl-dropdown-content .tpl-dropdown-menu-messages-item .menu-messages-content 
   border-left: #282d2f 3px solid;
   font-size: 14px;
   cursor: pointer;
+}
+.sidebar-nav-link a.sidebar-nav-sub-title {
+  font-size: 16px;
+  color: #fff;
 }
 .sidebar-nav-link a.active {
   cursor: pointer;

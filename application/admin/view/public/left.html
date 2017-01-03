@@ -2,63 +2,87 @@
 <div class="left-sidebar">
     <!-- 菜单 -->
     <ul class="sidebar-nav">
-
-        <li class="sidebar-nav-heading">比赛<span class="sidebar-nav-heading-info"></span></li>
         <li class="sidebar-nav-link">
-            <a href="{:url('match/index')}">
-                <i class="sidebar-nav-link-logo"></i> 模拟比赛
+            <a href="javascript:;" class="sidebar-nav-sub-title">
+                <i class=""></i> 比赛
+                <span class="am-icon-chevron-down am-fr am-margin-right-sm sidebar-nav-sub-ico"></span>
             </a>
+            <ul class="sidebar-nav sidebar-nav-sub" style="display: block;">
+                <li class="sidebar-nav-link">
+                    <a href="{:url('match/index')}">
+                        <span class="am-icon-angle-right sidebar-nav-link-logo"></span>  模拟比赛
+                    </a>
+                </li>
+                <li class="sidebar-nav-link">
+                    <a href="{:url('match/add')}">
+                        <i class="am-icon-angle-right sidebar-nav-link-logo"></i> 添加比赛
+                    </a>
+                </li>
+            </ul>
         </li>
         <li class="sidebar-nav-link">
-            <a href="{:url('match/add')}">
-                <i class="sidebar-nav-link-logo"></i> 添加比赛
+            <a href="javascript:;" class="sidebar-nav-sub-title">
+                <i class=""></i> 会员
+                <span class="am-icon-chevron-down am-fr am-margin-right-sm sidebar-nav-sub-ico"></span>
             </a>
-        </li>
-
-        <li class="sidebar-nav-heading">会员<span class="sidebar-nav-heading-info"></span></li>
-        <li class="sidebar-nav-link">
-            <a href="{:url('user/index')}">
-                <i class="sidebar-nav-link-logo"></i> 会员列表
-            </a>
-        </li>
-
-        <li class="sidebar-nav-heading">管理员<span class="sidebar-nav-heading-info"></span></li>
-        <li class="sidebar-nav-link">
-            <a href="{:url('admin/index')}">
-                <i class="sidebar-nav-link-logo"></i> 后台管理员
-            </a>
+            <ul class="sidebar-nav sidebar-nav-sub">
+                <li class="sidebar-nav-link">
+                    <a href="{:url('user/index')}">
+                        <span class="am-icon-angle-right sidebar-nav-link-logo"></span>  会员列表
+                    </a>
+                </li>
+            </ul>
         </li>
         <li class="sidebar-nav-link">
-            <a href="{:url('admin/add')}">
-                <i class="sidebar-nav-link-logo"></i> 添加管理员
+            <a href="javascript:;" class="sidebar-nav-sub-title">
+                <i class=""></i> 管理员
+                <span class="am-icon-chevron-down am-fr am-margin-right-sm sidebar-nav-sub-ico"></span>
             </a>
-        </li>
-
-        <li class="sidebar-nav-heading">系统 <span class="sidebar-nav-heading-info"></span></li>
-        <li class="sidebar-nav-link">
-            <a href="{:url('advertisement/report')}">
-                <i class="sidebar-nav-link-logo"></i> 赛况管理
-            </a>
-        </li>
-        <li class="sidebar-nav-link">
-            <a href="{:url('advertisement/announcement')}">
-                <i class="sidebar-nav-link-logo"></i> 公告管理
-            </a>
-        </li>
-        <li class="sidebar-nav-link">
-            <a href="{:url('advertisement/index')}">
-                <i class="sidebar-nav-link-logo"></i> 轮播图管理
-            </a>
+            <ul class="sidebar-nav sidebar-nav-sub">
+                <li class="sidebar-nav-link">
+                    <a href="{:url('admin/index')}">
+                        <span class="am-icon-angle-right sidebar-nav-link-logo"></span>  后台管理员
+                    </a>
+                </li>
+                <li class="sidebar-nav-link">
+                    <a href="{:url('admin/add')}">
+                        <i class="am-icon-angle-right sidebar-nav-link-logo"></i> 添加管理员
+                    </a>
+                </li>
+            </ul>
         </li>
         <li class="sidebar-nav-link">
-            <a href="{:url('advertisement/banner')}">
-                <i class="sidebar-nav-link-logo"></i> Banner管理
+            <a href="javascript:;" class="sidebar-nav-sub-title">
+                <i class=""></i> 系统
+                <span class="am-icon-chevron-down am-fr am-margin-right-sm sidebar-nav-sub-ico"></span>
             </a>
-        </li>
-        <li class="sidebar-nav-link">
-            <a href="{:url('auto/index')}">
-                <i class="sidebar-nav-link-logo"></i> 结算情况
-            </a>
+            <ul class="sidebar-nav sidebar-nav-sub">
+                <li class="sidebar-nav-link">
+                    <a href="{:url('advertisement/report')}">
+                        <span class="am-icon-angle-right sidebar-nav-link-logo"></span>  赛况管理
+                    </a>
+                </li>
+                <li class="sidebar-nav-link">
+                    <a href="{:url('advertisement/announcement')}">
+                        <i class="am-icon-angle-right sidebar-nav-link-logo"></i> 公告管理
+                    </a>
+                </li>
+                <li class="sidebar-nav-link">
+                    <a href="{:url('advertisement/index')}">
+                        <i class="am-icon-angle-right sidebar-nav-link-logo"></i> 轮播图管理
+                    </a>
+                </li>
+                <li class="sidebar-nav-link">
+                    <a href="{:url('advertisement/announcement')}">
+                        <i class="am-icon-angle-right sidebar-nav-link-logo"></i> Banner管理
+                    </a>
+                </li>
+                <li class="sidebar-nav-link">
+                    <a href="{:url('auto/index')}">
+                        <i class="am-icon-angle-right sidebar-nav-link-logo"></i> 结算情况
+                    </a>
+                </li>
+            </ul>
         </li>
     </ul>
 </div>
