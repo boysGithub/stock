@@ -113,7 +113,7 @@ class Index extends Base
 		        		$data['price'] = $tmp['price'];
 		        		$data['status'] = 1;
 		        		$order = new Order;
-		        		$orderNumber = $order->whereTime('time','today')->value('order_number');
+		        		$orderNumber = $order->whereTime('time','today')->order('id desc')->value('order_number');
 		        		if($orderNumber){
 		        			$data['order_number'] = date("Ymd").substr($orderNumber,8)+1;
 		        		}else{
