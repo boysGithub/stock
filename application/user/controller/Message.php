@@ -11,7 +11,7 @@ class Message extends Base
 {
 	public function unread()
     {
-        $this->_base->checkToken();
+        $this->checkToken();
         $type = input('get.type', 1);
         $uid = input('get.uid', 0);
         if (empty($uid)) {
