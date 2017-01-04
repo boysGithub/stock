@@ -26,13 +26,19 @@ class Index extends Base
      * @return [json] [用户的数据]
      */
     public function index(){
-        $expert = Db::table('sjq_transaction t')->join('sjq_users u','t.uid=u.uid')->join('sjq_users_funds uf','u.uid=uf.uid')->join('sjq_users_position up','u.uid=up.uid AND t.stock=up.stock')->where('status',1)->Field('t.id,t.uid,t.stock,t.stock_name,u.username,t.price,t.time,t.type,uf.total_rate,up.ratio')->order('t.id desc')->limit(30)->select();
+        $data = input('get.');
+        $limit = isset($data['limit']) && (int)$data['limit'] > 0 && (int)$data['limit'] < 1000 ? intval($data['limit']) : $this->_base->_limit;
+        $page = isset($data['p']) && (int)$data['p'] > 0 ? intval($data['p']) : 1;
+        $count = Db::table('sjq_transaction t')->join('sjq_users u','t.uid=u.uid')->join('sjq_users_funds uf','u.uid=uf.uid')->join('sjq_users_position up','u.uid=up.uid AND t.stock=up.stock')->where('status',1)->count();
+        $page_total = ceil($count / $limit);
+        
+        $expert = Db::table('sjq_transaction t')->join('sjq_users u','t.uid=u.uid')->join('sjq_users_funds uf','u.uid=uf.uid')->join('sjq_users_position up','u.uid=up.uid AND t.stock=up.stock')->where('status',1)->Field('t.id,t.uid,t.stock,t.stock_name,u.username,t.price,t.time,t.type,uf.total_rate,up.ratio')->order('t.id desc')->limit(($page-1)*$limit, $limit)->select();
         foreach ($expert as $key => $value) {
             $expert[$key]['avatar'] = $this->getAvatar($value['uid']);
         }
 
         if($expert){
-            $result = json(['status'=>'success','data'=>$expert]);
+            $result = json(['status'=>'success','data'=>$expert, 'pageTotal'=>$page_total]);
         }else{
             $result = json(['status'=>'failed','data'=>[]]);
         }

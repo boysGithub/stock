@@ -11,8 +11,8 @@ use app\admin\controller\Base;
 class Logout extends Base
 {
 	public function index(){
-		if(Session::has('id', 'admin')){
-			Session::delete('id', 'admin');
+		if($this->isLogined()){
+			unset($_SESSION['admin_id']);
 		}
 
 		$this->success('退出成功','login/index');

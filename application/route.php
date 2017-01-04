@@ -17,6 +17,7 @@ Route::get('share/:method','order/share/:method');
 Route::get('user/:method','user/index/:method');
 Route::get('match/:method','user/match/:method');
 Route::get('ad','user/ad/index');
+Route::get('message/:method','user/message/:method');
 Route::post('user/:method','user/index/:method');
 Route::post('match/:method','user/match/:method');
 Route::get('stock/:method','user/stock/:method');

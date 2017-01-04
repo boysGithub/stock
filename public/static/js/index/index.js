@@ -125,7 +125,7 @@ var index = new Vue({
         },
         updateTalentDynamic(){
             var _this = this;
-            $.getJSON(api_host + '/orders',{},function(data){
+            $.getJSON(api_host + '/orders',{limit:10},function(data){
                 if(data.status == 'success'){
                     var ret = data.data;
                     var talent_dynamic = [];
