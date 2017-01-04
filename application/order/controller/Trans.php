@@ -9,6 +9,7 @@ use think\Request;
 use app\common\model\UserFunds;
 use think\Db;
 use app\common\model\UserPosition;
+use app\common\model\Message;
 /**
 * 
 */
@@ -321,6 +322,7 @@ class Trans extends Base
     	//处理买入为整数
     	$data['number'] = floor($data['number']/100)*100;
         $scale = $this->_base->_scale;
+        $msg = [];//消息
         if($auto){
         	//开启事务
 	        Db::startTrans();
@@ -455,12 +457,18 @@ class Trans extends Base
                 	Db::commit();
                 	$result = json(['status'=>'success','data'=>'委托成功']);
             	}
+	            $msg = ['uid'=>$data['uid'], 'title'=>'买入'.$data['stock_name'],'content'=>'买入'.$data['number'].'股'.$data['stock_name'].'('.$data['stock'].')'];
 	    		//入库到交易表
 	       	} catch (\Exception $e) {
 	       		Db::rollback();
 	       		$result = json(['status'=>'failed','data'=>'委托多次失败请联系管理员']);
 	       	}
         }
+        if(!empty($msg)){//发送消息
+        	$message = new Message;
+        	$message->desertMsgSend($msg);
+        }
+
         return $result;
     }
 
@@ -643,6 +651,9 @@ class Trans extends Base
                 	//更改持仓信息到数据库
                  	UserPosition::where(['id'=>$userInfo['id']])->update($da);
                 	Db::commit();
+            		$msg = ['uid'=>$data['uid'], 'title'=>'买入'.$data['stock_name'],'content'=>'买入'.$data['number'].'股'.$data['stock_name'].'('.$data['stock'].')'];
+		        	$message = new Message;//发送消息
+		        	$message->desertMsgSend($msg);
                  	return json(['status'=>'success','data'=>'委托成功']);
             	}else{
             		//组装持仓信息
@@ -656,6 +667,9 @@ class Trans extends Base
                     $da['last_time'] = date("Y-m-d H:i:s");
                     UserPosition::where(['id'=>$userInfo['id']])->update($da);
                     Db::commit();
+            		$msg = ['uid'=>$data['uid'], 'title'=>'卖出'.$data['stock_name'],'content'=>'卖出'.$data['number'].'股'.$data['stock_name'].'('.$data['stock'].')'];
+		        	$message = new Message;//发送消息
+		        	$message->desertMsgSend($msg);
                  	return json(['status'=>'success','data'=>'委托成功']);
             	}
         	} catch (\Exception $e) {

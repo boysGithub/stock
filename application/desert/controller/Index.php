@@ -7,6 +7,7 @@ use think\Db;
 use app\common\model\Desert;
 use app\common\model\UserPrice;
 use app\common\model\Order;
+use app\common\model\Message;
 use think\Config;
 /**
 * 
@@ -294,6 +295,7 @@ class Index extends Base
 	            $expert[$key]['avatar'] = $this->getAvatar($value['uid']);
 	        }
 	        if($expert){
+              Message::where(['addressee'=>$data['uid']])->update(['read'=>1]);//标为已读
 	            return json(['status'=>'success','data'=>$expert]);
 	        }else{
 	            return json(['status'=>'failed','data'=>[]]);

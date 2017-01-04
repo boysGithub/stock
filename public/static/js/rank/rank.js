@@ -14,7 +14,7 @@ var ranking = new Vue({
 	methods: {
 		updateTalentDynamic(){
             var _this = this;
-            $.getJSON(api_host + '/orders',{},function(data){
+            $.getJSON(api_host + '/orders',{limit:100},function(data){
                 if(data.status == 'success'){
                     var ret = data.data;
                     var talent_dynamic = [];
