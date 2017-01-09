@@ -131,16 +131,16 @@ class Match extends Base
         $field = "";
         $order = "";
         //比赛排行
+        $date = $this->getRecentTradeDay($match->end_date);var_dump($date);die;
         if($match->type == 1){//周赛
-            $where = "DATE_FORMAT(time,'%Y-%u')='" . date('Y-W', strtotime($match->start_date)) . "'";
+            $where = "DATE_FORMAT(time,'%Y-%u')='" . date('Y-W', strtotime($date)) . "'";
             $field .= ",(SELECT count(muc.id) FROM sjq_match_user muc LEFT JOIN sjq_weekly_ratio wr ON muc.uid=wr.uid AND {$where} WHERE muc.match_id={$match['id']} AND (wr.endFunds - wr.initialCapital) / wr.initialCapital * 100 > week_rate)+1 ranking";
             $order = "week_rate DESC";
         } elseif ($match->type == 2){//月赛
-            $where = "DATE_FORMAT(time,'%Y-%m')='" . date('Y-m', strtotime($match->start_date)) . "'";
+            $where = "DATE_FORMAT(time,'%Y-%m')='" . date('Y-m', strtotime($date)) . "'";
             $field .= ",(SELECT count(muc.id) FROM sjq_match_user muc LEFT JOIN sjq_month_ratio mr ON muc.uid=mr.uid AND {$where} WHERE muc.match_id={$match['id']} AND (mr.endFunds - mr.initialCapital) / mr.initialCapital * 100 > month_rate)+1 ranking";
             $order = "month_rate DESC";
         }
-        $date = $this->getRecentTradeDay($match->end_date);
         $join = [
             ["sjq_users u", "mu.uid=u.uid", 'LEFT'],
             ["sjq_users_funds uf", "mu.uid=uf.uid", 'LEFT'],
