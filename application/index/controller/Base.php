@@ -131,7 +131,7 @@ class Base extends Controller
      */
     public function getAvatar($uid)
     {
-        $avatar = 'http://www.sjqcj.com/data/upload/avatar/';
+        $avatar = 'https://www.sjqcj.com/data/upload/avatar/';
 
         $str = md5($uid);
         $avatar .= substr($str, 0, 2) . '/' . substr($str, 2, 2) . '/' . substr($str, 4, 2);

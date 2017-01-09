@@ -1,0 +1,119 @@
+{extend name="base" /}
+{block name="head"}
+<meta name="description" content="">
+<meta name="keywords" content="">
+<title>持仓</title>
+{/block}
+{block name="css"}
+{/block}
+ <div class="am-g tpl-g">
+{block name="header"}{include file="public/header" /}{/block}
+{block name="left"}{include file="public/left" /}{/block}
+{block name="right"}
+<!-- 内容区域 -->
+<div class="tpl-content-wrapper">
+    <div class="row-content am-cf">
+        <div class="row">
+            <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                <div class="widget am-cf">
+                    <div class="widget-head am-cf">
+                        <div class="widget-title am-cf">持仓列表</div>
+                    </div>
+                    <div class="widget-body am-fr">
+                        <div class="am-u-sm-12 am-u-md-12 am-u-lg-3">
+                            <form method="get" action="{:url('user/positions')}">
+                                <input type="hidden" name="page" value="{$page}">
+                                <div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+                                    <input type="text" id="ex-stock" name="stock" class="am-form-field" placeholder="6位股票代码" value="{$Think.get.stock}">
+                                    <span class="am-input-group-btn">
+                                        <button class="am-btn am-btn-default am-btn-success tpl-table-list-field am-icon-search" type="submit"></button>
+                                    </span>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="am-u-sm-12 am-u-md-4 am-u-lg-2">
+                            <div class="am-form-group tpl-table-list-select">
+                                <!-- <select name="type" id="ex-type" data-am-selected="{btnSize: 'sm'}">
+                                  <option value="1">送股转增</option>
+                                </select> -->
+                            </div>
+                        </div>
+                        <div class="am-u-sm-12 am-u-md-4 am-u-lg-2">
+                            <div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+                                <input type="text" id="ex-value" name="value" class="am-form-field " placeholder="送股比例(每十股)">
+                            </div>
+                        </div>
+                        <div class="am-u-sm-12 am-u-md-4 am-u-lg-2">
+                            <div class="am-input-group">
+                                <button class="am-btn am-btn-default am-btn-success am-btn-sm" type="button" onclick="exRight()">除权</button>
+                            </div>
+                        </div>
+                        <div class="am-u-sm-12">
+                            <table width="100%" class="am-table am-table-compact am-table-striped tpl-table-black ">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>用户名</th>
+                                        <th>股票名称(代码)</th>
+                                        <th>持仓数量</th>
+                                        <th>可卖数量</th>
+                                        <th>成本价</th>
+                                        <th>市值</th>
+                                        <th width="14%">建仓时间</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {volist name="positions" id="vo" mod="2"}
+                                    <tr class="{eq name="mod" value="1"}gradeX{/eq}{eq name="mod" value="0"}even gradeC{/eq}">
+                                        <td class="am-text-middle">{$vo.id}</td>
+                                        <td class="am-text-middle">{$vo.username}</td>
+                                        <td class="am-text-middle">{$vo.stock_name}({$vo.stock})</td>
+                                        <td class="am-text-middle">{$vo.position_number}</td>
+                                        <td class="am-text-middle">{$vo.available_number}</td>
+                                        <td class="am-text-middle">{$vo.cost_price}</td>
+                                        <td class="am-text-middle">{$vo.assets}</td>
+                                        <td class="am-text-middle">{$vo.time}</td>
+                                    </tr>
+                                    {/volist}
+                                    <!-- more data -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="am-u-lg-12 am-cf">
+                            <div class="am-fr">
+                            {$pages}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+</div>
+{block name="js"}
+<script type="text/javascript">
+//除权
+function exRight()
+{
+    if(confirm('确定除权？')){
+        if($("#ex-stock").val() == ''){
+            alert('请输入股票代码');
+            return;
+        }
+       /* if($("#ex-type").val() == ''){
+            alert('请选择除权方式');
+            return;
+        }*/
+        if($("#ex-value").val() == ''){
+            alert('请输入除权比例(每十股)');
+            return;
+        }
+
+        $url = "{:url('user/exRight')}?stock="+$("#ex-stock").val()+"&value="+$("#ex-value").val();
+        window.location.href = $url;
+    }    
+}
+</script>
+{/block}

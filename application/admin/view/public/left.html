@@ -3,13 +3,13 @@
     <!-- 菜单 -->
     <ul class="sidebar-nav">
         <li class="sidebar-nav-link">
-            <a href="javascript:;" class="sidebar-nav-sub-title">
+            <a href="javascript:;" class="sidebar-nav-sub-title active">
                 <i class=""></i> 比赛
-                <span class="am-icon-chevron-down am-fr am-margin-right-sm sidebar-nav-sub-ico"></span>
+                <span class="am-icon-chevron-down am-fr am-margin-right-sm sidebar-nav-sub-ico sidebar-nav-sub-ico-rotate"></span>
             </a>
             <ul class="sidebar-nav sidebar-nav-sub" style="display: block;">
                 <li class="sidebar-nav-link">
-                    <a href="{:url('match/index')}">
+                    <a href="{:url('match/index')}" class="sub-active">
                         <span class="am-icon-angle-right sidebar-nav-link-logo"></span>  模拟比赛
                     </a>
                 </li>
@@ -29,6 +29,16 @@
                 <li class="sidebar-nav-link">
                     <a href="{:url('user/index')}">
                         <span class="am-icon-angle-right sidebar-nav-link-logo"></span>  会员列表
+                    </a>
+                </li>
+                <li class="sidebar-nav-link">
+                    <a href="{:url('user/positions')}">
+                        <span class="am-icon-angle-right sidebar-nav-link-logo"></span>  会员持仓
+                    </a>
+                </li>
+                <li class="sidebar-nav-link">
+                    <a href="{:url('stock/unusual')}">
+                        <span class="am-icon-angle-right sidebar-nav-link-logo"></span>  价格异常股票
                     </a>
                 </li>
             </ul>
@@ -79,7 +89,7 @@
                 </li>
                 <li class="sidebar-nav-link">
                     <a href="{:url('auto/index')}">
-                        <i class="am-icon-angle-right sidebar-nav-link-logo"></i> 结算情况
+                        <i class="am-icon-angle-right sidebar-nav-link-logo"></i> 计划任务
                     </a>
                 </li>
             </ul>
