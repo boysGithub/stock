@@ -20,6 +20,8 @@ use app\common\model\MonthRatio;
 use app\common\model\MatchUser;
 use app\common\model\Match;
 use app\common\model\AllStock;
+use app\common\model\StockUnusual;
+
 
 class Index extends Controller
 {
@@ -735,6 +737,46 @@ class Index extends Controller
         $t = join(',',$tmp1);
         $redis = new Redis;
         $redis->set("fans",$t);
+    }
+
+
+    /**
+     * [checkUnusual 检测异常股票]
+     * @return boolean [description]
+     */
+    public function checkUnusual(){
+        if(time() > strtotime(date('Y-m-d 11:31:00')) && time() > strtotime(date('Y-m-d 12:59:00')) ){
+            // 启动事务
+            Db::startTrans();
+            try {
+                //获取股票集合
+                $stocks = UserPosition::where(['is_position'=>1])->field('stock,count(id) count')->group('stock')->select();
+                if(count($stocks) > 0){
+                    $codes = [];
+                    foreach ($stocks as $key => $value) {
+                        $codes[] = $value->stock;
+                    }
+                    $stockTmp = getStock($codes);
+
+                    //检测异常股票
+                    $data = [];
+                    foreach ($stocks as $key => $value) {
+                        //判断昨收和今开
+                        if(!empty(intval($stockTmp[$value->stock]['1'])) && $stockTmp[$value->stock]['2'] / $stockTmp[$value->stock]['1'] > 1.08){
+                            $data[] = ['stock'=>$value->stock, 'stock_name'=>$stockTmp[$value->stock]['0'],'price'=>$stockTmp[$value->stock]['1'],'old_price'=>$stockTmp[$value->stock]['2'],'count'=>$value->count,'status'=>1];
+                        } 
+                    }
+                    $stockUnusual = new StockUnusual;
+                    $stockUnusual->saveAll($data);
+                }
+
+                $this->handle("自动检测异常股票成功",1);
+                Db::commit();
+            } catch (\Exception $e) {
+                Db::rollback();
+                $this->handle("自动检测异常股票失败",0);
+            }
+        }
     }
 
     /**

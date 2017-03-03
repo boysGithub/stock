@@ -13,7 +13,8 @@ use think\Session;
 class Base extends Controller
 {
     public function _initialize()
-    {	if (!session_id()) session_start();
+    {	
+    	if (!session_id()) session_start();
     	$controller = Request::instance()->controller();
     	$c_arr = ['Login'];
 

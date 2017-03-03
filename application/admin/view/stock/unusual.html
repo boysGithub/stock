@@ -1,0 +1,103 @@
+{extend name="base" /}
+{block name="head"}
+<meta name="description" content="">
+<meta name="keywords" content="">
+<title>价格异常股票</title>
+{/block}
+{block name="css"}
+{/block}
+ <div class="am-g tpl-g">
+{block name="header"}{include file="public/header" /}{/block}
+{block name="left"}{include file="public/left" /}{/block}
+{block name="right"}
+<!-- 内容区域 -->
+<div class="tpl-content-wrapper">
+    <div class="row-content am-cf">
+        <div class="row">
+            <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                <div class="widget am-cf">
+                    <div class="widget-head am-cf">
+                        <div class="widget-title am-cf">价格异常股票列表</div>
+                    </div>
+                    <div class="widget-body am-fr">
+                        <div class="am-u-sm-12">
+                            <table width="100%" class="am-table am-table-compact am-table-striped tpl-table-black ">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>股票名称(代码)</th>
+                                        <th>今开</th>
+                                        <th>昨收</th>
+                                        <th>波动比例</th>
+                                        <th>相关持仓个数</th>
+                                        <th>状态</th>
+                                        <th>时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {volist name="stocks" id="vo" mod="2"}
+                                    <tr class="{eq name="mod" value="1"}gradeX{/eq}{eq name="mod" value="0"}even gradeC{/eq}">
+                                        <td class="am-text-middle">{$vo.id}</td>
+                                        <td class="am-text-middle">{$vo.stock_name}({$vo.stock})</td>
+                                        <td class="am-text-middle">{$vo.price}</td>
+                                        <td class="am-text-middle">{$vo.old_price}</td>
+                                        <td class="am-text-middle">{$vo.rate}</td>
+                                        <td class="am-text-middle">{$vo.count}</td>
+                                        <td class="am-text-middle">{eq name="vo.status" value="1"}未处理{/eq}{eq name="vo.status" value="2"}已处理{/eq}</td>
+                                        <td class="am-text-middle">{$vo.time}</td>
+                                        <td class="am-text-middle">
+                                            <div class="tpl-table-black-operation">{eq name="vo.status" value="1"}
+                                            <a href="{:url('dispose')}?id={$vo.id}&stock={$vo.stock}&type=1" class="am-btn am-btn-default am-btn-success">
+                                                <i class="am-icon-plus"></i>
+                                                去除权
+                                            </a>
+                                            <a href="{:url('dispose')}?id={$vo.id}&type=2" class="am-btn am-btn-default am-btn-success">
+                                                <i class="am-icon-plus"></i>
+                                                标为已处理
+                                            </a>
+                                            {/eq}
+                                            </div>    
+                                        </td>
+                                    </tr>
+                                    {/volist}
+                                    <!-- more data -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="am-u-lg-12 am-cf">
+                            <div class="am-fr">
+                            {$pages}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="am-modal am-modal-confirm" tabindex="-1" id="my-confirm">
+  <div class="am-modal-dialog">
+    <div class="am-modal-hd">推荐<a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a></div>
+    <div class="am-modal-bd am-g">
+      <div class="am-u-sm-3 am-text-right">推荐理由：</div>
+      <textarea class="am-u-sm-8 am-u-end" id="reason_text">
+          
+      </textarea>
+      <div class="am-u-sm-3 am-margin-vertical-xs am-text-right">排序：</div>
+      <div class="am-u-sm-8 am-margin-vertical-xs am-u-end am-text-left am-padding-0">
+            <input type="text" value="62255" id="sort" name="sort">
+      </div>
+    </div>
+    <div class="am-modal-footer am-g">
+      <span class="am-modal-btn am-u-sm-7" id="confirm" data-am-modal-confirm>保存</span>
+      <span class="am-modal-btn am-u-sm-5" id="cancel" style="color: #999;" data-am-modal-cancel>撤销推荐</span>
+    </div>
+  </div>
+</div>
+{/block}
+</div>
+{block name="js"}
+<script type="text/javascript">
+</script>
+{/block}

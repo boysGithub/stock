@@ -2,7 +2,7 @@
 {block name="head"}
 <meta name="description" content="">
 <meta name="keywords" content="">
-<title>会员</title>
+<title>计划任务</title>
 {/block}
 {block name="css"}
 {/block}
@@ -17,66 +17,32 @@
             <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
                 <div class="widget am-cf">
                     <div class="widget-head am-cf">
-                        <div class="widget-title  am-cf">会员列表</div>
+                        <div class="widget-title  am-cf">计划任务执行记录</div>
                     </div>
-                    <div class="widget-body  am-fr">
-                        <div class="am-u-sm-12 am-u-md-6 am-u-lg-6">
-                            <div class="am-form-group">
-                                <div class="am-btn-toolbar">
-                                    <div class="am-btn-group am-btn-group-xs">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <form method="get" action="{:url('user/index')}">
-                        <input type="hidden" name="page" value="{$page}">
-                        <div class="am-u-sm-12 am-u-md-6 am-u-lg-3">
-                            <div class="am-form-group tpl-table-list-select">
-                                <select name="recommend" data-am-selected="{btnSize: 'sm'}">
-                                  <option value="">请选择</option>
-                                  <option value="0"{eq name="$Think.get.recommend" value="0" } selected="" {/eq}>未推荐</option>
-                                  <option value="1"{eq name="$Think.get.recommend" value="1" } selected="" {/eq}>推荐</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="am-u-sm-12 am-u-md-12 am-u-lg-3">
-                            <div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
-                                <input type="text" name="key" class="am-form-field " placeholder="用户名" value="{$Think.get.key}">
-                                <span class="am-input-group-btn">
-                                    <button class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search" type="submit"></button>
-                                </span>
-                            </div>
-                        </div>
-                        </form>
+                    <div class="widget-body am-fr">
                         <div class="am-u-sm-12">
                             <table width="100%" class="am-table am-table-compact am-table-striped tpl-table-black ">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>用户名</th>
-                                        <th>推荐</th>
-                                        <th>操作</th>
+                                        <th>任务</th>
+                                        <th>状态</th>
+                                        <th>提示</th>
+                                        <th>时间</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {volist name="users" id="vo" mod="2"}
+                                    {volist name="autos" id="vo" mod="2"}
                                     <tr class="{eq name="mod" value="1"}gradeX{/eq}{eq name="mod" value="0"}even gradeC{/eq}">
-                                        <td class="am-text-middle">{$vo.uid}</td>
-                                        <td class="am-text-middle">{$vo.username}</td>
-                                        <td class="am-text-middle">{if condition="empty($vo.recommend)"}否{else /}推荐{/if}</td>
+                                        <td class="am-text-middle">{$vo.id}</td>
+                                        <td class="am-text-middle">{$vo.column}</td>
+                                        <td class="am-text-middle">{if condition="empty($vo.is_update)"}否{else /}是{/if}</td>
                                         <td class="am-text-middle">
-                                            <div class="tpl-table-black-operation">
-                                                {if condition="empty($vo.recommend)"}<a uid="{$vo.uid}" reason="{$vo.reason}" href="javascript:;" onclick="recommend($(this))" class="am-btn am-btn-default am-btn-success">
-                                                    <i class="am-icon-plus"></i>
-                                                    推荐
-                                                </a>
-                                                {else /}
-                                                <a uid="{$vo.uid}" sort="{$vo.sort}" reason="{$vo.reason}" recommend="{$vo.recommend}" onclick="recommend($(this))" href="javascript:;">
-                                                    <i class="am-icon-pencil"></i> 查看推荐
-                                                 </a>   
-                                                {/if}
-                                            </div>
+                                        {eq name="$vo.normal" value="0"}接口有问题{/eq}
+                                        {eq name="$vo.normal" value="1"}正常{/eq}
+                                        {eq name="$vo.normal" value="2"}请检查服务器{/eq}
                                         </td>
+                                        <td class="am-text-middle">{$vo.time}</td>
                                     </tr>
                                     {/volist}
                                     <!-- more data -->
